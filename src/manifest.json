@@ -3,6 +3,9 @@
   "name": "Gitako",
   "version": "0.1.0",
   "author": "EnixCoda",
+  "icons": {
+    "128": "icons/Gitako-128x128.png"
+  },
   "description": "yet another GitHub extension.",
   "homepage_url": "https://github.com/EnixCoda/Gitako",
   "permissions": ["tabs", "storage", "*://github.com/*"],

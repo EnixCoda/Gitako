@@ -11,6 +11,10 @@ const plugins = [
       from: './src/manifest.json',
       to: 'manifest.json',
     },
+    {
+      from: './src/assets/icons/*',
+      to: 'icons/[name].[ext]',
+    },
   ]),
   new webpack.SourceMapDevToolPlugin({}),
 ]
