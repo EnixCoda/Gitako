@@ -1,0 +1,17 @@
+{
+  "presets": [
+    [
+      "babel-preset-env",
+      {
+        "targets": {
+          "chrome": "60"
+        }
+      }
+    ],
+    "react"
+  ],
+  "plugins": [
+    "transform-class-properties",
+    ["transform-object-rest-spread", { "useBuiltIns": true }]
+  ]
+}

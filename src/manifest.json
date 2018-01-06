@@ -1,0 +1,15 @@
+{
+  "manifest_version": 2,
+  "name": "Gitako",
+  "version": "0.1.0",
+  "author": "EnixCoda",
+  "description": "yet another GitHub extension.",
+  "homepage_url": "https://github.com/EnixCoda/Gitako",
+  "permissions": ["tabs", "storage", "*://github.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://github.com/*"],
+      "js": ["content.js"]
+    }
+  ]
+}

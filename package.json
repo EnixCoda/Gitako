@@ -1,0 +1,41 @@
+{
+  "name": "gitako",
+  "version": "0.1.0",
+  "description": "yet another extension for GitHub",
+  "repository": "https://github.com/EnixCoda/Gitako",
+  "author": "EnixCoda",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "webpack --watch",
+    "dev": "webpack",
+    "prod": "NODE_ENV=production webpack && cd dist && rm ./gitako.zip && zip gitako.zip *"
+  },
+  "dependencies": {
+    "pjax": "^0.2.4",
+    "preact": "^8.2.6"
+  },
+  "devDependencies": {
+    "babel-loader": "^7.1.2",
+    "babel-plugin-react-require": "^3.0.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "copy-webpack-plugin": "^4.2.0",
+    "css-loader": "^0.28.7",
+    "file-loader": "^1.1.5",
+    "less": "^2.7.3",
+    "less-loader": "^4.0.5",
+    "style-loader": "^0.19.0",
+    "uglifyjs-webpack-plugin": "^1.1.1",
+    "url-loader": "^0.6.2",
+    "webpack": "^3.8.1"
+  },
+  "prettier": {
+    "printWidth": 100,
+    "singleQuote": true,
+    "semi": false,
+    "trailingComma": "es5"
+  }
+}
