@@ -1,8 +1,7 @@
-function parse() {
+function parseRaw() {
   const { pathname } = window.location
-  const [
-    ,
-    // ignore content before the first '/'
+  let [
+    /* ignore content before the first '/' */,
     userName,
     repoName,
     type,
@@ -15,25 +14,28 @@ function parse() {
     branchName,
   }
 }
+function parse() {
+  const parsedData = parseRaw()
+  if (!isInCodePage(parsedData)) {
+    delete parsedData.type
+    delete parsedData.branchName
+  }
+  return parsedData
+}
 
 const RESERVED_NAME = ['blog']
-function isInCodePage() {
-  const { userName, repoName, type, branchName } = parse()
-  return !!(
+function isInCodePage(metaData = {}) {
+  const { userName, repoName, type, branchName } = {...parseRaw(), ...metaData}
+  return (
     userName &&
     !RESERVED_NAME.find(_ => _ === userName) &&
     repoName &&
     (!type || type === 'tree' || type === 'blob') &&
-    ((type && branchName) || !(type || branchName))
+    (branchName || !type && !branchName)
   )
 }
 
-function detectShouldShow(metaData) {
-  return isInCodePage() && (!metaData || metaData.repoName)
-}
-
 export default {
-  detectShouldShow,
   isInCodePage,
   parse,
 }

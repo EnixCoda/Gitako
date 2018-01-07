@@ -41,7 +41,7 @@ export default class GitakoSideBar extends preact.Component {
       const branchName = metaDataFromUrl.branchName || metaDataFromAPI['default_branch']
       const metaData = { ...metaDataFromUrl, branchName, api: metaDataFromAPI }
       this.setState({ metaData })
-      this.setShouldShow(URLHelper.detectShouldShow(metaData))
+      this.setShouldShow(URLHelper.isInCodePage(metaData))
       const treeData = await GitHubHelper.getTreeData({ ...metaData, accessToken })
       this.setState({ treeData, loading: false })
 
@@ -69,8 +69,9 @@ export default class GitakoSideBar extends preact.Component {
   }
 
   onPJAXEnd = () => {
+    const { metaData } = this.state
     this.setState({ loading: false })
-    this.setShouldShow(URLHelper.detectShouldShow())
+    this.setShouldShow(URLHelper.isInCodePage(metaData))
     this.decorateGitHubPageContent()
     DOMHelper.scrollToRepoContent()
     DOMHelper.focusSearchInput()
