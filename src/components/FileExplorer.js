@@ -6,6 +6,7 @@ import Node from './Node'
 
 import DOMHelper from '../utils/DOMHelper'
 import treeParser from '../utils/treeParser'
+import URLHelper from '../utils/URLHelper'
 import VisibleNodesGenerator from '../utils/VisibleNodesGenerator'
 
 export default class List extends preact.Component {
@@ -26,6 +27,13 @@ export default class List extends preact.Component {
     const { treeData, metaData } = this.props
     const { root, nodes } = treeParser.parse(treeData, metaData)
     this.visibleNodesGenerator.plantTree(root, nodes)
+    const currentPath = URLHelper.getCurrentPath()
+    if (currentPath.length) {
+      const nodeExpandedTo = this.visibleNodesGenerator.expandTo(currentPath)
+      this.visibleNodesGenerator.focusNode(nodeExpandedTo)
+      const { nodes } = this.visibleNodesGenerator.visibleNodes
+      this.tasksAfterRender.push(() => DOMHelper.scrollToNodeElement(nodes.indexOf(nodeExpandedTo)))
+    }
     this.updateVisibleNodes()
     this.tasksAfterRender.push(DOMHelper.focusFileExplorer)
     this.tasksAfterRender.push(DOMHelper.focusSearchInput)

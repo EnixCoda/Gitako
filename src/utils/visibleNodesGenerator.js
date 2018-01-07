@@ -91,6 +91,17 @@ export default class VisibleNodesGenerator {
     this.generateVisibleNodes()
   }
 
+  expandTo(path) {
+    let rootNode = this.root
+    let targetPath
+    for (const step of path) {
+      targetPath = rootNode.path ? `${rootNode.path}/${step}` : step
+      rootNode = rootNode.contents.find(node => node.path === targetPath)
+      this.setExpand(rootNode, true)
+    }
+    return rootNode
+  }
+
   visibleNodes = null
   generateVisibleNodes() {
     this.focusedNode = null

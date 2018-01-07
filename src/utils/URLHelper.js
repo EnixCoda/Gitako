@@ -6,17 +6,19 @@ function parseRaw() {
     repoName,
     type,
     branchName,
+    ...path
   ] = pathname.split('/')
   return {
     userName,
     repoName,
     type,
     branchName,
+    path,
   }
 }
 function parse() {
   const parsedData = parseRaw()
-  if (!isInCodePage(parsedData)) {
+  if (!isInCodePage()) {
     delete parsedData.type
     delete parsedData.branchName
   }
@@ -35,7 +37,13 @@ function isInCodePage(metaData = {}) {
   )
 }
 
+function getCurrentPath() {
+  const { path } = parseRaw()
+  return path
+}
+
 export default {
+  getCurrentPath,
   isInCodePage,
   parse,
 }
