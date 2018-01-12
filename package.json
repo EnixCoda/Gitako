@@ -9,7 +9,7 @@
   "scripts": {
     "start": "webpack --watch",
     "dev": "webpack",
-    "prod": "NODE_ENV=production webpack && cd dist && rm ./gitako.zip && zip gitako.zip *"
+    "prod": "NODE_ENV=production webpack && cd dist && rm -f ./gitako.zip && zip gitako.zip *"
   },
   "dependencies": {
     "pjax": "^0.2.4",
