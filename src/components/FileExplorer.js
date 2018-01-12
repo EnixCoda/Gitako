@@ -28,6 +28,8 @@ export default class List extends preact.Component {
     const { root, nodes } = treeParser.parse(treeData, metaData)
     this.visibleNodesGenerator.plantTree(root, nodes)
     const currentPath = URLHelper.getCurrentPath()
+    this.tasksAfterRender.push(DOMHelper.focusFileExplorer)
+    this.tasksAfterRender.push(DOMHelper.focusSearchInput)
     if (currentPath.length) {
       const nodeExpandedTo = this.visibleNodesGenerator.expandTo(currentPath)
       this.visibleNodesGenerator.focusNode(nodeExpandedTo)
@@ -35,8 +37,6 @@ export default class List extends preact.Component {
       this.tasksAfterRender.push(() => DOMHelper.scrollToNodeElement(nodes.indexOf(nodeExpandedTo)))
     }
     this.updateVisibleNodes()
-    this.tasksAfterRender.push(DOMHelper.focusFileExplorer)
-    this.tasksAfterRender.push(DOMHelper.focusSearchInput)
   }
 
   componentDidMount() {
