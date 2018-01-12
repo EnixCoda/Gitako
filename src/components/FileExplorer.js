@@ -183,16 +183,18 @@ export default class List extends preact.Component {
         {nodes.length === 0 ? (
           <label className={'no-results'}>No results found.</label>
         ) : (
-          nodes.map(node => (
-            <Node
-              key={node.path}
-              node={node}
-              depth={depths.get(node)}
-              focused={focusedNode === node}
-              expanded={expandedNodes.has(node)}
-              toggleExpand={this.toggleNodeExpand.bind(null, node)}
-            />
-          ))
+          <div className={'files'}>
+            {nodes.map(node => (
+              <Node
+                key={node.path}
+                node={node}
+                depth={depths.get(node)}
+                focused={focusedNode === node}
+                expanded={expandedNodes.has(node)}
+                toggleExpand={this.toggleNodeExpand.bind(null, node)}
+              />
+            ))}
+          </div>
         )}
       </div>
     )

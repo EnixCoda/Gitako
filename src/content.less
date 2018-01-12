@@ -158,24 +158,31 @@
         padding: 4px 10px;
       }
 
-      /* search input */
-      .search-input-wrapper {
-        input[type='text'].form-control {
-          box-shadow: none;
-          width: 100%;
-        }
-      }
-
-      .no-results {
-        padding: 0px 10px;
-        color: #666;
-      }
-
       .file-explorer {
         width: 100%;
         height: 100%;
-        overflow: auto;
         outline: none;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+
+        /* search input */
+        .search-input-wrapper {
+          input[type='text'].form-control {
+            box-shadow: none;
+            width: 100%;
+          }
+        }
+
+        .no-results {
+          padding: 0px 10px;
+          color: #666;
+        }
+
+        .files {
+          flex: 1;
+          overflow: auto;
+        }
 
         .node-item-row {
           background: #fff;
