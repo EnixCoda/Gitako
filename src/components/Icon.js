@@ -1,25 +1,41 @@
 import preact from 'preact'
 /** @jsx preact.h */
 
-function getIconClassName(type) {
+import TriangleRight from '../assets/icons/octicons/triangle-right.svg?svgr'
+import FilePdf from '../assets/icons/octicons/file-pdf.svg?svgr'
+import File from '../assets/icons/octicons/file.svg?svgr'
+import FileZip from '../assets/icons/octicons/file-zip.svg?svgr'
+import Markdown from '../assets/icons/octicons/markdown.svg?svgr'
+import FileMedia from '../assets/icons/octicons/file-media.svg?svgr'
+import FileCode from '../assets/icons/octicons/file-code.svg?svgr'
+// import FileBinary from '../assets/icons/octicons/file-binary.svg?svgr'
+// import FileSubmodule from '../assets/icons/octicons/file-submodule.svg?svgr'
+// import FileSymlinkDirectory from '../assets/icons/octicons/file-symlink-directory.svg?svgr'
+// import FileSymlinkFile from '../assets/icons/octicons/file-symlink-file.svg?svgr'
+import X from '../assets/icons/octicons/x.svg?svgr'
+import Gear from '../assets/icons/octicons/gear.svg?svgr'
+
+function getSVGIconComponent(type) {
   switch (type) {
+    case 'x':
+      return X
+    case 'gear':
+      return Gear
     case 'folder':
-      return 'triangle-right'
+      return TriangleRight
     case '.pdf':
-      return 'file-pdf'
-    case '.txt':
-      return 'file-text'
+      return FilePdf
     case '.zip':
     case '.rar':
     case '.7z':
-      return 'file-zip'
+      return FileZip
     case '.md':
-      return 'markdown'
+      return Markdown
     case '.png':
     case '.jpg':
     case '.gif':
     case '.bmp':
-      return 'file-media'
+      return FileMedia
     case '.js':
     case '.jsx':
     case '.ts':
@@ -30,17 +46,21 @@ function getIconClassName(type) {
     case '.less':
     case '.scss':
     case '.sass':
-      return 'file-code'
+      return FileCode
     // TODO: adapt to more file types
-    // case '': return 'file-binary'
-    // case '': return 'file-submodule'
-    // case '': return 'file-symlink-directory'
-    // case '': return 'file-symlink-file'
+    // case '': return FileBinary
+    // case '': return FileSubmodule
+    // case '': return FileSymlinkDirectory
+    // case '': return FileSymlinkFile
     default:
-      return 'file'
+      return File
   }
 }
 
-export default function Icon({ type }) {
-  return <span className={`octicon octicon-${getIconClassName(type)} octicon-color`} />
+export default function Icon({ type, ...otherProps }) {
+  return (
+    <div className={'octicon-wrapper'} {...otherProps}>
+      {preact.h(getSVGIconComponent(type), { width: '100%', height: '100%' })}
+    </div>
+  )
 }

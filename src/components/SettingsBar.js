@@ -1,6 +1,7 @@
 import preact from 'preact'
 /** @jsx preact.h */
 
+import Icon from './Icon'
 import storageHelper from '../utils/storageHelper'
 
 const ACCESS_TOKEN_REGEXP = /^[0-9a-f]{40}$/
@@ -36,10 +37,7 @@ export default class SettingsBar extends preact.Component {
       <div className={'gitako-settings-bar'}>
         <div className={'placeholder-row'}>
           <h3>{activated ? 'Settings' : ''}</h3>
-          <span
-            className={`settings-icon octicon octicon-${activated ? 'x' : 'gear'} octicon-color`}
-            onClick={toggleShowSettings}
-          />
+          <Icon type={activated ? 'x' : 'gear'} className={'settings-icon'} onClick={toggleShowSettings} />
         </div>
         {activated && (
           <div className={'gitako-settings-bar-content'}>

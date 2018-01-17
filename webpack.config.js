@@ -45,6 +45,11 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].js',
   },
+  resolve: {
+    alias: {
+      react: 'preact', // for svgr
+    },
+  },
   module: {
     rules: [
       {
@@ -61,9 +66,14 @@ module.exports = {
         include: [srcPath],
       },
       {
-        test: /\.(png|woff|woff2|eot|ttf|svg)(\?[a-z0-9=.]+)?$/,
-        loader: 'url-loader?limit=100000',
-        include: [srcPath],
+        test: /\.svg$/,
+        resourceQuery: /inline/,
+        loader: ['url-loader'],
+      },
+      {
+        test: /\.svg$/,
+        resourceQuery: /svgr/,
+        loader: ['babel-loader', 'svgr/webpack'],
       },
     ],
   },
