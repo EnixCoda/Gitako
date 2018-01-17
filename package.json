@@ -16,6 +16,7 @@
     "preact": "^8.2.6"
   },
   "devDependencies": {
+    "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-plugin-react-require": "^3.0.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
