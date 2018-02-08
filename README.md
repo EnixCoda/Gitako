@@ -15,7 +15,7 @@ Yet another Chrome extension for GitHub. Inspired by [Octotree](https://github.c
 - [x] support access token (for private repo and frequent usage)
 - [x] fancy loading animation ;)
 - [x] use [octicons](https://octicons.github.com)
-- [x] light size (40kb) & low memory usage
+- [x] light size (26kb) & low memory usage
 - [more WIP](https://github.com/EnixCoda/Gitako/projects/1)
 
 ### Download
