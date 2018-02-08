@@ -69,11 +69,13 @@ module.exports = {
         test: /\.svg$/,
         resourceQuery: /inline/,
         loader: ['url-loader'],
+        include: [srcPath],
       },
       {
         test: /\.svg$/,
         resourceQuery: /svgr/,
         loader: ['babel-loader', 'svgr/webpack'],
+        include: [srcPath],
       },
     ],
   },
