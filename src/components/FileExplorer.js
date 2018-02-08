@@ -27,7 +27,7 @@ export default class List extends preact.Component {
     const { treeData, metaData } = this.props
     const { root, nodes } = treeParser.parse(treeData, metaData)
     this.visibleNodesGenerator.plantTree(root, nodes)
-    const currentPath = URLHelper.getCurrentPath()
+    const currentPath = URLHelper.getCurrentPath(true)
     this.tasksAfterRender.push(DOMHelper.focusSearchInput)
     if (currentPath.length) {
       const nodeExpandedTo = this.visibleNodesGenerator.expandTo(currentPath)

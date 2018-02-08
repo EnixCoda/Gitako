@@ -37,9 +37,9 @@ function isInCodePage(metaData = {}) {
   )
 }
 
-function getCurrentPath() {
+function getCurrentPath(decode = false) {
   const { path } = parseRaw()
-  return path
+  return decode ? path.map(decodeURIComponent) : path
 }
 
 export default {
