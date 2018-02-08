@@ -68,14 +68,20 @@ export default class GitakoSideBar extends preact.Component {
     this.setState({ loading: true })
   }
 
-  onPJAXEnd = () => {
-    const { metaData } = this.state
-    this.setState({ loading: false })
-    this.setShouldShow(URLHelper.isInCodePage(metaData))
-    this.decorateGitHubPageContent()
-    DOMHelper.scrollToRepoContent()
-    DOMHelper.focusSearchInput()
-  }
+  onPJAXEnd = (() => {
+    let lastLocation
+    return () => {
+      if (location.href !== lastLocation) {
+        lastLocation = location.href
+        const { metaData } = this.state
+        this.setState({ loading: false })
+        this.setShouldShow(URLHelper.isInCodePage(metaData))
+        this.decorateGitHubPageContent()
+        DOMHelper.scrollToRepoContent()
+        DOMHelper.focusSearchInput()
+      }
+    }
+  })()
 
   decorateGitHubPageContent() {
     DOMHelper.attachCopyFileBtn()
