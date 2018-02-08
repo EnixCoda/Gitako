@@ -12,38 +12,45 @@
   }
 }
 
-.markdown-body pre {
-  position: relative;
-  .clippy {
-    position: absolute;
-    top: 10px;
-    right: 16px;
-    width: 32px;
-    height: 32px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background: #f9f9f9;
-    &:hover {
-      background: #fff;
-    }
-    &:active {
-      background: #f0f0f0;
-    }
+.markdown-body {
+  .clippy-wrapper {
+    position: relative;
+    width: 0;
+    height: 0;
+    top: 8px;
+    left: ~'calc(100% - 40px)';
+    z-index: 1;
 
-    &.success {
-      i::before {
-        content: '\F03A'; // .octicon-check
+    .clippy {
+      width: 32px;
+      height: 32px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: #f9f9f9;
+      &:hover {
+        background: #fff;
       }
-    }
-
-    &.fail {
-      i::before {
-        content: '\F081'; // .octicon-x
+      &:active {
+        background: #f0f0f0;
       }
-    }
-
-    i::before {
-      margin-left: 2px; // make icon centered
+      .icon {
+        width: 100%;
+        height: 100%;
+        display: block;
+        background-image: url("./assets/icons/octicons/clippy.svg?inline");
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+      &.success {
+        .icon {
+          background-image: url("./assets/icons/octicons/check.svg?inline");
+        }
+      }
+      &.fail {
+        .icon {
+          background-image: url("./assets/icons/octicons/x.svg?inline");
+        }
+      }
     }
   }
 }

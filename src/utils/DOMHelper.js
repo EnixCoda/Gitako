@@ -200,14 +200,20 @@ function createClippy() {
   }
 
   /**
-   * <button class="clippy">
-   *   <i class="octicon octicon-clippy" />
-   * </button>
+   * <div class="clippy-wrapper">
+   *    <button class="clippy">
+   *      <i class="octicon octicon-clippy" />
+   *    </button>
+   *  </div>
    */
+  const clippyWrapper = document.createElement('div')
+  clippyWrapper.classList.add('clippy-wrapper')
   const clippy = document.createElement('button')
   clippy.classList.add('clippy')
   const clippyIcon = document.createElement('i')
-  clippyIcon.classList.add('octicon', 'octicon-clippy')
+  clippyIcon.classList.add('icon')
+
+  clippyWrapper.appendChild(clippy)
   clippy.appendChild(clippyIcon)
 
   // set clipboard with current code snippet element's content
@@ -219,26 +225,33 @@ function createClippy() {
     }
   })
 
-  return clippy
+  return clippyWrapper
 }
 
 const clippy = createClippy()
 
 let currentCodeSnippetElement
 function attachCopySnippet() {
-  const readmeSelector = '.repository-content .readme'
+  const readmeSelector = '.repository-content .readme article'
   const readmeElement = document.querySelector(readmeSelector)
   if (readmeElement) {
-    const snippetSelector = '.repository-content .readme pre'
-    const snippetElements = readmeElement.querySelectorAll(snippetSelector)
     readmeElement.addEventListener('mouseover', ({ target }) => {
-      // only move clippy when mouse is over a new snippet
-      if (
-        Array.from(snippetElements).indexOf(target) !== -1 &&
-        currentCodeSnippetElement !== target
-      ) {
-        currentCodeSnippetElement = target
-        currentCodeSnippetElement.insertAdjacentElement('afterbegin', clippy)
+      // only move clippy when mouse is over a new snippet(<pre>)
+      if (target.nodeName === 'PRE') {
+        if (
+          currentCodeSnippetElement !== target
+        ) {
+          currentCodeSnippetElement = target
+          /**
+           *  <article>
+           *    <pre></pre>     <!-- case A -->
+           *    <div class="highlight">
+           *      <pre></pre>   <!-- case B -->
+           *    </div>
+           *  </article>
+           */
+          target.parentNode.insertBefore(clippy, target)
+        }
       }
     })
   }
