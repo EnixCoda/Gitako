@@ -1,0 +1,283 @@
+@side-bar-width: 260px;
+@github-content-width: 1280px;
+@content-width: (@side-bar-width + @github-content-width);
+
+.with-gitako-spacing {
+  margin-left: @side-bar-width;
+  @media (min-width: @github-content-width) and (max-width: @content-width) {
+    margin-left: ~'calc(' @content-width ~' - 100vw)';
+  }
+  @media (min-width: @content-width) {
+    margin-left: 0;
+  }
+}
+
+.markdown-body {
+  .clippy-wrapper {
+    position: relative;
+    width: 0;
+    height: 0;
+    top: 8px;
+    left: ~'calc(100% - 40px)';
+    z-index: 1;
+
+    .clippy {
+      width: 32px;
+      height: 32px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: #f9f9f9;
+      &:hover {
+        background: #fff;
+      }
+      &:active {
+        background: #f0f0f0;
+      }
+      .icon {
+        width: 100%;
+        height: 100%;
+        display: block;
+        background-image: url("./assets/icons/octicons/clippy.svg?inline");
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+      &.success {
+        .icon {
+          background-image: url("./assets/icons/octicons/check.svg?inline");
+        }
+      }
+      &.fail {
+        .icon {
+          background-image: url("./assets/icons/octicons/x.svg?inline");
+        }
+      }
+    }
+  }
+}
+
+.hidden {
+  display: none;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+.gitako {
+  .gitako-side-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    width: @side-bar-width;
+    height: 100vh;
+    z-index: 2;
+    background: #fafbfc;
+    border-right: 1px solid #e1e4e8;
+
+    @media screen and (min-width: @content-width) {
+      border-left: 1px solid #e1e4e8;
+      left: ~'calc((100vw - ' @content-width ~') / 2)';
+    }
+
+    &.hidden {
+      .hidden;
+    }
+
+    .gitako-logo-wrapper.Header {
+      position: relative;
+
+      .gitako-logo {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        cursor: default;
+        user-select: none;
+        -webkit-font-smoothing: antialiased;
+
+        &.breath {
+          background: linear-gradient(
+            135deg,
+            #ff2400,
+            #e81d1d,
+            #e8b71d,
+            #e3e81d,
+            #1de840,
+            #1ddde8,
+            #2b1de8,
+            #dd00f3,
+            #dd00f3
+          );
+          background-size: 450% 450%;
+          animation: rainbow 9s ease infinite;
+          -webkit-text-fill-color: transparent;
+          -webkit-background-clip: text;
+          background-clip: text;
+
+          // https://stackoverflow.com/questions/10814178/css-performance-relative-to-translatez0
+          -webkit-transform: rotateZ(360deg);
+          transform: rotateZ(360deg);
+        }
+      }
+    }
+
+    .octicon {
+      transition: 0.3s ease;
+      color: rgba(3, 47, 98, 0.55);
+      vertical-align: initial;
+    }
+
+    .octicon-wrapper {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .octicon-color {
+      color: rgba(3, 47, 98, 0.55);
+    }
+
+    .gitako-side-bar-content {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+
+      .meta-bar {
+        position: relative;
+        padding: 10px;
+        font-size: 13px;
+        line-height: 20px;
+        color: #586069;
+        background-color: #f1f8ff;
+        border-bottom: 1px solid #c8e1ff;
+
+        a {
+          // fix a weird bug:
+          // when gitako failed loading repo, cursor hovering <a> in meta bar will be 'text'
+          cursor: pointer;
+        }
+
+        .repo-name {
+          font-weight: bolder;
+        }
+      }
+
+      .description {
+        padding: 4px 10px;
+      }
+
+      .file-explorer {
+        width: 100%;
+        height: 100%;
+        outline: none;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+
+        /* search input */
+        .search-input-wrapper {
+          input[type='text'].form-control {
+            box-shadow: none;
+            width: 100%;
+          }
+        }
+
+        .no-results {
+          padding: 0px 10px;
+          color: #666;
+        }
+
+        .files {
+          flex: 1;
+          overflow: auto;
+        }
+
+        .node-item-row {
+          background: #fff;
+          &:hover {
+            background: #f6f8fa;
+          }
+          &.focused {
+            background: #f0f0f6;
+          }
+
+          .node-item {
+            word-wrap: normal;
+            word-break: break-all;
+            margin: 0;
+            color: #0366d6;
+            line-height: 20px;
+            padding: 6px 0;
+            cursor: pointer;
+            border-top: 1px solid #eaecef;
+            transition: all 0.5s ease;
+
+            // folder icon rotate when expand
+            &.expanded .octicon.octicon-triangle-right {
+              transform: rotate(90deg);
+            }
+
+            .node-item-name {
+              padding-left: 6px;
+              vertical-align: middle;
+            }
+
+            .node-item:hover .node-item-name {
+              text-decoration: underline;
+            }
+          }
+        }
+      }
+    }
+
+    .gitako-settings-bar {
+      border-top: 1px solid #eaecef;
+      &-content {
+        padding: 0 10px;
+        &-section {
+          padding-bottom: 10px;
+        }
+      }
+      .access-token {
+        border-bottom: none; // prevent overwrite by github style
+      }
+      .access-token-input {
+        width: 100%;
+        margin-top: 4px;
+        box-shadow: none;
+      }
+      .placeholder-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 10px;
+
+        .settings-icon {
+          width: 20px;
+          height: 20px;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
+
+@keyframes rainbow {
+  0% {
+    background-position: 9% 91%;
+  }
+  50% {
+    background-position: 91% 9%;
+  }
+  100% {
+    background-position: 9% 91%;
+  }
+}

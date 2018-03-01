@@ -1,0 +1,5 @@
+.vscode
+node_modules
+tmp
+dist
+src/assets/icons/octicons
