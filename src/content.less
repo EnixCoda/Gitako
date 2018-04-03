@@ -1,8 +1,10 @@
+@name: gitako;
+
 @side-bar-width: 260px;
 @github-content-width: 1280px;
 @content-width: (@side-bar-width + @github-content-width);
 
-.with-gitako-spacing {
+.with-@{name}-spacing {
   margin-left: @side-bar-width;
   @media (min-width: @github-content-width) and (max-width: @content-width) {
     margin-left: ~'calc(' @content-width ~' - 100vw)';
@@ -63,8 +65,8 @@
   visibility: hidden;
 }
 
-.gitako {
-  .gitako-side-bar {
+.@{name} {
+  .@{name}-side-bar {
     position: fixed;
     top: 0;
     left: 0;
@@ -85,10 +87,10 @@
       .hidden;
     }
 
-    .gitako-logo-wrapper.Header {
+    .@{name}-logo-wrapper.Header {
       position: relative;
 
-      .gitako-logo {
+      .@{name}-logo {
         display: flex;
         justify-content: space-around;
         align-items: center;
@@ -145,7 +147,7 @@
       color: rgba(3, 47, 98, 0.55);
     }
 
-    .gitako-side-bar-content {
+    .@{name}-side-bar-content {
       display: flex;
       flex: 1;
       flex-direction: column;
@@ -238,7 +240,7 @@
       }
     }
 
-    .gitako-settings-bar {
+    .@{name}-settings-bar {
       border-top: 1px solid #eaecef;
       &-content {
         padding: 0 10px;

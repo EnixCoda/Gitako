@@ -3,8 +3,8 @@ import preact from 'preact'
 
 import './content.less'
 
-import GitakoSideBar from './components/GitakoSideBar'
+import SideBar from './components/SideBar'
 
-const GitakoSideBarElement = document.createElement('div')
-document.body.appendChild(GitakoSideBarElement)
-preact.render(<GitakoSideBar />, GitakoSideBarElement)
+const SideBarElement = document.createElement('div')
+document.body.appendChild(SideBarElement)
+preact.render(<SideBar />, SideBarElement)

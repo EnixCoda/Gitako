@@ -12,7 +12,7 @@ import GitHubHelper, { NOT_FOUND } from '../utils/GitHubHelper'
 import storageHelper from '../utils/storageHelper'
 import URLHelper from '../utils/URLHelper'
 
-export default class GitakoSideBar extends preact.Component {
+export default class SideBar extends preact.Component {
   state = {
     // whether Gitako side bar should be shown
     shouldShow: false,
