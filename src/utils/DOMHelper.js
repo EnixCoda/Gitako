@@ -288,11 +288,22 @@ function clickOnNodeElement(index = 0) {
   nodeElements[index].click()
 }
 
+/**
+ * a combination of few above functions
+ */
+function decorateGitHubPageContent() {
+  attachPJAX('github')
+  attachCopyFileBtn()
+  attachCopySnippet()
+}
+
+
 export default {
   attachPJAX,
   attachCopyFileBtn,
   attachCopySnippet,
   clickOnNodeElement,
+  decorateGitHubPageContent,
   focusSearchInput,
   focusFileExplorer,
   getCurrentPageType,

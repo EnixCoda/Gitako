@@ -34,7 +34,7 @@ export default class SideBar extends preact.Component {
     try {
       const metaDataFromUrl = URLHelper.parse()
       this.setState({ metaData: metaDataFromUrl })
-      this.decorateGitHubPageContent()
+      DOMHelper.decorateGitHubPageContent()
       const accessToken = await storageHelper.getAccessToken()
       this.setState({ hasAccessToken: !!accessToken })
       const metaDataFromAPI = await GitHubHelper.getRepoMeta({ ...metaDataFromUrl, accessToken })
@@ -76,18 +76,12 @@ export default class SideBar extends preact.Component {
         const { metaData } = this.state
         this.setState({ loading: false })
         this.setShouldShow(URLHelper.isInCodePage(metaData))
-        this.decorateGitHubPageContent()
+        DOMHelper.decorateGitHubPageContent()
         DOMHelper.scrollToRepoContent()
         DOMHelper.focusSearchInput()
       }
     }
   })()
-
-  decorateGitHubPageContent() {
-    DOMHelper.attachCopyFileBtn()
-    DOMHelper.attachCopySnippet()
-    DOMHelper.attachPJAX('github')
-  }
 
   setShouldShow = shouldShow => {
     this.setState({ shouldShow })
