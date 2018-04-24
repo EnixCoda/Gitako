@@ -28,3 +28,11 @@ Yet another Chrome extension for GitHub. Inspired by [Octotree](https://github.c
 ### Issues
 
 Any bug report or feature requests are welcomed, feel free to draft a [issue](https://github.com/EnixCoda/Gitako/issues/)!
+
+### About
+
+#### Why named 'Gitako'?
+GitHub's totem is a cute octopus. And octopus in Japanese is `たこ`(tako).
+Then link them together:
+
+    git + tako -> gitako
