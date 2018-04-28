@@ -105,25 +105,33 @@ export default class SideBar extends preact.Component {
     )
   }
 
+  renderContent() {
+    const {
+      errorDueToPrivateRepo,
+      metaData,
+      treeData,
+    } = this.state
+    return (
+      <div className={'gitako-side-bar-content'}>
+        {metaData && <MetaBar metaData={metaData} />}
+        {errorDueToPrivateRepo && this.renderPrivateRepoError()}
+        {metaData && treeData && <FileExplorer metaData={metaData} treeData={treeData} />}
+      </div>
+    )
+  }
+
   render() {
     const {
       shouldShow,
       loading,
-      metaData,
-      treeData,
       showSettings,
       hasAccessToken,
-      errorDueToPrivateRepo,
     } = this.state
     return (
       <div className={cx('gitako', { hidden: !shouldShow })}>
         <div className={'gitako-side-bar'}>
           <Logo loading={loading} />
-          <div className={'gitako-side-bar-content'}>
-            {metaData && <MetaBar metaData={metaData} />}
-            {errorDueToPrivateRepo && this.renderPrivateRepoError()}
-            {metaData && treeData && <FileExplorer metaData={metaData} treeData={treeData} />}
-          </div>
+          {this.renderContent()}
           <SettingsBar
             toggleShowSettings={this.toggleShowSettings}
             activated={showSettings}
