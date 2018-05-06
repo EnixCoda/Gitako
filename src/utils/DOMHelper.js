@@ -100,7 +100,7 @@ const PAGE_TYPES = {
  * this function tries to tell which type current page is of
  *
  * note: not determining through file extension here
- * becasuse there might be files using wrong extension name
+ * because there might be files using wrong extension name
  *
  * TODO: distinguish type 'preview'
  */
