@@ -122,12 +122,12 @@ export default class SideBar extends preact.Component {
   }
 
   renderContent() {
-    const { errorDueToPrivateRepo, metaData, treeData } = this.state
+    const { errorDueToPrivateRepo, metaData, treeData, showSettings } = this.state
     return (
       <div className={'gitako-side-bar-content'}>
         {metaData && <MetaBar metaData={metaData} />}
         {errorDueToPrivateRepo && this.renderPrivateRepoError()}
-        {metaData && treeData && <FileExplorer metaData={metaData} treeData={treeData} />}
+        {metaData && treeData && <FileExplorer metaData={metaData} treeData={treeData} freeze={showSettings} />}
       </div>
     )
   }

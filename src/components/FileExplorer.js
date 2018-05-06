@@ -1,9 +1,9 @@
 import preact from 'preact'
 /** @jsx preact.h */
-
 import SearchBar from './SearchBar'
 import Node from './Node'
 
+import cx from '../utils/cx'
 import DOMHelper from '../utils/DOMHelper'
 import treeParser from '../utils/treeParser'
 import URLHelper from '../utils/URLHelper'
@@ -18,6 +18,7 @@ export default class List extends preact.Component {
   props = {
     treeData: null,
     metaData: null,
+    freeze: false,
   }
 
   tasksAfterRender = []
@@ -176,8 +177,9 @@ export default class List extends preact.Component {
 
   render() {
     const { visibleNodes: { nodes, depths, focusedNode, expandedNodes } } = this.state
+    const { freeze } = this.props
     return (
-      <div className={`file-explorer`} tabIndex={-1} onKeyDown={this.handleKeyDown}>
+      <div className={cx(`file-explorer`, { freeze })} tabIndex={-1} onKeyDown={this.handleKeyDown}>
         <SearchBar onSearchKeyChange={this.handleSearchKeyChange} />
         {nodes.length === 0 ? (
           <label className={'no-results'}>No results found.</label>
