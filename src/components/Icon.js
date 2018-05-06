@@ -1,6 +1,8 @@
 import preact from 'preact'
 /** @jsx preact.h */
 
+import ChevronLeft from '../assets/icons/octicons/chevron-left.svg?svgr'
+import ChevronRight from '../assets/icons/octicons/chevron-right.svg?svgr'
 import TriangleRight from '../assets/icons/octicons/triangle-right.svg?svgr'
 import FilePdf from '../assets/icons/octicons/file-pdf.svg?svgr'
 import File from '../assets/icons/octicons/file.svg?svgr'
@@ -17,6 +19,10 @@ import Gear from '../assets/icons/octicons/gear.svg?svgr'
 
 function getSVGIconComponent(type) {
   switch (type) {
+    case 'chevron-left':
+      return ChevronLeft
+    case 'chevron-right':
+      return ChevronRight
     case 'x':
       return X
     case 'gear':

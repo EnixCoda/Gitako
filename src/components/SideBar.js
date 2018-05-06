@@ -1,4 +1,5 @@
 import preact from 'preact'
+import Portal from 'preact-portal'
 /** @jsx preact.h */
 
 import FileExplorer from './FileExplorer'
@@ -44,6 +45,7 @@ export default class SideBar extends preact.Component {
       this.setShouldShow(URLHelper.isInCodePage(metaData))
       const treeData = await GitHubHelper.getTreeData({ ...metaData, accessToken })
       this.setState({ treeData, loading: false })
+      this.logoContainerElement = DOMHelper.insertLogo()
 
       window.addEventListener('pjax:send', this.onPJAXStart)
       window.addEventListener('pjax:complete', this.onPJAXEnd)
@@ -88,6 +90,11 @@ export default class SideBar extends preact.Component {
     DOMHelper.setBodyIndent(shouldShow)
   }
 
+  toggleShowSideBar = () => {
+    const { shouldShow } = this.state
+    this.setShouldShow(!shouldShow)
+  }
+
   toggleShowSettings = () => {
     const { showSettings } = this.state
     this.setState({ showSettings: !showSettings })
@@ -105,12 +112,17 @@ export default class SideBar extends preact.Component {
     )
   }
 
+  renderLogo() {
+    const { loading, shouldShow } = this.state
+    return (
+      <Portal into={this.logoContainerElement}>
+        <Logo loading={loading} shouldShow={shouldShow} toggleShowSideBar={this.toggleShowSideBar} />
+      </Portal>
+    )
+  }
+
   renderContent() {
-    const {
-      errorDueToPrivateRepo,
-      metaData,
-      treeData,
-    } = this.state
+    const { errorDueToPrivateRepo, metaData, treeData } = this.state
     return (
       <div className={'gitako-side-bar-content'}>
         {metaData && <MetaBar metaData={metaData} />}
@@ -121,16 +133,11 @@ export default class SideBar extends preact.Component {
   }
 
   render() {
-    const {
-      shouldShow,
-      loading,
-      showSettings,
-      hasAccessToken,
-    } = this.state
+    const { shouldShow, showSettings, hasAccessToken } = this.state
     return (
       <div className={cx('gitako', { hidden: !shouldShow })}>
+        {this.renderLogo()}
         <div className={'gitako-side-bar'}>
-          <Logo loading={loading} />
           {this.renderContent()}
           <SettingsBar
             toggleShowSettings={this.toggleShowSettings}

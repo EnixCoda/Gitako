@@ -18,6 +18,26 @@ function setBodyIndent(shouldShowGitako) {
 }
 
 /**
+ * add the logo element into DOM
+ * 
+ */
+function insertLogo() {
+  const logoSelector = '.gitako .gitako-logo'
+  const logoElement = document.querySelector(logoSelector)
+  if (!logoElement) {
+    const logoMountElement = document.createElement('div')
+    logoMountElement.setAttribute('class', 'gitako-logo-mount-point')
+    const headerSelector = 'header'
+    const headerElement = document.querySelector(headerSelector)
+    const headerContentWrapper = headerElement.children.item(0)
+    const headerContents = headerContentWrapper.children.item(0)
+    headerContents.insertBefore(logoMountElement, headerContents.children.item(0))
+    return logoMountElement
+  }
+  return logoElement
+}
+
+/**
  * content above the file navigation bar is same for all pages of the repo
  * use this function to scroll down a bit to hide them
  */
@@ -308,6 +328,7 @@ export default {
   focusFileExplorer,
   getCurrentPageType,
   getRepoPageType,
+  insertLogo,
   setBodyIndent,
   scrollToNodeElement,
   scrollToRepoContent,

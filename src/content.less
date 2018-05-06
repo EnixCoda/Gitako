@@ -65,6 +65,30 @@
   visibility: hidden;
 }
 
+.@{name}-logo-wrapper {
+  margin-right: 12px;
+  padding-right: 12px;
+  border-right: 1px solid #ffffffbf;
+  height: 100%;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+
+  .action-icon {
+    width: 12px;
+    height: 24px;
+    margin-right: 8px;
+  }
+
+  .@{name}-logo {
+    font-family: monospace;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
 .@{name} {
   .@{name}-side-bar {
     position: fixed;
@@ -85,48 +109,6 @@
 
     &.hidden {
       .hidden;
-    }
-
-    .@{name}-logo-wrapper.Header {
-      position: relative;
-
-      .@{name}-logo {
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-        bottom: 0;
-        cursor: default;
-        user-select: none;
-        -webkit-font-smoothing: antialiased;
-
-        &.breath {
-          background: linear-gradient(
-            135deg,
-            #ff2400,
-            #e81d1d,
-            #e8b71d,
-            #e3e81d,
-            #1de840,
-            #1ddde8,
-            #2b1de8,
-            #dd00f3,
-            #dd00f3
-          );
-          background-size: 450% 450%;
-          animation: rainbow 9s ease infinite;
-          -webkit-text-fill-color: transparent;
-          -webkit-background-clip: text;
-          background-clip: text;
-
-          // https://stackoverflow.com/questions/10814178/css-performance-relative-to-translatez0
-          -webkit-transform: rotateZ(360deg);
-          transform: rotateZ(360deg);
-        }
-      }
     }
 
     .octicon {

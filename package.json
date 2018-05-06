@@ -14,7 +14,8 @@
   "dependencies": {
     "octicons": "^7.1.0",
     "pjax": "^0.2.4",
-    "preact": "^8.2.6"
+    "preact": "^8.2.6",
+    "preact-portal": "^1.1.3"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
