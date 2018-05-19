@@ -37,7 +37,10 @@ export default class SettingsBar extends preact.Component {
       <div className={'gitako-settings-bar'}>
         <div className={'placeholder-row'}>
           <h3>{activated ? 'Settings' : ''}</h3>
-          <Icon type={activated ? 'x' : 'gear'} className={'settings-icon'} onClick={toggleShowSettings} />
+          {activated
+            ? <Icon type={'chevron-down'} className={'hide-settings-icon'} onClick={toggleShowSettings} />
+            : <Icon type={'gear'} className={'show-settings-icon'} onClick={toggleShowSettings} />
+          }
         </div>
         {activated && (
           <div className={'gitako-settings-bar-content'}>

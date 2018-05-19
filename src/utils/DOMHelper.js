@@ -24,17 +24,13 @@ function setBodyIndent(shouldShowGitako) {
 function insertLogo() {
   const logoSelector = '.gitako .gitako-logo'
   const logoElement = document.querySelector(logoSelector)
-  if (!logoElement) {
-    const logoMountElement = document.createElement('div')
-    logoMountElement.setAttribute('class', 'gitako-logo-mount-point')
-    const headerSelector = 'header'
-    const headerElement = document.querySelector(headerSelector)
-    const headerContentWrapper = headerElement.children.item(0)
-    const headerContents = headerContentWrapper.children.item(0)
-    headerContents.insertBefore(logoMountElement, headerContents.children.item(0))
-    return logoMountElement
+  if (logoElement) {
+    return logoElement
   }
-  return logoElement
+  const logoMountElement = document.createElement('div')
+  logoMountElement.setAttribute('class', 'gitako-logo-mount-point')
+  document.body.appendChild(logoMountElement)
+  return logoMountElement
 }
 
 /**

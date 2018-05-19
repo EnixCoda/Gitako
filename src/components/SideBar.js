@@ -3,7 +3,7 @@ import Portal from 'preact-portal'
 /** @jsx preact.h */
 
 import FileExplorer from './FileExplorer'
-import Logo from './Logo'
+import ToggleShowButton from './ToggleShowButton'
 import MetaBar from './MetaBar'
 import SettingsBar from './SettingsBar'
 
@@ -112,15 +112,6 @@ export default class SideBar extends preact.Component {
     )
   }
 
-  renderLogo() {
-    const { loading, shouldShow } = this.state
-    return (
-      <Portal into={this.logoContainerElement}>
-        <Logo loading={loading} shouldShow={shouldShow} toggleShowSideBar={this.toggleShowSideBar} />
-      </Portal>
-    )
-  }
-
   renderContent() {
     const { errorDueToPrivateRepo, metaData, treeData, showSettings } = this.state
     return (
@@ -133,10 +124,12 @@ export default class SideBar extends preact.Component {
   }
 
   render() {
-    const { shouldShow, showSettings, hasAccessToken } = this.state
+    const { shouldShow, showSettings, hasAccessToken, loading } = this.state
     return (
       <div className={cx('gitako', { hidden: !shouldShow })}>
-        {this.renderLogo()}
+        <Portal into={this.logoContainerElement}>
+          <ToggleShowButton shouldShow={shouldShow} toggleShowSideBar={this.toggleShowSideBar} />
+        </Portal>
         <div className={'gitako-side-bar'}>
           {this.renderContent()}
           <SettingsBar
