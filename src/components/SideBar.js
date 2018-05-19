@@ -1,5 +1,6 @@
 import preact from 'preact'
 import Portal from 'preact-portal'
+import NProgress from 'nprogress'
 /** @jsx preact.h */
 
 import FileExplorer from './FileExplorer'
@@ -19,8 +20,6 @@ export default class SideBar extends preact.Component {
     shouldShow: false,
     // whether show settings pane
     showSettings: false,
-    // whether pending for network request
-    loading: true,
     // whether failed loading the repo due to it is private
     errorDueToAuth: false,
     // got access token for GitHub
@@ -44,7 +43,7 @@ export default class SideBar extends preact.Component {
       this.setState({ metaData })
       this.setShouldShow(URLHelper.isInCodePage(metaData))
       const treeData = await GitHubHelper.getTreeData({ ...metaData, accessToken })
-      this.setState({ treeData, loading: false })
+      this.setState({ treeData })
       this.logoContainerElement = DOMHelper.insertLogo()
 
       window.addEventListener('pjax:send', this.onPJAXStart)
@@ -67,7 +66,7 @@ export default class SideBar extends preact.Component {
   }
 
   onPJAXStart = () => {
-    this.setState({ loading: true })
+    NProgress.start()
   }
 
   onPJAXEnd = (() => {
@@ -76,7 +75,7 @@ export default class SideBar extends preact.Component {
       if (location.href !== lastLocation) {
         lastLocation = location.href
         const { metaData } = this.state
-        this.setState({ loading: false })
+        NProgress.done()
         this.setShouldShow(URLHelper.isInCodePage(metaData))
         DOMHelper.decorateGitHubPageContent()
         DOMHelper.scrollToRepoContent()
