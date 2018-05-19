@@ -9,30 +9,48 @@ const ACCESS_TOKEN_REGEXP = /^[0-9a-f]{40}$/
 export default class SettingsBar extends preact.Component {
   state = {
     hint: null,
-    tokenCleared: false,
+    hasAccessToken: false,
+    accessToken: '',
   }
 
-  handleAccessTokenChange = event => {
-    const value = event.target.value
+  componentWillMount() {
     const { hasAccessToken } = this.props
-    if (value === '') {
-      if (hasAccessToken) {
-        storageHelper.setAccessToken('')
-        this.setState({ tokenCleared: true })
-      } else {
-        this.setState({ hint: '' })
-      }
-    } else if (ACCESS_TOKEN_REGEXP.test(value)) {
-      storageHelper.setAccessToken(value)
-      this.setState({ hint: 'Your token is saved, refresh the page to make it work!' })
-    } else {
-      this.setState({ hint: 'Invalid token' })
+    this.setState({ hasAccessToken })
+  }
+  
+  componentWillReceiveProps({ hasAccessToken }) {
+    this.setState({ hasAccessToken })
+  }
+
+  onInputAccessToken = event => {
+    const value = event.target.value
+    this.setState({ accessToken: value })
+    this.setState({
+      hint: ACCESS_TOKEN_REGEXP.test(value)
+        ? ''
+        : 'This token is in unknown format.'
+    })
+  }
+
+  saveToken = () => {
+    const { accessToken } = this.state
+    if (accessToken) {
+      storageHelper.setAccessToken(accessToken)
+      this.setState({
+        hasAccessToken: true,
+        hint: 'Your token is saved, will work after reloading the page!',
+      })
     }
   }
 
+  clearToken = () => {
+    storageHelper.setAccessToken('')
+    this.setState({ accessToken: '', hasAccessToken: false })
+  }
+
   render() {
-    const { hint, tokenCleared } = this.state
-    const { toggleShowSettings, activated, hasAccessToken } = this.props
+    const { hint, accessToken, hasAccessToken } = this.state
+    const { toggleShowSettings, activated} = this.props
     return (
       <div className={'gitako-settings-bar'}>
         <div className={'placeholder-row'}>
@@ -47,31 +65,39 @@ export default class SettingsBar extends preact.Component {
             <div className={'gitako-settings-bar-content-section access-token'}>
               <h4>Access Token</h4>
               <span>
-                With access token, Gitako will be able to browse your private repositories with no
-                API request time limit.
+                With access token provided, Gitako can access more repositories.
               </span>
               <br />
               <a href="https://github.com/blog/1509-personal-api-tokens" target="_blank">
-                How to create access token?
+                Help: how to create access token?
               </a>
               <br />
               <span>
-                Gitako stores the token in{' '}
+                Gitako stores the token in&nbsp;
                 <a href="https://developer.chrome.com/apps/storage" target="_blank">
                   chrome local storage
-                </a>{' '}
-                locally and safely.
+                </a>
+                &nbsp;locally and safely.
               </span>
               <br />
-              <input
-                className={'access-token-input form-control'}
-                placeholder={
+              <div className={'access-token-input-control'}>
+                <input
+                  className={'access-token-input form-control'}
+                  disabled={hasAccessToken}
+                  placeholder={
+                    hasAccessToken
+                      ? 'Your token is saved'
+                      : 'Input your token here'
+                  }
+                  value={accessToken}
+                  onInput={this.onInputAccessToken}
+                />
+                {
                   hasAccessToken
-                    ? tokenCleared ? 'Your token is cleared' : 'Your token is saved'
-                    : 'Input your token here'
+                    ? <button className={'btn'} onClick={this.clearToken}>Clear</button>
+                    : <button className={'btn'} onClick={this.saveToken}>Save</button>
                 }
-                onInput={this.handleAccessTokenChange}
-              />
+              </div>
               {hint && <span className={'hint'}>{hint}</span>}
             </div>
             <div className={'gitako-settings-bar-content-section position'}>
@@ -89,11 +115,12 @@ export default class SettingsBar extends preact.Component {
             </div>
             <div className={'gitako-settings-bar-content-section issue'}>
               <h4>Issue</h4>
-              <a href="https://github.com/EnixCoda/Gitako/issues" target="_blank">
-                Draft a issue on Github.
-              </a>
-              <br />
-              <span>Report BUG or request feature.</span>
+              <span>
+                <a href="https://github.com/EnixCoda/Gitako/issues" target="_blank">
+                  Draft a issue on Github
+                </a>
+                &nbsp;for bug report or feature request.
+              </span>
             </div>
           </div>
         )}

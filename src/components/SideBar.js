@@ -9,7 +9,7 @@ import SettingsBar from './SettingsBar'
 
 import cx from '../utils/cx'
 import DOMHelper, { REPO_TYPE_PRIVATE } from '../utils/DOMHelper'
-import GitHubHelper, { NOT_FOUND } from '../utils/GitHubHelper'
+import GitHubHelper, { NOT_FOUND, BAD_CREDENTIALS } from '../utils/GitHubHelper'
 import storageHelper from '../utils/storageHelper'
 import URLHelper from '../utils/URLHelper'
 
@@ -22,7 +22,7 @@ export default class SideBar extends preact.Component {
     // whether pending for network request
     loading: true,
     // whether failed loading the repo due to it is private
-    errorDueToPrivateRepo: false,
+    errorDueToAuth: false,
     // got access token for GitHub
     hasAccessToken: null,
     // meta data for the repository
@@ -37,7 +37,7 @@ export default class SideBar extends preact.Component {
       this.setState({ metaData: metaDataFromUrl })
       DOMHelper.decorateGitHubPageContent()
       const accessToken = await storageHelper.getAccessToken()
-      this.setState({ hasAccessToken: !!accessToken })
+      this.setState({ hasAccessToken: Boolean(accessToken) })
       const metaDataFromAPI = await GitHubHelper.getRepoMeta({ ...metaDataFromUrl, accessToken })
       const branchName = metaDataFromUrl.branchName || metaDataFromAPI['default_branch']
       const metaData = { ...metaDataFromUrl, branchName, api: metaDataFromAPI }
@@ -51,14 +51,14 @@ export default class SideBar extends preact.Component {
       window.addEventListener('pjax:complete', this.onPJAXEnd)
     } catch (err) {
       // TODO: detect request time exceeds limit
-      if (err.message === NOT_FOUND) {
+      if (err.message === NOT_FOUND || err.message === BAD_CREDENTIALS) {
         const repoPageType = await DOMHelper.getRepoPageType()
-        const errorDueToPrivateRepo = repoPageType === REPO_TYPE_PRIVATE
+        const errorDueToAuth = repoPageType === REPO_TYPE_PRIVATE || err.message === BAD_CREDENTIALS
         this.setState({
           showSettings: repoPageType !== null,
-          errorDueToPrivateRepo,
+          errorDueToAuth,
         })
-        this.setShouldShow(errorDueToPrivateRepo)
+        this.setShouldShow(errorDueToAuth)
       } else {
         console.error(err)
         this.setShouldShow(false)
@@ -100,24 +100,24 @@ export default class SideBar extends preact.Component {
     this.setState({ showSettings: !showSettings })
   }
 
-  renderPrivateRepoError() {
+  renderAccessDeniedError() {
     return (
       <div className={'description'}>
         <h5>Access Denied</h5>
         <p>
-          Gitako need access token with proper scopes (recommended: repo) to read this repository's
-          data.
+          Gitako needs access token with proper scopes (recommended: repo) to access this repository.
+          Please save it in the settings below.
         </p>
       </div>
     )
   }
 
   renderContent() {
-    const { errorDueToPrivateRepo, metaData, treeData, showSettings } = this.state
+    const { errorDueToAuth, metaData, treeData, showSettings } = this.state
     return (
       <div className={'gitako-side-bar-content'}>
         {metaData && <MetaBar metaData={metaData} />}
-        {errorDueToPrivateRepo && this.renderPrivateRepoError()}
+        {errorDueToAuth && this.renderAccessDeniedError()}
         {metaData && treeData && <FileExplorer metaData={metaData} treeData={treeData} freeze={showSettings} />}
       </div>
     )

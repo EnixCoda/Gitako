@@ -95,7 +95,7 @@
     }
 
     .action-icon {
-      color: #0366d6;
+      color: #0366d6d0;
     }
   }
 
@@ -156,6 +156,7 @@
       .meta-bar {
         position: relative;
         padding: 10px;
+        padding-right: 30px;
         font-size: 13px;
         line-height: 20px;
         color: #586069;
@@ -247,7 +248,6 @@
 
     .@{name}-settings-bar {
       border-top: 1px solid #eaecef;
-      box-shadow: 0px -2px 16px #666666dd;
       &-content {
         padding: 0 10px;
         &-section {
@@ -256,11 +256,21 @@
       }
       .access-token {
         border-bottom: none; // prevent overwrite by github style
+        .hint {
+          color: #6a737d;
+        }
       }
-      .access-token-input {
-        width: 100%;
-        margin-top: 4px;
-        box-shadow: none;
+      .access-token-input-control {
+        display: flex;
+        margin-top: 8px;
+        .access-token-input {
+          flex: 1;
+          box-shadow: none;
+
+          &:disabled {
+            cursor: not-allowed;
+          }
+        }
       }
       .placeholder-row {
         display: flex;
@@ -268,9 +278,14 @@
         align-items: center;
         padding: 6px 10px;
 
-        .settings-icon {
+        .show-settings-icon {
           width: 20px;
           height: 20px;
+          cursor: pointer;
+        }
+        .hide-settings-icon {
+          width: 15px;
+          height: 24px;
           cursor: pointer;
         }
       }
