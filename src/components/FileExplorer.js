@@ -32,9 +32,11 @@ export default class List extends preact.Component {
     this.tasksAfterRender.push(DOMHelper.focusSearchInput)
     if (currentPath.length) {
       const nodeExpandedTo = this.visibleNodesGenerator.expandTo(currentPath)
-      this.visibleNodesGenerator.focusNode(nodeExpandedTo)
-      const { nodes } = this.visibleNodesGenerator.visibleNodes
-      this.tasksAfterRender.push(() => DOMHelper.scrollToNodeElement(nodes.indexOf(nodeExpandedTo)))
+      if (nodeExpandedTo) {
+        this.visibleNodesGenerator.focusNode(nodeExpandedTo)
+        const { nodes } = this.visibleNodesGenerator.visibleNodes
+        this.tasksAfterRender.push(() => DOMHelper.scrollToNodeElement(nodes.indexOf(nodeExpandedTo)))
+      }
     }
     this.updateVisibleNodes()
   }

@@ -97,6 +97,7 @@ export default class VisibleNodesGenerator {
     for (const step of path) {
       targetPath = rootNode.path ? `${rootNode.path}/${step}` : step
       rootNode = rootNode.contents.find(node => node.path === targetPath)
+      if (!rootNode) return
       this.setExpand(rootNode, true)
     }
     return rootNode
