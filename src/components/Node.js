@@ -15,7 +15,7 @@ function getIconType(node) {
 }
 
 export default function Node({ node, depth, expanded, focused, toggleExpand }) {
-  const { name, url, type } = node
+  const { name, url, type, path } = node
   const item = (
     <p
       className={cx('node-item', { expanded })}
@@ -27,7 +27,7 @@ export default function Node({ node, depth, expanded, focused, toggleExpand }) {
     </p>
   )
   return (
-    <div className={cx(`node-item-row`, { focused })}>
+    <div className={cx(`node-item-row`, { focused })} title={path}>
       {
         type !== 'tree'
           ? (
