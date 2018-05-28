@@ -104,8 +104,8 @@ export default class SideBar extends preact.Component {
       <div className={'description'}>
         <h5>Access Denied</h5>
         <p>
-          Gitako needs access token with proper scopes (recommended: repo) to access this repository.
-          Please save it in the settings below.
+          Gitako needs access token with proper scopes (recommended: repo) to access this
+          repository. Please save it in the settings below.
         </p>
       </div>
     )
@@ -117,7 +117,10 @@ export default class SideBar extends preact.Component {
       <div className={'gitako-side-bar-content'}>
         {metaData && <MetaBar metaData={metaData} />}
         {errorDueToAuth && this.renderAccessDeniedError()}
-        {metaData && treeData && <FileExplorer metaData={metaData} treeData={treeData} freeze={showSettings} />}
+        {metaData &&
+          treeData && (
+            <FileExplorer metaData={metaData} treeData={treeData} freeze={showSettings} />
+          )}
       </div>
     )
   }
