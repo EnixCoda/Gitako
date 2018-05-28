@@ -13,6 +13,7 @@ import DOMHelper, { REPO_TYPE_PRIVATE } from '../utils/DOMHelper'
 import GitHubHelper, { NOT_FOUND, BAD_CREDENTIALS } from '../utils/GitHubHelper'
 import storageHelper from '../utils/storageHelper'
 import URLHelper from '../utils/URLHelper'
+import keyHelper from '../utils/keyHelper'
 
 export default class SideBar extends preact.Component {
   state = {
@@ -23,7 +24,9 @@ export default class SideBar extends preact.Component {
     // whether failed loading the repo due to it is private
     errorDueToAuth: false,
     // got access token for GitHub
-    hasAccessToken: null,
+    hasAccessToken: false,
+    // the shortcut string for toggle sidebar
+    toggleShowSideBarShortcut: '',
     // meta data for the repository
     metaData: null,
     // file tree data
@@ -35,8 +38,11 @@ export default class SideBar extends preact.Component {
       const metaDataFromUrl = URLHelper.parse()
       this.setState({ metaData: metaDataFromUrl })
       DOMHelper.decorateGitHubPageContent()
-      const accessToken = await storageHelper.getAccessToken()
-      this.setState({ hasAccessToken: Boolean(accessToken) })
+      const [accessToken, shortcut] = await Promise.all([
+        storageHelper.getAccessToken(),
+        storageHelper.getShortcut(),
+      ])
+      this.setState({ hasAccessToken: Boolean(accessToken), toggleShowSideBarShortcut: shortcut })
       const metaDataFromAPI = await GitHubHelper.getRepoMeta({ ...metaDataFromUrl, accessToken })
       const branchName = metaDataFromUrl.branchName || metaDataFromAPI['default_branch']
       const metaData = { ...metaDataFromUrl, branchName, api: metaDataFromAPI }
@@ -48,6 +54,7 @@ export default class SideBar extends preact.Component {
 
       window.addEventListener('pjax:send', this.onPJAXStart)
       window.addEventListener('pjax:complete', this.onPJAXEnd)
+      window.addEventListener('keydown', this.onKeyDown)
     } catch (err) {
       // TODO: detect request time exceeds limit
       if (err.message === NOT_FOUND || err.message === BAD_CREDENTIALS) {
@@ -99,6 +106,24 @@ export default class SideBar extends preact.Component {
     this.setState({ showSettings: !showSettings })
   }
 
+  onHasAccessTokenChange = hasAccessToken => {
+    this.setState({ hasAccessToken })
+  }
+
+  onKeyDown = e => {
+    const { toggleShowSideBarShortcut } = this.state
+    if (toggleShowSideBarShortcut) {
+      const keys = keyHelper.parseEvent(e)
+      if (keys === toggleShowSideBarShortcut) {
+        this.toggleShowSideBar()
+      }
+    }
+  }
+
+  onShortcutChange = shortcut => {
+    this.setState({ toggleShowSideBarShortcut: shortcut })
+  }
+
   renderAccessDeniedError() {
     return (
       <div className={'description'}>
@@ -126,7 +151,13 @@ export default class SideBar extends preact.Component {
   }
 
   render() {
-    const { shouldShow, showSettings, hasAccessToken, loading } = this.state
+    const {
+      shouldShow,
+      showSettings,
+      hasAccessToken,
+      toggleShowSideBarShortcut,
+      loading,
+    } = this.state
     return (
       <div className={cx('gitako', { hidden: !shouldShow })}>
         <Portal into={this.logoContainerElement}>
@@ -136,8 +167,11 @@ export default class SideBar extends preact.Component {
           {this.renderContent()}
           <SettingsBar
             toggleShowSettings={this.toggleShowSettings}
+            onShortcutChange={this.onShortcutChange}
+            onHasAccessTokenChange={this.onHasAccessTokenChange}
             activated={showSettings}
             hasAccessToken={hasAccessToken}
+            toggleShowSideBarShortcut={toggleShowSideBarShortcut}
           />
         </div>
       </div>
