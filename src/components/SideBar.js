@@ -82,8 +82,12 @@ export default class SideBar extends preact.Component {
       if (location.href !== lastLocation) {
         lastLocation = location.href
         const { metaData } = this.state
+        const mergedMetaData = { ...metaData, ...URLHelper.parse() }
+        this.setState({
+          metaData: mergedMetaData,
+        })
         NProgress.done()
-        this.setShouldShow(URLHelper.isInCodePage(metaData))
+        this.setShouldShow(URLHelper.isInCodePage(mergedMetaData))
         DOMHelper.decorateGitHubPageContent()
         DOMHelper.scrollToRepoContent()
         DOMHelper.focusSearchInput()
