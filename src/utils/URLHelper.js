@@ -1,7 +1,7 @@
 function parseRaw() {
   const { pathname } = window.location
   let [
-    /* ignore content before the first '/' */,
+    , // ignore content before the first '/'
     userName,
     repoName,
     type,
@@ -19,21 +19,29 @@ function parseRaw() {
 function parse() {
   const parsedData = parseRaw()
   if (!isInCodePage()) {
-    delete parsedData.type
     delete parsedData.branchName
   }
   return parsedData
 }
 
 const RESERVED_NAME = ['blog']
+// route types related to determining if sidebar should show
+const TYPES = {
+  TREE: 'tree',
+  BLOB: 'blob',
+  COMMIT: 'commit',
+  // known but not related types: issues, pulls, wiki, insight,
+  // TODO: record more types
+}
 function isInCodePage(metaData = {}) {
-  const { userName, repoName, type, branchName } = {...parseRaw(), ...metaData}
+  const { userName, repoName, type, branchName } = { ...parseRaw(), ...metaData }
   return (
     userName &&
     !RESERVED_NAME.find(_ => _ === userName) &&
     repoName &&
-    (!type || type === 'tree' || type === 'blob') &&
-    (branchName || !type && !branchName)
+    (!type || type === TYPES.TREE || type === TYPES.BLOB) &&
+    type !== TYPES.COMMIT &&
+    (branchName || (!type && !branchName))
   )
 }
 
