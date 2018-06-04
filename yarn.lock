@@ -3404,10 +3404,6 @@ pify@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/pify/-/pify-3.0.0.tgz#e5a4acd2c101fdf3d9a4d07f0dbc4db49dd28176"
 
-pjax@^0.2.4:
-  version "0.2.4"
-  resolved "https://registry.yarnpkg.com/pjax/-/pjax-0.2.4.tgz#0ae5885cfe663eb6a786156ed9c3de5bcb627513"
-
 pkg-dir@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/pkg-dir/-/pkg-dir-2.0.0.tgz#f6d5d1109e19d63edf428e0bd57e12777615334b"

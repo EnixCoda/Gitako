@@ -14,7 +14,6 @@
   "dependencies": {
     "nprogress": "^0.2.0",
     "octicons": "^7.1.0",
-    "pjax": "^0.2.4",
     "preact": "^8.2.6",
     "preact-portal": "^1.1.3"
   },

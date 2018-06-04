@@ -49,6 +49,7 @@ module.exports = {
     alias: {
       react: 'preact', // for svgr
     },
+    modules: ['packages', 'node_modules']
   },
   module: {
     rules: [
