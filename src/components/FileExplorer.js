@@ -194,7 +194,7 @@ export default class List extends preact.Component {
                 depth={depths.get(node)}
                 focused={focusedNode === node}
                 expanded={expandedNodes.has(node)}
-                toggleExpand={this.toggleNodeExpand.bind(null, node)}
+                toggleExpand={this.toggleNodeExpand}
               />
             ))}
           </div>

@@ -2,7 +2,7 @@
  * this helper helps manipulating DOM
  */
 
-import pjax from 'pjax'
+import PJAX from 'pjax'
 
 /**
  * if should show gitako, then move body right to make space for showing gitako
@@ -61,22 +61,18 @@ function scrollToNodeElement(index) {
   })
 }
 
-/**
- * add pjax listeners
- * call this when pjax redirected or page loaded
- */
-function attachPJAX(fields) {
-  // TODO: switch for fields
-  const elements = [
-    '.gitako a.pjax-link', // links in Gitako file tree & list
-    '.js-path-segment a', // links in the file navigation bar
-  ].join()
-  new pjax({
-    elements,
+const pjax = new PJAX({
+  elements: '.pjax-link',
     selectors: ['.repository-content'],
     scrollTo: false,
-    analytics: () => {},
-  })
+  analytics: false,
+  cacheBust: false,
+  forceCache: true,
+})
+
+function loadWithPJAX(URL) {
+  NProgress.start()
+  pjax.loadUrl(URL)
 }
 
 /**
@@ -308,14 +304,13 @@ function clickOnNodeElement(index = 0) {
  * a combination of few above functions
  */
 function decorateGitHubPageContent() {
-  attachPJAX('github')
   attachCopyFileBtn()
   attachCopySnippet()
 }
 
 
 export default {
-  attachPJAX,
+  loadWithPJAX,
   attachCopyFileBtn,
   attachCopySnippet,
   clickOnNodeElement,
