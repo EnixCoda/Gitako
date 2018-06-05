@@ -23,6 +23,7 @@ function detectOS() {
 }
 
 function friendlyFormatShortcut(shortcut) {
+  if (!shortcut) return
   const OS = detectOS()
   if (OS === OperatingSystems.Windows) {
     return shortcut.replace(/meta/, 'win')
