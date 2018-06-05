@@ -91,7 +91,6 @@ export default class SideBar extends preact.Component {
     })
     this.setShouldShow(URLHelper.isInCodePage(mergedMetaData))
     DOMHelper.decorateGitHubPageContent()
-    DOMHelper.scrollToRepoContent()
     DOMHelper.focusSearchInput()
   }
 
