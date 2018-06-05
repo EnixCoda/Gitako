@@ -1,0 +1,7 @@
+language: "node_js"
+node_js:
+  - "6"
+  - "8"
+# Force Travis to use npm v5
+# https://github.com/travis-ci/travis-ci/issues/4653#issuecomment-194051953
+before_install: if [[ `npm -v` != 5* ]]; then npm i -g npm@5; fi
