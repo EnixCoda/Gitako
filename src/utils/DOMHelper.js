@@ -3,6 +3,9 @@
  */
 
 import PJAX from 'pjax'
+import NProgress from 'nprogress'
+
+NProgress.configure({ showSpinner: false })
 
 /**
  * if should show gitako, then move body right to make space for showing gitako
@@ -63,8 +66,8 @@ function scrollToNodeElement(index) {
 
 const pjax = new PJAX({
   elements: '.pjax-link',
-    selectors: ['.repository-content'],
-    scrollTo: false,
+  selectors: ['.repository-content'],
+  scrollTo: false,
   analytics: false,
   cacheBust: false,
   forceCache: true,

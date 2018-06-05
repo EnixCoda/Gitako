@@ -47,10 +47,17 @@ export default class SideBar extends preact.Component {
       const branchName = metaDataFromUrl.branchName || metaDataFromAPI['default_branch']
       const metaData = { ...metaDataFromUrl, branchName, api: metaDataFromAPI }
       this.setState({ metaData })
-      this.setShouldShow(URLHelper.isInCodePage(metaData))
+      const shouldShow = URLHelper.isInCodePage(metaData)
+      this.setShouldShow(shouldShow)
+      if (shouldShow) {
+        NProgress.start()
+      }
       const treeData = await GitHubHelper.getTreeData({ ...metaData, accessToken })
       this.setState({ treeData })
       this.logoContainerElement = DOMHelper.insertLogo()
+      if (shouldShow) {
+        NProgress.done()
+      }
 
       window.addEventListener('pjax:send', this.onPJAXStart)
       window.addEventListener('pjax:complete', this.onPJAXEnd)
@@ -73,27 +80,20 @@ export default class SideBar extends preact.Component {
   }
 
   onPJAXStart = () => {
-    NProgress.start()
   }
 
-  onPJAXEnd = (() => {
-    let lastLocation
-    return () => {
-      if (location.href !== lastLocation) {
-        lastLocation = location.href
-        const { metaData } = this.state
-        const mergedMetaData = { ...metaData, ...URLHelper.parse() }
-        this.setState({
-          metaData: mergedMetaData,
-        })
-        NProgress.done()
-        this.setShouldShow(URLHelper.isInCodePage(mergedMetaData))
-        DOMHelper.decorateGitHubPageContent()
-        DOMHelper.scrollToRepoContent()
-        DOMHelper.focusSearchInput()
-      }
-    }
-  })()
+  onPJAXEnd = () => {
+    NProgress.done()
+    const { metaData } = this.state
+    const mergedMetaData = { ...metaData, ...URLHelper.parse() }
+    this.setState({
+      metaData: mergedMetaData,
+    })
+    this.setShouldShow(URLHelper.isInCodePage(mergedMetaData))
+    DOMHelper.decorateGitHubPageContent()
+    DOMHelper.scrollToRepoContent()
+    DOMHelper.focusSearchInput()
+  }
 
   setShouldShow = shouldShow => {
     this.setState({ shouldShow })

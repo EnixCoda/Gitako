@@ -59,7 +59,6 @@ export default class List extends preact.Component {
   updateVisibleNodes() {
     const { visibleNodes } = this.visibleNodesGenerator
     this.setState({ visibleNodes })
-    this.tasksAfterRender.push(() => DOMHelper.attachPJAX('gitako'))
   }
 
   handleKeyDown = event => {
