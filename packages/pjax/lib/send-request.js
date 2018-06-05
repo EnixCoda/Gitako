@@ -1,8 +1,11 @@
 var updateQueryString = require("./util/update-query-string");
 
+const cache = new Map()
+
 module.exports = function(location, options, callback) {
   options = options || {}
   var queryString
+  var forceCache = options.forceCache || false
   var requestOptions = options.requestOptions || {}
   var requestMethod = (requestOptions.requestMethod || "GET").toUpperCase()
   var requestParams = requestOptions.requestParams || null
@@ -11,9 +14,15 @@ module.exports = function(location, options, callback) {
   var request = new XMLHttpRequest()
   var timeout = options.timeout || 0
 
+  if (forceCache && cache.has(location)) {
+    callback(cache.get(location), request, location, options)
+    return
+  }
+
   request.onreadystatechange = function() {
     if (request.readyState === 4) {
       if (request.status === 200) {
+        if (forceCache) cache.set(location, request.responseText)
         callback(request.responseText, request, location, options)
       }
       else if (request.status !== 0) {
