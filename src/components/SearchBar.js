@@ -8,7 +8,7 @@ export default function SearchBar({ onSearchKeyChange }) {
         tabIndex={0}
         className="form-control search-input"
         aria-label="search files"
-        placeholder="Search files (regexp)"
+        placeholder="Search files (RegEx)"
         type="text"
         onInput={onSearchKeyChange}
       />
