@@ -3,7 +3,7 @@ const keyCodeArray = [
   ...'`[]\\;\',./'.split(''),
   'alt',
   'shift',
-  'control',
+  'ctrl',
   'meta',
 ]
 const validKeyCodes = new Set(keyCodeArray)
@@ -33,11 +33,12 @@ function parse(keysString) {
 }
 
 function parseKeyCode(code) {
-  let c = code.toLowerCase()
-  c = c.replace(/(left|right)$/, '')
-  c = c.replace(/^digit/, '')
-  c = c.replace(/^key/, '')
-  return c
+  return code
+    .toLowerCase()
+    .replace(/(left|right)$/, '')
+    .replace(/^control$/, 'ctrl')
+    .replace(/^digit/, '')
+    .replace(/^key/, '')
 }
 
 function parseEvent(e) {

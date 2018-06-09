@@ -33,6 +33,7 @@ function friendlyFormatShortcut(shortcut) {
       .replace(/ctrl/, '⌃')
       .replace(/shift/, '⇧')
       .replace(/alt/, '⌥')
+      .toUpperCase()
   } else {
     return shortcut
   }
