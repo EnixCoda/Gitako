@@ -17,6 +17,8 @@ import FileCode from '../assets/icons/octicons/file-code.svg?svgr'
 import X from '../assets/icons/octicons/x.svg?svgr'
 import Gear from '../assets/icons/octicons/gear.svg?svgr'
 
+import cx from '../utils/cx'
+
 function getSVGIconComponent(type) {
   switch (type) {
     case 'octoface':
@@ -63,9 +65,9 @@ function getSVGIconComponent(type) {
   }
 }
 
-export default function Icon({ type, ...otherProps }) {
+export default function Icon({ type, className, ...otherProps }) {
   return (
-    <div className={'octicon-wrapper'} {...otherProps}>
+    <div className={cx('octicon-wrapper', className)} {...otherProps}>
       {preact.h(getSVGIconComponent(type), { width: '100%', height: '100%' })}
     </div>
   )
