@@ -7,6 +7,7 @@ import FileExplorer from './FileExplorer'
 import ToggleShowButton from './ToggleShowButton'
 import MetaBar from './MetaBar'
 import SettingsBar from './SettingsBar'
+import ResizeHandler from './ResizeHandler'
 
 import cx from '../utils/cx'
 import DOMHelper, { REPO_TYPE_PRIVATE } from '../utils/DOMHelper'
@@ -15,8 +16,12 @@ import storageHelper from '../utils/storageHelper'
 import URLHelper from '../utils/URLHelper'
 import keyHelper from '../utils/keyHelper'
 
+// initial width of side bar
+const baseSize = 260
 export default class SideBar extends preact.Component {
   state = {
+    // current width of side bar
+    size: 260,
     // whether Gitako side bar should be shown
     shouldShow: false,
     // whether show settings pane
@@ -127,6 +132,12 @@ export default class SideBar extends preact.Component {
     this.setState({ toggleShowSideBarShortcut: shortcut })
   }
 
+  onResize = size => {
+    this.setState({
+      size,
+    })
+  }
+
   renderAccessDeniedError() {
     return (
       <div className={'description'}>
@@ -155,6 +166,7 @@ export default class SideBar extends preact.Component {
 
   render() {
     const {
+      size,
       shouldShow,
       showSettings,
       hasAccessToken,
@@ -166,16 +178,19 @@ export default class SideBar extends preact.Component {
         <Portal into={this.logoContainerElement}>
           <ToggleShowButton shouldShow={shouldShow} toggleShowSideBar={this.toggleShowSideBar} />
         </Portal>
-        <div className={'gitako-side-bar'}>
-          {this.renderContent()}
-          <SettingsBar
-            toggleShowSettings={this.toggleShowSettings}
-            onShortcutChange={this.onShortcutChange}
-            onHasAccessTokenChange={this.onHasAccessTokenChange}
-            activated={showSettings}
-            hasAccessToken={hasAccessToken}
-            toggleShowSideBarShortcut={toggleShowSideBarShortcut}
-          />
+        <div className={'gitako-position-wrapper'}>
+          <ResizeHandler onResize={this.onResize} baseSize={baseSize} style={{ right: size }} />
+          <div className={'gitako-side-bar'} style={{ width: size }}>
+            {this.renderContent()}
+            <SettingsBar
+              toggleShowSettings={this.toggleShowSettings}
+              onShortcutChange={this.onShortcutChange}
+              onHasAccessTokenChange={this.onHasAccessTokenChange}
+              activated={showSettings}
+              hasAccessToken={hasAccessToken}
+              toggleShowSideBarShortcut={toggleShowSideBarShortcut}
+            />
+          </div>
         </div>
       </div>
     )

@@ -1,6 +1,7 @@
 import preact from 'preact'
 /** @jsx preact.h */
 
+import Grabber from '../assets/icons/octicons/grabber.svg?svgr'
 import Octoface from '../assets/icons/octicons/octoface.svg?svgr'
 import ChevronDown from '../assets/icons/octicons/chevron-down.svg?svgr'
 import TriangleRight from '../assets/icons/octicons/triangle-right.svg?svgr'
@@ -21,6 +22,8 @@ import cx from '../utils/cx'
 
 function getSVGIconComponent(type) {
   switch (type) {
+    case 'grabber':
+      return Grabber
     case 'octoface':
       return Octoface
     case 'chevron-down':
