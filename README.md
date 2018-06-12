@@ -5,17 +5,20 @@ Yet another Chrome extension for GitHub. Inspired by [Octotree](https://github.c
 ### Features
 
 - [x] neat file tree
-- [x] instant search for files
+- [x] instant file search
 - [x] keyboard accessibility
   - press 'up' and 'down' to nav between search input and files in the list
   - press 'enter' or 'right' to redirect to file or expand folder
   - press 'left' to jump to parent folder or collapse current folder
-- [x] redirect with pjax
+- [x] redirect smoothly with pjax
+- [x] enlargeable when window is wide enough
 - [x] copy snippets with one click
+  - copy code snippets inside markdown preview
+  - copy all contents of a file
 - [x] support access token (for private repo and frequent usage)
-- [x] fancy loading animation ;)
-- [x] use [octicons](https://octicons.github.com)
-- [x] light size (26kb) & low memory usage
+- [x] consistent UI with GitHub
+  - [x] use [octicons](https://octicons.github.com)
+- [x] light size (~30kb) & low memory usage
 - [more WIP](https://github.com/EnixCoda/Gitako/projects/1)
 
 ### Download
@@ -24,4 +27,4 @@ Yet another Chrome extension for GitHub. Inspired by [Octotree](https://github.c
 
 ### Issues
 
-Any bug report or suggestions are welcomed, feel free to draft a [issue](https://github.com/EnixCoda/Gitako/issues/)!
+Any bug report or feature requests are welcomed, feel free to draft a [issue](https://github.com/EnixCoda/Gitako/issues/)!
