@@ -108,20 +108,14 @@ export default class SettingsBar extends preact.Component {
     const { toggleShowSettings, activated } = this.props
     return (
       <div className={'gitako-settings-bar'}>
-        <div className={'placeholder-row'}>
-          <h3>{activated ? 'Settings' : ''}</h3>
-          {activated ? (
-            <Icon
-              type={'chevron-down'}
-              className={'hide-settings-icon'}
-              onClick={toggleShowSettings}
-            />
-          ) : (
-            <Icon type={'gear'} className={'show-settings-icon'} onClick={toggleShowSettings} />
-          )}
-        </div>
+        {activated && (
+          <h3 className={'gitako-settings-bar-title'}>
+            Settings
+          </h3>
+        )}
         {activated && (
           <div className={'gitako-settings-bar-content'}>
+            <div className={'shadow-shelter'} />
             <div className={'gitako-settings-bar-content-section access-token'}>
               <h4>Access Token</h4>
               <span>With access token provided, Gitako can access more repositories.</span>
@@ -200,6 +194,17 @@ export default class SettingsBar extends preact.Component {
             </div>
           </div>
         )}
+        <div className={'placeholder-row'}>
+          {activated ? (
+            <Icon
+              type={'chevron-down'}
+              className={'hide-settings-icon'}
+              onClick={toggleShowSettings}
+            />
+          ) : (
+            <Icon type={'gear'} className={'show-settings-icon'} onClick={toggleShowSettings} />
+          )}
+        </div>
       </div>
     )
   }

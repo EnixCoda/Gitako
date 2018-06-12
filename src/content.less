@@ -284,9 +284,30 @@
       }
 
       .@{name}-settings-bar {
-        border-top: 1px solid #eaecef;
+        z-index: 2;
+        background: #fafbfc;
+        display: flex;
+        flex-direction: column;
+        &-title {
+          border-top: 1px solid #eaecef;
+          padding: 6px 10px;
+          box-shadow: 0 1px 8px 0 rgba(0,0,0,.2), 0 3px 4px 0 rgba(0,0,0,.14), 0 3px 3px -2px rgba(0,0,0,.12);
+          z-index: 1;
+        }
         &-content {
           padding: 0 10px;
+          flex: 1;
+          overflow: auto;
+          position: relative;
+          
+          .shadow-shelter {
+            position: absolute;
+            width: 100%;
+            height: 6px;
+            left: 0;
+            background: #fafbfc;
+            z-index: 1;
+          }
           &-section {
             padding-bottom: 10px;
           }
@@ -324,9 +345,10 @@
         }
         .placeholder-row {
           display: flex;
-          justify-content: space-between;
+          justify-content: flex-end;
           align-items: center;
           padding: 6px 10px;
+          border-top: 1px solid #eaecef;
 
           .show-settings-icon {
             width: 20px;
@@ -334,8 +356,8 @@
             cursor: pointer;
           }
           .hide-settings-icon {
-            width: 15px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
             cursor: pointer;
           }
         }
