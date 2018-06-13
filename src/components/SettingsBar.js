@@ -21,7 +21,7 @@ function detectOS() {
 }
 
 function friendlyFormatShortcut(shortcut) {
-  if (!shortcut) return
+  if (typeof shortcut !== 'string') return ''
   const OS = detectOS()
   if (OS === OperatingSystems.Windows) {
     return shortcut.replace(/meta/, 'win')
@@ -158,9 +158,9 @@ export default class SettingsBar extends React.Component {
                 <input
                   className={'toggle-shortcut-input form-control'}
                   placeholder={'focus here and press the shortcut keys'}
-                  default={''}
                   value={friendlyFormatShortcut(toggleShowSideBarShortcut)}
                   onKeyDown={this.onShortCutInputKeyDown}
+                  readOnly
                 />
                 <button className={'btn'} onClick={this.saveShortcut}>
                   Save

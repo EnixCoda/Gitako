@@ -35,15 +35,12 @@ function parse(keysString) {
 function parseKeyCode(code) {
   return code
     .toLowerCase()
-    .replace(/(left|right)$/, '')
     .replace(/^control$/, 'ctrl')
-    .replace(/^digit/, '')
-    .replace(/^key/, '')
 }
 
 function parseEvent(e) {
   const { altKey: alt, shiftKey: shift, metaKey: meta, ctrlKey: ctrl } = e
-  const code = parseKeyCode(e.code)
+  const code = parseKeyCode(e.key)
   const keys = { meta, ctrl, shift, alt, [code]: true }
   const combination = parse(
     Object.entries(keys)
