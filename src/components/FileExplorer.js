@@ -157,15 +157,15 @@ export default class List extends React.Component {
     this.tasksAfterRender.push(DOMHelper.focusSearchInput)
   }
 
-  toggleNodeExpand = node => {
+  toggleNodeExpand = (node, skipScrollToNode) => {
     this.visibleNodesGenerator.toggleExpand(node)
-    this.focusNode(node)
+    this.focusNode(node, skipScrollToNode)
     this.tasksAfterRender.push(DOMHelper.focusFileExplorer)
   }
 
-  focusNode = node => {
+  focusNode = (node, skipScroll) => {
     this.visibleNodesGenerator.focusNode(node)
-    if (node) {
+    if (node && !skipScroll) {
       // when focus a node not in viewport(by keyboard), scroll to it
       const { visibleNodes: { nodes } } = this.state
       const indexOfToBeFocusedNode = nodes.indexOf(node)

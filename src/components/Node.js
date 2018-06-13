@@ -17,10 +17,10 @@ function getIconType(node) {
 }
 
 export default class Node extends React.PureComponent {
-  onNodeClick = (...args) => {
+  onNodeClick = () => {
     const { node, toggleExpand } = this.props
     if (node.type === 'tree') {
-      toggleExpand(node, ...args)
+      toggleExpand(node, true)
     } else {
       DOMHelper.loadWithPJAX(node.url)
     }
