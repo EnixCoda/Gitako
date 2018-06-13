@@ -1,5 +1,4 @@
-import preact from 'preact'
-/** @jsx preact.h */
+import React from 'react'
 import PJAX from 'pjax'
 
 import Icon from './Icon'
@@ -17,11 +16,7 @@ function getIconType(node) {
   }
 }
 
-export default class Node extends preact.Component {
-  shouldComponentUpdate(nextProps) {
-    return !general.shallowEqual(this.props, nextProps)
-  }
-
+export default class Node extends React.PureComponent {
   onNodeClick = (...args) => {
     const { node, toggleExpand } = this.props
     if (node.type === 'tree') {
@@ -36,14 +31,14 @@ export default class Node extends preact.Component {
     const { name, path } = node
     return (
       <div className={cx(`node-item-row`, { focused })} title={path}>
-        <p
+        <div
           className={cx('node-item', { expanded })}
           style={{ paddingLeft: `${10 + 20 * depth}px` }}
           onClick={this.onNodeClick}
         >
           <Icon type={getIconType(node)} />
           <span className={'node-item-name'}>{name}</span>
-        </p>
+        </div>
       </div>
     )
   }

@@ -4,6 +4,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const UglifyJSWebpackPlugin = require('uglifyjs-webpack-plugin')
 
 const srcPath = path.resolve(__dirname, 'src')
+const packagesPath = path.resolve(__dirname, 'packages')
 
 const plugins = [
   new CopyWebpackPlugin([
@@ -46,9 +47,6 @@ module.exports = {
     filename: '[name].js',
   },
   resolve: {
-    alias: {
-      react: 'preact', // for svgr
-    },
     modules: ['packages', 'node_modules']
   },
   module: {
@@ -59,7 +57,7 @@ module.exports = {
         options: {
           cacheDirectory: true,
         },
-        include: [srcPath],
+        include: [srcPath, packagesPath],
       },
       {
         test: /\.less$/,

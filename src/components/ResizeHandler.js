@@ -1,9 +1,8 @@
-import preact from 'preact'
-/** @jsx preact.h */
+import React from 'react'
 
 import Icon from './Icon'
 
-export default class ResizeHandler extends preact.Component {
+export default class ResizeHandler extends React.Component {
   pointerDown = false
   startX = 0
   delta = 0

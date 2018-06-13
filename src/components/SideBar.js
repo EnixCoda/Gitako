@@ -1,13 +1,12 @@
-import preact from 'preact'
-import Portal from 'preact-portal'
+import React from 'react'
 import NProgress from 'nprogress'
-/** @jsx preact.h */
 
 import FileExplorer from './FileExplorer'
 import ToggleShowButton from './ToggleShowButton'
 import MetaBar from './MetaBar'
 import SettingsBar from './SettingsBar'
 import ResizeHandler from './ResizeHandler'
+import Portal from './Portal'
 
 import cx from '../utils/cx'
 import DOMHelper, { REPO_TYPE_PRIVATE } from '../utils/DOMHelper'
@@ -18,7 +17,7 @@ import keyHelper from '../utils/keyHelper'
 
 // initial width of side bar
 const baseSize = 260
-export default class SideBar extends preact.Component {
+export default class SideBar extends React.Component {
   state = {
     // current width of side bar
     size: 260,
@@ -58,8 +57,8 @@ export default class SideBar extends preact.Component {
         NProgress.start()
       }
       const treeData = await GitHubHelper.getTreeData({ ...metaData, accessToken })
-      this.setState({ treeData })
       this.logoContainerElement = DOMHelper.insertLogo()
+      this.setState({ treeData })
       if (shouldShow) {
         NProgress.done()
       }

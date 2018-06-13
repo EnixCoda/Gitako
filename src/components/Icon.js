@@ -1,5 +1,4 @@
-import preact from 'preact'
-/** @jsx preact.h */
+import React from 'react'
 
 import Grabber from '../assets/icons/octicons/grabber.svg?svgr'
 import Octoface from '../assets/icons/octicons/octoface.svg?svgr'
@@ -71,7 +70,7 @@ function getSVGIconComponent(type) {
 export default function Icon({ type, className, ...otherProps }) {
   return (
     <div className={cx('octicon-wrapper', className)} {...otherProps}>
-      {preact.h(getSVGIconComponent(type), { width: '100%', height: '100%' })}
+      {React.createElement(getSVGIconComponent(type), { width: '100%', height: '100%' })}
     </div>
   )
 }

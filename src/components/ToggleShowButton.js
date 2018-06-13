@@ -1,5 +1,4 @@
-import preact from 'preact'
-/** @jsx preact.h */
+import React from 'react'
 import Icon from './Icon'
 
 import cx from '../utils/cx'

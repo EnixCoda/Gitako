@@ -1,6 +1,4 @@
-import preact from 'preact'
-/** @jsx preact.h */
-
+import React from 'react'
 import Icon from './Icon'
 import storageHelper from '../utils/storageHelper'
 import keyHelper from '../utils/keyHelper'
@@ -39,7 +37,7 @@ function friendlyFormatShortcut(shortcut) {
   }
 }
 
-export default class SettingsBar extends preact.Component {
+export default class SettingsBar extends React.Component {
   state = {
     accessTokenHint: null,
     accessToken: '',

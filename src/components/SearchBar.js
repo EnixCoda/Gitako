@@ -1,5 +1,4 @@
-import preact from 'preact'
-/** @jsx preact.h */
+import React from 'react'
 
 export default function SearchBar({ onSearchKeyChange }) {
   return (
