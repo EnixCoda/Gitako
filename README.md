@@ -18,8 +18,10 @@ Yet another Chrome extension for GitHub. Inspired by [Octotree](https://github.c
 - [x] support access token (for private repo and frequent usage)
 - [x] consistent UI with GitHub
   - [x] use [octicons](https://octicons.github.com)
-- [x] light size (~30kb) & low memory usage
+- [x] light size (~60kb) & low memory usage
 - [more WIP](https://github.com/EnixCoda/Gitako/projects/1)
+
+[Change Log](https://github.com/EnixCoda/Gitako/wiki/ChangeLog)
 
 ### Download
 
