@@ -116,6 +116,23 @@ export default class List extends React.Component {
 
         // consider the two keys as 'confirm' key
         case 'ArrowRight':
+          // expand node or focus on first content node or redirect to file page
+          if (focusedNode.type === 'tree') {
+            if (expandedNodes.has(focusedNode)) {
+              const nextNode = nodes[focusedNodeIndex + 1]
+              if (depths.get(nextNode) > depths.get(focusedNode)) {
+                this.focusNode(nextNode)
+              }
+            } else {
+              this.setExpand(focusedNode, true)
+            }
+          } else if (focusedNode.type === 'blob') {
+            DOMHelper.loadWithPJAX(focusedNode.url)
+          } else if (focusedNode.type === 'commit') {
+            // redirect to its parent folder
+            DOMHelper.loadWithPJAX(focusedNode.parent.url)
+          }
+          break
         case 'Enter':
           // expand node or redirect to file page
           if (focusedNode.type === 'tree') {
