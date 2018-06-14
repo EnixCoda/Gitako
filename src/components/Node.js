@@ -21,8 +21,10 @@ export default class Node extends React.PureComponent {
     const { node, toggleExpand } = this.props
     if (node.type === 'tree') {
       toggleExpand(node, true)
-    } else {
+    } else if (node.type === 'blob') {
       DOMHelper.loadWithPJAX(node.url)
+    } else if (node.type === 'commit') {
+      DOMHelper.loadWithPJAX(node.parent.url)
     }
   }
 

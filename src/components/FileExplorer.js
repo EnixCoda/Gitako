@@ -8,6 +8,20 @@ import treeParser from '../utils/treeParser'
 import URLHelper from '../utils/URLHelper'
 import VisibleNodesGenerator from '../utils/VisibleNodesGenerator'
 
+function getVisibleParentNode(nodes, focusedNode, depths) {
+  const focusedNodeIndex = nodes.indexOf(focusedNode)
+  const focusedNodeDepth = depths.get(focusedNode)
+  let indexOfParentNode = focusedNodeIndex - 1
+  while (
+    indexOfParentNode !== -1 &&
+    depths.get(nodes[indexOfParentNode]) >= focusedNodeDepth
+  ) {
+    --indexOfParentNode
+  }
+  const parentNode = nodes[indexOfParentNode]
+  return parentNode
+}
+
 export default class List extends React.Component {
   static defaultProps = {
     treeData: null,
@@ -93,16 +107,9 @@ export default class List extends React.Component {
             this.setExpand(focusedNode, false)
           } else {
             // go forward to the start of the list, find the closest node with lower depth
-            let indexOfParentNode = focusedNodeIndex
-            const focusedNodeDepth = depths.get(nodes[focusedNodeIndex])
-            while (
-              indexOfParentNode !== -1 &&
-              depths.get(nodes[indexOfParentNode]) >= focusedNodeDepth
-            ) {
-              --indexOfParentNode
-            }
-            if (indexOfParentNode !== -1) {
-              this.focusNode(nodes[indexOfParentNode])
+            const parentNode = getVisibleParentNode(nodes, focusedNode, depths)
+            if (parentNode) {
+              this.focusNode(parentNode)
             }
           }
           break
@@ -113,9 +120,11 @@ export default class List extends React.Component {
           // expand node or redirect to file page
           if (focusedNode.type === 'tree') {
             this.setExpand(focusedNode, true)
-          } else {
-            // simulate click to trigger pjax
-            DOMHelper.clickOnNodeElement(focusedNodeIndex)
+          } else if (focusedNode.type === 'blob') {
+            DOMHelper.loadWithPJAX(focusedNode.url)
+          } else if (focusedNode.type === 'commit') {
+            // redirect to its parent folder
+            DOMHelper.loadWithPJAX(focusedNode.parent.url)
           }
           break
 

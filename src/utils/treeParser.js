@@ -23,6 +23,13 @@ function sortFoldersToFront(root) {
   return DFS(root)
 }
 
+function setParentNode(root, parent = null) {
+  root.parent = parent
+  if (root.contents) {
+    root.contents.forEach(node => setParentNode(node, root))
+  }
+}
+
 function parse(treeData, metaData) {
   const { tree } = treeData
 
@@ -52,7 +59,9 @@ function parse(treeData, metaData) {
         ...nodeTemplate,
         ...item,
         name: item.path.replace(/^.*\//, ''),
-        url: GitHubHelper.getUrlForRedirect(metaData, item.path),
+        url: item.url
+          ? GitHubHelper.getUrlForRedirect(metaData, item.path)
+          : null,
         contents: item.type === 'tree' ? [] : null,
       }
       pathToNode.get(path).contents.push(node)
@@ -61,6 +70,7 @@ function parse(treeData, metaData) {
     }
   })
 
+  setParentNode(root)
   return {
     root: sortFoldersToFront(root),
     nodes: Array.from(pathToNode.values()),
