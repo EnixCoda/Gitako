@@ -83,6 +83,12 @@ export default class SideBar extends React.Component {
     }
   }
 
+  componentWillUnmount() {
+    window.removeEventListener('pjax:send', this.onPJAXStart)
+    window.removeEventListener('pjax:complete', this.onPJAXEnd)
+    window.removeEventListener('keydown', this.onKeyDown)
+  }
+
   onPJAXStart = () => {
   }
 
