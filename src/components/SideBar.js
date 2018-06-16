@@ -63,7 +63,6 @@ export default class SideBar extends React.Component {
         NProgress.done()
       }
 
-      window.addEventListener('pjax:send', this.onPJAXStart)
       window.addEventListener('pjax:complete', this.onPJAXEnd)
       window.addEventListener('keydown', this.onKeyDown)
     } catch (err) {
@@ -84,12 +83,8 @@ export default class SideBar extends React.Component {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('pjax:send', this.onPJAXStart)
     window.removeEventListener('pjax:complete', this.onPJAXEnd)
     window.removeEventListener('keydown', this.onKeyDown)
-  }
-
-  onPJAXStart = () => {
   }
 
   onPJAXEnd = () => {
