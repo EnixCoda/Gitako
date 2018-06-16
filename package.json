@@ -14,6 +14,7 @@
   "dependencies": {
     "nprogress": "^0.2.0",
     "octicons": "^7.1.0",
+    "prop-types": "^15.6.1",
     "react": "^16.4.0",
     "react-dom": "^16.4.0"
   },

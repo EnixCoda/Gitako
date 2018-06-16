@@ -311,6 +311,13 @@ function decorateGitHubPageContent() {
   attachCopySnippet()
 }
 
+function mountTopProgressBar() {
+  NProgress.start()
+}
+
+function unmountTopProgressBar() {
+  NProgress.done()
+}
 
 export default {
   loadWithPJAX,
@@ -326,4 +333,6 @@ export default {
   setBodyIndent,
   scrollToNodeElement,
   scrollToRepoContent,
+  mountTopProgressBar,
+  unmountTopProgressBar,
 }

@@ -1,5 +1,8 @@
 import React from 'react'
-import NProgress from 'nprogress'
+import PropTypes from 'prop-types'
+
+import connect from '../driver/Driver'
+import core from '../driver/core'
 
 import FileExplorer from './FileExplorer'
 import ToggleShowButton from './ToggleShowButton'
@@ -9,133 +12,70 @@ import ResizeHandler from './ResizeHandler'
 import Portal from './Portal'
 
 import cx from '../utils/cx'
-import DOMHelper, { REPO_TYPE_PRIVATE } from '../utils/DOMHelper'
-import GitHubHelper, { NOT_FOUND, BAD_CREDENTIALS } from '../utils/GitHubHelper'
-import storageHelper from '../utils/storageHelper'
-import URLHelper from '../utils/URLHelper'
-import keyHelper from '../utils/keyHelper'
 
-// initial width of side bar
 const baseSize = 260
-export default class SideBar extends React.Component {
-  state = {
+
+class SideBar extends React.Component {
+  static propTypes = {
+    // initial width of side bar
+    baseSize: PropTypes.number,
     // current width of side bar
-    size: 260,
+    size: PropTypes.number,
     // whether Gitako side bar should be shown
-    shouldShow: false,
+    shouldShow: PropTypes.bool,
     // whether show settings pane
-    showSettings: false,
+    showSettings: PropTypes.bool,
     // whether failed loading the repo due to it is private
-    errorDueToAuth: false,
+    errorDueToAuth: PropTypes.bool,
     // got access token for GitHub
-    hasAccessToken: false,
+    hasAccessToken: PropTypes.bool,
     // the shortcut string for toggle sidebar
-    toggleShowSideBarShortcut: '',
+    toggleShowSideBarShortcut: PropTypes.string,
     // meta data for the repository
-    metaData: null,
+    metaData: PropTypes.object,
     // file tree data
+    treeData: PropTypes.object,
+
+    init: PropTypes.func.isRequired,
+    onPJAXEnd: PropTypes.func.isRequired,
+    setShouldShow: PropTypes.func.isRequired,
+    toggleShowSideBar: PropTypes.func.isRequired,
+    toggleShowSettings: PropTypes.func.isRequired,
+    onHasAccessTokenChange: PropTypes.func.isRequired,
+    onKeyDown: PropTypes.func.isRequired,
+    onShortcutChange: PropTypes.func.isRequired,
+    onResize: PropTypes.func.isRequired,
+    setMetaData: PropTypes.func.isRequired,
+  }
+
+  static defaultProps = {
+    baseSize,
+    size: baseSize,
+    shouldShow: false,
+    showSettings: false,
+    errorDueToAuth: false,
+    hasAccessToken: false,
+    toggleShowSideBarShortcut: '',
+    metaData: null,
     treeData: null,
   }
 
-  async componentWillMount() {
-    try {
-      const metaDataFromUrl = URLHelper.parse()
-      this.setState({ metaData: metaDataFromUrl })
-      DOMHelper.decorateGitHubPageContent()
-      const [accessToken, shortcut] = await Promise.all([
-        storageHelper.getAccessToken(),
-        storageHelper.getShortcut(),
-      ])
-      this.setState({ hasAccessToken: Boolean(accessToken), toggleShowSideBarShortcut: shortcut })
-      const metaDataFromAPI = await GitHubHelper.getRepoMeta({ ...metaDataFromUrl, accessToken })
-      const branchName = metaDataFromUrl.branchName || metaDataFromAPI['default_branch']
-      const metaData = { ...metaDataFromUrl, branchName, api: metaDataFromAPI }
-      this.setState({ metaData })
-      const shouldShow = URLHelper.isInCodePage(metaData)
-      this.setShouldShow(shouldShow)
-      if (shouldShow) {
-        NProgress.start()
-      }
-      const treeData = await GitHubHelper.getTreeData({ ...metaData, accessToken })
-      this.logoContainerElement = DOMHelper.insertLogo()
-      this.setState({ treeData })
-      if (shouldShow) {
-        NProgress.done()
-      }
+  constructor(props) {
+    super(props)
+    const { init } = props
+    init()
+  }
 
-      window.addEventListener('pjax:complete', this.onPJAXEnd)
-      window.addEventListener('keydown', this.onKeyDown)
-    } catch (err) {
-      // TODO: detect request time exceeds limit
-      if (err.message === NOT_FOUND || err.message === BAD_CREDENTIALS) {
-        const repoPageType = await DOMHelper.getRepoPageType()
-        const errorDueToAuth = repoPageType === REPO_TYPE_PRIVATE || err.message === BAD_CREDENTIALS
-        this.setState({
-          showSettings: repoPageType !== null,
-          errorDueToAuth,
-        })
-        this.setShouldShow(errorDueToAuth)
-      } else {
-        console.error(err)
-        this.setShouldShow(false)
-      }
-    }
+  componentDidMount() {
+    const { onPJAXEnd, onKeyDown } = this.props
+    window.addEventListener('pjax:complete', onPJAXEnd)
+    window.addEventListener('keydown', onKeyDown)
   }
 
   componentWillUnmount() {
-    window.removeEventListener('pjax:complete', this.onPJAXEnd)
-    window.removeEventListener('keydown', this.onKeyDown)
-  }
-
-  onPJAXEnd = () => {
-    NProgress.done()
-    const { metaData } = this.state
-    const mergedMetaData = { ...metaData, ...URLHelper.parse() }
-    this.setState({
-      metaData: mergedMetaData,
-    })
-    this.setShouldShow(URLHelper.isInCodePage(mergedMetaData))
-    DOMHelper.decorateGitHubPageContent()
-    DOMHelper.focusSearchInput()
-  }
-
-  setShouldShow = shouldShow => {
-    this.setState({ shouldShow })
-    DOMHelper.setBodyIndent(shouldShow)
-  }
-
-  toggleShowSideBar = () => {
-    const { shouldShow } = this.state
-    this.setShouldShow(!shouldShow)
-  }
-
-  toggleShowSettings = () => {
-    const { showSettings } = this.state
-    this.setState({ showSettings: !showSettings })
-  }
-
-  onHasAccessTokenChange = hasAccessToken => {
-    this.setState({ hasAccessToken })
-  }
-
-  onKeyDown = e => {
-    const { toggleShowSideBarShortcut } = this.state
-    if (toggleShowSideBarShortcut) {
-      const keys = keyHelper.parseEvent(e)
-      if (keys === toggleShowSideBarShortcut) {
-        this.toggleShowSideBar()
-      }
-    }
-  }
-
-  onShortcutChange = shortcut => {
-    this.setState({ toggleShowSideBarShortcut: shortcut })
-  }
-
-  onResize = size => {
-    this.setState({
-      size,
-    })
+    const { onPJAXEnd, onKeyDown } = this.props
+    window.removeEventListener('pjax:complete', onPJAXEnd)
+    window.removeEventListener('keydown', onKeyDown)
   }
 
   renderAccessDeniedError() {
@@ -151,7 +91,7 @@ export default class SideBar extends React.Component {
   }
 
   renderContent() {
-    const { errorDueToAuth, metaData, treeData, showSettings } = this.state
+    const { errorDueToAuth, metaData, treeData, showSettings } = this.props
     return (
       <div className={'gitako-side-bar-content'}>
         {metaData && <MetaBar metaData={metaData} />}
@@ -171,21 +111,26 @@ export default class SideBar extends React.Component {
       showSettings,
       hasAccessToken,
       toggleShowSideBarShortcut,
-      loading,
-    } = this.state
+      logoContainerElement,
+      toggleShowSideBar,
+      onResize,
+      toggleShowSettings,
+      onShortcutChange,
+      onHasAccessTokenChange,
+    } = this.props
     return (
       <div className={cx('gitako', { hidden: !shouldShow })}>
-        <Portal into={this.logoContainerElement}>
-          <ToggleShowButton shouldShow={shouldShow} toggleShowSideBar={this.toggleShowSideBar} />
+        <Portal into={logoContainerElement}>
+          <ToggleShowButton shouldShow={shouldShow} toggleShowSideBar={toggleShowSideBar} />
         </Portal>
         <div className={'gitako-position-wrapper'}>
-          <ResizeHandler onResize={this.onResize} baseSize={baseSize} style={{ right: size }} />
+          <ResizeHandler onResize={onResize} baseSize={baseSize} style={{ right: size }} />
           <div className={'gitako-side-bar'} style={{ width: size }}>
             {this.renderContent()}
             <SettingsBar
-              toggleShowSettings={this.toggleShowSettings}
-              onShortcutChange={this.onShortcutChange}
-              onHasAccessTokenChange={this.onHasAccessTokenChange}
+              toggleShowSettings={toggleShowSettings}
+              onShortcutChange={onShortcutChange}
+              onHasAccessTokenChange={onHasAccessTokenChange}
               activated={showSettings}
               hasAccessToken={hasAccessToken}
               toggleShowSideBarShortcut={toggleShowSideBarShortcut}
@@ -196,3 +141,5 @@ export default class SideBar extends React.Component {
     )
   }
 }
+
+export default connect(core)(SideBar)
