@@ -201,6 +201,17 @@ export default class List extends React.Component {
     this.updateVisibleNodes()
   }
 
+  onNodeClick = (node) => {
+    if (node.type === 'tree') {
+      this.toggleNodeExpand(node, true)
+    } else if (node.type === 'blob') {
+      this.focusNode(node, true)
+      DOMHelper.loadWithPJAX(node.url)
+    } else if (node.type === 'commit') {
+      DOMHelper.loadWithPJAX(node.parent.url)
+    }
+  }
+
   render() {
     const { visibleNodes: { nodes, depths, focusedNode, expandedNodes } } = this.state
     const { freeze } = this.props
@@ -218,7 +229,7 @@ export default class List extends React.Component {
                 depth={depths.get(node)}
                 focused={focusedNode === node}
                 expanded={expandedNodes.has(node)}
-                toggleExpand={this.toggleNodeExpand}
+                onClick={this.onNodeClick}
               />
             ))}
           </div>

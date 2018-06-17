@@ -17,15 +17,9 @@ function getIconType(node) {
 }
 
 export default class Node extends React.PureComponent {
-  onNodeClick = () => {
-    const { node, toggleExpand } = this.props
-    if (node.type === 'tree') {
-      toggleExpand(node, true)
-    } else if (node.type === 'blob') {
-      DOMHelper.loadWithPJAX(node.url)
-    } else if (node.type === 'commit') {
-      DOMHelper.loadWithPJAX(node.parent.url)
-    }
+  onClick = () => {
+    const { node, onClick } = this.props
+    onClick(node)
   }
 
   render() {
@@ -36,7 +30,7 @@ export default class Node extends React.PureComponent {
         <div
           className={cx('node-item', { expanded })}
           style={{ paddingLeft: `${10 + 20 * depth}px` }}
-          onClick={this.onNodeClick}
+          onClick={this.onClick}
         >
           <Icon type={getIconType(node)} />
           <span className={'node-item-name'}>{name}</span>
