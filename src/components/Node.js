@@ -11,6 +11,8 @@ function getIconType(node) {
   switch (node.type) {
     case 'tree':
       return 'folder'
+    case 'commit':
+      return 'submodule'
     default:
       return node.name.replace(/.*\./, '.')
   }

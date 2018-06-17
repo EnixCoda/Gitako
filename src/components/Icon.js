@@ -1,5 +1,6 @@
 import React from 'react'
 
+import Submodule from '../assets/icons/octicons/file-submodule.svg?svgr'
 import Grabber from '../assets/icons/octicons/grabber.svg?svgr'
 import Octoface from '../assets/icons/octicons/octoface.svg?svgr'
 import ChevronDown from '../assets/icons/octicons/chevron-down.svg?svgr'
@@ -11,7 +12,6 @@ import Markdown from '../assets/icons/octicons/markdown.svg?svgr'
 import FileMedia from '../assets/icons/octicons/file-media.svg?svgr'
 import FileCode from '../assets/icons/octicons/file-code.svg?svgr'
 // import FileBinary from '../assets/icons/octicons/file-binary.svg?svgr'
-// import FileSubmodule from '../assets/icons/octicons/file-submodule.svg?svgr'
 // import FileSymlinkDirectory from '../assets/icons/octicons/file-symlink-directory.svg?svgr'
 // import FileSymlinkFile from '../assets/icons/octicons/file-symlink-file.svg?svgr'
 import X from '../assets/icons/octicons/x.svg?svgr'
@@ -21,6 +21,8 @@ import cx from '../utils/cx'
 
 function getSVGIconComponent(type) {
   switch (type) {
+    case 'submodule':
+      return Submodule
     case 'grabber':
       return Grabber
     case 'octoface':
