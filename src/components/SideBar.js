@@ -1,9 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import connect from '../driver/Driver'
-import core from '../driver/core'
-
 import FileExplorer from './FileExplorer'
 import ToggleShowButton from './ToggleShowButton'
 import MetaBar from './MetaBar'
@@ -15,7 +12,7 @@ import cx from '../utils/cx'
 
 const baseSize = 260
 
-class SideBar extends React.Component {
+export default class Gitako extends React.PureComponent {
   static propTypes = {
     // initial width of side bar
     baseSize: PropTypes.number,
@@ -141,5 +138,3 @@ class SideBar extends React.Component {
     )
   }
 }
-
-export default connect(core)(SideBar)
