@@ -2,7 +2,7 @@ import React from 'react'
 
 import Icon from './Icon'
 
-export default class ResizeHandler extends React.Component {
+export default class ResizeHandler extends React.PureComponent {
   pointerDown = false
   startX = 0
   delta = 0

@@ -1,10 +1,8 @@
 import React from 'react'
-import PJAX from 'pjax'
 
 import Icon from './Icon'
 
 import cx from '../utils/cx'
-import general from '../utils/general'
 import DOMHelper from '../utils/DOMHelper'
 
 function getIconType(node) {
@@ -31,7 +29,7 @@ export default class Node extends React.PureComponent {
   }
 
   render() {
-    const { node, depth, expanded, focused, pjax } = this.props
+    const { node, depth, expanded, focused } = this.props
     const { name, path } = node
     return (
       <div className={cx(`node-item-row`, { focused })} title={path}>

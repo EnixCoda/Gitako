@@ -35,7 +35,7 @@ const TYPES = {
 }
 function isInCodePage(metaData = {}) {
   const { userName, repoName, type, branchName } = { ...parseRaw(), ...metaData }
-  return (
+  return Boolean(
     userName &&
     !RESERVED_NAME.find(_ => _ === userName) &&
     repoName &&

@@ -37,7 +37,7 @@ function friendlyFormatShortcut(shortcut) {
   }
 }
 
-export default class SettingsBar extends React.Component {
+export default class SettingsBar extends React.PureComponent {
   state = {
     accessTokenHint: null,
     accessToken: '',

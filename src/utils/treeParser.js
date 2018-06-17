@@ -12,15 +12,15 @@ const nodeTemplate = {
 function sortFoldersToFront(root) {
   const isFolder = node => node.type === 'tree'
   const isNotFolder = (...args) => !isFolder(...args)
-  function DFS(root) {
+  function depthFirstSearch(root) {
     const nodes = root.contents
     if (nodes) {
       nodes.splice(0, Infinity, ...nodes.filter(isFolder), ...nodes.filter(isNotFolder))
-      nodes.forEach(DFS)
+      nodes.forEach(depthFirstSearch)
     }
     return root
   }
-  return DFS(root)
+  return depthFirstSearch(root)
 }
 
 function setParentNode(root, parent = null) {

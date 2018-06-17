@@ -69,10 +69,12 @@ function getSVGIconComponent(type) {
   }
 }
 
+const iconStyle = { width: '100%', height: '100%' }
+
 export default function Icon({ type, className, ...otherProps }) {
   return (
     <div className={cx('octicon-wrapper', className)} {...otherProps}>
-      {React.createElement(getSVGIconComponent(type), { width: '100%', height: '100%' })}
+      {React.createElement(getSVGIconComponent(type), iconStyle)}
     </div>
   )
 }
