@@ -56,28 +56,29 @@ export default class SettingsBar extends React.PureComponent {
 
   onInputAccessToken = event => {
     const value = event.target.value
-    this.setState({ accessToken: value })
     this.setState({
+      accessToken: value,
       accessTokenHint: ACCESS_TOKEN_REGEXP.test(value) ? '' : 'This token is in unknown format.',
     })
   }
 
   saveToken = async () => {
-    const { onHasAccessTokenChange } = this.props
+    const { onAccessTokenChange } = this.props
     const { accessToken } = this.state
     if (accessToken) {
       await storageHelper.setAccessToken(accessToken)
-      onHasAccessTokenChange(true)
+      onAccessTokenChange(accessToken)
       this.setState({
+        accessToken: '',
         accessTokenHint: 'Your token is saved, will work after reloading the page!',
       })
     }
   }
 
   clearToken = async () => {
-    const { onHasAccessTokenChange } = this.props
+    const { onAccessTokenChange } = this.props
     await storageHelper.setAccessToken('')
-    onHasAccessTokenChange(false)
+    onAccessTokenChange('')
     this.setState({ accessToken: '' })
   }
 
@@ -101,9 +102,8 @@ export default class SettingsBar extends React.PureComponent {
   }
 
   render() {
-    const { accessTokenHint, accessToken, toggleShowSideBarShortcut, shortcutHint } = this.state
-    const { hasAccessToken } = this.props
-    const { toggleShowSettings, activated } = this.props
+    const { accessTokenHint, toggleShowSideBarShortcut, shortcutHint, accessToken } = this.state
+    const { toggleShowSettings, activated, accessToken: hasAccessToken } = this.props
     return (
       <div className={'gitako-settings-bar'}>
         {activated && (
@@ -138,12 +138,12 @@ export default class SettingsBar extends React.PureComponent {
                   value={accessToken}
                   onInput={this.onInputAccessToken}
                 />
-                {hasAccessToken ? (
+                {hasAccessToken && !accessToken ? (
                   <button className={'btn'} onClick={this.clearToken}>
                     Clear
                   </button>
                 ) : (
-                  <button className={'btn'} onClick={this.saveToken}>
+                  <button className={'btn'} onClick={this.saveToken} disabled={!accessToken}>
                     Save
                   </button>
                 )}

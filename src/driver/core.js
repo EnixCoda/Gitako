@@ -15,7 +15,7 @@ const init = dispatch => async () => {
       storageHelper.getAccessToken(),
       storageHelper.getShortcut(),
     ])
-    dispatch({ hasAccessToken: Boolean(accessToken), toggleShowSideBarShortcut: shortcut })
+    dispatch({ accessToken, toggleShowSideBarShortcut: shortcut })
     const metaDataFromAPI = await GitHubHelper.getRepoMeta({ ...metaData, accessToken })
     const branchName = metaData.branchName || metaDataFromAPI['default_branch']
     Object.assign(metaData, { branchName, api: metaDataFromAPI })
@@ -81,23 +81,21 @@ const onResize = dispatch => size => dispatch({ size })
 
 const toggleShowSettings = dispatch => () => dispatch(({ showSettings }) => ({ showSettings: !showSettings }))
 
-const onHasAccessTokenChange = dispatch => hasAccessToken => dispatch({ hasAccessToken })
+const onAccessTokenChange = dispatch => accessToken => dispatch({ accessToken })
 
 const onShortcutChange = dispatch => shortcut => dispatch({ toggleShowSideBarShortcut: shortcut })
 
 const setMetaData = dispatch => metaData => dispatch({ metaData })
 
-export default function(instance) {
-  return link(instance.setState.bind(instance), {
-    init,
-    onPJAXEnd,
-    onKeyDown,
-    setShouldShow,
-    toggleShowSideBar,
-    toggleShowSettings,
-    onHasAccessTokenChange,
-    onShortcutChange,
-    onResize,
-    setMetaData,
-  })
+export default {
+  init,
+  onPJAXEnd,
+  onKeyDown,
+  setShouldShow,
+  toggleShowSideBar,
+  toggleShowSettings,
+  onAccessTokenChange,
+  onShortcutChange,
+  onResize,
+  setMetaData,
 }

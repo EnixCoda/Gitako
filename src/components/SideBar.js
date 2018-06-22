@@ -24,8 +24,8 @@ export default class Gitako extends React.PureComponent {
     showSettings: PropTypes.bool,
     // whether failed loading the repo due to it is private
     errorDueToAuth: PropTypes.bool,
-    // got access token for GitHub
-    hasAccessToken: PropTypes.bool,
+    // access token for GitHub
+    accessToken: PropTypes.string,
     // the shortcut string for toggle sidebar
     toggleShowSideBarShortcut: PropTypes.string,
     // meta data for the repository
@@ -38,7 +38,7 @@ export default class Gitako extends React.PureComponent {
     setShouldShow: PropTypes.func.isRequired,
     toggleShowSideBar: PropTypes.func.isRequired,
     toggleShowSettings: PropTypes.func.isRequired,
-    onHasAccessTokenChange: PropTypes.func.isRequired,
+    onAccessTokenChange: PropTypes.func.isRequired,
     onKeyDown: PropTypes.func.isRequired,
     onShortcutChange: PropTypes.func.isRequired,
     onResize: PropTypes.func.isRequired,
@@ -51,7 +51,7 @@ export default class Gitako extends React.PureComponent {
     shouldShow: false,
     showSettings: false,
     errorDueToAuth: false,
-    hasAccessToken: false,
+    accessToken: '',
     toggleShowSideBarShortcut: '',
     metaData: null,
     treeData: null,
@@ -88,14 +88,14 @@ export default class Gitako extends React.PureComponent {
   }
 
   renderContent() {
-    const { errorDueToAuth, metaData, treeData, showSettings } = this.props
+    const { errorDueToAuth, metaData, treeData, showSettings, accessToken } = this.props
     return (
       <div className={'gitako-side-bar-content'}>
         {metaData && <MetaBar metaData={metaData} />}
         {errorDueToAuth && this.renderAccessDeniedError()}
         {metaData &&
           treeData && (
-            <FileExplorer metaData={metaData} treeData={treeData} freeze={showSettings} />
+            <FileExplorer metaData={metaData} treeData={treeData} freeze={showSettings} accessToken={accessToken} />
           )}
       </div>
     )
@@ -106,14 +106,14 @@ export default class Gitako extends React.PureComponent {
       size,
       shouldShow,
       showSettings,
-      hasAccessToken,
+      accessToken,
       toggleShowSideBarShortcut,
       logoContainerElement,
       toggleShowSideBar,
       onResize,
       toggleShowSettings,
       onShortcutChange,
-      onHasAccessTokenChange,
+      onAccessTokenChange,
     } = this.props
     return (
       <div className={cx('gitako', { hidden: !shouldShow })}>
@@ -127,9 +127,9 @@ export default class Gitako extends React.PureComponent {
             <SettingsBar
               toggleShowSettings={toggleShowSettings}
               onShortcutChange={onShortcutChange}
-              onHasAccessTokenChange={onHasAccessTokenChange}
+              onAccessTokenChange={onAccessTokenChange}
               activated={showSettings}
-              hasAccessToken={hasAccessToken}
+              accessToken={accessToken}
               toggleShowSideBarShortcut={toggleShowSideBarShortcut}
             />
           </div>
