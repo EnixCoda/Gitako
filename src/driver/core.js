@@ -1,5 +1,3 @@
-import link from './link'
-
 import DOMHelper, { REPO_TYPE_PRIVATE } from '../utils/DOMHelper'
 import GitHubHelper, { NOT_FOUND, BAD_CREDENTIALS } from '../utils/GitHubHelper'
 import storageHelper from '../utils/storageHelper'
