@@ -83,12 +83,9 @@
   height: 30px;
   will-change: transform;
   border: 1px solid transparent;
+  transition: all @animation-duration ease;
 
-  @media screen and (max-width: @width-with-gitako) {
-    transition: all @animation-duration ease;
-  }
   @media screen and (min-width: @width-with-gitako) {
-    transition: border-color, border-radius, background @animation-duration ease;
     transform: translate(~'calc(50vw - (' @github-content-width ~') / 2 - 30px)');
   }
 
