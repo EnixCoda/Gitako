@@ -131,6 +131,9 @@ export default class VisibleNodesGenerator {
   focusedNode = null
   focusNode(node) {
     this.focusedNode = node
-    this.visibleNodes.focusedNode = node
+    this.visibleNodes = {
+      ...this.visibleNodes,
+      focusedNode: node,
+    }
   }
 }
