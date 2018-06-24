@@ -32,5 +32,8 @@
   "plugins": [
     "babel",
     "react"
-  ]
+  ],
+  "globals": {
+    "chrome": true
+  }
 }
