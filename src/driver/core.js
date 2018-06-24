@@ -1,6 +1,6 @@
 import DOMHelper, { REPO_TYPE_PRIVATE } from '../utils/DOMHelper'
 import GitHubHelper, { NOT_FOUND, BAD_CREDENTIALS } from '../utils/GitHubHelper'
-import storageHelper from '../utils/storageHelper'
+import configHelper from '../utils/configHelper'
 import URLHelper from '../utils/URLHelper'
 import keyHelper from '../utils/keyHelper'
 
@@ -9,10 +9,7 @@ const init = dispatch => async () => {
     DOMHelper.decorateGitHubPageContent()
     const metaData = URLHelper.parse()
     dispatch(setMetaData, metaData)
-    const [accessToken, shortcut] = await Promise.all([
-      storageHelper.getAccessToken(),
-      storageHelper.getShortcut(),
-    ])
+    const { access_token: accessToken, shortcut } = await configHelper.get()
     dispatch({ accessToken, toggleShowSideBarShortcut: shortcut })
     const metaDataFromAPI = await GitHubHelper.getRepoMeta({ ...metaData, accessToken })
     const branchName = metaData.branchName || metaDataFromAPI['default_branch']

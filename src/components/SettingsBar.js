@@ -1,6 +1,6 @@
 import React from 'react'
 import Icon from './Icon'
-import storageHelper from '../utils/storageHelper'
+import configHelper, { config } from '../utils/configHelper'
 import keyHelper from '../utils/keyHelper'
 
 const ACCESS_TOKEN_REGEXP = /^[0-9a-f]{40}$/
@@ -66,7 +66,7 @@ export default class SettingsBar extends React.PureComponent {
     const { onAccessTokenChange } = this.props
     const { accessToken } = this.state
     if (accessToken) {
-      await storageHelper.setAccessToken(accessToken)
+      await configHelper.setOne(config.accessToken, accessToken)
       onAccessTokenChange(accessToken)
       this.setState({
         accessToken: '',
@@ -77,7 +77,7 @@ export default class SettingsBar extends React.PureComponent {
 
   clearToken = async () => {
     const { onAccessTokenChange } = this.props
-    await storageHelper.setAccessToken('')
+    await configHelper.setOne(config.accessToken, '')
     onAccessTokenChange('')
     this.setState({ accessToken: '' })
   }
@@ -85,7 +85,7 @@ export default class SettingsBar extends React.PureComponent {
   saveShortcut = async () => {
     const { onShortcutChange } = this.props
     const { toggleShowSideBarShortcut } = this.state
-    await storageHelper.setShortcut(toggleShowSideBarShortcut)
+    await configHelper.setOne(config.shortcut, toggleShowSideBarShortcut)
     onShortcutChange(toggleShowSideBarShortcut)
     this.setState({
       shortcutHint: 'Shortcut is saved!',
