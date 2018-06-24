@@ -11,7 +11,7 @@ const nodeTemplate = {
 
 function sortFoldersToFront(root) {
   const isFolder = node => node.type === 'tree'
-  const isNotFolder = (...args) => !isFolder(...args)
+  const isNotFolder = node => !isFolder(node)
   function depthFirstSearch(root) {
     const nodes = root.contents
     if (nodes) {
@@ -73,7 +73,6 @@ function parse(treeData, metaData) {
   setParentNode(root)
   return {
     root: sortFoldersToFront(root),
-    nodes: Array.from(pathToNode.values()),
   }
 }
 

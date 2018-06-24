@@ -30,12 +30,12 @@ const tasksAfterRender = []
 const visibleNodesGenerator = new VisibleNodesGenerator()
 
 const init = dispatch => () => dispatch(async (state, { treeData, metaData, accessToken }) => {
-  const { root, nodes } = treeParser.parse(treeData, metaData)
-  visibleNodesGenerator.plantTree(root, nodes)
+  const { root } = treeParser.parse(treeData, metaData)
+  await visibleNodesGenerator.plantTree(root)
   const currentPath = URLHelper.getCurrentPath(true)
   tasksAfterRender.push(DOMHelper.focusSearchInput)
   if (currentPath.length) {
-    const nodeExpandedTo = visibleNodesGenerator.expandTo(currentPath)
+    const nodeExpandedTo = visibleNodesGenerator.expandTo(currentPath.join('/'))
     if (nodeExpandedTo) {
       visibleNodesGenerator.focusNode(nodeExpandedTo)
       const { nodes } = visibleNodesGenerator.visibleNodes
