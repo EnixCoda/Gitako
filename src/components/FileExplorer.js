@@ -53,7 +53,6 @@ const execAfterRender = dispatch => () => {
 }
 
 const handleKeyDown = dispatch => ({ key }) => dispatch(({ visibleNodes: { nodes, focusedNode, expandedNodes, depths } }) => {
-  let shouldStopPropagation = true // prevent body scrolling
   if (focusedNode) {
     const focusedNodeIndex = nodes.indexOf(focusedNode)
     switch (key) {
@@ -121,8 +120,6 @@ const handleKeyDown = dispatch => ({ key }) => dispatch(({ visibleNodes: { nodes
         }
         break
 
-      default:
-        shouldStopPropagation = false
     }
   } else {
     // now search input is focused
@@ -134,16 +131,8 @@ const handleKeyDown = dispatch => ({ key }) => dispatch(({ visibleNodes: { nodes
         case 'ArrowUp':
           dispatch(focusNode, nodes[nodes.length - 1])
           break
-        default:
-          shouldStopPropagation = false
       }
-    } else {
-      shouldStopPropagation = false
     }
-  }
-  if (shouldStopPropagation) {
-    event.stopPropagation()
-    event.preventDefault()
   }
 })
 
