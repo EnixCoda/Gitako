@@ -29,8 +29,9 @@ function getVisibleParentNode(nodes, focusedNode, depths) {
 const tasksAfterRender = []
 const visibleNodesGenerator = new VisibleNodesGenerator()
 
-const init = dispatch => () => dispatch(async (state, { treeData, metaData, accessToken }) => {
+const init = dispatch => () => dispatch(async (state, { treeData, metaData, compressSingletonFolder }) => {
   const { root } = treeParser.parse(treeData, metaData)
+  visibleNodesGenerator.setCompress(compressSingletonFolder)
   await visibleNodesGenerator.plantTree(root)
   const currentPath = URLHelper.getCurrentPath(true)
   tasksAfterRender.push(DOMHelper.focusSearchInput)

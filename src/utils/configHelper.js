@@ -4,6 +4,7 @@ import { pick } from './general'
 export const config = {
   shortcut: 'shortcut',
   accessToken: 'access_token',
+  compressSingletonFolder: 'compressSingletonFolder',
 }
 
 const configKeys = Object.values(config)

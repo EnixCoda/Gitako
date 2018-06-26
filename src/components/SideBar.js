@@ -32,6 +32,8 @@ export default class Gitako extends React.PureComponent {
     metaData: PropTypes.object,
     // file tree data
     treeData: PropTypes.object,
+    // compress singleton folder
+    compressSingletonFolder: PropTypes.bool,
 
     init: PropTypes.func.isRequired,
     onPJAXEnd: PropTypes.func.isRequired,
@@ -55,6 +57,7 @@ export default class Gitako extends React.PureComponent {
     toggleShowSideBarShortcut: '',
     metaData: null,
     treeData: null,
+    compressSingletonFolder: false,
   }
 
   constructor(props) {
@@ -88,14 +91,14 @@ export default class Gitako extends React.PureComponent {
   }
 
   renderContent() {
-    const { errorDueToAuth, metaData, treeData, showSettings, accessToken } = this.props
+    const { errorDueToAuth, metaData, treeData, showSettings, accessToken, compressSingletonFolder } = this.props
     return (
       <div className={'gitako-side-bar-content'}>
         {metaData && <MetaBar metaData={metaData} />}
         {errorDueToAuth && this.renderAccessDeniedError()}
         {metaData &&
           treeData && (
-            <FileExplorer metaData={metaData} treeData={treeData} freeze={showSettings} accessToken={accessToken} />
+            <FileExplorer metaData={metaData} treeData={treeData} freeze={showSettings} accessToken={accessToken} compressSingletonFolder={compressSingletonFolder} />
           )}
       </div>
     )
@@ -107,6 +110,7 @@ export default class Gitako extends React.PureComponent {
       shouldShow,
       showSettings,
       accessToken,
+      compressSingletonFolder,
       toggleShowSideBarShortcut,
       logoContainerElement,
       toggleShowSideBar,
@@ -114,6 +118,7 @@ export default class Gitako extends React.PureComponent {
       toggleShowSettings,
       onShortcutChange,
       onAccessTokenChange,
+      setCompressSingleton,
     } = this.props
     return (
       <div className={cx('gitako', { hidden: !shouldShow })}>
@@ -130,7 +135,9 @@ export default class Gitako extends React.PureComponent {
               onAccessTokenChange={onAccessTokenChange}
               activated={showSettings}
               accessToken={accessToken}
+              compressSingletonFolder={compressSingletonFolder}
               toggleShowSideBarShortcut={toggleShowSideBarShortcut}
+              setCompressSingleton={setCompressSingleton}
             />
           </div>
         </div>

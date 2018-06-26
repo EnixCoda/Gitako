@@ -9,8 +9,8 @@ const init = dispatch => async () => {
     DOMHelper.decorateGitHubPageContent()
     const metaData = URLHelper.parse()
     dispatch(setMetaData, metaData)
-    const { access_token: accessToken, shortcut } = await configHelper.get()
-    dispatch({ accessToken, toggleShowSideBarShortcut: shortcut })
+    const { access_token: accessToken, shortcut, compressSingletonFolder } = await configHelper.get()
+    dispatch({ accessToken, toggleShowSideBarShortcut: shortcut, compressSingletonFolder })
     const metaDataFromAPI = await GitHubHelper.getRepoMeta({ ...metaData, accessToken })
     const branchName = metaData.branchName || metaDataFromAPI['default_branch']
     Object.assign(metaData, { branchName, api: metaDataFromAPI })
@@ -82,6 +82,8 @@ const onShortcutChange = dispatch => shortcut => dispatch({ toggleShowSideBarSho
 
 const setMetaData = dispatch => metaData => dispatch({ metaData })
 
+const setCompressSingleton = dispatch => compressSingletonFolder => dispatch({ compressSingletonFolder })
+
 export default {
   init,
   onPJAXEnd,
@@ -93,4 +95,5 @@ export default {
   onShortcutChange,
   onResize,
   setMetaData,
+  setCompressSingleton,
 }

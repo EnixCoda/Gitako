@@ -1,7 +1,13 @@
 import React from 'react'
+import PropTypes from 'prop-types'
+
 import Icon from './Icon'
 import configHelper, { config } from '../utils/configHelper'
 import keyHelper from '../utils/keyHelper'
+
+const wikiLinks = {
+  compressSingletonFolder: 'https://github.com/EnixCoda/Gitako/wiki/Compress-Singleton-Folder',
+}
 
 const ACCESS_TOKEN_REGEXP = /^[0-9a-f]{40}$/
 
@@ -38,20 +44,32 @@ function friendlyFormatShortcut(shortcut) {
 }
 
 export default class SettingsBar extends React.PureComponent {
+  static propTypes = {
+    accessToken: PropTypes.string.isRequired,
+    activated: PropTypes.bool.isRequired,
+    compressSingletonFolder: PropTypes.bool.isRequired,
+    onAccessTokenChange: PropTypes.func.isRequired,
+    onShortcutChange: PropTypes.func.isRequired,
+    setCompressSingleton: PropTypes.func.isRequired,
+    toggleShowSettings: PropTypes.func.isRequired,
+    toggleShowSideBarShortcut: PropTypes.string.isRequired,
+  }
+
   state = {
-    accessTokenHint: null,
     accessToken: '',
-    shortcutHint: null,
+    accessTokenHint: '',
+    shortcutHint: '',
     toggleShowSideBarShortcut: '',
+    compressHint: '',
   }
 
   componentWillMount() {
-    const { toggleShowSideBarShortcut } = this.props
-    this.setState({ toggleShowSideBarShortcut })
+    const { toggleShowSideBarShortcut, compressSingletonFolder } = this.props
+    this.setState({ toggleShowSideBarShortcut, compressSingletonFolder })
   }
 
-  componentWillReceiveProps({ toggleShowSideBarShortcut }) {
-    this.setState({ toggleShowSideBarShortcut })
+  componentWillReceiveProps({ toggleShowSideBarShortcut, compressSingletonFolder }) {
+    this.setState({ toggleShowSideBarShortcut, compressSingletonFolder })
   }
 
   onInputAccessToken = event => {
@@ -101,8 +119,18 @@ export default class SettingsBar extends React.PureComponent {
     this.setState({ toggleShowSideBarShortcut: shortcut })
   }
 
+  setCompressSingletonFolder = async e => {
+    const compress = e.target.checked
+    await configHelper.setOne(config.compressSingletonFolder, compress)
+    const { setCompressSingleton } = this.props
+    setCompressSingleton(compress)
+    this.setState({
+      compressHint: 'Saved, reload page to apply!',
+    })
+  }
+
   render() {
-    const { accessTokenHint, toggleShowSideBarShortcut, shortcutHint, accessToken } = this.state
+    const { accessTokenHint, toggleShowSideBarShortcut, compressSingletonFolder, shortcutHint, accessToken, compressHint } = this.state
     const { toggleShowSettings, activated, accessToken: hasAccessToken } = this.props
     return (
       <div className={'gitako-settings-bar'}>
@@ -168,6 +196,17 @@ export default class SettingsBar extends React.PureComponent {
               </div>
               {shortcutHint && <span className={'hint'}>{shortcutHint}</span>}
             </div>
+            <div className={'gitako-settings-bar-content-section singleton'}>
+              <h5>
+                Compress singleton folder&nbsp;
+                <a href={wikiLinks.compressSingletonFolder} target={'_blank'}>(?)</a>
+              </h5>
+              <label htmlFor={'compress-singleton-folder'}>
+                <input id={'compress-singleton-folder'} name={'compress-singleton-folder'} type={'checkbox'} onChange={this.setCompressSingletonFolder} checked={compressSingletonFolder} />
+                &nbsp; {compressSingletonFolder ? 'enabled' : 'disabled'}
+              </label>
+              {compressHint && <div className={'hint'}>{compressHint}</div>}
+            </div>
             <div className={'gitako-settings-bar-content-section position'}>
               <h5>Position of Gitako (WIP)</h5>
               <select value={'next to'} disabled>
@@ -178,7 +217,7 @@ export default class SettingsBar extends React.PureComponent {
               <h5>Table of Markdown Content (WIP)</h5>
               <label htmlFor={'toc'}>
                 <input name={'toc'} type={'checkbox'} disabled />
-                &nbsp;enable
+                &nbsp; disabled
               </label>
             </div>
             <div className={'gitako-settings-bar-content-section issue'}>
