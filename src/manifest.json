@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Gitako",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "author": "EnixCoda",
   "icons": {
     "128": "icons/Gitako-128x128.png"
