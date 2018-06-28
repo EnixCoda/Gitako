@@ -60,7 +60,7 @@ function parse(treeData, metaData) {
         ...item,
         name: item.path.replace(/^.*\//, ''),
         url: item.url
-          ? GitHubHelper.getUrlForRedirect(metaData, item.path)
+          ? GitHubHelper.getUrlForRedirect(metaData, item.type, item.path)
           : null,
         contents: item.type === 'tree' ? [] : null,
       }

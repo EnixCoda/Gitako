@@ -24,8 +24,8 @@ async function getTreeData({ userName, repoName, branchName, accessToken }) {
   return await request(url, { accessToken })
 }
 
-function getUrlForRedirect({ userName, repoName, branchName }, path) {
-  return `https://github.com/${userName}/${repoName}/tree/${branchName}/${path}`
+function getUrlForRedirect({ userName, repoName, branchName }, type = 'blob', path) {
+  return `https://github.com/${userName}/${repoName}/${type}/${branchName}/${path}`
 }
 
 export default {
