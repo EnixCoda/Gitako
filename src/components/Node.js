@@ -17,7 +17,9 @@ function getIconType(node) {
 }
 
 export default class Node extends React.PureComponent {
-  onClick = () => {
+  onClick = (event) => {
+    if (event.metaKey) return
+    event.preventDefault()
     const { node, onClick } = this.props
     onClick(node)
   }
@@ -27,14 +29,15 @@ export default class Node extends React.PureComponent {
     const { name, path } = node
     return (
       <div className={cx(`node-item-row`, { focused })} title={path}>
-        <div
-          className={cx('node-item', { expanded })}
-          style={{ paddingLeft: `${10 + 20 * depth}px` }}
-          onClick={this.onClick}
-        >
-          <Icon type={getIconType(node)} />
-          <span className={'node-item-name'}>{name}</span>
-        </div>
+        <a href={node.url} onClick={this.onClick}>
+          <div
+            className={cx('node-item', { expanded })}
+            style={{ paddingLeft: `${10 + 20 * depth}px` }}
+          >
+            <Icon type={getIconType(node)} />
+            <span className={'node-item-name'}>{name}</span>
+          </div>
+        </a>
       </div>
     )
   }
