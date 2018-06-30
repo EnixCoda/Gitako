@@ -6,7 +6,7 @@ export default class ResizeHandler extends React.PureComponent {
   pointerDown = false
   startX = 0
   delta = 0
-  baseSize = this.props.baseSize
+  baseSize = this.props.size
 
   subscribeEvents = () => {
     window.addEventListener('mousemove', this.onPointerMove)

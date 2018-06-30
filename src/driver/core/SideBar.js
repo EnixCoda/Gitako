@@ -6,7 +6,6 @@ import keyHelper from '../../utils/keyHelper'
 
 const init = dispatch => async () => {
   try {
-    DOMHelper.decorateGitHubPageContent()
     const metaData = URLHelper.parse()
     dispatch(setMetaData, metaData)
     const { access_token: accessToken, shortcut, compressSingletonFolder } = await configHelper.get()
@@ -21,7 +20,7 @@ const init = dispatch => async () => {
       DOMHelper.mountTopProgressBar()
     }
     const treeData = await GitHubHelper.getTreeData({ ...metaData, accessToken })
-    dispatch({ logoContainerElement: DOMHelper.insertLogo() })
+    dispatch({ logoContainerElement: DOMHelper.insertLogoMountPoint() })
     dispatch({ treeData })
     if (shouldShow) {
       DOMHelper.unmountTopProgressBar()
@@ -72,8 +71,6 @@ const setShouldShow = dispatch => shouldShow => {
   DOMHelper.setBodyIndent(shouldShow)
 }
 
-const onResize = dispatch => size => dispatch({ size })
-
 const toggleShowSettings = dispatch => () => dispatch(({ showSettings }) => ({ showSettings: !showSettings }))
 
 const onAccessTokenChange = dispatch => accessToken => dispatch({ accessToken })
@@ -93,7 +90,6 @@ export default {
   toggleShowSettings,
   onAccessTokenChange,
   onShortcutChange,
-  onResize,
   setMetaData,
   setCompressSingleton,
 }

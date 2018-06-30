@@ -8,20 +8,16 @@ import FileExplorer from './FileExplorer'
 import ToggleShowButton from './ToggleShowButton'
 import MetaBar from './MetaBar'
 import SettingsBar from './SettingsBar'
-import ResizeHandler from './ResizeHandler'
 import Portal from './Portal'
+import Resizable from './Resizable'
 
 import cx from '../utils/cx'
-
-const baseSize = 260
 
 @connect(SideBarCore)
 export default class Gitako extends React.PureComponent {
   static propTypes = {
     // initial width of side bar
     baseSize: PropTypes.number,
-    // current width of side bar
-    size: PropTypes.number,
     // whether Gitako side bar should be shown
     shouldShow: PropTypes.bool,
     // whether show settings pane
@@ -47,13 +43,11 @@ export default class Gitako extends React.PureComponent {
     onAccessTokenChange: PropTypes.func.isRequired,
     onKeyDown: PropTypes.func.isRequired,
     onShortcutChange: PropTypes.func.isRequired,
-    onResize: PropTypes.func.isRequired,
     setMetaData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
-    baseSize,
-    size: baseSize,
+    baseSize: 260,
     shouldShow: false,
     showSettings: false,
     errorDueToAuth: false,
@@ -110,7 +104,7 @@ export default class Gitako extends React.PureComponent {
 
   render() {
     const {
-      size,
+      baseSize,
       shouldShow,
       showSettings,
       accessToken,
@@ -118,20 +112,18 @@ export default class Gitako extends React.PureComponent {
       toggleShowSideBarShortcut,
       logoContainerElement,
       toggleShowSideBar,
-      onResize,
       toggleShowSettings,
       onShortcutChange,
       onAccessTokenChange,
       setCompressSingleton,
     } = this.props
     return (
-      <div className={cx('gitako', { hidden: !shouldShow })}>
+      <div className={'gitako-side-bar'}>
         <Portal into={logoContainerElement}>
           <ToggleShowButton shouldShow={shouldShow} toggleShowSideBar={toggleShowSideBar} />
         </Portal>
-        <div className={'gitako-position-wrapper'}>
-          <ResizeHandler onResize={onResize} baseSize={baseSize} style={{ right: size }} />
-          <div className={'gitako-side-bar'} style={{ width: size }}>
+        <Resizable className={cx({ hidden: !shouldShow })} baseSize={baseSize}>
+          <div className={'gitako-side-bar-body'}>
             {this.renderContent()}
             <SettingsBar
               toggleShowSettings={toggleShowSettings}
@@ -142,9 +134,9 @@ export default class Gitako extends React.PureComponent {
               compressSingletonFolder={compressSingletonFolder}
               toggleShowSideBarShortcut={toggleShowSideBarShortcut}
               setCompressSingleton={setCompressSingleton}
-            />
+              />
           </div>
-        </div>
+        </Resizable>
       </div>
     )
   }

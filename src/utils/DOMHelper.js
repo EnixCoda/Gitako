@@ -24,7 +24,7 @@ function setBodyIndent(shouldShowGitako) {
  * add the logo element into DOM
  * 
  */
-function insertLogo() {
+function insertLogoMountPoint() {
   const logoSelector = '.gitako .gitako-logo'
   const logoElement = document.querySelector(logoSelector)
   if (logoElement) {
@@ -329,7 +329,7 @@ export default {
   focusFileExplorer,
   getCurrentPageType,
   getRepoPageType,
-  insertLogo,
+  insertLogoMountPoint,
   setBodyIndent,
   scrollToNodeElement,
   scrollToRepoContent,
