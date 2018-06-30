@@ -1,9 +1,5 @@
 import React from 'react'
 
-function isObject(target) {
-  return typeof target === 'object' && target !== null
-}
-
 function link(instance, sources) {
   const wrappedMethods = {/* sources[key] -> wrappedMethods.method */}
   const map = new Map(/* sources.creator -> wrappedMethods.method */)
