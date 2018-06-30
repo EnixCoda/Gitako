@@ -137,88 +137,88 @@ export default class SettingsBar extends React.PureComponent {
     return (
       <div className={'gitako-settings-bar'}>
         {activated && (
-          <h3 className={'gitako-settings-bar-title'}>
-            Settings
-          </h3>
-        )}
-        {activated && (
-          <div className={'gitako-settings-bar-content'}>
-            <div className={'shadow-shelter'} />
-            <div className={'gitako-settings-bar-content-section access-token'}>
-              <h4>Access Token</h4>
-              <span>With access token provided, Gitako can access more repositories.</span>
-              <br />
-              <a href="https://github.com/blog/1509-personal-api-tokens" target="_blank">
-                Help: how to create access token?
-              </a>
-              <br />
-              <span>
-                Gitako stores the token in&nbsp;
-                <a href="https://developer.chrome.com/apps/storage" target="_blank">
-                  chrome local storage
+          <React.Fragment>
+            <h3 className={'gitako-settings-bar-title'}>
+              Settings
+            </h3>
+            <div className={'gitako-settings-bar-content'}>
+              <div className={'shadow-shelter'} />
+              <div className={'gitako-settings-bar-content-section access-token'}>
+                <h4>Access Token</h4>
+                <span>With access token provided, Gitako can access more repositories.</span>
+                <br />
+                <a href="https://github.com/blog/1509-personal-api-tokens" target="_blank">
+                  Help: how to create access token?
                 </a>
-                &nbsp;locally and safely.
-              </span>
-              <br />
-              <div className={'access-token-input-control'}>
-                <input
-                  className={'access-token-input form-control'}
-                  disabled={hasAccessToken}
-                  placeholder={hasAccessToken ? 'Your token is saved' : 'Input your token here'}
-                  value={accessToken}
-                  onInput={this.onInputAccessToken}
-                />
-                {hasAccessToken && !accessToken ? (
-                  <button className={'btn'} onClick={this.clearToken}>
-                    Clear
-                  </button>
-                ) : (
-                  <button className={'btn'} onClick={this.saveToken} disabled={!accessToken}>
+                <br />
+                <span>
+                  Gitako stores the token in&nbsp;
+                  <a href="https://developer.chrome.com/apps/storage" target="_blank">
+                    chrome local storage
+                  </a>
+                  &nbsp;locally and safely.
+                </span>
+                <br />
+                <div className={'access-token-input-control'}>
+                  <input
+                    className={'access-token-input form-control'}
+                    disabled={hasAccessToken}
+                    placeholder={hasAccessToken ? 'Your token is saved' : 'Input your token here'}
+                    value={accessToken}
+                    onInput={this.onInputAccessToken}
+                  />
+                  {hasAccessToken && !accessToken ? (
+                    <button className={'btn'} onClick={this.clearToken}>
+                      Clear
+                    </button>
+                  ) : (
+                    <button className={'btn'} onClick={this.saveToken} disabled={!accessToken}>
+                      Save
+                    </button>
+                  )}
+                </div>
+                {accessTokenHint && <span className={'hint'}>{accessTokenHint}</span>}
+              </div>
+              <div className={'gitako-settings-bar-content-section toggle-shortcut'}>
+                <h4>Toggle shortcut</h4>
+                <span>Set a combination of keys for toggling Gitako sidebar.</span>
+                <br />
+                <div className={'toggle-shortcut-input-control'}>
+                  <input
+                    className={'toggle-shortcut-input form-control'}
+                    placeholder={'focus here and press the shortcut keys'}
+                    value={friendlyFormatShortcut(toggleShowSideBarShortcut)}
+                    onKeyDown={this.onShortCutInputKeyDown}
+                    readOnly
+                  />
+                  <button className={'btn'} onClick={this.saveShortcut}>
                     Save
                   </button>
-                )}
+                </div>
+                {shortcutHint && <span className={'hint'}>{shortcutHint}</span>}
               </div>
-              {accessTokenHint && <span className={'hint'}>{accessTokenHint}</span>}
-            </div>
-            <div className={'gitako-settings-bar-content-section toggle-shortcut'}>
-              <h4>Toggle shortcut</h4>
-              <span>Set a combination of keys for toggling Gitako sidebar.</span>
-              <br />
-              <div className={'toggle-shortcut-input-control'}>
-                <input
-                  className={'toggle-shortcut-input form-control'}
-                  placeholder={'focus here and press the shortcut keys'}
-                  value={friendlyFormatShortcut(toggleShowSideBarShortcut)}
-                  onKeyDown={this.onShortCutInputKeyDown}
-                  readOnly
-                />
-                <button className={'btn'} onClick={this.saveShortcut}>
-                  Save
-                </button>
+              <div className={'gitako-settings-bar-content-section singleton'}>
+                <h5>
+                  Compress singleton folder&nbsp;
+                  <a href={wikiLinks.compressSingletonFolder} target={'_blank'}>(?)</a>
+                </h5>
+                <label htmlFor={'compress-singleton-folder'}>
+                  <input id={'compress-singleton-folder'} name={'compress-singleton-folder'} type={'checkbox'} onChange={this.setCompressSingletonFolder} checked={compressSingletonFolder} />
+                  &nbsp; {compressSingletonFolder ? 'enabled' : 'disabled'}
+                </label>
+                {compressHint && <div className={'hint'}>{compressHint}</div>}
               </div>
-              {shortcutHint && <span className={'hint'}>{shortcutHint}</span>}
+              <div className={'gitako-settings-bar-content-section issue'}>
+                <h4>Issue</h4>
+                <span>
+                  <a href="https://github.com/EnixCoda/Gitako/issues" target="_blank">
+                    Draft a issue on Github
+                  </a>
+                  &nbsp;for bug report or feature request.
+                </span>
+              </div>
             </div>
-            <div className={'gitako-settings-bar-content-section singleton'}>
-              <h5>
-                Compress singleton folder&nbsp;
-                <a href={wikiLinks.compressSingletonFolder} target={'_blank'}>(?)</a>
-              </h5>
-              <label htmlFor={'compress-singleton-folder'}>
-                <input id={'compress-singleton-folder'} name={'compress-singleton-folder'} type={'checkbox'} onChange={this.setCompressSingletonFolder} checked={compressSingletonFolder} />
-                &nbsp; {compressSingletonFolder ? 'enabled' : 'disabled'}
-              </label>
-              {compressHint && <div className={'hint'}>{compressHint}</div>}
-            </div>
-            <div className={'gitako-settings-bar-content-section issue'}>
-              <h4>Issue</h4>
-              <span>
-                <a href="https://github.com/EnixCoda/Gitako/issues" target="_blank">
-                  Draft a issue on Github
-                </a>
-                &nbsp;for bug report or feature request.
-              </span>
-            </div>
-          </div>
+          </React.Fragment>
         )}
         <div className={'placeholder-row'}>
           <a className={'version'} href={wikiLinks.changeLog} target={'_blank'} title={'Check out new features!'}>
@@ -231,7 +231,11 @@ export default class SettingsBar extends React.PureComponent {
               onClick={toggleShowSettings}
             />
           ) : (
-            <Icon type={'gear'} className={'show-settings-icon'} onClick={toggleShowSettings} />
+            <Icon
+              type={'gear'}
+              className={'show-settings-icon'}
+              onClick={toggleShowSettings}
+            />
           )}
         </div>
       </div>
