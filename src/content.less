@@ -139,7 +139,7 @@
     user-select: none;
     border-left: 1px solid #e1e4e8;
 
-    @media screen and (min-width: @min-screen-width) {
+    @media screen and (min-width: (@min-screen-width + @side-bar-base-width + @resize-handler-width * 2)) {
       display: flex;
       align-items: center;
     }

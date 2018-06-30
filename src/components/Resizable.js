@@ -12,7 +12,7 @@ export default class Resizable extends React.PureComponent {
     size: this.props.baseSize,
   }
 
-  onResize = size => this.setState({ size })
+  onResize = size => this.setState({ size: Math.max(this.props.baseSize, size) })
 
   render() {
     const { className, children } = this.props

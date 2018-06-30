@@ -40,7 +40,7 @@ export default class ResizeHandler extends React.PureComponent {
 
   onPointerUp = () => {
     this.pointerDown = false
-    this.baseSize += this.delta
+    this.baseSize = Math.max(this.baseSize + this.delta, this.props.size)
     this.unsubscribeEvents()
   }
 
