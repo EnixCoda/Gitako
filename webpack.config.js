@@ -76,6 +76,11 @@ module.exports = {
         loader: ['babel-loader', 'svgr/webpack'],
         include: [srcPath],
       },
+      {
+        test: /\.json$/,
+        loader: ['json-loader'],
+        include: [srcPath],
+      },
     ],
   },
   plugins,

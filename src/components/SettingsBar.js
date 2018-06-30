@@ -1,12 +1,14 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
+import { version } from '../../package'
 import Icon from './Icon'
 import configHelper, { config } from '../utils/configHelper'
 import keyHelper from '../utils/keyHelper'
 
 const wikiLinks = {
   compressSingletonFolder: 'https://github.com/EnixCoda/Gitako/wiki/Compress-Singleton-Folder',
+  changeLog: 'https://github.com/EnixCoda/Gitako/wiki/Change-Log',
 }
 
 const ACCESS_TOKEN_REGEXP = /^[0-9a-f]{40}$/
@@ -232,6 +234,9 @@ export default class SettingsBar extends React.PureComponent {
           </div>
         )}
         <div className={'placeholder-row'}>
+          <a className={'version'} href={wikiLinks.changeLog} target={'_blank'} title={'Check out new features!'}>
+            v{version}
+          </a>
           {activated ? (
             <Icon
               type={'chevron-down'}
