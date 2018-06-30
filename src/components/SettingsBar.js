@@ -209,19 +209,6 @@ export default class SettingsBar extends React.PureComponent {
               </label>
               {compressHint && <div className={'hint'}>{compressHint}</div>}
             </div>
-            <div className={'gitako-settings-bar-content-section position'}>
-              <h5>Position of Gitako (WIP)</h5>
-              <select value={'next to'} disabled>
-                <option value="next to">next to main content</option>
-              </select>
-            </div>
-            <div className={'gitako-settings-bar-content-section TOC'}>
-              <h5>Table of Markdown Content (WIP)</h5>
-              <label htmlFor={'toc'}>
-                <input name={'toc'} type={'checkbox'} disabled />
-                &nbsp; disabled
-              </label>
-            </div>
             <div className={'gitako-settings-bar-content-section issue'}>
               <h4>Issue</h4>
               <span>
