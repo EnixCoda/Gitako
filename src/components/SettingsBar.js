@@ -198,10 +198,10 @@ export default class SettingsBar extends React.PureComponent {
                 {shortcutHint && <span className={'hint'}>{shortcutHint}</span>}
               </div>
               <div className={'gitako-settings-bar-content-section singleton'}>
-                <h5>
+                <h4>
                   Compress singleton folder&nbsp;
                   <a href={wikiLinks.compressSingletonFolder} target={'_blank'}>(?)</a>
-                </h5>
+                </h4>
                 <label htmlFor={'compress-singleton-folder'}>
                   <input id={'compress-singleton-folder'} name={'compress-singleton-folder'} type={'checkbox'} onChange={this.setCompressSingletonFolder} checked={compressSingletonFolder} />
                   &nbsp; {compressSingletonFolder ? 'enabled' : 'disabled'}
