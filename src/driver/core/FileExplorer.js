@@ -21,9 +21,15 @@ const tasksAfterRender = []
 const visibleNodesGenerator = new VisibleNodesGenerator()
 
 const init = dispatch => () => dispatch(async (state, { treeData, metaData, compressSingletonFolder }) => {
+  if (!treeData) {
+    dispatch(setStateText, 'Fetching Tree Data...')
+    return
+  }
+  dispatch(setStateText, 'Rendering File List...')
   const { root } = treeParser.parse(treeData, metaData)
   visibleNodesGenerator.setCompress(compressSingletonFolder)
   await visibleNodesGenerator.plantTree(root)
+  dispatch(setStateText, null)
   const currentPath = URLHelper.getCurrentPath(true)
   if (currentPath.length) {
     const nodeExpandedTo = visibleNodesGenerator.expandTo(currentPath.join('/'))
@@ -43,6 +49,10 @@ const execAfterRender = dispatch => () => {
   }
   tasksAfterRender.length = 0
 }
+
+const setStateText = dispatch => text => dispatch({
+  stateText: text,
+})
 
 const handleKeyDown = dispatch => ({ key }) => dispatch(({ visibleNodes: { nodes, focusedNode, expandedNodes, depths } }) => {
   if (focusedNode) {
@@ -174,6 +184,7 @@ const updateVisibleNodes = dispatch => () => {
 export default {
   init,
   execAfterRender,
+  setStateText,
   handleKeyDown,
   handleSearchKeyChange,
   setExpand,

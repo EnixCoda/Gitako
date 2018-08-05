@@ -215,6 +215,25 @@
         padding: 4px 10px;
       }
 
+      .loading-indicator-container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .loading-indicator {
+          display: flex;
+          align-items: center;
+        }
+
+        .loading-indicator-icon {
+          width: 20px;
+          height: 20px;
+          animation: rotate 2s infinite linear;
+        }
+      }
+
       .file-explorer {
         width: 100%;
         height: 100%;
@@ -371,5 +390,13 @@
         }
       }
     }
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotateZ(0);
+  } to {
+    transform: rotateZ(360deg);
   }
 }

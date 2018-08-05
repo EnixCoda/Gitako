@@ -6,6 +6,7 @@ import { FileExplorer as FileExplorerCore } from '../driver/core'
 
 import SearchBar from './SearchBar'
 import Node from './Node'
+import LoadingIndicator from './LoadingIndicator'
 
 import cx from '../utils/cx'
 
@@ -45,44 +46,53 @@ export default class FileExplorer extends React.Component {
     execAfterRender()
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.treeData !== this.props.treeData) {
+      const { init } = nextProps
+      init()
+    }
+  }
+
   componentDidUpdate() {
     const { execAfterRender } = this.props
     execAfterRender()
   }
 
+  renderFiles(visibleNodes, onNodeClick) {
+    const { nodes, depths, focusedNode, expandedNodes } = visibleNodes
+    if (nodes.length === 0) {
+      return (
+        <label className={'no-results'}>
+          No results found.
+        </label>
+      )
+    }
+    return (
+      <div className={'files'}>
+        {nodes.map(node => (
+          <Node
+            key={node.path}
+            node={node}
+            depth={depths.get(node)}
+            focused={focusedNode === node}
+            expanded={expandedNodes.has(node)}
+            onClick={onNodeClick}
+          />
+        ))}
+      </div>
+    )
+  }
+
   render() {
-    const {
-      visibleNodes,
-      freeze,
-      handleKeyDown,
-      handleSearchKeyChange,
-      onNodeClick
-    } = this.props
-    const {
-      nodes,
-      depths,
-      focusedNode,
-      expandedNodes,
-    } = visibleNodes || {}
+    const { stateText, visibleNodes, freeze, handleKeyDown, handleSearchKeyChange, onNodeClick } = this.props
     return (
       <div className={cx(`file-explorer`, { freeze })} tabIndex={-1} onKeyDown={handleKeyDown}>
         <SearchBar onSearchKeyChange={handleSearchKeyChange} />
-        {!visibleNodes || !nodes || nodes.length === 0 ? (
-          <label className={'no-results'}>No results found.</label>
-        ) : (
-            <div className={'files'}>
-              {nodes.map(node => (
-                <Node
-                  key={node.path}
-                  node={node}
-                  depth={depths.get(node)}
-                  focused={focusedNode === node}
-                  expanded={expandedNodes.has(node)}
-                  onClick={onNodeClick}
-                />
-              ))}
-            </div>
-          )}
+        {
+          !visibleNodes || stateText
+          ? <LoadingIndicator text={stateText} />
+          : this.renderFiles(visibleNodes, onNodeClick)
+        }
       </div>
     )
   }

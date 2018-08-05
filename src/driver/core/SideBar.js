@@ -16,15 +16,9 @@ const init = dispatch => async () => {
     dispatch(setMetaData, metaData)
     const shouldShow = URLHelper.isInCodePage(metaData)
     dispatch(setShouldShow, shouldShow)
-    if (shouldShow) {
-      DOMHelper.mountTopProgressBar()
-    }
     const treeData = await GitHubHelper.getTreeData({ ...metaData, accessToken })
     dispatch({ logoContainerElement: DOMHelper.insertLogoMountPoint() })
     dispatch({ treeData })
-    if (shouldShow) {
-      DOMHelper.unmountTopProgressBar()
-    }
   } catch (err) {
     // TODO: detect request time exceeds limit
     if (err.message === NOT_FOUND || err.message === BAD_CREDENTIALS) {
