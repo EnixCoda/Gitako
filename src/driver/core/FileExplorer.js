@@ -51,8 +51,7 @@ const handleKeyDown = dispatch => ({ key }) => dispatch(({ visibleNodes: { nodes
       case 'ArrowUp':
         // focus on previous node
         if (focusedNodeIndex === 0) {
-          dispatch(focusNode, null)
-          tasksAfterRender.push(DOMHelper.focusSearchInput)
+          dispatch(focusNode, nodes[nodes.length - 1])
         } else {
           dispatch(focusNode, nodes[focusedNodeIndex - 1])
         }
@@ -63,8 +62,7 @@ const handleKeyDown = dispatch => ({ key }) => dispatch(({ visibleNodes: { nodes
         if (focusedNodeIndex + 1 < nodes.length) {
           dispatch(focusNode, nodes[focusedNodeIndex + 1])
         } else {
-          dispatch(focusNode, null)
-          tasksAfterRender.push(DOMHelper.focusSearchInput)
+          dispatch(focusNode, nodes[0])
         }
         break
 
