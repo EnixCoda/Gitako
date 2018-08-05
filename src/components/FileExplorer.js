@@ -35,9 +35,8 @@ export default class FileExplorer extends React.Component {
     visibleNodes: null,
   }
 
-  constructor(props) {
-    super(props)
-    const { init } = props
+  componentWillMount() {
+    const { init } = this.props
     init()
   }
 
