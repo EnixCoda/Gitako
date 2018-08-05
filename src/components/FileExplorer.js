@@ -1,5 +1,5 @@
 import React from 'react'
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types'
 
 import connect from '../driver/connect'
 import { FileExplorer as FileExplorerCore } from '../driver/core'
