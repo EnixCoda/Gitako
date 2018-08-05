@@ -53,11 +53,27 @@ function debounce(func, delay) {
 
 export const debouncedSearch = debounce(search, 250)
 
-function getNodes(root) {
-  if (!root.contents) return []
-  return [].concat(
-    ...root.contents.map(node => [node, ...getNodes(node)])
-  )
+function runIdle(func) {
+  return new Promise(resolve => {
+    window.requestIdleCallback(async () => resolve(await func()))
+  })
+}
+
+function promisifyAsyncFunc(func) {
+  return (...args) => new Promise(async resolve => resolve(await func(...args)))
+}
+
+async function asyncMap(arr, asyncCallback) {
+  return await Promise.all(arr.map(promisifyAsyncFunc(asyncCallback)))
+}
+
+async function getNodes(root) {
+  return await runIdle(async () => {
+    if (!root.contents) return []
+    return [].concat(
+      ...await asyncMap(root.contents, async node => [node, ...await getNodes(node)])
+    )
+  })
 }
 
 function compressTree(root, prefix = []) {
@@ -92,7 +108,7 @@ export default class VisibleNodesGenerator {
 
   async plantTree(root) {
     this.root = root
-    this.nodes = getNodes(root)
+    this.nodes = await getNodes(root)
     this.compressedRoot = compressTree(root)
 
     await this.search()
