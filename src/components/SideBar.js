@@ -58,9 +58,8 @@ export default class Gitako extends React.PureComponent {
     compressSingletonFolder: false,
   }
 
-  constructor(props) {
-    super(props)
-    const { init } = props
+  componentWillMount() {
+    const { init } = this.props
     init()
   }
 
