@@ -36,7 +36,6 @@ const init = dispatch => async () => {
       })
       dispatch(setShouldShow, errorDueToAuth)
     } else {
-      console.error(err)
       dispatch(setShouldShow, false)
     }
   }
