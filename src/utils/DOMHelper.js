@@ -58,10 +58,13 @@ function scrollToRepoContent() {
 function scrollToNodeElement(index) {
   const nodeElementSelector = '.node-item'
   const nodeElements = document.querySelectorAll(nodeElementSelector)
-  nodeElements[index].scrollIntoView({
-    behavior: 'smooth',
-    block: 'center',
-  })
+  const targetElement = nodeElements[index]
+  if (targetElement) {
+    targetElement.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    })
+  }
 }
 
 const pjax = new PJAX({
