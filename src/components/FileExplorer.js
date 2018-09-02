@@ -12,10 +12,10 @@ import cx from '../utils/cx'
 
 @connect(FileExplorerCore)
 export default class FileExplorer extends React.Component {
-  static propTyps = {
+  static propTypes = {
     treeData: PropTypes.object,
     metaData: PropTypes.object,
-    freeze: PropTypes.boolean,
+    freeze: PropTypes.bool,
     visibleNodes: PropTypes.object,
 
     init: PropTypes.func.isRequired,
