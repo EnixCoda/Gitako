@@ -1426,6 +1426,10 @@ commondir@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/commondir/-/commondir-1.0.1.tgz#ddd800da0c66127393cca5950ea968a3aaf1253b"
 
+compare-versions@^3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/compare-versions/-/compare-versions-3.4.0.tgz#e0747df5c9cb7f054d6d3dc3e1dbc444f9e92b26"
+
 component-emitter@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/component-emitter/-/component-emitter-1.2.1.tgz#137918d6d78283f7df7a6b7c5a63e140e69425e6"
@@ -4470,6 +4474,12 @@ react-dom@^16.4.0:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
     prop-types "^15.6.0"
+
+react-life-hook@^0.2.0:
+  version "0.2.8"
+  resolved "https://registry.yarnpkg.com/react-life-hook/-/react-life-hook-0.2.8.tgz#d38bdeb82a30010c11c9a5e45f27805fdd25e7e7"
+  dependencies:
+    compare-versions "^3.4.0"
 
 react@^16.4.0:
   version "16.4.0"
