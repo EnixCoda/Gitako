@@ -2,14 +2,6 @@ import React from 'react'
 
 import { withErrorLog } from "../analytics"
 
-function async(func) {
-  return new Promise(resolve => setTimeout(() => resolve(func())))
-}
-
-function sync(func) {
-  return func()
-}
-
 function link(instance, sources) {
   const wrappedMethods = {/* [keyof sources] -> wrappedMethods.method */}
   const map = new Map(/* sources.creator -> wrappedMethods.method */)
@@ -24,9 +16,17 @@ function link(instance, sources) {
   function dispatch(...args) {
     const isFromSource = Object.values(sources).includes(args[0])
     if (isFromSource) {
-      sync(withErrorLog(() => map.get(args[0])(...args.slice(1))))
+      withErrorLog(() => map.get(args[0])(...args.slice(1)))()
     } else {
-      async(() => instance.setState(...args))
+      // by doing so, no async updater is available anymore
+      // luckily I don't need them :)
+      let [updater, callback] = args
+      if (typeof updater === 'function') {
+        callback = updater
+        callback(instance.state, instance.props)
+      } else {
+        instance.setState(updater, callback)
+      }
     }
   }
 
