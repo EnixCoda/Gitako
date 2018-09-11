@@ -22,11 +22,9 @@ function link(instance, sources) {
       // luckily I don't need them :)
       let [updater, callback] = args
       if (typeof updater === 'function') {
-        callback = updater
-        callback(instance.state, instance.props)
-      } else {
-        instance.setState(updater, callback)
+        updater = updater(instance.state, instance.props)
       }
+      instance.setState(updater, callback)
     }
   }
 
