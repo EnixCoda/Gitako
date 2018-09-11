@@ -29,6 +29,8 @@ const init = dispatch => () => dispatch(async (state, { treeData, metaData, comp
   const { root } = treeParser.parse(treeData, metaData)
   visibleNodesGenerator.setCompress(compressSingletonFolder)
   await visibleNodesGenerator.plantTree(root)
+
+  tasksAfterRender.push(DOMHelper.focusSearchInput)
   dispatch(setStateText, null)
   const currentPath = URLHelper.getCurrentPath(true)
   if (currentPath.length) {
@@ -39,7 +41,6 @@ const init = dispatch => () => dispatch(async (state, { treeData, metaData, comp
       tasksAfterRender.push(() => DOMHelper.scrollToNodeElement(nodes.indexOf(nodeExpandedTo)))
     }
   }
-  tasksAfterRender.push(DOMHelper.focusSearchInput)
   dispatch(updateVisibleNodes)
 })
 
