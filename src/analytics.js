@@ -5,14 +5,17 @@ export function raiseError(error) {
   return reportError(error)
 }
 
-export function withErrorLog(func) {
-  return function () {
-    try {
-      func()
-    } catch (error) {
-      raiseError(error)
-    }
-  }
+export function withErrorLog(method, args) {
+  return [
+    function() {
+      try {
+        method.apply(this, arguments)
+      } catch (error) {
+        raiseError(error)
+      }
+    },
+    args,
+  ]
 }
 
 function encodeParams(params) {
