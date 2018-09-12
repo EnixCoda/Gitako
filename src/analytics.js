@@ -19,12 +19,16 @@ export function withErrorLog(method, args) {
 }
 
 function encodeParams(params) {
-  return Object.keys(params).map(key => `${key}=${encodeURIComponent(JSON.stringify(params[key]))}`).join('&')
+  return Object.keys(params)
+    .map(key => `${key}=${encodeURIComponent(JSON.stringify(params[key]))}`)
+    .join('&')
 }
 
 function reportError(error) {
-  return fetch(`${LOG_ENDPOINT}?${encodeParams({
-    error: error && error.message || error,
-    path: window.location.href,
-  })}`)
+  return fetch(
+    `${LOG_ENDPOINT}?${encodeParams({
+      error: (error && error.message) || error,
+      path: window.location.href,
+    })}`
+  )
 }
