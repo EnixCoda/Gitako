@@ -1,4 +1,5 @@
-const LOG_ENDPOINT = ''
+// TODO: set this through ENV or something else
+const LOG_ENDPOINT = 'https://enix.one/gitako/log'
 
 export function raiseError(error) {
   return reportError(error)
