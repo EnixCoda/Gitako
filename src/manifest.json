@@ -1,18 +1,1 @@
-{
-  "manifest_version": 2,
-  "name": "Gitako",
-  "version": "0.2.6",
-  "author": "EnixCoda",
-  "icons": {
-    "128": "icons/Gitako-128x128.png"
-  },
-  "description": "yet another GitHub extension, inspired by Octotree and GayHub.",
-  "homepage_url": "https://github.com/EnixCoda/Gitako",
-  "permissions": ["tabs", "storage", "*://github.com/*"],
-  "content_scripts": [
-    {
-      "matches": ["https://github.com/*"],
-      "js": ["content.js"]
-    }
-  ]
-}
+{"manifest_version":2,"name":"Gitako","version":"0.3.0","author":"EnixCoda","icons":{"128":"icons/Gitako-128x128.png"},"description":"yet another GitHub extension, inspired by Octotree and GayHub.","homepage_url":"https://github.com/EnixCoda/Gitako","permissions":["tabs","storage","*://github.com/*"],"content_scripts":[{"matches":["https://github.com/*"],"js":["content.js"]}]}
