@@ -9,6 +9,7 @@
   "scripts": {
     "start": "webpack --watch",
     "dev": "webpack",
+    "stamp": "node scripts/version.js",
     "prod": "NODE_ENV=production webpack && cd dist && rm -f ./gitako.zip && zip gitako.zip -r *"
   },
   "dependencies": {
