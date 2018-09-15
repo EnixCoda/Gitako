@@ -4,6 +4,7 @@ import Icon from './Icon'
 
 import cx from '../utils/cx'
 import DOMHelper from '../utils/DOMHelper'
+import LoadingIndicator from './LoadingIndicator';
 
 function getIconType(node) {
   switch (node.type) {
@@ -26,7 +27,18 @@ export default class Node extends React.PureComponent {
 
   render() {
     const { node, depth, expanded, focused } = this.props
-    const { name, path } = node
+    const { name, path, virtual } = node
+    if (virtual) {
+      // this is not a real node
+      // for now, all virtual nodes are indicators for pending state
+      return (
+        <div className={cx(`node-item-row`, { focused })}>
+          <div className={'node-item'}>
+            <LoadingIndicator text={name} />
+          </div>
+        </div>
+      )
+    }
     return (
       <div className={cx(`node-item-row`, { focused })} title={path}>
         <a href={node.url} onClick={this.onClick}>

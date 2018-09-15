@@ -143,16 +143,38 @@ const handleSearchKeyChange = dispatch => async event => {
   dispatch(updateVisibleNodes)
 }
 
+const delayExpandThreshold = 400
+function shouldDelayExpand(node) {
+  return visibleNodesGenerator.visibleNodes.expandedNodes.has(node)
+    && node.contents.length > delayExpandThreshold
+}
+
 const setExpand = dispatch => (node, expand) => {
   visibleNodesGenerator.setExpand(node, expand)
-  dispatch(focusNode, node)
-  tasksAfterRender.push(DOMHelper.focusSearchInput)
+  const applyChanges = () => {
+    dispatch(focusNode, node)
+    tasksAfterRender.push(DOMHelper.focusSearchInput)
+  }
+  if (shouldDelayExpand(node)) {
+    dispatch(mountExpandingIndicator, node)
+    tasksAfterRender.push(() => setTimeout(applyChanges, 0))
+  } else {
+    applyChanges()
+  }
 }
 
 const toggleNodeExpansion = dispatch => (node, skipScrollToNode) => {
   visibleNodesGenerator.toggleExpand(node)
-  dispatch(focusNode, node, skipScrollToNode)
-  tasksAfterRender.push(DOMHelper.focusFileExplorer)
+  const applyChanges = () => {
+    dispatch(focusNode, node, skipScrollToNode)
+    tasksAfterRender.push(DOMHelper.focusFileExplorer)
+  }
+  if (shouldDelayExpand(node)) {
+    dispatch(mountExpandingIndicator, node)
+    tasksAfterRender.push(() => setTimeout(applyChanges, 0))
+  } else {
+    applyChanges()
+  }
 }
 
 const focusNode = dispatch => (node, skipScroll) => dispatch(({ visibleNodes: { nodes } }) => {
@@ -177,6 +199,21 @@ const onNodeClick = dispatch => (node) => {
   }
 }
 
+const mountExpandingIndicator = dispatch => node => dispatch(({ visibleNodes }) => {
+  const dummyVisibleNodes = {
+    ...visibleNodes,
+    nodes: visibleNodes.nodes.slice(),
+  }
+  dummyVisibleNodes.nodes.splice(
+    dummyVisibleNodes.nodes.indexOf(node) + 1,
+    0,
+    { virtual: true, name: 'Loading' },
+  )
+  return {
+    visibleNodes: dummyVisibleNodes
+  }
+})
+
 const updateVisibleNodes = dispatch => () => {
   const { visibleNodes } = visibleNodesGenerator
   dispatch({ visibleNodes })
@@ -193,4 +230,5 @@ export default {
   focusNode,
   onNodeClick,
   updateVisibleNodes,
+  mountExpandingIndicator,
 }
