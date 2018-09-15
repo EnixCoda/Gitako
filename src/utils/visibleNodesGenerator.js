@@ -171,19 +171,26 @@ export default class VisibleNodesGenerator {
     this.focusedNode = null
     this.depths.clear()
     const nodesSet = new Set() // prevent duplication
-    const get = (nodes, depth = 0) => {
-      return [].concat(
-        ...nodes.map(node => {
-          if (nodesSet.has(node)) return []
-          this.depths.set(node, depth)
-          nodesSet.add(node)
-          const children = this.expandedNodes.has(node) ? get(node.contents, depth + 1) : []
-          return [node, ...children]
-        })
-      )
+    const nodes = [], stack = this.searchedNodes.slice().reverse()
+    let current, depth = 0
+    while (stack.length) {
+      current = stack.pop()
+      if (current === null) {
+        depth -= 1
+        continue
+      }
+      if (nodesSet.has(current)) continue
+      nodes.push(current)
+      nodesSet.add(current)
+      this.depths.set(current, depth)
+      if (this.expandedNodes.has(current)) {
+        stack.push(null) // use null as pop depth flag
+        stack.push(...current.contents.slice().reverse())
+        depth += 1
+      }
     }
     this.visibleNodes = {
-      nodes: get(this.searchedNodes),
+      nodes,
       depths: this.depths,
       expandedNodes: this.expandedNodes,
     }
