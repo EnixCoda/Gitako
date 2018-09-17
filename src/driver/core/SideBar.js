@@ -10,28 +10,38 @@ const init = dispatch => async () => {
     dispatch(setMetaData, metaData)
     const { access_token: accessToken, shortcut, compressSingletonFolder } = await configHelper.get()
     dispatch({ accessToken, toggleShowSideBarShortcut: shortcut, compressSingletonFolder })
+    const aggressivelyGotTreeData = GitHubHelper.getTreeData({ branchName: 'master', ...metaData, accessToken }).catch(() => {})
     const metaDataFromAPI = await GitHubHelper.getRepoMeta({ ...metaData, accessToken })
     const branchName = metaData.branchName || metaDataFromAPI['default_branch']
     Object.assign(metaData, { branchName, api: metaDataFromAPI })
     dispatch(setMetaData, metaData)
     const shouldShow = URLHelper.isInCodePage(metaData)
     dispatch(setShouldShow, shouldShow)
-    const treeData = await GitHubHelper.getTreeData({ ...metaData, accessToken })
-    dispatch({ logoContainerElement: DOMHelper.insertLogoMountPoint() })
-    dispatch({ treeData })
-  } catch (err) {
-    // TODO: detect request time exceeds limit
-    if (err.message === NOT_FOUND || err.message === BAD_CREDENTIALS) {
-      const repoPageType = await DOMHelper.getRepoPageType()
-      const errorDueToAuth = repoPageType === REPO_TYPE_PRIVATE || err.message === BAD_CREDENTIALS
-      dispatch({
-        showSettings: repoPageType !== null,
-        errorDueToAuth,
+    aggressivelyGotTreeData
+      .then(treeData => {
+        dispatch({ logoContainerElement: DOMHelper.insertLogoMountPoint() })
+        dispatch({ treeData })
       })
-      dispatch(setShouldShow, errorDueToAuth)
-    } else {
-      dispatch(setShouldShow, false)
-    }
+      .catch(err => {
+        dispatch(handleError, err)
+      })
+  } catch (err) {
+    dispatch(handleError, err)
+  }
+}
+
+const handleError = dispatch => async (err) => {
+  // TODO: detect request time exceeds limit
+  if (err.message === NOT_FOUND || err.message === BAD_CREDENTIALS) {
+    const repoPageType = await DOMHelper.getRepoPageType()
+    const errorDueToAuth = repoPageType === REPO_TYPE_PRIVATE || err.message === BAD_CREDENTIALS
+    dispatch({
+      showSettings: repoPageType !== null,
+      errorDueToAuth,
+    })
+    dispatch(setShouldShow, errorDueToAuth)
+  } else {
+    dispatch(setShouldShow, false)
   }
 }
 
@@ -85,4 +95,5 @@ export default {
   onShortcutChange,
   setMetaData,
   setCompressSingleton,
+  handleError,
 }
