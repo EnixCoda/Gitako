@@ -18,6 +18,8 @@ export default class Gitako extends React.PureComponent {
   static propTypes = {
     // initial width of side bar
     baseSize: PropTypes.number,
+    // error message
+    error: PropTypes.string,
     // whether Gitako side bar should be shown
     shouldShow: PropTypes.bool,
     // whether show settings pane
@@ -103,6 +105,7 @@ export default class Gitako extends React.PureComponent {
   render() {
     const {
       baseSize,
+      error,
       shouldShow,
       showSettings,
       accessToken,
@@ -118,9 +121,9 @@ export default class Gitako extends React.PureComponent {
     return (
       <div className={'gitako-side-bar'}>
         <Portal into={logoContainerElement}>
-          <ToggleShowButton shouldShow={shouldShow} toggleShowSideBar={toggleShowSideBar} />
+          <ToggleShowButton error={error} shouldShow={shouldShow} toggleShowSideBar={toggleShowSideBar} />
         </Portal>
-        <Resizable className={cx({ hidden: !shouldShow })} baseSize={baseSize}>
+        <Resizable className={cx({ hidden: error || !shouldShow })} baseSize={baseSize}>
           <div className={'gitako-side-bar-body'}>
             {this.renderContent()}
             <SettingsBar

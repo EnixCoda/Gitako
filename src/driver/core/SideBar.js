@@ -6,6 +6,7 @@ import keyHelper from '../../utils/keyHelper'
 
 const init = dispatch => async () => {
   try {
+    let nothingWentWrong = true
     const metaData = URLHelper.parse()
     dispatch(setMetaData, metaData)
     const { access_token: accessToken, shortcut, compressSingletonFolder } = await configHelper.get()
@@ -14,20 +15,20 @@ const init = dispatch => async () => {
       ...metaData,
       branchName: metaData.branchName || 'master',
       accessToken,
-    }).catch(() => {})
+    }).catch(err => {
+      nothingWentWrong = false
+      dispatch(handleError, err)
+    })
     const metaDataFromAPI = await GitHubHelper.getRepoMeta({ ...metaData, accessToken })
     const branchName = metaData.branchName || metaDataFromAPI['default_branch']
     Object.assign(metaData, { branchName, api: metaDataFromAPI })
     dispatch(setMetaData, metaData)
     const shouldShow = URLHelper.isInCodePage(metaData)
-    dispatch(setShouldShow, shouldShow)
+    dispatch(setShouldShow, nothingWentWrong && shouldShow)
     aggressivelyGotTreeData
       .then(treeData => {
         dispatch({ logoContainerElement: DOMHelper.insertLogoMountPoint() })
         dispatch({ treeData })
-      })
-      .catch(err => {
-        dispatch(handleError, err)
       })
   } catch (err) {
     dispatch(handleError, err)
@@ -39,13 +40,14 @@ const handleError = dispatch => async (err) => {
   if (err.message === NOT_FOUND || err.message === BAD_CREDENTIALS) {
     const repoPageType = await DOMHelper.getRepoPageType()
     const errorDueToAuth = repoPageType === REPO_TYPE_PRIVATE || err.message === BAD_CREDENTIALS
-    dispatch({
-      showSettings: repoPageType !== null,
-      errorDueToAuth,
-    })
+    dispatch({ errorDueToAuth })
     dispatch(setShouldShow, errorDueToAuth)
+    if (!errorDueToAuth) {
+      dispatch(setError, 'Gitako ate a bug, but it should recovery soon!')
+    }
   } else {
     dispatch(setShouldShow, false)
+    dispatch(setError, 'Gitako ate a bug, but it should recovery soon!')
   }
 }
 
@@ -78,6 +80,10 @@ const setShouldShow = dispatch => shouldShow => {
   DOMHelper.setBodyIndent(shouldShow)
 }
 
+const setError = dispatch => error => {
+  dispatch({ error })
+}
+
 const toggleShowSettings = dispatch => () => dispatch(({ showSettings }) => ({ showSettings: !showSettings }))
 
 const onAccessTokenChange = dispatch => accessToken => dispatch({ accessToken })
@@ -99,5 +105,6 @@ export default {
   onShortcutChange,
   setMetaData,
   setCompressSingleton,
+  setError,
   handleError,
 }

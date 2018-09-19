@@ -79,7 +79,7 @@
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  width: 30px;
+  min-width: 30px;
   height: 30px;
   will-change: transform;
   border: 1px solid transparent;
@@ -87,6 +87,12 @@
 
   @media screen and (min-width: @width-with-gitako) {
     transform: translate(~'calc(50vw - (' @github-content-width ~') / 2 - 30px)');
+  }
+
+  &:hover {
+    .error-message {
+      display: inline;
+    }
   }
 
   &.collapsed {
@@ -103,11 +109,23 @@
     }
   }
 
+  &.error {
+    .action-icon {
+      color: #cb2431;
+    }
+  }
+
   .action-icon {
     color: #666666;
     width: 16px;
     height: 20px;
+    margin: 5px 6px;
     transition: all @animation-duration ease;
+  }
+
+  .error-message {
+    display: none;
+    margin: 0 4px;
   }
 }
 
