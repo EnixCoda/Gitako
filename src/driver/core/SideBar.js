@@ -10,7 +10,11 @@ const init = dispatch => async () => {
     dispatch(setMetaData, metaData)
     const { access_token: accessToken, shortcut, compressSingletonFolder } = await configHelper.get()
     dispatch({ accessToken, toggleShowSideBarShortcut: shortcut, compressSingletonFolder })
-    const aggressivelyGotTreeData = GitHubHelper.getTreeData({ branchName: 'master', ...metaData, accessToken }).catch(() => {})
+    const aggressivelyGotTreeData = GitHubHelper.getTreeData({
+      ...metaData,
+      branchName: metaData.branchName || 'master',
+      accessToken,
+    }).catch(() => {})
     const metaDataFromAPI = await GitHubHelper.getRepoMeta({ ...metaData, accessToken })
     const branchName = metaData.branchName || metaDataFromAPI['default_branch']
     Object.assign(metaData, { branchName, api: metaDataFromAPI })
