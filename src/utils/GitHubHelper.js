@@ -1,3 +1,4 @@
+import { raiseError } from '../analytics'
 export const NOT_FOUND = 'Repo Not Found'
 export const BAD_CREDENTIALS = 'Bad credentials'
 
@@ -7,6 +8,7 @@ async function request(url, { accessToken } = {}) {
     headers.Authorization = `token ${accessToken}`
   }
   const res = await fetch(url, { headers })
+  if (!res.ok) raiseError(new Error(`Got ${res.statusText} when requesting ${url}`))
   if (res.status === 200) return res.json()
   // for private repo, GitHub api also responses with 404 when unauthorized
   if (res.status === 404) throw new Error(NOT_FOUND)
