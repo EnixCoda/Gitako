@@ -167,7 +167,7 @@
       .hidden;
     }
 
-    .octicon {
+    .@{name}-svg-icon {
       transition: 0.3s ease;
       color: rgba(3, 47, 98, 0.55);
       vertical-align: initial;
@@ -285,7 +285,7 @@
             transition: all 0.5s ease;
 
             // folder icon rotate when expand
-            &.expanded .octicon.octicon-triangle-right {
+            &.expanded .@{name}-svg-icon-triangle-right {
               transform: rotate(90deg);
             }
 
@@ -392,6 +392,11 @@
       }
     }
   }
+}
+
+.@{name}-svg-icon {
+  width: 100%;
+  height: 100%;
 }
 
 @keyframes rotate {

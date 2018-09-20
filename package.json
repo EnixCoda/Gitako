@@ -42,6 +42,7 @@
     "less-loader": "^4.0.5",
     "react-life-hook": "^0.2.0",
     "style-loader": "^0.19.0",
+    "svg-sprite-loader": "^4.1.1",
     "svgr": "^1.6.0",
     "uglifyjs-webpack-plugin": "^1.1.1",
     "url-loader": "^0.6.2",
