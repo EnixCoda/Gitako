@@ -6,6 +6,7 @@ import keyHelper from '../../utils/keyHelper'
 
 const init = dispatch => async () => {
   try {
+    if (!URLHelper.isInRepoPage()) return
     const metaData = URLHelper.parse()
     dispatch(setMetaData, metaData)
     const { access_token: accessToken, shortcut, compressSingletonFolder } = await configHelper.get()
