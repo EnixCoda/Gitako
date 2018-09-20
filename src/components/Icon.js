@@ -1,53 +1,36 @@
 import React from 'react'
 
-import Submodule from '../assets/icons/octicons/file-submodule.svg?svgr'
-import Grabber from '../assets/icons/octicons/grabber.svg?svgr'
-import Octoface from '../assets/icons/octicons/octoface.svg?svgr'
-import ChevronDown from '../assets/icons/octicons/chevron-down.svg?svgr'
-import TriangleRight from '../assets/icons/octicons/triangle-right.svg?svgr'
-import FilePdf from '../assets/icons/octicons/file-pdf.svg?svgr'
-import File from '../assets/icons/octicons/file.svg?svgr'
-import FileZip from '../assets/icons/octicons/file-zip.svg?svgr'
-import Markdown from '../assets/icons/octicons/markdown.svg?svgr'
-import FileMedia from '../assets/icons/octicons/file-media.svg?svgr'
-import FileCode from '../assets/icons/octicons/file-code.svg?svgr'
-// import FileBinary from '../assets/icons/octicons/file-binary.svg?svgr'
-// import FileSymlinkDirectory from '../assets/icons/octicons/file-symlink-directory.svg?svgr'
-// import FileSymlinkFile from '../assets/icons/octicons/file-symlink-file.svg?svgr'
-import X from '../assets/icons/octicons/x.svg?svgr'
-import Gear from '../assets/icons/octicons/gear.svg?svgr'
-
 import cx from '../utils/cx'
 
 function getSVGIconComponent(type) {
   switch (type) {
     case 'submodule':
-      return Submodule
+      return 'Submodule'
     case 'grabber':
-      return Grabber
+      return 'Grabber'
     case 'octoface':
-      return Octoface
+      return 'Octoface'
     case 'chevron-down':
-      return ChevronDown
+      return 'ChevronDown'
     case 'x':
-      return X
+      return 'X'
     case 'gear':
-      return Gear
+      return 'Gear'
     case 'folder':
-      return TriangleRight
+      return 'TriangleRight'
     case '.pdf':
-      return FilePdf
+      return 'FilePdf'
     case '.zip':
     case '.rar':
     case '.7z':
-      return FileZip
+      return 'FileZip'
     case '.md':
-      return Markdown
+      return 'Markdown'
     case '.png':
     case '.jpg':
     case '.gif':
     case '.bmp':
-      return FileMedia
+      return 'FileMedia'
     case '.js':
     case '.jsx':
     case '.ts':
@@ -58,23 +41,53 @@ function getSVGIconComponent(type) {
     case '.less':
     case '.scss':
     case '.sass':
-      return FileCode
+      return 'FileCode'
     // TODO: adapt to more file types
-    // case '': return FileBinary
-    // case '': return FileSubmodule
-    // case '': return FileSymlinkDirectory
-    // case '': return FileSymlinkFile
+    // case '': return 'FileBinary'
+    // case '': return 'FileSubmodule'
+    // case '': return 'FileSymlinkDirectory'
+    // case '': return 'FileSymlinkFile'
     default:
-      return File
+      return 'File'
   }
 }
-
-const iconStyle = { width: '100%', height: '100%' }
-
 export default function Icon({ type, className, ...otherProps }) {
   return (
     <div className={cx('octicon-wrapper', className)} {...otherProps}>
-      {React.createElement(getSVGIconComponent(type), iconStyle)}
+      {/* {React.createElement(getSVGIconComponent(type), iconStyle)} */}
+      <SVG name={type} />
     </div>
+  )
+}
+
+function titlecase(o = '') {
+  return o.replace(/-./, s => s[1].toUpperCase()).replace(/^./, s => s.toUpperCase())
+}
+
+function importAll (r) {
+  const map = {}
+  r.keys().forEach((key) => {
+    const module = r(key)
+    map[titlecase(key.replace(/^.*?(\w.*)\.svg$/, '$1'))] = module.default
+  })
+  return map
+}
+
+const svgMap = importAll(require.context('../assets/icons/octicons', true, /\.svg$/))
+
+export function SVG({ name, className, onClick }) {
+  const svgObj = svgMap[name] || svgMap[getSVGIconComponent(name)]
+  if (!svgObj) {
+    console.error(`SVG '${name}' does not exist.`)
+    return null
+  }
+  console.log('found', name, svgObj)
+  const { id, viewBox } = svgObj
+  return (
+    <span role="none" onClick={onClick} className={className}>
+      <svg className={`gitako-svg-icon gitako-svg-icon-${id}`} viewBox={viewBox}>
+        <use xlinkHref={`#${id}`} />
+      </svg>
+    </span>
   )
 }

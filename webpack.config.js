@@ -70,11 +70,18 @@ module.exports = {
         loader: ['url-loader'],
         include: [srcPath],
       },
+      // {
+      //   test: /\.svg$/,
+      //   resourceQuery: /svgr/,
+      //   loader: ['babel-loader', 'svgr/webpack'],
+      //   include: [srcPath],
+      // },
       {
         test: /\.svg$/,
-        resourceQuery: /svgr/,
-        loader: ['babel-loader', 'svgr/webpack'],
-        include: [srcPath],
+        loader: 'svg-sprite-loader',
+        options: {
+          extract: false,
+        }
       },
       {
         test: /\.json$/,
