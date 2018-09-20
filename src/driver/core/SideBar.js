@@ -11,13 +11,26 @@ const init = dispatch => async () => {
     dispatch(setMetaData, metaData)
     const { access_token: accessToken, shortcut, compressSingletonFolder } = await configHelper.get()
     dispatch({ accessToken, toggleShowSideBarShortcut: shortcut, compressSingletonFolder })
-    const aggressivelyGotTreeData = GitHubHelper.getTreeData({
+    const defaultBranchName = 'master'
+    let aggressivelyGotTreeData = GitHubHelper.getTreeData({
       ...metaData,
-      branchName: metaData.branchName || 'master',
+      branchName: metaData.branchName || defaultBranchName,
       accessToken,
     }).catch(() => {})
     const metaDataFromAPI = await GitHubHelper.getRepoMeta({ ...metaData, accessToken })
-    const branchName = metaData.branchName || metaDataFromAPI['default_branch']
+    const projectDefaultBranchName = metaDataFromAPI['default_branch']
+    if (!metaData.branchName) {
+      // User accessed repo's homepage(no branch name in URL) and we predicted its default branch to be 'master'
+      if (projectDefaultBranchName !== defaultBranchName) {
+        // And the repo do not use {defaultBranchName} as default branch,
+        aggressivelyGotTreeData = GitHubHelper.getTreeData({
+          ...metaData,
+          branchName: projectDefaultBranchName,
+          accessToken,
+        })
+      }
+    }
+    const branchName = metaData.branchName || projectDefaultBranchName
     Object.assign(metaData, { branchName, api: metaDataFromAPI })
     dispatch(setMetaData, metaData)
     const shouldShow = URLHelper.isInCodePage(metaData)
