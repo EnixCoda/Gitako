@@ -6,6 +6,7 @@ import keyHelper from '../../utils/keyHelper'
 
 const init = dispatch => async () => {
   try {
+    if (!URLHelper.isInRepoPage()) return
     let nothingWentWrong = true
     const metaData = URLHelper.parse()
     dispatch(setMetaData, metaData)

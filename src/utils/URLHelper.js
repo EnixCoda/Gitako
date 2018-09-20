@@ -33,12 +33,21 @@ const TYPES = {
   // known but not related types: issues, pulls, wiki, insight,
   // TODO: record more types
 }
-function isInCodePage(metaData = {}) {
-  const { userName, repoName, type, branchName } = { ...parseRaw(), ...metaData }
+
+function isInRepoPage(metaData) {
+  const { userName, repoName } = metaData || parseRaw()
   return Boolean(
     userName &&
     !RESERVED_NAME.find(_ => _ === userName) &&
-    repoName &&
+    repoName
+  )
+}
+
+function isInCodePage(metaData = {}) {
+  const mergedRepo = { ...parseRaw(), ...metaData }
+  const { type, branchName } = mergedRepo
+  return Boolean(
+    isInRepoPage(mergedRepo) &&
     (!type || type === TYPES.TREE || type === TYPES.BLOB) &&
     type !== TYPES.COMMIT &&
     (branchName || (!type && !branchName))
@@ -52,6 +61,7 @@ function getCurrentPath(decode = false) {
 
 export default {
   getCurrentPath,
+  isInRepoPage,
   isInCodePage,
   parse,
 }
