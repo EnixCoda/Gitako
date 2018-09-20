@@ -41,11 +41,18 @@ const init = dispatch => async () => {
     dispatch(setShouldShow, nothingWentWrong && shouldShow)
     aggressivelyGotTreeData
       .then(treeData => {
-        dispatch({ logoContainerElement: DOMHelper.insertLogoMountPoint() })
         dispatch({ treeData })
+      })
+      .catch(err => {
+        dispatch(handleError, err)
+      })
+      .then(() => {
+        dispatch({ logoContainerElement: DOMHelper.insertLogoMountPoint() })
       })
   } catch (err) {
     dispatch(handleError, err)
+  } finally {
+    dispatch({ logoContainerElement: DOMHelper.insertLogoMountPoint() })
   }
 }
 
