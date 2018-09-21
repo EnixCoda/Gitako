@@ -20,11 +20,12 @@ function getVisibleParentNode(nodes, focusedNode, depths) {
 const tasksAfterRender = []
 const visibleNodesGenerator = new VisibleNodesGenerator()
 
-const init = dispatch => () => dispatch(async (state, { treeData, metaData, compressSingletonFolder }) => {
-  if (!treeData) {
-    dispatch(setStateText, 'Fetching Tree Data...')
-    return
-  }
+const init = dispatch => () => dispatch(async () => {
+  dispatch(setStateText, 'Fetching File List...')
+})
+
+const setUpTree = dispatch => () => dispatch(async (state, { treeData, metaData, compressSingletonFolder }) => {
+  if (!treeData) return
   dispatch(setStateText, 'Rendering File List...')
   const { root } = treeParser.parse(treeData, metaData)
   visibleNodesGenerator.setCompress(compressSingletonFolder)
@@ -225,6 +226,7 @@ const updateVisibleNodes = dispatch => () => {
 
 export default {
   init,
+  setUpTree,
   execAfterRender,
   setStateText,
   handleKeyDown,

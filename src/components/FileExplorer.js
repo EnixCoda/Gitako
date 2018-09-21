@@ -37,8 +37,9 @@ export default class FileExplorer extends React.Component {
   }
 
   componentWillMount() {
-    const { init } = this.props
+    const { init, setUpTree, treeData } = this.props
     init()
+    setUpTree(treeData)
   }
 
   componentDidMount() {
@@ -48,8 +49,8 @@ export default class FileExplorer extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.treeData !== this.props.treeData) {
-      const { init } = nextProps
-      init()
+      const { setUpTree } = nextProps
+      setUpTree()
     }
   }
 
