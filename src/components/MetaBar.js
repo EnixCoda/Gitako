@@ -12,6 +12,8 @@ export default function MetaBar({ metaData }) {
       <a className={'repo-name pjax-link'} href={repoUrl}>
         {metaData.repoName}
       </a>
+      &nbsp;/&nbsp;
+      {metaData.branchName}
     </div>
   )
 }
