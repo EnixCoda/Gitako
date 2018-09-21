@@ -211,7 +211,7 @@ const mountExpandingIndicator = dispatch => node => dispatch(({ visibleNodes }) 
   dummyVisibleNodes.nodes.splice(
     dummyVisibleNodes.nodes.indexOf(node) + 1,
     0,
-    { virtual: true, name: 'Loading' },
+    { virtual: true, name: 'Loading', path: '-' },
   )
   return {
     visibleNodes: dummyVisibleNodes
