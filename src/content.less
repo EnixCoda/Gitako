@@ -74,7 +74,7 @@
   top: 5px;
   left: 0;
   transform: translate((@side-bar-base-width - 30px));
-  z-index: 2;
+  z-index: 32;
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -135,7 +135,7 @@
     top: 0;
     left: 0;
     height: 100vh;
-    z-index: 2;
+    z-index: 32; // be more aggressive, against header in guest mode
     min-width: @side-bar-base-width;
     display: flex;
     justify-content: flex-end;
