@@ -137,10 +137,14 @@ const handleKeyDown = dispatch => ({ key }) => dispatch(({ visibleNodes: { nodes
   }
 })
 
-const handleSearchKeyChange = dispatch => async event => {
-  const searchKey = event.target.value
-  await visibleNodesGenerator.search(searchKey)
-  dispatch(updateVisibleNodes)
+const handleSearchKeyChange = dispatch => {
+  let i = 0
+  return async event => {
+    const searchKey = event.target.value
+    const j = i += 1
+    await visibleNodesGenerator.search(searchKey)
+    if (i === j) dispatch(updateVisibleNodes)
+  }
 }
 
 const delayExpandThreshold = 400
