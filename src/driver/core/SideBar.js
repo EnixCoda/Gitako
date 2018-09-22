@@ -62,6 +62,7 @@ const handleError = dispatch => async (err) => {
     const repoPageType = await DOMHelper.getRepoPageType()
     const errorDueToAuth = repoPageType === REPO_TYPE_PRIVATE || err.message === BAD_CREDENTIALS
     dispatch({ errorDueToAuth })
+    dispatch(setShowSettings, true)
     dispatch(setShouldShow, errorDueToAuth)
     if (!errorDueToAuth) {
       dispatch(setError, 'Gitako ate a bug, but it should recovery soon!')
@@ -107,6 +108,8 @@ const setError = dispatch => error => {
 
 const toggleShowSettings = dispatch => () => dispatch(({ showSettings }) => ({ showSettings: !showSettings }))
 
+const setShowSettings = dispatch => showSettings => dispatch({ showSettings })
+
 const onAccessTokenChange = dispatch => accessToken => dispatch({ accessToken })
 
 const onShortcutChange = dispatch => shortcut => dispatch({ toggleShowSideBarShortcut: shortcut })
@@ -120,6 +123,7 @@ export default {
   onPJAXEnd,
   onKeyDown,
   setShouldShow,
+  setShowSettings,
   toggleShowSideBar,
   toggleShowSettings,
   onAccessTokenChange,

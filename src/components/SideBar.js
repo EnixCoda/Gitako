@@ -94,9 +94,10 @@ export default class Gitako extends React.PureComponent {
     return (
       <div className={'gitako-side-bar-content'}>
         {metaData && <MetaBar metaData={metaData} />}
-        {errorDueToAuth && this.renderAccessDeniedError()}
-        {metaData &&
-          <FileExplorer metaData={metaData} treeData={treeData} freeze={showSettings} accessToken={accessToken} compressSingletonFolder={compressSingletonFolder} />
+        {errorDueToAuth
+          ? this.renderAccessDeniedError()
+          : metaData &&
+            <FileExplorer metaData={metaData} treeData={treeData} freeze={showSettings} accessToken={accessToken} compressSingletonFolder={compressSingletonFolder} />
         }
       </div>
     )
