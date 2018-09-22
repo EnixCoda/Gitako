@@ -17,9 +17,8 @@ const init = dispatch => async () => {
       ...metaData,
       branchName: detectedBranchName,
       accessToken,
-    }).catch(err => {
+    }).catch(() => {
       nothingWentWrong = false
-      dispatch(handleError, err)
     })
     const metaDataFromAPI = await GitHubHelper.getRepoMeta({ ...metaData, accessToken })
     const projectDefaultBranchName = metaDataFromAPI['default_branch']
