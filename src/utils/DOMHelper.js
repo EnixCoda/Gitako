@@ -20,6 +20,24 @@ function setBodyIndent(shouldShowGitako) {
   }
 }
 
+function isInCodePage() {
+  const branchListSelector = '.branch-select-menu'
+  const listElement = document.querySelector(branchListSelector)
+  return Boolean(listElement)
+}
+
+function getBranches() {
+  const branchSelector = '.branch-select-menu .select-menu-list > div .select-menu-item-text'
+  const branchElements = Array.from(document.querySelectorAll(branchSelector))
+  return branchElements.map(element => element.innerHTML.trim())
+}
+
+function getCurrentBranch() {
+  const selectedBranchSelector = '.select-menu.branch-select-menu .select-menu-modal .select-menu-list .select-menu-item.selected svg.select-menu-item-icon + span'
+  const selectedBranchElement = document.querySelector(selectedBranchSelector)
+  return selectedBranchElement ? selectedBranchElement.textContent.trim() : null
+}
+
 /**
  * add the logo element into DOM
  * 
@@ -338,4 +356,7 @@ export default {
   scrollToRepoContent,
   mountTopProgressBar,
   unmountTopProgressBar,
+  isInCodePage,
+  getBranches,
+  getCurrentBranch,
 }

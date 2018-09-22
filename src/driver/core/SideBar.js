@@ -12,10 +12,10 @@ const init = dispatch => async () => {
     dispatch(setMetaData, metaData)
     const { access_token: accessToken, shortcut, compressSingletonFolder } = await configHelper.get()
     dispatch({ accessToken, toggleShowSideBarShortcut: shortcut, compressSingletonFolder })
-    const defaultBranchName = 'master'
+    const detectedBranchName = DOMHelper.getCurrentBranch() || 'master'
     let aggressivelyGotTreeData = GitHubHelper.getTreeData({
       ...metaData,
-      branchName: metaData.branchName || defaultBranchName,
+      branchName: detectedBranchName,
       accessToken,
     }).catch(err => {
       nothingWentWrong = false
@@ -25,7 +25,7 @@ const init = dispatch => async () => {
     const projectDefaultBranchName = metaDataFromAPI['default_branch']
     if (!metaData.branchName) {
       // User accessed repo's homepage(no branch name in URL) and we predicted its default branch to be 'master'
-      if (projectDefaultBranchName !== defaultBranchName) {
+      if (projectDefaultBranchName !== detectedBranchName) {
         // And the repo do not use {defaultBranchName} as default branch,
         aggressivelyGotTreeData = GitHubHelper.getTreeData({
           ...metaData,
