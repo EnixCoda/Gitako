@@ -7,6 +7,7 @@ import keyHelper from '../../utils/keyHelper'
 const init = dispatch => async () => {
   try {
     if (!URLHelper.isInRepoPage()) return
+    dispatch({ logoContainerElement: DOMHelper.insertLogoMountPoint() })
     let nothingWentWrong = true
     const metaData = URLHelper.parse()
     dispatch(setMetaData, metaData)
@@ -45,13 +46,8 @@ const init = dispatch => async () => {
       .catch(err => {
         dispatch(handleError, err)
       })
-      .then(() => {
-        dispatch({ logoContainerElement: DOMHelper.insertLogoMountPoint() })
-      })
   } catch (err) {
     dispatch(handleError, err)
-  } finally {
-    dispatch({ logoContainerElement: DOMHelper.insertLogoMountPoint() })
   }
 }
 
