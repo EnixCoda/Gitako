@@ -8,6 +8,10 @@ import { raiseError } from '../analytics'
 
 @connect(GitakoCore)
 export default class Gitako extends React.PureComponent {
+  componentDidMount() {
+    const { init } = this.props
+    init()
+  }
 
   componentDidCatch(error) {
     raiseError(error)

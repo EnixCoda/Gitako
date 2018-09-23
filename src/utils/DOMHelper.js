@@ -268,7 +268,7 @@ const clippy = createClippy()
 
 let currentCodeSnippetElement
 function attachCopySnippet() {
-  const readmeSelector = '.repository-content .readme article'
+  const readmeSelector = '.repository-content #readme article'
   const readmeElement = document.querySelector(readmeSelector)
   if (readmeElement) {
     readmeElement.addEventListener('mouseover', ({ target }) => {
