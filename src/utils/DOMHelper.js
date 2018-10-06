@@ -87,7 +87,7 @@ function scrollToNodeElement(index) {
 
 const pjax = new PJAX({
   elements: '.pjax-link',
-  selectors: ['.repository-content'],
+  selectors: ['.repository-content', 'title'],
   scrollTo: false,
   analytics: false,
   cacheBust: false,
