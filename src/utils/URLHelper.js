@@ -24,7 +24,7 @@ function parse() {
   return parsedData
 }
 
-const RESERVED_NAME = ['blog']
+const RESERVED_NAME = ['blog', 'settings']
 // route types related to determining if sidebar should show
 const TYPES = {
   TREE: 'tree',
