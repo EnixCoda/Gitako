@@ -24,7 +24,11 @@ function parse() {
   return parsedData
 }
 
-const RESERVED_NAME = ['blog', 'settings', 'orgs']
+function isInRepoPage() {
+  const repoHeaderSelector = '.repohead'
+  return Boolean(document.querySelector(repoHeaderSelector))
+}
+
 // route types related to determining if sidebar should show
 const TYPES = {
   TREE: 'tree',
@@ -32,15 +36,6 @@ const TYPES = {
   COMMIT: 'commit',
   // known but not related types: issues, pulls, wiki, insight,
   // TODO: record more types
-}
-
-function isInRepoPage(metaData) {
-  const { userName, repoName } = metaData || parseRaw()
-  return Boolean(
-    userName &&
-    !RESERVED_NAME.find(_ => _ === userName) &&
-    repoName
-  )
 }
 
 function isInCodePage(metaData = {}) {
