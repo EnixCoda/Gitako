@@ -26,6 +26,11 @@ async function getTreeData({ userName, repoName, branchName, accessToken }) {
   return await request(url, { accessToken })
 }
 
+async function getBlobData({ userName, repoName, accessToken, fileSHA }) {
+  const url = `https://api.github.com/repos/${userName}/${repoName}/git/blobs/${fileSHA}`
+  return await request(url, { accessToken })
+}
+
 function getUrlForRedirect({ userName, repoName, branchName }, type = 'blob', path) {
   return `https://github.com/${userName}/${repoName}/${type}/${branchName}/${path}`
 }
@@ -33,5 +38,6 @@ function getUrlForRedirect({ userName, repoName, branchName }, type = 'blob', pa
 export default {
   getRepoMeta,
   getTreeData,
+  getBlobData,
   getUrlForRedirect,
 }

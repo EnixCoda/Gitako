@@ -30,6 +30,16 @@ function setParentNode(root, parent = null) {
   }
 }
 
+function findGitModules(root) {
+  if (root.contents) {
+    const modulesFile = root.contents.find(content => content.name === '.gitmodules')
+    if (modulesFile) {
+      return modulesFile
+    }
+  }
+  return null
+}
+
 function parse(treeData, metaData) {
   const { tree } = treeData
 
@@ -71,7 +81,9 @@ function parse(treeData, metaData) {
   })
 
   setParentNode(root)
+  
   return {
+    gitModules: findGitModules(root),
     root: sortFoldersToFront(root),
   }
 }

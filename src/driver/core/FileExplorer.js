@@ -1,7 +1,9 @@
+import ini from 'ini'
 import DOMHelper from 'utils/DOMHelper'
 import treeParser from 'utils/treeParser'
 import URLHelper from 'utils/URLHelper'
 import VisibleNodesGenerator from 'utils/VisibleNodesGenerator'
+import GitHubHelper from 'utils/GitHubHelper'
 
 function getVisibleParentNode(nodes, focusedNode, depths) {
   const focusedNodeIndex = nodes.indexOf(focusedNode)
@@ -24,10 +26,37 @@ const init = dispatch => () => dispatch(async () => {
   dispatch(setStateText, 'Fetching File List...')
 })
 
-const setUpTree = dispatch => () => dispatch(async (state, { treeData, metaData, compressSingletonFolder }) => {
+function resolveGitModules(root, blobData) {
+  if (blobData) {
+    if (blobData.encoding === 'base64') {
+      const content = atob(blobData.content)
+      const parsed = ini.parse(content)
+      Object.values(parsed).map(value => {
+        const { url, path } = value
+        // for now, handle modules at root only
+        const node = root.contents.find(node => node.path === path)
+        node.url = url
+      })
+    }
+  }
+}
+
+const setUpTree = dispatch => () => dispatch(async (state, { treeData, metaData, compressSingletonFolder, accessToken }) => {
   if (!treeData) return
   dispatch(setStateText, 'Rendering File List...')
-  const { root } = treeParser.parse(treeData, metaData)
+  const { root, gitModules } = treeParser.parse(treeData, metaData)
+
+  if (gitModules) {
+    const blobData = await GitHubHelper.getBlobData({
+      userName: metaData.userName,
+      repoName: metaData.repoName,
+      fileSHA: gitModules.sha,
+      accessToken,
+    })
+
+    resolveGitModules(root, blobData)
+  }
+
   visibleNodesGenerator.setCompress(compressSingletonFolder)
   await visibleNodesGenerator.plantTree(root)
 
@@ -193,16 +222,16 @@ const focusNode = dispatch => (node, skipScroll) => dispatch(({ visibleNodes: { 
   dispatch(updateVisibleNodes)
 })
 
-const onNodeClick = dispatch => (node) => {
+const onNodeClick = dispatch => (node) => dispatch((state, { metaData, accessToken }) => {
   if (node.type === 'tree') {
     dispatch(toggleNodeExpansion, node, true)
   } else if (node.type === 'blob') {
     dispatch(focusNode, node, true)
     DOMHelper.loadWithPJAX(node.url)
   } else if (node.type === 'commit') {
-    DOMHelper.loadWithPJAX(node.parent.url)
+    window.open(node.url, '_blank')
   }
-}
+})
 
 const mountExpandingIndicator = dispatch => node => dispatch(({ visibleNodes }) => {
   const dummyVisibleNodes = {
