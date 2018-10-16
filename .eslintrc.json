@@ -28,11 +28,21 @@
     "babel/object-curly-spacing": 0,
     "babel/quotes": 0,
     "babel/semi": 0,
-    "babel/no-unused-expressions": 1
+    "babel/no-unused-expressions": 1,
+    "import/order": [
+      1,
+      {
+        "groups": ["external", "internal", "builtin", ["parent", "sibling", "index"]],
+        "newlines-between": "never"
+      }
+    ],
+    "babel/no-invalid-this": 0,
+    "no-unused-vars": 0
   },
   "plugins": [
     "babel",
-    "react"
+    "react",
+    "import"
   ],
   "globals": {
     "chrome": true

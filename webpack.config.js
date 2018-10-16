@@ -47,7 +47,7 @@ module.exports = {
     filename: '[name].js',
   },
   resolve: {
-    modules: ['packages', 'node_modules']
+    modules: [srcPath, packagesPath, 'node_modules']
   },
   module: {
     rules: [
