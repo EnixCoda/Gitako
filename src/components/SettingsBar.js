@@ -89,7 +89,7 @@ export default class SettingsBar extends React.PureComponent {
       onAccessTokenChange(accessToken)
       this.setState({
         accessToken: '',
-        accessTokenHint: 'Your token is saved, will work after reloading the page!',
+        accessTokenHint: <span><a href="#" onClick={() => window.location.reload()}>Reload</a> to activate!</span>,
       })
     }
   }
@@ -126,7 +126,7 @@ export default class SettingsBar extends React.PureComponent {
     const { setCompressSingleton } = this.props
     setCompressSingleton(compress)
     this.setState({
-      compressHint: 'Saved, reload page to apply!',
+      compressHint: <span>Saved, <a href="#" onClick={() => window.location.reload()}>reload</a> to apply.</span>,
     })
   }
 
