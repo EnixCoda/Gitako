@@ -1,10 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-
+import Icon from 'components/Icon'
+import configHelper, { config } from 'utils/configHelper'
+import keyHelper from 'utils/keyHelper'
 import { version } from '../../package'
-import Icon from './Icon'
-import configHelper, { config } from '../utils/configHelper'
-import keyHelper from '../utils/keyHelper'
 
 const wikiLinks = {
   compressSingletonFolder: 'https://github.com/EnixCoda/Gitako/wiki/Compress-Singleton-Folder',

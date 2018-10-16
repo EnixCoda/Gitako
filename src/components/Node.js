@@ -1,10 +1,8 @@
 import React from 'react'
-
-import Icon from './Icon'
-
-import cx from '../utils/cx'
-import DOMHelper from '../utils/DOMHelper'
-import LoadingIndicator from './LoadingIndicator';
+import Icon from 'components/Icon'
+import cx from 'utils/cx'
+import DOMHelper from 'utils/DOMHelper'
+import LoadingIndicator from 'components/LoadingIndicator';
 
 function getIconType(node) {
   switch (node.type) {

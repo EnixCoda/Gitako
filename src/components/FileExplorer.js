@@ -1,14 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-
-import connect from '../driver/connect'
-import { FileExplorer as FileExplorerCore } from '../driver/core'
-
-import SearchBar from './SearchBar'
-import Node from './Node'
-import LoadingIndicator from './LoadingIndicator'
-
-import cx from '../utils/cx'
+import connect from 'driver/connect'
+import { FileExplorer as FileExplorerCore } from 'driver/core'
+import SearchBar from 'components/SearchBar'
+import Node from 'components/Node'
+import LoadingIndicator from 'components/LoadingIndicator'
+import cx from 'utils/cx'
 
 @connect(FileExplorerCore)
 export default class FileExplorer extends React.Component {

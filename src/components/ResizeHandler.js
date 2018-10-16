@@ -1,6 +1,5 @@
 import React from 'react'
-
-import Icon from './Icon'
+import Icon from 'components/Icon'
 
 export default class ResizeHandler extends React.PureComponent {
   pointerDown = false

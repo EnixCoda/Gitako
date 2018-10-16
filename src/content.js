@@ -1,9 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-
-import Gitako from './components/Gitako'
-import { addMiddleware } from './driver/connect'
-import { withErrorLog } from './analytics'
+import Gitako from 'components/Gitako'
+import { addMiddleware } from 'driver/connect'
+import { withErrorLog } from 'analytics'
 
 import './content.less'
 

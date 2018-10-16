@@ -1,17 +1,14 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-
-import { SideBar as SideBarCore } from '../driver/core'
-import connect from '../driver/connect'
-
-import FileExplorer from './FileExplorer'
-import ToggleShowButton from './ToggleShowButton'
-import MetaBar from './MetaBar'
-import SettingsBar from './SettingsBar'
-import Portal from './Portal'
-import Resizable from './Resizable'
-
-import cx from '../utils/cx'
+import { SideBar as SideBarCore } from 'driver/core'
+import connect from 'driver/connect'
+import FileExplorer from 'components/FileExplorer'
+import ToggleShowButton from 'components/ToggleShowButton'
+import MetaBar from 'components/MetaBar'
+import SettingsBar from 'components/SettingsBar'
+import Portal from 'components/Portal'
+import Resizable from 'components/Resizable'
+import cx from 'utils/cx'
 
 @connect(SideBarCore)
 export default class Gitako extends React.PureComponent {

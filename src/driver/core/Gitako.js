@@ -1,4 +1,4 @@
-import DOMHelper from '../../utils/DOMHelper'
+import DOMHelper from 'utils/DOMHelper'
 
 const init = dispatch => () => {
   DOMHelper.decorateGitHubPageContent()

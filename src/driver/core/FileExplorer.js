@@ -1,7 +1,7 @@
-import DOMHelper from '../../utils/DOMHelper'
-import treeParser from '../../utils/treeParser'
-import URLHelper from '../../utils/URLHelper'
-import VisibleNodesGenerator from '../../utils/VisibleNodesGenerator'
+import DOMHelper from 'utils/DOMHelper'
+import treeParser from 'utils/treeParser'
+import URLHelper from 'utils/URLHelper'
+import VisibleNodesGenerator from 'utils/VisibleNodesGenerator'
 
 function getVisibleParentNode(nodes, focusedNode, depths) {
   const focusedNodeIndex = nodes.indexOf(focusedNode)

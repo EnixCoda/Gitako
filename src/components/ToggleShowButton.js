@@ -1,7 +1,6 @@
 import React from 'react'
-import Icon from './Icon'
-
-import cx from '../utils/cx'
+import Icon from 'components/Icon'
+import cx from 'utils/cx'
 
 export default function Logo({ error, shouldShow, toggleShowSideBar }) {
   return (

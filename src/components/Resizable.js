@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ResizeHandler from './ResizeHandler'
-import cx from '../utils/cx';
+import ResizeHandler from 'components/ResizeHandler'
+import cx from 'utils/cx';
 
 export default class Resizable extends React.PureComponent {
   static propTypes = {

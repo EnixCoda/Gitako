@@ -1,4 +1,4 @@
-import { raiseError } from '../analytics'
+import { raiseError } from 'analytics'
 export const NOT_FOUND = 'Repo Not Found'
 export const BAD_CREDENTIALS = 'Bad credentials'
 

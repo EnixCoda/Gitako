@@ -1,8 +1,8 @@
-import DOMHelper, { REPO_TYPE_PRIVATE } from '../../utils/DOMHelper'
-import GitHubHelper, { NOT_FOUND, BAD_CREDENTIALS } from '../../utils/GitHubHelper'
-import configHelper from '../../utils/configHelper'
-import URLHelper from '../../utils/URLHelper'
-import keyHelper from '../../utils/keyHelper'
+import DOMHelper, { REPO_TYPE_PRIVATE } from 'utils/DOMHelper'
+import GitHubHelper, { NOT_FOUND, BAD_CREDENTIALS } from 'utils/GitHubHelper'
+import configHelper from 'utils/configHelper'
+import URLHelper from 'utils/URLHelper'
+import keyHelper from 'utils/keyHelper'
 
 const init = dispatch => async () => {
   try {

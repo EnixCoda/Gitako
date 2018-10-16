@@ -1,5 +1,5 @@
-import storageHelper from './storageHelper'
-import { pick } from './general'
+import storageHelper from 'utils/storageHelper'
+import { pick } from 'utils/general'
 
 export const config = {
   shortcut: 'shortcut',

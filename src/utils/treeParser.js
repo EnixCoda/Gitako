@@ -1,4 +1,4 @@
-import GitHubHelper from './GitHubHelper'
+import GitHubHelper from 'utils/GitHubHelper'
 
 const nodeTemplate = {
   name: null,
