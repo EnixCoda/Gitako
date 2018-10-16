@@ -1,5 +1,7 @@
 {
     "compilerOptions": {
+        "jsx": "react",
+        "target": "es2017",
         "experimentalDecorators": true,
         "baseUrl": "./",
         "paths": {
