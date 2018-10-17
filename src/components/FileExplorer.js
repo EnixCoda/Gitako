@@ -82,9 +82,9 @@ export default class FileExplorer extends React.Component {
   }
 
   render() {
-    const { stateText, visibleNodes, freeze, handleKeyDown, handleSearchKeyChange, onNodeClick } = this.props
+    const { stateText, visibleNodes, freeze, handleKeyDown, handleSearchKeyChange, onNodeClick, toggleShowSettings } = this.props
     return (
-      <div className={cx(`file-explorer`, { freeze })} tabIndex={-1} onKeyDown={handleKeyDown}>
+      <div className={cx(`file-explorer`, { freeze })} tabIndex={-1} onKeyDown={handleKeyDown} onClick={ freeze ? toggleShowSettings : null}>
         {
           stateText
           ? <LoadingIndicator text={stateText} />

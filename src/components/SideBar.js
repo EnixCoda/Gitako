@@ -87,14 +87,14 @@ export default class Gitako extends React.PureComponent {
   }
 
   renderContent() {
-    const { errorDueToAuth, metaData, treeData, showSettings, accessToken, compressSingletonFolder } = this.props
+    const { errorDueToAuth, metaData, treeData, showSettings, accessToken, compressSingletonFolder, toggleShowSettings } = this.props
     return (
       <div className={'gitako-side-bar-content'}>
         {metaData && <MetaBar metaData={metaData} />}
         {errorDueToAuth
           ? this.renderAccessDeniedError()
           : metaData &&
-            <FileExplorer metaData={metaData} treeData={treeData} freeze={showSettings} accessToken={accessToken} compressSingletonFolder={compressSingletonFolder} />
+            <FileExplorer toggleShowSettings={toggleShowSettings} metaData={metaData} treeData={treeData} freeze={showSettings} accessToken={accessToken} compressSingletonFolder={compressSingletonFolder} />
         }
       </div>
     )
