@@ -93,7 +93,7 @@ const onKeyDown = dispatch => e => {
 const toggleShowSideBar = dispatch => () => dispatch(({ shouldShow }) => dispatch(setShouldShow, !shouldShow))
 
 const setShouldShow = dispatch => shouldShow => {
-  dispatch({ shouldShow })
+  dispatch({ shouldShow }, shouldShow ? DOMHelper.focusSearchInput : null)
   DOMHelper.setBodyIndent(shouldShow)
 }
 
