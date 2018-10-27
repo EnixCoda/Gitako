@@ -79,23 +79,46 @@ export default class Gitako extends React.PureComponent {
       <div className={'description'}>
         <h5>Access Denied</h5>
         <p>
-          Gitako needs access token with proper scopes (recommended: repo) to access this
-          repository. Please save it in the settings below.
+          Due to{' '}
+          <a target="_blank" href="https://developer.github.com/v3/#rate-limiting">
+            limitation of GitHub
+          </a>{' '}
+          or{' '}
+          <a target="_blank" href="https://developer.github.com/v3/#authentication">
+            auth needs
+          </a>
+          , Gitako needs access token to continue. Please follow the instructions in the settings
+          panel below.
         </p>
       </div>
     )
   }
 
   renderContent() {
-    const { errorDueToAuth, metaData, treeData, showSettings, accessToken, compressSingletonFolder, toggleShowSettings } = this.props
+    const {
+      errorDueToAuth,
+      metaData,
+      treeData,
+      showSettings,
+      accessToken,
+      compressSingletonFolder,
+      toggleShowSettings,
+    } = this.props
     return (
       <div className={'gitako-side-bar-content'}>
         {metaData && <MetaBar metaData={metaData} />}
         {errorDueToAuth
           ? this.renderAccessDeniedError()
-          : metaData &&
-            <FileExplorer toggleShowSettings={toggleShowSettings} metaData={metaData} treeData={treeData} freeze={showSettings} accessToken={accessToken} compressSingletonFolder={compressSingletonFolder} />
-        }
+          : metaData && (
+              <FileExplorer
+                toggleShowSettings={toggleShowSettings}
+                metaData={metaData}
+                treeData={treeData}
+                freeze={showSettings}
+                accessToken={accessToken}
+                compressSingletonFolder={compressSingletonFolder}
+              />
+            )}
       </div>
     )
   }
@@ -119,7 +142,11 @@ export default class Gitako extends React.PureComponent {
     return (
       <div className={'gitako-side-bar'}>
         <Portal into={logoContainerElement}>
-          <ToggleShowButton error={error} shouldShow={shouldShow} toggleShowSideBar={toggleShowSideBar} />
+          <ToggleShowButton
+            error={error}
+            shouldShow={shouldShow}
+            toggleShowSideBar={toggleShowSideBar}
+          />
         </Portal>
         <Resizable className={cx({ hidden: error || !shouldShow })} baseSize={baseSize}>
           <div className={'gitako-side-bar-body'}>
@@ -133,7 +160,7 @@ export default class Gitako extends React.PureComponent {
               compressSingletonFolder={compressSingletonFolder}
               toggleShowSideBarShortcut={toggleShowSideBarShortcut}
               setCompressSingleton={setCompressSingleton}
-              />
+            />
           </div>
         </Resizable>
       </div>

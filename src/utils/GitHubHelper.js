@@ -1,6 +1,11 @@
 import { raiseError } from 'analytics'
 export const NOT_FOUND = 'Repo Not Found'
 export const BAD_CREDENTIALS = 'Bad credentials'
+export const API_RATE_LIMIT = `API rate limit`
+
+function apiRateLimitExceeded(content) {
+  return content && content['documentation_url'] === 'https://developer.github.com/v3/#rate-limiting'
+}
 
 async function request(url, { accessToken } = {}) {
   const headers = {}
@@ -11,9 +16,12 @@ async function request(url, { accessToken } = {}) {
   if (res.status === 200) return res.json()
   // for private repo, GitHub api also responses with 404 when unauthorized
   else if (res.status === 404) throw new Error(NOT_FOUND)
-  else if (!res.ok) raiseError(new Error(`Got ${res.statusText} when requesting ${url}`))
-  const content = await res.json()
-  throw new Error(content && content.message)
+  else {
+    const content = await res.json()
+    if (apiRateLimitExceeded(content)) throw new Error(API_RATE_LIMIT)
+    else if (!res.ok) raiseError(new Error(`Got ${res.statusText} when requesting ${url}`))
+    throw new Error(content && content.message)
+  }
 }
 
 async function getRepoMeta({ userName, repoName, accessToken }) {

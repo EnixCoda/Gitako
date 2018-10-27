@@ -1,5 +1,5 @@
 import DOMHelper, { REPO_TYPE_PRIVATE } from 'utils/DOMHelper'
-import GitHubHelper, { NOT_FOUND, BAD_CREDENTIALS } from 'utils/GitHubHelper'
+import GitHubHelper, { NOT_FOUND, BAD_CREDENTIALS, API_RATE_LIMIT } from 'utils/GitHubHelper'
 import configHelper from 'utils/configHelper'
 import URLHelper from 'utils/URLHelper'
 import keyHelper from 'utils/keyHelper'
@@ -53,9 +53,9 @@ const init = dispatch => async () => {
 
 const handleError = dispatch => async (err) => {
   // TODO: detect request time exceeds limit
-  if (err.message === NOT_FOUND || err.message === BAD_CREDENTIALS) {
+  if (err.message === NOT_FOUND || err.message === BAD_CREDENTIALS || err.message === API_RATE_LIMIT ) {
     const repoPageType = await DOMHelper.getRepoPageType()
-    const errorDueToAuth = repoPageType === REPO_TYPE_PRIVATE || err.message === BAD_CREDENTIALS
+    const errorDueToAuth = repoPageType === REPO_TYPE_PRIVATE || err.message === BAD_CREDENTIALS || err.message === API_RATE_LIMIT
     dispatch({ errorDueToAuth })
     dispatch(setShowSettings, true)
     dispatch(setShouldShow, errorDueToAuth)

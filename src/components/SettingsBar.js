@@ -89,7 +89,14 @@ export default class SettingsBar extends React.PureComponent {
       onAccessTokenChange(accessToken)
       this.setState({
         accessToken: '',
-        accessTokenHint: <span><a href="#" onClick={() => window.location.reload()}>Reload</a> to activate!</span>,
+        accessTokenHint: (
+          <span>
+            <a href="#" onClick={() => window.location.reload()}>
+              Reload
+            </a>{' '}
+            to activate!
+          </span>
+        ),
       })
     }
   }
@@ -126,37 +133,43 @@ export default class SettingsBar extends React.PureComponent {
     const { setCompressSingleton } = this.props
     setCompressSingleton(compress)
     this.setState({
-      compressHint: <span>Saved, <a href="#" onClick={() => window.location.reload()}>reload</a> to apply.</span>,
+      compressHint: (
+        <span>
+          Saved,{' '}
+          <a href="#" onClick={() => window.location.reload()}>
+            reload
+          </a>{' '}
+          to apply.
+        </span>
+      ),
     })
   }
 
   render() {
-    const { accessTokenHint, toggleShowSideBarShortcut, compressSingletonFolder, shortcutHint, accessToken, compressHint } = this.state
+    const {
+      accessTokenHint,
+      toggleShowSideBarShortcut,
+      compressSingletonFolder,
+      shortcutHint,
+      accessToken,
+      compressHint,
+    } = this.state
     const { toggleShowSettings, activated, accessToken: hasAccessToken } = this.props
     return (
       <div className={'gitako-settings-bar'}>
         {activated && (
           <React.Fragment>
-            <h3 className={'gitako-settings-bar-title'}>
-              Settings
-            </h3>
+            <h3 className={'gitako-settings-bar-title'}>Settings</h3>
             <div className={'gitako-settings-bar-content'}>
               <div className={'shadow-shelter'} />
               <div className={'gitako-settings-bar-content-section access-token'}>
                 <h4>Access Token</h4>
-                <span>With access token provided, Gitako can access more repositories.</span>
-                <br />
-                <a href="https://github.com/blog/1509-personal-api-tokens" target="_blank">
-                  Help: how to create access token?
+                <a
+                  href="https://github.com/EnixCoda/Gitako/wiki/How-to-create-access-token-for-Gitako%3F"
+                  target="_blank"
+                >
+                  Why & how to create it?
                 </a>
-                <br />
-                <span>
-                  Gitako stores the token in&nbsp;
-                  <a href="https://developer.chrome.com/apps/storage" target="_blank">
-                    chrome local storage
-                  </a>
-                  &nbsp;locally and safely.
-                </span>
                 <br />
                 <div className={'access-token-input-control'}>
                   <input
@@ -199,10 +212,18 @@ export default class SettingsBar extends React.PureComponent {
               <div className={'gitako-settings-bar-content-section singleton'}>
                 <h4>
                   Compress singleton folder&nbsp;
-                  <a href={wikiLinks.compressSingletonFolder} target={'_blank'}>(?)</a>
+                  <a href={wikiLinks.compressSingletonFolder} target={'_blank'}>
+                    (?)
+                  </a>
                 </h4>
                 <label htmlFor={'compress-singleton-folder'}>
-                  <input id={'compress-singleton-folder'} name={'compress-singleton-folder'} type={'checkbox'} onChange={this.setCompressSingletonFolder} checked={compressSingletonFolder} />
+                  <input
+                    id={'compress-singleton-folder'}
+                    name={'compress-singleton-folder'}
+                    type={'checkbox'}
+                    onChange={this.setCompressSingletonFolder}
+                    checked={compressSingletonFolder}
+                  />
                   &nbsp; {compressSingletonFolder ? 'enabled' : 'disabled'}
                 </label>
                 {compressHint && <div className={'hint'}>{compressHint}</div>}
@@ -220,7 +241,12 @@ export default class SettingsBar extends React.PureComponent {
           </React.Fragment>
         )}
         <div className={'placeholder-row'}>
-          <a className={'version'} href={wikiLinks.changeLog} target={'_blank'} title={'Check out new features!'}>
+          <a
+            className={'version'}
+            href={wikiLinks.changeLog}
+            target={'_blank'}
+            title={'Check out new features!'}
+          >
             v{version}
           </a>
           {activated ? (
@@ -230,11 +256,7 @@ export default class SettingsBar extends React.PureComponent {
               onClick={toggleShowSettings}
             />
           ) : (
-            <Icon
-              type={'gear'}
-              className={'show-settings-icon'}
-              onClick={toggleShowSettings}
-            />
+            <Icon type={'gear'} className={'show-settings-icon'} onClick={toggleShowSettings} />
           )}
         </div>
       </div>
