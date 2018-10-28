@@ -8,6 +8,8 @@ import { version } from '../../package'
 const wikiLinks = {
   compressSingletonFolder: 'https://github.com/EnixCoda/Gitako/wiki/Compress-Singleton-Folder',
   changeLog: 'https://github.com/EnixCoda/Gitako/wiki/Change-Log',
+  copyFileButton: 'https://github.com/EnixCoda/Gitako/wiki/Copy-file-and-snippet',
+  copySnippet: 'https://github.com/EnixCoda/Gitako/wiki/Copy-file-and-snippet',
 }
 
 const ACCESS_TOKEN_REGEXP = /^[0-9a-f]{40}$/
@@ -65,12 +67,12 @@ export default class SettingsBar extends React.PureComponent {
   }
 
   componentWillMount() {
-    const { toggleShowSideBarShortcut, compressSingletonFolder } = this.props
-    this.setState({ toggleShowSideBarShortcut, compressSingletonFolder })
+    const { toggleShowSideBarShortcut, compressSingletonFolder, copyFileButton, copySnippetButton } = this.props
+    this.setState({ toggleShowSideBarShortcut, compressSingletonFolder, copyFileButton, copySnippetButton })
   }
 
-  componentWillReceiveProps({ toggleShowSideBarShortcut, compressSingletonFolder }) {
-    this.setState({ toggleShowSideBarShortcut, compressSingletonFolder })
+  componentWillReceiveProps({ toggleShowSideBarShortcut, compressSingletonFolder, copyFileButton, copySnippetButton }) {
+    this.setState({ toggleShowSideBarShortcut, compressSingletonFolder, copyFileButton, copySnippetButton })
   }
 
   onInputAccessToken = event => {
@@ -145,11 +147,27 @@ export default class SettingsBar extends React.PureComponent {
     })
   }
 
+  setCopyFile = async e => {
+    const enabled = e.target.checked
+    await configHelper.setOne(config.copyFileButton, enabled)
+    const { setCopyFile } = this.props
+    setCopyFile(enabled)
+  }
+
+  setCopySnippet = async e => {
+    const enabled = e.target.checked
+    await configHelper.setOne(config.copySnippetButton, enabled)
+    const { setCopySnippet } = this.props
+    setCopySnippet(enabled)
+  }
+
   render() {
     const {
       accessTokenHint,
       toggleShowSideBarShortcut,
       compressSingletonFolder,
+      copyFileButton,
+      copySnippetButton,
       shortcutHint,
       accessToken,
       compressHint,
@@ -227,6 +245,42 @@ export default class SettingsBar extends React.PureComponent {
                   &nbsp; {compressSingletonFolder ? 'enabled' : 'disabled'}
                 </label>
                 {compressHint && <div className={'hint'}>{compressHint}</div>}
+              </div>
+              <div className={'gitako-settings-bar-content-section copy-file'}>
+                <h4>
+                  Copy File&nbsp;
+                  <a href={wikiLinks.copyFileButton} target={'_blank'}>
+                    (?)
+                  </a>
+                </h4>
+                <label htmlFor={'copy-file'}>
+                  <input
+                    id={'copy-file'}
+                    name={'copy-file'}
+                    type={'checkbox'}
+                    onChange={this.setCopyFile}
+                    checked={copyFileButton}
+                  />
+                  &nbsp; {copyFileButton ? 'enabled' : 'disabled'}
+                </label>
+              </div>
+              <div className={'gitako-settings-bar-content-section copy-snippet'}>
+                <h4>
+                  Copy Snippet&nbsp;
+                  <a href={wikiLinks.copySnippet} target={'_blank'}>
+                    (?)
+                  </a>
+                </h4>
+                <label htmlFor={'copy-snippet'}>
+                  <input
+                    id={'copy-snippet'}
+                    name={'copy-snippet'}
+                    type={'checkbox'}
+                    onChange={this.setCopySnippet}
+                    checked={copySnippetButton}
+                  />
+                  &nbsp; {copySnippetButton ? 'enabled' : 'disabled'}
+                </label>
               </div>
               <div className={'gitako-settings-bar-content-section issue'}>
                 <h4>Issue</h4>

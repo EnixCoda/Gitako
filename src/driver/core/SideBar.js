@@ -11,8 +11,9 @@ const init = dispatch => async () => {
     let nothingWentWrong = true
     const metaData = URLHelper.parse()
     dispatch(setMetaData, metaData)
-    const { access_token: accessToken, shortcut, compressSingletonFolder } = await configHelper.get()
-    dispatch({ accessToken, toggleShowSideBarShortcut: shortcut, compressSingletonFolder })
+    const { access_token: accessToken, shortcut, compressSingletonFolder, copyFileButton, copySnippetButton } = await configHelper.get()
+    DOMHelper.decorateGitHubPageContent({ copyFileButton, copySnippetButton })
+    dispatch({ accessToken, toggleShowSideBarShortcut: shortcut, compressSingletonFolder, copyFileButton, copySnippetButton })
     const detectedBranchName = DOMHelper.getCurrentBranch() || 'master'
     let aggressivelyGotTreeData = GitHubHelper.getTreeData({
       ...metaData,
@@ -69,9 +70,9 @@ const handleError = dispatch => async (err) => {
 }
 
 const onPJAXEnd = dispatch => () => {
-  dispatch(({ metaData }) => {
+  dispatch(({ metaData, copyFileButton, copySnippetButton }) => {
     DOMHelper.unmountTopProgressBar()
-    DOMHelper.decorateGitHubPageContent()
+    DOMHelper.decorateGitHubPageContent({ copyFileButton, copySnippetButton })
     DOMHelper.focusSearchInput()
     const mergedMetaData = { ...metaData, ...URLHelper.parse() }
     dispatch(setShouldShow, URLHelper.isInCodePage(mergedMetaData))
@@ -113,6 +114,10 @@ const setMetaData = dispatch => metaData => dispatch({ metaData })
 
 const setCompressSingleton = dispatch => compressSingletonFolder => dispatch({ compressSingletonFolder })
 
+const setCopyFile = dispatch => copyFileButton => dispatch({ copyFileButton })
+
+const setCopySnippet = dispatch => copySnippetButton => dispatch({ copySnippetButton })
+
 export default {
   init,
   onPJAXEnd,
@@ -125,6 +130,8 @@ export default {
   onShortcutChange,
   setMetaData,
   setCompressSingleton,
+  setCopyFile,
+  setCopySnippet,
   setError,
   handleError,
 }

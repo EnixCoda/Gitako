@@ -327,9 +327,9 @@ function clickOnNodeElement(index = 0) {
 /**
  * a combination of few above functions
  */
-function decorateGitHubPageContent() {
-  attachCopyFileBtn()
-  attachCopySnippet()
+function decorateGitHubPageContent({ copyFileButton, copySnippetButton }) {
+  if (copyFileButton) attachCopyFileBtn()
+  if (copySnippetButton) attachCopySnippet()
 }
 
 function mountTopProgressBar() {

@@ -5,6 +5,8 @@ export const config = {
   shortcut: 'shortcut',
   accessToken: 'access_token',
   compressSingletonFolder: 'compressSingletonFolder',
+  copyFileButton: 'copyFileButton',
+  copySnippetButton: 'copySnippetButton',
 }
 
 const configKeys = Object.values(config)

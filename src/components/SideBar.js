@@ -131,6 +131,8 @@ export default class Gitako extends React.PureComponent {
       showSettings,
       accessToken,
       compressSingletonFolder,
+      copyFileButton,
+      copySnippetButton,
       toggleShowSideBarShortcut,
       logoContainerElement,
       toggleShowSideBar,
@@ -138,6 +140,8 @@ export default class Gitako extends React.PureComponent {
       onShortcutChange,
       onAccessTokenChange,
       setCompressSingleton,
+      setCopyFile,
+      setCopySnippet,
     } = this.props
     return (
       <div className={'gitako-side-bar'}>
@@ -158,8 +162,12 @@ export default class Gitako extends React.PureComponent {
               activated={showSettings}
               accessToken={accessToken}
               compressSingletonFolder={compressSingletonFolder}
+              copyFileButton={copyFileButton}
+              copySnippetButton={copySnippetButton}
               toggleShowSideBarShortcut={toggleShowSideBarShortcut}
               setCompressSingleton={setCompressSingleton}
+              setCopyFile={setCopyFile}
+              setCopySnippet={setCopySnippet}
             />
           </div>
         </Resizable>
