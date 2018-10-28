@@ -227,7 +227,7 @@ export default class SettingsBar extends React.PureComponent {
                 {accessTokenHint && <span className={'hint'}>{accessTokenHint}</span>}
               </div>
               <div className={'gitako-settings-bar-content-section toggle-shortcut'}>
-                <h4>Toggle shortcut</h4>
+                <h4>Toggle Shortcut</h4>
                 <span>Set a combination of keys for toggling Gitako sidebar.</span>
                 <br />
                 <div className={'toggle-shortcut-input-control'}>
@@ -267,13 +267,10 @@ export default class SettingsBar extends React.PureComponent {
                 {reloadHint && <div className={'hint'}>{reloadHint}</div>}
               </div>
               <div className={'gitako-settings-bar-content-section issue'}>
-                <h4>Issue</h4>
-                <span>
-                  <a href="https://github.com/EnixCoda/Gitako/issues" target="_blank">
-                    Draft a issue on Github
-                  </a>
-                  &nbsp;for bug report or feature request.
-                </span>
+                <h4>Contact</h4>
+                <a href="https://github.com/EnixCoda/Gitako/issues" target="_blank">
+                  Bug report / feature request.
+                </a>
               </div>
             </div>
           </React.Fragment>
