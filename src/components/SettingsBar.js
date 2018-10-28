@@ -63,7 +63,30 @@ export default class SettingsBar extends React.PureComponent {
     accessTokenHint: '',
     shortcutHint: '',
     toggleShowSideBarShortcut: '',
-    compressHint: '',
+    reloadHint: '',
+    moreOptions: [
+      {
+        key: 'compress-singleton',
+        label: 'Compress singleton folder',
+        onChange: this.createOnChange(config.compressSingletonFolder, this.props.setCompressSingleton),
+        getValue: () => this.props.compressSingletonFolder,
+        wikiLink: wikiLinks.compressSingletonFolder,
+      },
+      {
+        key: 'copy-file',
+        label: 'Copy File',
+        onChange: this.createOnChange(config.copyFileButton, this.props.setCopyFile),
+        getValue: () => this.props.copyFileButton,
+        wikiLink: wikiLinks.copyFileButton,
+      },
+      {
+        key: 'copy-snippet',
+        label: 'Copy Snippet',
+        onChange: this.createOnChange(config.copySnippetButton, this.props.setCopySnippet),
+        getValue: () => this.props.copySnippetButton,
+        wikiLink: wikiLinks.copySnippet,
+      },
+    ]
   }
 
   componentWillMount() {
@@ -129,13 +152,9 @@ export default class SettingsBar extends React.PureComponent {
     this.setState({ toggleShowSideBarShortcut: shortcut })
   }
 
-  setCompressSingletonFolder = async e => {
-    const compress = e.target.checked
-    await configHelper.setOne(config.compressSingletonFolder, compress)
-    const { setCompressSingleton } = this.props
-    setCompressSingleton(compress)
+  setReloadHint = () => {
     this.setState({
-      compressHint: (
+      reloadHint: (
         <span>
           Saved,{' '}
           <a href="#" onClick={() => window.location.reload()}>
@@ -147,30 +166,24 @@ export default class SettingsBar extends React.PureComponent {
     })
   }
 
-  setCopyFile = async e => {
-    const enabled = e.target.checked
-    await configHelper.setOne(config.copyFileButton, enabled)
-    const { setCopyFile } = this.props
-    setCopyFile(enabled)
-  }
-
-  setCopySnippet = async e => {
-    const enabled = e.target.checked
-    await configHelper.setOne(config.copySnippetButton, enabled)
-    const { setCopySnippet } = this.props
-    setCopySnippet(enabled)
+  // writing this method as arrow function would be more verbose
+  createOnChange(configKey, set ) {
+    return async e => {
+      const enabled = e.target.checked
+      await configHelper.setOne(configKey, enabled)
+      set(enabled)
+      this.setReloadHint()
+    }
   }
 
   render() {
     const {
       accessTokenHint,
       toggleShowSideBarShortcut,
-      compressSingletonFolder,
-      copyFileButton,
-      copySnippetButton,
       shortcutHint,
       accessToken,
-      compressHint,
+      reloadHint,
+      moreOptions,
     } = this.state
     const { toggleShowSettings, activated, accessToken: hasAccessToken } = this.props
     return (
@@ -227,60 +240,27 @@ export default class SettingsBar extends React.PureComponent {
                 </div>
                 {shortcutHint && <span className={'hint'}>{shortcutHint}</span>}
               </div>
-              <div className={'gitako-settings-bar-content-section singleton'}>
-                <h4>
-                  Compress singleton folder&nbsp;
-                  <a href={wikiLinks.compressSingletonFolder} target={'_blank'}>
-                    (?)
-                  </a>
-                </h4>
-                <label htmlFor={'compress-singleton-folder'}>
-                  <input
-                    id={'compress-singleton-folder'}
-                    name={'compress-singleton-folder'}
-                    type={'checkbox'}
-                    onChange={this.setCompressSingletonFolder}
-                    checked={compressSingletonFolder}
-                  />
-                  &nbsp; {compressSingletonFolder ? 'enabled' : 'disabled'}
-                </label>
-                {compressHint && <div className={'hint'}>{compressHint}</div>}
-              </div>
-              <div className={'gitako-settings-bar-content-section copy-file'}>
-                <h4>
-                  Copy File&nbsp;
-                  <a href={wikiLinks.copyFileButton} target={'_blank'}>
-                    (?)
-                  </a>
-                </h4>
-                <label htmlFor={'copy-file'}>
-                  <input
-                    id={'copy-file'}
-                    name={'copy-file'}
-                    type={'checkbox'}
-                    onChange={this.setCopyFile}
-                    checked={copyFileButton}
-                  />
-                  &nbsp; {copyFileButton ? 'enabled' : 'disabled'}
-                </label>
-              </div>
-              <div className={'gitako-settings-bar-content-section copy-snippet'}>
-                <h4>
-                  Copy Snippet&nbsp;
-                  <a href={wikiLinks.copySnippet} target={'_blank'}>
-                    (?)
-                  </a>
-                </h4>
-                <label htmlFor={'copy-snippet'}>
-                  <input
-                    id={'copy-snippet'}
-                    name={'copy-snippet'}
-                    type={'checkbox'}
-                    onChange={this.setCopySnippet}
-                    checked={copySnippetButton}
-                  />
-                  &nbsp; {copySnippetButton ? 'enabled' : 'disabled'}
-                </label>
+              <div className={'gitako-settings-bar-content-section others'}>
+                <h4>More Options</h4>
+                {moreOptions.map(option => (
+                  <React.Fragment>
+                    <label key={option.key} htmlFor={option.key}>
+                      <input
+                        id={option.key}
+                        name={option.key}
+                        type={'checkbox'}
+                        onChange={option.onChange}
+                        checked={option.getValue()}
+                      />
+                      &nbsp;{option.label}&nbsp;
+                      <a href={option.wikiLink} target={'_blank'}>
+                        (?)
+                      </a>
+                    </label>
+                    <br />
+                  </React.Fragment>
+                ))}
+                {reloadHint && <div className={'hint'}>{reloadHint}</div>}
               </div>
               <div className={'gitako-settings-bar-content-section issue'}>
                 <h4>Issue</h4>
