@@ -15,6 +15,11 @@
   @media (min-width: @width-with-gitako) {
     margin-left: 0;
   }
+
+  .Header > div {
+    width: 1012px;
+    margin: 0 auto;
+  }
 }
 
 .markdown-body {
@@ -74,22 +79,25 @@
   top: 5px;
   left: 0;
   transform: translate((@side-bar-base-width - 30px));
-  z-index: 2;
+  z-index: 32;
   display: inline-flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  width: 30px;
+  min-width: 30px;
   height: 30px;
   will-change: transform;
   border: 1px solid transparent;
+  transition: all @animation-duration ease;
 
-  @media screen and (max-width: @width-with-gitako) {
-    transition: all @animation-duration ease;
-  }
   @media screen and (min-width: @width-with-gitako) {
-    transition: border-color, border-radius, background @animation-duration ease;
     transform: translate(~'calc(50vw - (' @github-content-width ~') / 2 - 30px)');
+  }
+
+  &:hover {
+    .error-message {
+      display: inline;
+    }
   }
 
   &.collapsed {
@@ -106,262 +114,319 @@
     }
   }
 
+  &.error {
+    .action-icon {
+      color: #cb2431;
+    }
+  }
+
   .action-icon {
     color: #666666;
     width: 16px;
     height: 20px;
+    margin: 5px 6px;
     transition: all @animation-duration ease;
+  }
+
+  .error-message {
+    display: none;
+    margin: 0 4px;
   }
 }
 
-.@{name} {
+.@{name}-side-bar {
   .@{name}-position-wrapper {
     position: fixed;
     top: 0;
     left: 0;
     height: 100vh;
-    z-index: 2;
+    z-index: 32; // be more aggressive, against header in guest mode
     min-width: @side-bar-base-width;
+    display: flex;
+    justify-content: flex-end;
     @media screen and (min-width: @min-screen-width) {
       width: ~'calc((100vw - ' @github-content-width ~') / 2)';
     }
 
-    .@{name}-resize-handler {
-      @resize-handler-width: 16px;
-      @side-bar-and-handler-width: (@min-screen-width + @resize-handler-width);
-      position: absolute;
-      top: 0;
-      display: none;
-      width: @resize-handler-width;
-      height: 100vh;
-      background: #fafbfc;
-      cursor: ew-resize;
-      user-select: none;
-      border-left: 1px solid #e1e4e8;
-
-      @media screen and (min-width: @min-screen-width) {
-        display: flex;
-        align-items: center;
-      }
-
-      .grabber-icon {
-        transform: rotate(90deg);
-        width: 12px;
-      }
+    &.hidden {
+      .hidden;
     }
-    .@{name}-side-bar {
-      position: absolute;
-      right: 0;
-      width: @side-bar-base-width;
+
+    .gitako-position-content {
       max-width: 100%;
-      height: 100%;
+    }
+  }
+  .@{name}-resize-handler {
+    @resize-handler-width: 16px;
+    @side-bar-and-handler-width: (@min-screen-width + @resize-handler-width);
+    display: none;
+    width: @resize-handler-width;
+    background: #fafbfc;
+    cursor: ew-resize;
+    user-select: none;
+    border-left: 1px solid #e1e4e8;
+
+    @media screen and (min-width: (@min-screen-width + @side-bar-base-width + @resize-handler-width * 2)) {
       display: flex;
+      align-items: center;
+    }
+
+    .grabber-icon {
+      transform: rotate(90deg);
+      width: 12px;
+    }
+  }
+  .@{name}-side-bar-body {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: #fafbfc;
+    border-right: 1px solid #e1e4e8;
+    border-left: 1px solid #e1e4e8;
+    overflow: hidden;
+
+    &.hidden {
+      .hidden;
+    }
+
+    .octicon {
+      transition: 0.3s ease;
+      color: rgba(3, 47, 98, 0.55);
+      vertical-align: initial;
+    }
+
+    .octicon-wrapper {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .octicon-color {
+      color: rgba(3, 47, 98, 0.55);
+    }
+
+    .@{name}-side-bar-content {
+      display: flex;
+      flex: 1;
       flex-direction: column;
-      background: #fafbfc;
-      border-right: 1px solid #e1e4e8;
-      overflow: hidden;
-      will-change: transform;
-      border-left: 1px solid #e1e4e8;
 
-      &.hidden {
-        .hidden;
+      .meta-bar {
+        position: relative;
+        padding: 10px;
+        padding-right: 30px;
+        font-size: 13px;
+        line-height: 20px;
+        color: #586069;
+        background-color: #f1f8ff;
+        border-bottom: 1px solid #c8e1ff;
+
+        a {
+          // fix a weird bug:
+          // when gitako failed loading repo, cursor hovering <a> in meta bar will be 'text'
+          cursor: pointer;
+        }
+
+        .repo-name {
+          font-weight: bolder;
+        }
       }
 
-      .octicon {
-        transition: 0.3s ease;
-        color: rgba(3, 47, 98, 0.55);
-        vertical-align: initial;
+      .description {
+        padding: 4px 10px;
       }
 
-      .octicon-wrapper {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        text-align: center;
-        vertical-align: middle;
-      }
-
-      .octicon-color {
-        color: rgba(3, 47, 98, 0.55);
-      }
-
-      .@{name}-side-bar-content {
+      .loading-indicator-container {
+        width: 100%;
+        height: 100%;
         display: flex;
-        flex: 1;
-        flex-direction: column;
+        justify-content: center;
+        align-items: center;
 
-        .meta-bar {
-          position: relative;
-          padding: 10px;
-          padding-right: 30px;
-          font-size: 13px;
-          line-height: 20px;
-          color: #586069;
-          background-color: #f1f8ff;
-          border-bottom: 1px solid #c8e1ff;
-
-          a {
-            // fix a weird bug:
-            // when gitako failed loading repo, cursor hovering <a> in meta bar will be 'text'
-            cursor: pointer;
-          }
-
-          .repo-name {
-            font-weight: bolder;
-          }
-        }
-
-        .description {
-          padding: 4px 10px;
-        }
-
-        .file-explorer {
-          width: 100%;
-          height: 100%;
-          outline: none;
+        .loading-indicator {
           display: flex;
-          flex-direction: column;
-          flex-wrap: nowrap;
-          &.freeze {
-            filter: blur(1.5px) opacity(0.6) grayscale(0.9);
-            pointer-events: none;
-          }
+          align-items: center;
+        }
 
-          /* search input */
-          .search-input-wrapper {
-            input[type='text'].form-control {
-              box-shadow: none;
-              width: 100%;
-            }
-          }
-
-          .no-results {
-            padding: 0px 10px;
-            color: #666;
-          }
-
-          .files {
-            flex: 1;
-            overflow: auto;
-          }
-
-          .node-item-row {
-            background: #fff;
-            &:hover {
-              background: #f6f8fa;
-            }
-            &.focused {
-              background: #f0f0f6;
-            }
-
-            .node-item {
-              word-wrap: normal;
-              word-break: break-all;
-              margin: 0;
-              color: #0366d6;
-              line-height: 20px;
-              padding: 6px 0;
-              cursor: pointer;
-              border-top: 1px solid #eaecef;
-              transition: all 0.5s ease;
-
-              // folder icon rotate when expand
-              &.expanded .octicon.octicon-triangle-right {
-                transform: rotate(90deg);
-              }
-
-              .node-item-name {
-                padding-left: 6px;
-                vertical-align: middle;
-              }
-
-              .node-item:hover .node-item-name {
-                text-decoration: underline;
-              }
-            }
-          }
+        .loading-indicator-icon {
+          width: 20px;
+          height: 20px;
+          animation: rotate 2s infinite linear;
         }
       }
 
-      .@{name}-settings-bar {
-        z-index: 2;
-        background: #fafbfc;
+      .file-explorer {
+        width: 100%;
+        height: 100%;
+        outline: none;
         display: flex;
         flex-direction: column;
-        &-title {
-          border-top: 1px solid #eaecef;
-          padding: 6px 10px;
-          box-shadow: 0 1px 8px 0 rgba(0,0,0,.2), 0 3px 4px 0 rgba(0,0,0,.14), 0 3px 3px -2px rgba(0,0,0,.12);
-          z-index: 1;
+        flex-wrap: nowrap;
+        &.freeze {
+          filter: blur(1.5px) opacity(0.6) grayscale(0.9);
+          cursor: pointer;
+
+          > * {
+            pointer-events: none;
+            user-select: none;
+          }
         }
-        &-content {
-          padding: 0 10px;
+
+        /* search input */
+        .search-input-wrapper {
+          input[type='text'].form-control {
+            box-shadow: none;
+            width: 100%;
+          }
+        }
+
+        .no-results {
+          padding: 0px 10px;
+          color: #666;
+        }
+
+        .files {
           flex: 1;
           overflow: auto;
-          position: relative;
-          
-          .shadow-shelter {
-            position: absolute;
-            width: 100%;
-            height: 6px;
-            left: 0;
-            background: #fafbfc;
-            z-index: 1;
-          }
-          &-section {
-            padding-bottom: 10px;
-          }
         }
-        .access-token {
-          border-bottom: none; // prevent overwrite by github style
-          .hint {
-            color: #6a737d;
-          }
-        }
-        .access-token-input-control {
-          display: flex;
-          margin-top: 8px;
-          .access-token-input {
-            flex: 1;
-            box-shadow: none;
 
-            &:disabled {
-              cursor: not-allowed;
+        .node-item-row {
+          background: #fff;
+          &:hover {
+            background: #f6f8fa;
+          }
+          &.focused {
+            background: #f0f0f6;
+          }
+
+          .node-item {
+            word-wrap: normal;
+            word-break: break-all;
+            margin: 0;
+            color: #0366d6;
+            line-height: 20px;
+            padding: 6px 0;
+            cursor: pointer;
+            border-top: 1px solid #eaecef;
+            transition: all 0.5s ease;
+
+            // folder icon rotate when expand
+            &.expanded .octicon.octicon-triangle-right {
+              transform: rotate(90deg);
             }
-          }
-        }
-        .toggle-shortcut {
-          .hint {
-            color: #6a737d;
-          }
-        }
-        .toggle-shortcut-input-control {
-          display: flex;
-          margin-top: 8px;
-          .toggle-shortcut-input {
-            flex: 1;
-            box-shadow: none;
-          }
-        }
-        .placeholder-row {
-          display: flex;
-          justify-content: flex-end;
-          align-items: center;
-          padding: 6px 10px;
-          border-top: 1px solid #eaecef;
 
-          .show-settings-icon {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-          }
-          .hide-settings-icon {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
+            .node-item-name {
+              padding-left: 6px;
+              vertical-align: middle;
+            }
+
+            .node-item:hover .node-item-name {
+              text-decoration: underline;
+            }
           }
         }
       }
     }
+
+    .@{name}-settings-bar {
+      z-index: 2;
+      background: #fafbfc;
+      display: flex;
+      flex-direction: column;
+      &-title {
+        border-top: 1px solid #eaecef;
+        padding: 6px 10px;
+        box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.2), 0 3px 4px 0 rgba(0, 0, 0, 0.14),
+          0 3px 3px -2px rgba(0, 0, 0, 0.12);
+        z-index: 1;
+      }
+      &-content {
+        padding: 0 10px;
+        flex: 1;
+        overflow: auto;
+        position: relative;
+
+        .shadow-shelter {
+          position: absolute;
+          width: 100%;
+          height: 6px;
+          left: 0;
+          background: #fafbfc;
+          z-index: 1;
+        }
+        &-section {
+          padding-bottom: 10px;
+        }
+      }
+      .access-token {
+        border-bottom: none; // prevent overwrite by github style
+        .hint {
+          color: #6a737d;
+        }
+      }
+      .access-token-input-control {
+        display: flex;
+        margin-top: 8px;
+        .access-token-input {
+          flex: 1;
+          box-shadow: none;
+
+          &:disabled {
+            cursor: not-allowed;
+          }
+        }
+      }
+      .toggle-shortcut {
+        .hint {
+          color: #6a737d;
+        }
+      }
+      .toggle-shortcut-input-control {
+        display: flex;
+        margin-top: 8px;
+        .toggle-shortcut-input {
+          flex: 1;
+          box-shadow: none;
+        }
+      }
+      .singleton {
+        .hint {
+          color: #6a737d;
+        }
+      }
+      .placeholder-row {
+        flex-shrink: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 10px;
+        border-top: 1px solid #eaecef;
+
+        .version {
+          color: #999999;
+        }
+        .show-settings-icon {
+          width: 20px;
+          height: 20px;
+          cursor: pointer;
+        }
+        .hide-settings-icon {
+          width: 20px;
+          height: 20px;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotateZ(0);
+  }
+  to {
+    transform: rotateZ(360deg);
   }
 }

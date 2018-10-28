@@ -1,13 +1,18 @@
-import preact from 'preact'
-/** @jsx preact.h */
-import Icon from './Icon'
+import React from 'react'
+import Icon from 'components/Icon'
+import cx from 'utils/cx'
 
-import cx from '../utils/cx'
-
-export default function Logo({ shouldShow, toggleShowSideBar }) {
+export default function Logo({ error, shouldShow, toggleShowSideBar }) {
   return (
-    <div className={cx('gitako-toggle-show-button-wrapper', { collapsed: !shouldShow })} onClick={toggleShowSideBar}>
+    <div
+      className={cx('gitako-toggle-show-button-wrapper', {
+        collapsed: !shouldShow || error,
+        error,
+      })}
+      onClick={error ? undefined : toggleShowSideBar}
+    >
       <Icon className={'action-icon'} type={shouldShow ? 'x' : 'octoface'} />
+      {error && <span className={'error-message'}>{error}</span>}
     </div>
   )
 }

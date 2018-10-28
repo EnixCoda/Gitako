@@ -1,5 +1,4 @@
-import preact from 'preact'
-/** @jsx preact.h */
+import React from 'react'
 
 export default function MetaBar({ metaData }) {
   const userUrl = metaData ? metaData.api && metaData.api.owner.html_url : undefined
@@ -13,6 +12,8 @@ export default function MetaBar({ metaData }) {
       <a className={'repo-name pjax-link'} href={repoUrl}>
         {metaData.repoName}
       </a>
+      &nbsp;/&nbsp;
+      {metaData.branchName}
     </div>
   )
 }

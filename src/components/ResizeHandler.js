@@ -1,13 +1,11 @@
-import preact from 'preact'
-/** @jsx preact.h */
+import React from 'react'
+import Icon from 'components/Icon'
 
-import Icon from './Icon'
-
-export default class ResizeHandler extends preact.Component {
+export default class ResizeHandler extends React.PureComponent {
   pointerDown = false
   startX = 0
   delta = 0
-  baseSize = this.props.baseSize
+  baseSize = this.props.size
 
   subscribeEvents = () => {
     window.addEventListener('mousemove', this.onPointerMove)
@@ -41,7 +39,7 @@ export default class ResizeHandler extends preact.Component {
 
   onPointerUp = () => {
     this.pointerDown = false
-    this.baseSize += this.delta
+    this.baseSize = Math.max(this.baseSize + this.delta, this.props.size)
     this.unsubscribeEvents()
   }
 

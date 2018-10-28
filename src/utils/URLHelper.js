@@ -24,7 +24,11 @@ function parse() {
   return parsedData
 }
 
-const RESERVED_NAME = ['blog']
+function isInRepoPage() {
+  const repoHeaderSelector = '.repohead'
+  return Boolean(document.querySelector(repoHeaderSelector))
+}
+
 // route types related to determining if sidebar should show
 const TYPES = {
   TREE: 'tree',
@@ -33,12 +37,12 @@ const TYPES = {
   // known but not related types: issues, pulls, wiki, insight,
   // TODO: record more types
 }
+
 function isInCodePage(metaData = {}) {
-  const { userName, repoName, type, branchName } = { ...parseRaw(), ...metaData }
-  return (
-    userName &&
-    !RESERVED_NAME.find(_ => _ === userName) &&
-    repoName &&
+  const mergedRepo = { ...parseRaw(), ...metaData }
+  const { type, branchName } = mergedRepo
+  return Boolean(
+    isInRepoPage(mergedRepo) &&
     (!type || type === TYPES.TREE || type === TYPES.BLOB) &&
     type !== TYPES.COMMIT &&
     (branchName || (!type && !branchName))
@@ -52,6 +56,7 @@ function getCurrentPath(decode = false) {
 
 export default {
   getCurrentPath,
+  isInRepoPage,
   isInCodePage,
   parse,
 }

@@ -1,10 +1,14 @@
-import preact from 'preact'
-/** @jsx preact.h */
+import React from 'react'
+import ReactDOM from 'react-dom'
+import Gitako from 'components/Gitako'
+import { addMiddleware } from 'driver/connect'
+import { withErrorLog } from 'analytics'
 
 import './content.less'
 
-import SideBar from './components/SideBar'
+addMiddleware(withErrorLog)
 
 const SideBarElement = document.createElement('div')
 document.body.appendChild(SideBarElement)
-preact.render(<SideBar />, SideBarElement)
+
+ReactDOM.render(<Gitako />, SideBarElement)

@@ -1,141 +1,82 @@
-import preact from 'preact'
-import Portal from 'preact-portal'
-import NProgress from 'nprogress'
-/** @jsx preact.h */
+import React from 'react'
+import PropTypes from 'prop-types'
+import { SideBar as SideBarCore } from 'driver/core'
+import connect from 'driver/connect'
+import FileExplorer from 'components/FileExplorer'
+import ToggleShowButton from 'components/ToggleShowButton'
+import MetaBar from 'components/MetaBar'
+import SettingsBar from 'components/SettingsBar'
+import Portal from 'components/Portal'
+import Resizable from 'components/Resizable'
+import cx from 'utils/cx'
 
-import FileExplorer from './FileExplorer'
-import ToggleShowButton from './ToggleShowButton'
-import MetaBar from './MetaBar'
-import SettingsBar from './SettingsBar'
-import ResizeHandler from './ResizeHandler'
-
-import cx from '../utils/cx'
-import DOMHelper, { REPO_TYPE_PRIVATE } from '../utils/DOMHelper'
-import GitHubHelper, { NOT_FOUND, BAD_CREDENTIALS } from '../utils/GitHubHelper'
-import storageHelper from '../utils/storageHelper'
-import URLHelper from '../utils/URLHelper'
-import keyHelper from '../utils/keyHelper'
-
-// initial width of side bar
-const baseSize = 260
-export default class SideBar extends preact.Component {
-  state = {
-    // current width of side bar
-    size: 260,
+@connect(SideBarCore)
+export default class Gitako extends React.PureComponent {
+  static propTypes = {
+    // initial width of side bar
+    baseSize: PropTypes.number,
+    // error message
+    error: PropTypes.string,
     // whether Gitako side bar should be shown
-    shouldShow: false,
+    shouldShow: PropTypes.bool,
     // whether show settings pane
-    showSettings: false,
+    showSettings: PropTypes.bool,
     // whether failed loading the repo due to it is private
-    errorDueToAuth: false,
-    // got access token for GitHub
-    hasAccessToken: false,
+    errorDueToAuth: PropTypes.bool,
+    // access token for GitHub
+    accessToken: PropTypes.string,
     // the shortcut string for toggle sidebar
-    toggleShowSideBarShortcut: '',
+    toggleShowSideBarShortcut: PropTypes.string,
     // meta data for the repository
-    metaData: null,
+    metaData: PropTypes.object,
     // file tree data
+    treeData: PropTypes.object,
+    // few settings
+    compressSingletonFolder: PropTypes.bool,
+    copyFileButton: PropTypes.bool,
+    copySnippetButton: PropTypes.bool,
+
+    init: PropTypes.func.isRequired,
+    onPJAXEnd: PropTypes.func.isRequired,
+    setShouldShow: PropTypes.func.isRequired,
+    toggleShowSideBar: PropTypes.func.isRequired,
+    toggleShowSettings: PropTypes.func.isRequired,
+    onAccessTokenChange: PropTypes.func.isRequired,
+    onKeyDown: PropTypes.func.isRequired,
+    onShortcutChange: PropTypes.func.isRequired,
+    setMetaData: PropTypes.func.isRequired,
+    setCopyFile: PropTypes.func.isRequired,
+    setCopySnippet: PropTypes.func.isRequired,
+    setCompressSingleton: PropTypes.func.isRequired,
+  }
+
+  static defaultProps = {
+    baseSize: 260,
+    shouldShow: false,
+    showSettings: false,
+    errorDueToAuth: false,
+    accessToken: '',
+    toggleShowSideBarShortcut: '',
+    metaData: null,
     treeData: null,
+    compressSingletonFolder: false,
   }
 
-  async componentWillMount() {
-    try {
-      const metaDataFromUrl = URLHelper.parse()
-      this.setState({ metaData: metaDataFromUrl })
-      DOMHelper.decorateGitHubPageContent()
-      const [accessToken, shortcut] = await Promise.all([
-        storageHelper.getAccessToken(),
-        storageHelper.getShortcut(),
-      ])
-      this.setState({ hasAccessToken: Boolean(accessToken), toggleShowSideBarShortcut: shortcut })
-      const metaDataFromAPI = await GitHubHelper.getRepoMeta({ ...metaDataFromUrl, accessToken })
-      const branchName = metaDataFromUrl.branchName || metaDataFromAPI['default_branch']
-      const metaData = { ...metaDataFromUrl, branchName, api: metaDataFromAPI }
-      this.setState({ metaData })
-      const shouldShow = URLHelper.isInCodePage(metaData)
-      this.setShouldShow(shouldShow)
-      if (shouldShow) {
-        NProgress.start()
-      }
-      const treeData = await GitHubHelper.getTreeData({ ...metaData, accessToken })
-      this.setState({ treeData })
-      this.logoContainerElement = DOMHelper.insertLogo()
-      if (shouldShow) {
-        NProgress.done()
-      }
-
-      window.addEventListener('pjax:send', this.onPJAXStart)
-      window.addEventListener('pjax:complete', this.onPJAXEnd)
-      window.addEventListener('keydown', this.onKeyDown)
-    } catch (err) {
-      // TODO: detect request time exceeds limit
-      if (err.message === NOT_FOUND || err.message === BAD_CREDENTIALS) {
-        const repoPageType = await DOMHelper.getRepoPageType()
-        const errorDueToAuth = repoPageType === REPO_TYPE_PRIVATE || err.message === BAD_CREDENTIALS
-        this.setState({
-          showSettings: repoPageType !== null,
-          errorDueToAuth,
-        })
-        this.setShouldShow(errorDueToAuth)
-      } else {
-        console.error(err)
-        this.setShouldShow(false)
-      }
-    }
+  componentWillMount() {
+    const { init } = this.props
+    init()
   }
 
-  onPJAXStart = () => {
+  componentDidMount() {
+    const { onPJAXEnd, onKeyDown } = this.props
+    window.addEventListener('pjax:complete', onPJAXEnd)
+    window.addEventListener('keydown', onKeyDown)
   }
 
-  onPJAXEnd = () => {
-    NProgress.done()
-    const { metaData } = this.state
-    const mergedMetaData = { ...metaData, ...URLHelper.parse() }
-    this.setState({
-      metaData: mergedMetaData,
-    })
-    this.setShouldShow(URLHelper.isInCodePage(mergedMetaData))
-    DOMHelper.decorateGitHubPageContent()
-    DOMHelper.focusSearchInput()
-  }
-
-  setShouldShow = shouldShow => {
-    this.setState({ shouldShow })
-    DOMHelper.setBodyIndent(shouldShow)
-  }
-
-  toggleShowSideBar = () => {
-    const { shouldShow } = this.state
-    this.setShouldShow(!shouldShow)
-  }
-
-  toggleShowSettings = () => {
-    const { showSettings } = this.state
-    this.setState({ showSettings: !showSettings })
-  }
-
-  onHasAccessTokenChange = hasAccessToken => {
-    this.setState({ hasAccessToken })
-  }
-
-  onKeyDown = e => {
-    const { toggleShowSideBarShortcut } = this.state
-    if (toggleShowSideBarShortcut) {
-      const keys = keyHelper.parseEvent(e)
-      if (keys === toggleShowSideBarShortcut) {
-        this.toggleShowSideBar()
-      }
-    }
-  }
-
-  onShortcutChange = shortcut => {
-    this.setState({ toggleShowSideBarShortcut: shortcut })
-  }
-
-  onResize = size => {
-    this.setState({
-      size,
-    })
+  componentWillUnmount() {
+    const { onPJAXEnd, onKeyDown } = this.props
+    window.removeEventListener('pjax:complete', onPJAXEnd)
+    window.removeEventListener('keydown', onKeyDown)
   }
 
   renderAccessDeniedError() {
@@ -143,55 +84,98 @@ export default class SideBar extends preact.Component {
       <div className={'description'}>
         <h5>Access Denied</h5>
         <p>
-          Gitako needs access token with proper scopes (recommended: repo) to access this
-          repository. Please save it in the settings below.
+          Due to{' '}
+          <a target="_blank" href="https://developer.github.com/v3/#rate-limiting">
+            limitation of GitHub
+          </a>{' '}
+          or{' '}
+          <a target="_blank" href="https://developer.github.com/v3/#authentication">
+            auth needs
+          </a>
+          , Gitako needs access token to continue. Please follow the instructions in the settings
+          panel below.
         </p>
       </div>
     )
   }
 
   renderContent() {
-    const { errorDueToAuth, metaData, treeData, showSettings } = this.state
+    const {
+      errorDueToAuth,
+      metaData,
+      treeData,
+      showSettings,
+      accessToken,
+      compressSingletonFolder,
+      toggleShowSettings,
+    } = this.props
     return (
       <div className={'gitako-side-bar-content'}>
         {metaData && <MetaBar metaData={metaData} />}
-        {errorDueToAuth && this.renderAccessDeniedError()}
-        {metaData &&
-          treeData && (
-            <FileExplorer metaData={metaData} treeData={treeData} freeze={showSettings} />
-          )}
+        {errorDueToAuth
+          ? this.renderAccessDeniedError()
+          : metaData && (
+              <FileExplorer
+                toggleShowSettings={toggleShowSettings}
+                metaData={metaData}
+                treeData={treeData}
+                freeze={showSettings}
+                accessToken={accessToken}
+                compressSingletonFolder={compressSingletonFolder}
+              />
+            )}
       </div>
     )
   }
 
   render() {
     const {
-      size,
+      baseSize,
+      error,
       shouldShow,
       showSettings,
-      hasAccessToken,
+      accessToken,
+      compressSingletonFolder,
+      copyFileButton,
+      copySnippetButton,
       toggleShowSideBarShortcut,
-      loading,
-    } = this.state
+      logoContainerElement,
+      toggleShowSideBar,
+      toggleShowSettings,
+      onShortcutChange,
+      onAccessTokenChange,
+      setCompressSingleton,
+      setCopyFile,
+      setCopySnippet,
+    } = this.props
     return (
-      <div className={cx('gitako', { hidden: !shouldShow })}>
-        <Portal into={this.logoContainerElement}>
-          <ToggleShowButton shouldShow={shouldShow} toggleShowSideBar={this.toggleShowSideBar} />
+      <div className={'gitako-side-bar'}>
+        <Portal into={logoContainerElement}>
+          <ToggleShowButton
+            error={error}
+            shouldShow={shouldShow}
+            toggleShowSideBar={toggleShowSideBar}
+          />
         </Portal>
-        <div className={'gitako-position-wrapper'}>
-          <ResizeHandler onResize={this.onResize} baseSize={baseSize} style={{ right: size }} />
-          <div className={'gitako-side-bar'} style={{ width: size }}>
+        <Resizable className={cx({ hidden: error || !shouldShow })} baseSize={baseSize}>
+          <div className={'gitako-side-bar-body'}>
             {this.renderContent()}
             <SettingsBar
-              toggleShowSettings={this.toggleShowSettings}
-              onShortcutChange={this.onShortcutChange}
-              onHasAccessTokenChange={this.onHasAccessTokenChange}
+              toggleShowSettings={toggleShowSettings}
+              onShortcutChange={onShortcutChange}
+              onAccessTokenChange={onAccessTokenChange}
               activated={showSettings}
-              hasAccessToken={hasAccessToken}
+              accessToken={accessToken}
               toggleShowSideBarShortcut={toggleShowSideBarShortcut}
+              compressSingletonFolder={compressSingletonFolder}
+              copyFileButton={copyFileButton}
+              copySnippetButton={copySnippetButton}
+              setCompressSingleton={setCompressSingleton}
+              setCopyFile={setCopyFile}
+              setCopySnippet={setCopySnippet}
             />
           </div>
-        </div>
+        </Resizable>
       </div>
     )
   }

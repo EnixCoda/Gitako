@@ -1,18 +1,26 @@
 {
   "manifest_version": 2,
-  "name": "Gitako",
-  "version": "0.2.4",
+  "name": "Gitako - enhanced Github code tree",
+  "version": "0.3.16",
   "author": "EnixCoda",
   "icons": {
     "128": "icons/Gitako-128x128.png"
   },
   "description": "yet another GitHub extension, inspired by Octotree and GayHub.",
   "homepage_url": "https://github.com/EnixCoda/Gitako",
-  "permissions": ["tabs", "storage", "*://github.com/*"],
+  "permissions": [
+    "tabs",
+    "storage",
+    "*://github.com/*"
+  ],
   "content_scripts": [
     {
-      "matches": ["https://github.com/*"],
-      "js": ["content.js"]
+      "matches": [
+        "https://github.com/*"
+      ],
+      "js": [
+        "content.js"
+      ]
     }
   ]
 }

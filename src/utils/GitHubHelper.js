@@ -1,5 +1,11 @@
+import { raiseError } from 'analytics'
 export const NOT_FOUND = 'Repo Not Found'
 export const BAD_CREDENTIALS = 'Bad credentials'
+export const API_RATE_LIMIT = `API rate limit`
+
+function apiRateLimitExceeded(content) {
+  return content && content['documentation_url'] === 'https://developer.github.com/v3/#rate-limiting'
+}
 
 async function request(url, { accessToken } = {}) {
   const headers = {}
@@ -9,9 +15,13 @@ async function request(url, { accessToken } = {}) {
   const res = await fetch(url, { headers })
   if (res.status === 200) return res.json()
   // for private repo, GitHub api also responses with 404 when unauthorized
-  if (res.status === 404) throw new Error(NOT_FOUND)
-  const content = await res.json()
-  throw new Error(content.message)
+  else if (res.status === 404) throw new Error(NOT_FOUND)
+  else {
+    const content = await res.json()
+    if (apiRateLimitExceeded(content)) throw new Error(API_RATE_LIMIT)
+    else if (!res.ok) raiseError(new Error(`Got ${res.statusText} when requesting ${url}`))
+    throw new Error(content && content.message)
+  }
 }
 
 async function getRepoMeta({ userName, repoName, accessToken }) {
@@ -24,12 +34,18 @@ async function getTreeData({ userName, repoName, branchName, accessToken }) {
   return await request(url, { accessToken })
 }
 
-function getUrlForRedirect({ userName, repoName, branchName }, path) {
-  return `https://github.com/${userName}/${repoName}/tree/${branchName}/${path}`
+async function getBlobData({ userName, repoName, accessToken, fileSHA }) {
+  const url = `https://api.github.com/repos/${userName}/${repoName}/git/blobs/${fileSHA}`
+  return await request(url, { accessToken })
+}
+
+function getUrlForRedirect({ userName, repoName, branchName }, type = 'blob', path) {
+  return `https://github.com/${userName}/${repoName}/${type}/${branchName}/${path}`
 }
 
 export default {
   getRepoMeta,
   getTreeData,
+  getBlobData,
   getUrlForRedirect,
 }

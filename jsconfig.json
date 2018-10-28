@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "jsx": "react",
+        "target": "es2017",
+        "experimentalDecorators": true,
+        "baseUrl": "./",
+        "paths": {
+            "*" : ["src/*", "packages/*"]
+        }
+    },
+    "exclude": [
+        "node_modules",
+    ],
+    "include": [
+        "src/**/*",
+        "packages/**/*",
+    ]
+}

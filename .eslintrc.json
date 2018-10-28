@@ -1,4 +1,5 @@
 {
+  "parser": "babel-eslint",
   "env": {
     "browser": true,
     "commonjs": true,
@@ -12,15 +13,38 @@
     "sourceType": "module"
   },
   "rules": {
+    "strict": 0,
     "no-const-assign": "warn",
-    "no-this-before-super": "warn",
-    "no-undef": "warn",
+    "no-this-before-super": "error",
+    "no-undef": "error",
     "no-unreachable": "warn",
     "no-unused-vars": "warn",
     "constructor-super": "warn",
-    "valid-typeof": "warn"
+    "react/jsx-uses-vars": 1,
+    "react/jsx-uses-react": 1,
+    "valid-typeof": "warn",
+    "babel/new-cap": 1,
+    "babel/no-invalid-this": 1,
+    "babel/object-curly-spacing": 0,
+    "babel/quotes": 0,
+    "babel/semi": 0,
+    "babel/no-unused-expressions": 1,
+    "import/order": [
+      1,
+      {
+        "groups": ["external", "internal", "builtin", ["parent", "sibling", "index"]],
+        "newlines-between": "never"
+      }
+    ],
+    "babel/no-invalid-this": 0,
+    "no-unused-vars": 0
   },
   "plugins": [
-    "class-property"
-  ]
+    "babel",
+    "react",
+    "import"
+  ],
+  "globals": {
+    "chrome": true
+  }
 }

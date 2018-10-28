@@ -20,11 +20,29 @@ function setBodyIndent(shouldShowGitako) {
   }
 }
 
+function isInCodePage() {
+  const branchListSelector = '.branch-select-menu'
+  const listElement = document.querySelector(branchListSelector)
+  return Boolean(listElement)
+}
+
+function getBranches() {
+  const branchSelector = '.branch-select-menu .select-menu-list > div .select-menu-item-text'
+  const branchElements = Array.from(document.querySelectorAll(branchSelector))
+  return branchElements.map(element => element.innerHTML.trim())
+}
+
+function getCurrentBranch() {
+  const selectedBranchSelector = '.select-menu.branch-select-menu .select-menu-modal .select-menu-list .select-menu-item.selected svg.select-menu-item-icon + span'
+  const selectedBranchElement = document.querySelector(selectedBranchSelector)
+  return selectedBranchElement ? selectedBranchElement.textContent.trim() : null
+}
+
 /**
  * add the logo element into DOM
  * 
  */
-function insertLogo() {
+function insertLogoMountPoint() {
   const logoSelector = '.gitako .gitako-logo'
   const logoElement = document.querySelector(logoSelector)
   if (logoElement) {
@@ -58,15 +76,18 @@ function scrollToRepoContent() {
 function scrollToNodeElement(index) {
   const nodeElementSelector = '.node-item'
   const nodeElements = document.querySelectorAll(nodeElementSelector)
-  nodeElements[index].scrollIntoView({
-    behavior: 'smooth',
-    block: 'center',
-  })
+  const targetElement = nodeElements[index]
+  if (targetElement) {
+    targetElement.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    })
+  }
 }
 
 const pjax = new PJAX({
   elements: '.pjax-link',
-  selectors: ['.repository-content'],
+  selectors: ['.repository-content', 'title'],
   scrollTo: false,
   analytics: false,
   cacheBust: false,
@@ -247,7 +268,7 @@ const clippy = createClippy()
 
 let currentCodeSnippetElement
 function attachCopySnippet() {
-  const readmeSelector = '.repository-content .readme article'
+  const readmeSelector = '.repository-content #readme article'
   const readmeElement = document.querySelector(readmeSelector)
   if (readmeElement) {
     readmeElement.addEventListener('mouseover', ({ target }) => {
@@ -306,11 +327,18 @@ function clickOnNodeElement(index = 0) {
 /**
  * a combination of few above functions
  */
-function decorateGitHubPageContent() {
-  attachCopyFileBtn()
-  attachCopySnippet()
+function decorateGitHubPageContent({ copyFileButton, copySnippetButton }) {
+  if (copyFileButton) attachCopyFileBtn()
+  if (copySnippetButton) attachCopySnippet()
 }
 
+function mountTopProgressBar() {
+  NProgress.start()
+}
+
+function unmountTopProgressBar() {
+  NProgress.done()
+}
 
 export default {
   loadWithPJAX,
@@ -322,8 +350,13 @@ export default {
   focusFileExplorer,
   getCurrentPageType,
   getRepoPageType,
-  insertLogo,
+  insertLogoMountPoint,
   setBodyIndent,
   scrollToNodeElement,
   scrollToRepoContent,
+  mountTopProgressBar,
+  unmountTopProgressBar,
+  isInCodePage,
+  getBranches,
+  getCurrentBranch,
 }
