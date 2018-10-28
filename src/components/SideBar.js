@@ -31,8 +31,10 @@ export default class Gitako extends React.PureComponent {
     metaData: PropTypes.object,
     // file tree data
     treeData: PropTypes.object,
-    // compress singleton folder
+    // few settings
     compressSingletonFolder: PropTypes.bool,
+    copyFileButton: PropTypes.bool,
+    copySnippetButton: PropTypes.bool,
 
     init: PropTypes.func.isRequired,
     onPJAXEnd: PropTypes.func.isRequired,
@@ -43,6 +45,9 @@ export default class Gitako extends React.PureComponent {
     onKeyDown: PropTypes.func.isRequired,
     onShortcutChange: PropTypes.func.isRequired,
     setMetaData: PropTypes.func.isRequired,
+    setCopyFile: PropTypes.func.isRequired,
+    setCopySnippet: PropTypes.func.isRequired,
+    setCompressSingleton: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -161,10 +166,10 @@ export default class Gitako extends React.PureComponent {
               onAccessTokenChange={onAccessTokenChange}
               activated={showSettings}
               accessToken={accessToken}
+              toggleShowSideBarShortcut={toggleShowSideBarShortcut}
               compressSingletonFolder={compressSingletonFolder}
               copyFileButton={copyFileButton}
               copySnippetButton={copySnippetButton}
-              toggleShowSideBarShortcut={toggleShowSideBarShortcut}
               setCompressSingleton={setCompressSingleton}
               setCopyFile={setCopyFile}
               setCopySnippet={setCopySnippet}
