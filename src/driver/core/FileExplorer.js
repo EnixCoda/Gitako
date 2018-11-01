@@ -35,7 +35,9 @@ function resolveGitModules(root, blobData) {
         const { url, path } = value
         // for now, handle modules at root only
         const node = root.contents.find(node => node.path === path)
-        node.url = url
+        if (node) {
+          node.url = url
+        }
       })
     }
   }
