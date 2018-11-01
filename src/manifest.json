@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Gitako - enhanced Github code tree",
-  "version": "0.3.16",
+  "version": "0.3.17",
   "author": "EnixCoda",
   "icons": {
     "128": "icons/Gitako-128x128.png"
