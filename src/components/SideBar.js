@@ -59,7 +59,9 @@ export default class Gitako extends React.PureComponent {
     toggleShowSideBarShortcut: '',
     metaData: null,
     treeData: null,
-    compressSingletonFolder: false,
+    compressSingletonFolder: true,
+    copyFileButton: true,
+    copySnippetButton: true,
   }
 
   componentWillMount() {
