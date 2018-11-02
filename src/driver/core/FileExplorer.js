@@ -138,7 +138,7 @@ const handleKeyDown = dispatch => ({ key }) => dispatch(({ visibleNodes: { nodes
           DOMHelper.loadWithPJAX(focusedNode.url)
         } else if (focusedNode.type === 'commit') {
           // redirect to its parent folder
-          DOMHelper.loadWithPJAX(focusedNode.parent.url)
+          window.open(focusedNode.url)
         }
         break
       case 'Enter':
@@ -149,7 +149,7 @@ const handleKeyDown = dispatch => ({ key }) => dispatch(({ visibleNodes: { nodes
           DOMHelper.loadWithPJAX(focusedNode.url)
         } else if (focusedNode.type === 'commit') {
           // redirect to its parent folder
-          DOMHelper.loadWithPJAX(focusedNode.parent.url)
+          window.open(focusedNode.url)
         }
         break
 
