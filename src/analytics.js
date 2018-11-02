@@ -1,3 +1,4 @@
+import { version } from '../package'
 // TODO: set this through ENV or something else
 const LOG_ENDPOINT = 'https://enix.one/gitako/log'
 
@@ -29,6 +30,7 @@ function reportError(error) {
     `${LOG_ENDPOINT}?${encodeParams({
       error: (error && error.message) || error,
       path: window.location.href,
+      version,
     })}`
   )
 }
