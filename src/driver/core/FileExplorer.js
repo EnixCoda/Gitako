@@ -87,26 +87,31 @@ const setStateText = dispatch => text => dispatch({
   stateText: text,
 })
 
-const handleKeyDown = dispatch => ({ key }) => dispatch(({ visibleNodes: { nodes, focusedNode, expandedNodes, depths } }) => {
+const handleKeyDown = dispatch => event => dispatch(({ visibleNodes: { nodes, focusedNode, expandedNodes, depths } }) => {
+  function handleVerticalMove(index) {
+    if (0 <= index && index < nodes.length) {
+      DOMHelper.focusFileExplorer()
+      dispatch(focusNode, nodes[index])
+    } else {
+      DOMHelper.focusSearchInput()
+      dispatch(focusNode, null)
+    }
+  }
+
+  const { key } = event
+  // prevent document body scrolling if the keypress results in Gitako action
+  let muteEvent = true
   if (focusedNode) {
     const focusedNodeIndex = nodes.indexOf(focusedNode)
     switch (key) {
       case 'ArrowUp':
         // focus on previous node
-        if (focusedNodeIndex === 0) {
-          dispatch(focusNode, nodes[nodes.length - 1])
-        } else {
-          dispatch(focusNode, nodes[focusedNodeIndex - 1])
-        }
+        handleVerticalMove(focusedNodeIndex - 1)
         break
 
       case 'ArrowDown':
         // focus on next node
-        if (focusedNodeIndex + 1 < nodes.length) {
-          dispatch(focusNode, nodes[focusedNodeIndex + 1])
-        } else {
-          dispatch(focusNode, nodes[0])
-        }
+        handleVerticalMove(focusedNodeIndex + 1)
         break
 
       case 'ArrowLeft':
@@ -137,7 +142,6 @@ const handleKeyDown = dispatch => ({ key }) => dispatch(({ visibleNodes: { nodes
         } else if (focusedNode.type === 'blob') {
           DOMHelper.loadWithPJAX(focusedNode.url)
         } else if (focusedNode.type === 'commit') {
-          // redirect to its parent folder
           window.open(focusedNode.url)
         }
         break
@@ -148,26 +152,38 @@ const handleKeyDown = dispatch => ({ key }) => dispatch(({ visibleNodes: { nodes
         } else if (focusedNode.type === 'blob') {
           DOMHelper.loadWithPJAX(focusedNode.url)
         } else if (focusedNode.type === 'commit') {
-          // redirect to its parent folder
           window.open(focusedNode.url)
         }
         break
-
+      default:
+        muteEvent = false
+    }
+    if (muteEvent) {
+      event.preventDefault()
     }
   } else {
     // now search input is focused
     if (nodes.length) {
       switch (key) {
         case 'ArrowDown':
+          DOMHelper.focusFileExplorer()
           dispatch(focusNode, nodes[0])
           break
         case 'ArrowUp':
+          DOMHelper.focusFileExplorer()
           dispatch(focusNode, nodes[nodes.length - 1])
           break
+        default:
+          muteEvent = false
+      }
+      if (muteEvent) {
+        event.preventDefault()
       }
     }
   }
 })
+
+const onFocusSearchBar = dispatch => () => dispatch(focusNode, null)
 
 const handleSearchKeyChange = dispatch => {
   let i = 0
@@ -187,10 +203,7 @@ function shouldDelayExpand(node) {
 
 const setExpand = dispatch => (node, expand) => {
   visibleNodesGenerator.setExpand(node, expand)
-  const applyChanges = () => {
-    dispatch(focusNode, node)
-    tasksAfterRender.push(DOMHelper.focusSearchInput)
-  }
+  const applyChanges = () => dispatch(focusNode, node)
   if (shouldDelayExpand(node)) {
     dispatch(mountExpandingIndicator, node)
     tasksAfterRender.push(() => setTimeout(applyChanges, 0))
@@ -219,7 +232,6 @@ const focusNode = dispatch => (node, skipScroll) => dispatch(({ visibleNodes: { 
     // when focus a node not in viewport(by keyboard), scroll to it
     const indexOfToBeFocusedNode = nodes.indexOf(node)
     tasksAfterRender.push(() => DOMHelper.scrollToNodeElement(indexOfToBeFocusedNode))
-    tasksAfterRender.push(DOMHelper.focusSearchInput)
   }
   dispatch(updateVisibleNodes)
 })
@@ -261,6 +273,7 @@ export default {
   execAfterRender,
   setStateText,
   handleKeyDown,
+  onFocusSearchBar,
   handleSearchKeyChange,
   setExpand,
   toggleNodeExpansion,

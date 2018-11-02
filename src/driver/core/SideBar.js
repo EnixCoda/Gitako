@@ -73,7 +73,6 @@ const onPJAXEnd = dispatch => () => {
   dispatch(({ metaData, copyFileButton, copySnippetButton }) => {
     DOMHelper.unmountTopProgressBar()
     DOMHelper.decorateGitHubPageContent({ copyFileButton, copySnippetButton })
-    DOMHelper.focusSearchInput()
     const mergedMetaData = { ...metaData, ...URLHelper.parse() }
     dispatch(setShouldShow, URLHelper.isInCodePage(mergedMetaData))
     dispatch(setMetaData, mergedMetaData)
@@ -94,7 +93,7 @@ const onKeyDown = dispatch => e => {
 const toggleShowSideBar = dispatch => () => dispatch(({ shouldShow }) => dispatch(setShouldShow, !shouldShow))
 
 const setShouldShow = dispatch => shouldShow => {
-  dispatch({ shouldShow }, shouldShow ? DOMHelper.focusSearchInput : null)
+  dispatch({ shouldShow }, shouldShow ? DOMHelper.focusFileExplorer : null)
   DOMHelper.setBodyIndent(shouldShow)
 }
 

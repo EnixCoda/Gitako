@@ -40,7 +40,7 @@ function getCurrentBranch() {
 
 /**
  * add the logo element into DOM
- * 
+ *
  */
 function insertLogoMountPoint() {
   const logoSelector = '.gitako .gitako-logo'
@@ -297,16 +297,21 @@ function attachCopySnippet() {
  * focus to side bar, user will be able to manipulate it with keyboard
  */
 function focusFileExplorer() {
-  const sideBarContentSelector = '.gitako .file-explorer'
+  const sideBarContentSelector = '.gitako-side-bar .file-explorer'
   const sideBarElement = document.querySelector(sideBarContentSelector)
   if (sideBarElement) {
     sideBarElement.focus()
   }
 }
 
-function focusSearchInput() {
+function getSearchInput() {
   const searchInputSelector = '.search-input'
   const searchInputElement = document.querySelector(searchInputSelector)
+  return searchInputElement
+}
+
+function focusSearchInput() {
+  const searchInputElement = getSearchInput()
   if (searchInputElement) {
     if (document.activeElement !== searchInputElement) {
       searchInputElement.focus()
