@@ -20,10 +20,17 @@ function setBodyIndent(shouldShowGitako) {
   }
 }
 
+function $(selector, existCallback, otherwise) {
+  const element = document.querySelector(selector)
+  if (element) {
+    return existCallback ? existCallback(element) : element
+  }
+  return otherwise ? otherwise() : null
+}
+
 function isInCodePage() {
   const branchListSelector = '.branch-select-menu'
-  const listElement = document.querySelector(branchListSelector)
-  return Boolean(listElement)
+  return Boolean($(branchListSelector))
 }
 
 function getBranches() {
@@ -34,8 +41,7 @@ function getBranches() {
 
 function getCurrentBranch() {
   const selectedBranchSelector = '.select-menu.branch-select-menu .select-menu-modal .select-menu-list .select-menu-item.selected svg.select-menu-item-icon + span'
-  const selectedBranchElement = document.querySelector(selectedBranchSelector)
-  return selectedBranchElement ? selectedBranchElement.textContent.trim() : null
+  return $(selectedBranchSelector, element => element.textContent.trim())
 }
 
 /**
@@ -44,10 +50,10 @@ function getCurrentBranch() {
  */
 function insertLogoMountPoint() {
   const logoSelector = '.gitako .gitako-logo'
-  const logoElement = document.querySelector(logoSelector)
-  if (logoElement) {
-    return logoElement
-  }
+  return $(logoSelector) || createLogoMountPoint()
+}
+
+function createLogoMountPoint() {
   const logoMountElement = document.createElement('div')
   logoMountElement.setAttribute('class', 'gitako-logo-mount-point')
   document.body.appendChild(logoMountElement)
@@ -60,13 +66,9 @@ function insertLogoMountPoint() {
  */
 function scrollToRepoContent() {
   const fileNavigationSelector = '.file-navigation.js-zeroclipboard-container'
-  const fileNavigationElement = document.querySelector(fileNavigationSelector)
-  // cannot to use behavior: smooth here as it will scroll horizontally
-  if (fileNavigationElement) {
-    fileNavigationElement.scrollIntoView()
-  } else {
-    document.body.scrollIntoView()
-  }
+  const scrollTarget = $(fileNavigationSelector) || document.body
+  // do NOT use behavior: smooth here as it will scroll horizontally
+  return scrollTarget.scrollIntoView()
 }
 
 /**
@@ -121,36 +123,25 @@ const PAGE_TYPES = {
  * TODO: distinguish type 'preview'
  */
 function getCurrentPageType() {
-  const blobWrapperSelector = '.repository-content .file .blob-wrapper'
-  const blobWrapperElement = document.querySelector(blobWrapperSelector)
-  if (blobWrapperElement) {
-    if (blobWrapperElement.querySelector('table')) {
-      return PAGE_TYPES.RAW_TEXT
-    }
-  } else {
-    const readmeSelector = '.repository-content .readme'
-    const readmeElement = document.querySelector(readmeSelector)
-    if (readmeElement) {
-      return PAGE_TYPES.RENDERED
-    }
-  }
-  return PAGE_TYPES.OTHERS
+  const blobWrapperSelector = '.repository-content .file .blob-wrapper table'
+  const readmeSelector = '.repository-content .readme'
+  return $(blobWrapperSelector, () => PAGE_TYPES.RAW_TEXT)
+    || $(readmeSelector, () => PAGE_TYPES.RENDERED)
+    || PAGE_TYPES.OTHERS
 }
 
 export const REPO_TYPE_PRIVATE = 'private'
 export const REPO_TYPE_PUBLIC = 'public'
 function getRepoPageType() {
   const headerSelector = `#js-repo-pjax-container .pagehead.repohead h1`
-  const header = document.querySelector(headerSelector)
-  if (header) {
+  return $(headerSelector, header => {
     const repoPageTypes = [REPO_TYPE_PRIVATE, REPO_TYPE_PUBLIC]
     for (const repoPageType of repoPageTypes) {
       if (header.classList.contains(repoPageType)) {
         return repoPageType
       }
     }
-  }
-  return null
+  })
 }
 
 /**
@@ -164,7 +155,7 @@ function attachCopyFileBtn() {
   function getCodeElement() {
     if (getCurrentPageType() === PAGE_TYPES.RAW_TEXT) {
       const codeContentSelector = '.repository-content .file .data table'
-      return document.querySelector(codeContentSelector)
+      return $(codeContentSelector)
     }
   }
 
@@ -269,14 +260,11 @@ const clippy = createClippy()
 let currentCodeSnippetElement
 function attachCopySnippet() {
   const readmeSelector = '.repository-content #readme article'
-  const readmeElement = document.querySelector(readmeSelector)
-  if (readmeElement) {
+  return $(readmeSelector, readmeElement =>
     readmeElement.addEventListener('mouseover', ({ target }) => {
       // only move clippy when mouse is over a new snippet(<pre>)
       if (target.nodeName === 'PRE') {
-        if (
-          currentCodeSnippetElement !== target
-        ) {
+        if (currentCodeSnippetElement !== target) {
           currentCodeSnippetElement = target
           /**
            *  <article>
@@ -290,7 +278,7 @@ function attachCopySnippet() {
         }
       }
     })
-  }
+  )
 }
 
 /**
@@ -298,25 +286,16 @@ function attachCopySnippet() {
  */
 function focusFileExplorer() {
   const sideBarContentSelector = '.gitako-side-bar .file-explorer'
-  const sideBarElement = document.querySelector(sideBarContentSelector)
-  if (sideBarElement) {
-    sideBarElement.focus()
-  }
-}
-
-function getSearchInput() {
-  const searchInputSelector = '.search-input'
-  const searchInputElement = document.querySelector(searchInputSelector)
-  return searchInputElement
+  $(sideBarContentSelector, sideBarElement => sideBarElement.focus())
 }
 
 function focusSearchInput() {
-  const searchInputElement = getSearchInput()
-  if (searchInputElement) {
+  const searchInputSelector = '.search-input'
+  $(searchInputSelector, searchInputElement => {
     if (document.activeElement !== searchInputElement) {
       searchInputElement.focus()
     }
-  }
+  })
 }
 
 /**
