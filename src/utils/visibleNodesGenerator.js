@@ -19,6 +19,8 @@
  *  v  stable
  */
 
+const SEARCH_DELAY = 250
+
 function getFilterFunc(keyRegex) {
   return function filterFunc({ name }) {
     return keyRegex.test(name)
@@ -43,37 +45,21 @@ function search(treeNodes, searchKey) {
 
 function debounce(func, delay) {
   let timer
-  return (...args) => {
-    return new Promise(resolve => {
-      window.clearTimeout(timer)
-      timer = window.setTimeout(() => resolve(func(...args)), delay)
-    })
-  }
-}
-
-export const debouncedSearch = debounce(search, 250)
-
-function runIdle(func) {
-  return new Promise(resolve => {
-    window.requestIdleCallback(async () => resolve(await func()))
+  return (...args) => new Promise(resolve => {
+    window.clearTimeout(timer)
+    timer = window.setTimeout(() => resolve(func(...args)), delay)
   })
 }
 
-function promisifyAsyncFunc(func) {
-  return (...args) => new Promise(async resolve => resolve(await func(...args)))
-}
+export const debouncedSearch = debounce(search, SEARCH_DELAY)
 
-async function asyncMap(arr, asyncCallback) {
-  return await Promise.all(arr.map(promisifyAsyncFunc(asyncCallback)))
-}
-
-async function getNodes(root) {
-  return await runIdle(async () => {
-    if (!root.contents) return []
-    return [].concat(
-      ...await asyncMap(root.contents, async node => [node, ...await getNodes(node)])
-    )
+function getNodes(root, nodes = []) {
+  if (!root.contents) return
+  root.contents.forEach(node => {
+    nodes.push(node)
+    getNodes(node, nodes)
   })
+  return nodes
 }
 
 function compressTree(root, prefix = []) {
@@ -108,7 +94,7 @@ export default class VisibleNodesGenerator {
 
   async plantTree(root) {
     this.root = root
-    this.nodes = await getNodes(root)
+    this.nodes = getNodes(root)
     this.compressedRoot = compressTree(root)
 
     await this.search()
