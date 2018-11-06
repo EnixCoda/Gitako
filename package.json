@@ -7,10 +7,11 @@
   "license": "MIT",
   "private": true,
   "scripts": {
+    "postinstall": "node scripts/generate-octicons",
     "start": "webpack --watch",
-    "stamp": "node scripts/version.js",
-    "postversion": "npm run stamp && git add src/manifest.json && git commit --amend --no-edit",
-    "prod": "npm run stamp && NODE_ENV=production webpack && cd dist && rm -f ./gitako.zip && zip gitako.zip -r *"
+    "postversion": "node scripts/version.js",
+    "build": "NODE_ENV=production webpack && npm run postbuild",
+    "postbuild": "cd dist && rm -f ./gitako.zip && zip gitako.zip -r *"
   },
   "dependencies": {
     "ini": "^1.3.5",
