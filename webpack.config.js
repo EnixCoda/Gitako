@@ -83,7 +83,12 @@ module.exports = {
       {
         test: /\.svg$/,
         resourceQuery: /svgr/,
-        loader: ['babel-loader', 'svgr/webpack'],
+        use: [
+          {
+            loader: '@svgr/webpack',
+            options: { svgo: false },
+          },
+        ],
         include: [srcPath],
       },
       {
