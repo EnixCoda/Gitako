@@ -8,39 +8,48 @@ const init = dispatch => async () => {
   try {
     if (!URLHelper.isInRepoPage()) return
     dispatch({ logoContainerElement: DOMHelper.insertLogoMountPoint() })
-    let nothingWentWrong = true
+    let nothingWentWrong = true, branchDetected = false
     const metaData = URLHelper.parse()
+    if (DOMHelper.isInCodePage()) {
+      // in case GitHub page structure changes, fallback to 'master'
+      const detectedBranchName = DOMHelper.getCurrentBranch() || 'master'
+      metaData.branchName = detectedBranchName
+      branchDetected = true
+    } else {
+      metaData.branchName = 'master'
+      branchDetected = false
+    }
     dispatch(setMetaData, metaData)
     const { access_token: accessToken, shortcut, compressSingletonFolder, copyFileButton, copySnippetButton } = await configHelper.get()
     DOMHelper.decorateGitHubPageContent({ copyFileButton, copySnippetButton })
     dispatch({ accessToken, toggleShowSideBarShortcut: shortcut, compressSingletonFolder, copyFileButton, copySnippetButton })
-    const detectedBranchName = DOMHelper.getCurrentBranch() || 'master'
-    let aggressivelyGotTreeData = GitHubHelper.getTreeData({
+    const getTreeDataAggressively = GitHubHelper.getTreeData({
       ...metaData,
-      branchName: detectedBranchName,
       accessToken,
     }).catch(() => {
+      // 1. the repo has no master branch
+      // 2. detect branch name from DOM failed
+      // 3. not very possible...
       nothingWentWrong = false
     })
+    let getTreeData = getTreeDataAggressively
     const metaDataFromAPI = await GitHubHelper.getRepoMeta({ ...metaData, accessToken })
     const projectDefaultBranchName = metaDataFromAPI['default_branch']
-    if (!metaData.branchName) {
-      // User accessed repo's homepage(no branch name in URL) and we predicted its default branch to be 'master'
-      if (projectDefaultBranchName !== detectedBranchName) {
-        // And the repo do not use {defaultBranchName} as default branch,
-        aggressivelyGotTreeData = GitHubHelper.getTreeData({
-          ...metaData,
-          branchName: projectDefaultBranchName,
-          accessToken,
-        })
-      }
+    if (!branchDetected && projectDefaultBranchName !== metaData.branchName) {
+      // Accessing repo's non-homepage(no branch name in URL, nor in DOM)
+      // We predicted its default branch to be 'master' and sent aggressive request
+      // Throw that request due to the repo do not use {defaultBranchName} as default branch
+      metaData.branchName = projectDefaultBranchName
+      getTreeData = GitHubHelper.getTreeData({
+        ...metaData,
+        accessToken,
+      })
     }
-    const branchName = metaData.branchName || projectDefaultBranchName
-    Object.assign(metaData, { branchName, api: metaDataFromAPI })
+    Object.assign(metaData, { api: metaDataFromAPI })
     dispatch(setMetaData, metaData)
     const shouldShow = URLHelper.isInCodePage(metaData)
     dispatch(setShouldShow, nothingWentWrong && shouldShow)
-    aggressivelyGotTreeData
+    getTreeData
       .then(treeData => {
         dispatch({ treeData })
       })
