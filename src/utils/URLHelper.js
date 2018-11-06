@@ -42,21 +42,32 @@ function isInCodePage(metaData = {}) {
   )
 }
 
+function isCommitPath(path) {
+  return /^[a-z0-9]{40}$/.test(path[0])
+}
+
 function getCurrentPath(branchName = '') {
   const { path, type } = parse()
-  const slicedBranchName = branchName.split('/')
   if (type === 'blob' || type === 'tree') {
-    while (slicedBranchName.length) {
-      if (slicedBranchName[0] === path[0]) {
-        slicedBranchName.shift()
-        path.shift()
-      } else {
-        raiseError(new Error(`branch name and path prefix not match`))
-        return []
+    if (isCommitPath(path)) {
+      // path = commit-SHA/path/to/item
+      path.shift()
+    } else {
+      // path = branch/name/path/to/item
+      const slicedBranchName = branchName.split('/')
+      while (slicedBranchName.length) {
+        if (slicedBranchName[0] === path[0]) {
+          slicedBranchName.shift()
+          path.shift()
+        } else {
+          raiseError(new Error(`branch name and path prefix not match`))
+          return []
+        }
       }
     }
+    return path.map(decodeURIComponent)
   }
-  return path.map(decodeURIComponent)
+  return []
 }
 
 export default {
