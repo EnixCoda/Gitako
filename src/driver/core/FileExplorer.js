@@ -64,7 +64,7 @@ const setUpTree = dispatch => () => dispatch(async (state, { treeData, metaData,
 
   tasksAfterRender.push(DOMHelper.focusSearchInput)
   dispatch(setStateText, null)
-  const currentPath = URLHelper.getCurrentPath(true)
+  const currentPath = URLHelper.getCurrentPath(metaData.branchName)
   if (currentPath.length) {
     const nodeExpandedTo = visibleNodesGenerator.expandTo(currentPath.join('/'))
     if (nodeExpandedTo) {

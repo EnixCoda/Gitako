@@ -1,27 +1,20 @@
-function parseRaw() {
+import { raiseError } from "analytics";
+
+function parse() {
   const { pathname } = window.location
   let [
     , // ignore content before the first '/'
     userName,
     repoName,
     type,
-    branchName,
-    ...path
+    ...path // should be [...branchName.split('/'), ...filePath.split('/')]
   ] = pathname.split('/')
   return {
     userName,
     repoName,
     type,
-    branchName,
     path,
   }
-}
-function parse() {
-  const parsedData = parseRaw()
-  if (!isInCodePage()) {
-    delete parsedData.branchName
-  }
-  return parsedData
 }
 
 function isInRepoPage() {
@@ -39,7 +32,7 @@ const TYPES = {
 }
 
 function isInCodePage(metaData = {}) {
-  const mergedRepo = { ...parseRaw(), ...metaData }
+  const mergedRepo = { ...parse(), ...metaData }
   const { type, branchName } = mergedRepo
   return Boolean(
     isInRepoPage(mergedRepo) &&
@@ -49,9 +42,21 @@ function isInCodePage(metaData = {}) {
   )
 }
 
-function getCurrentPath(decode = false) {
-  const { path } = parseRaw()
-  return decode ? path.map(decodeURIComponent) : path
+function getCurrentPath(branchName = '') {
+  const { path, type } = parse()
+  const slicedBranchName = branchName.split('/')
+  if (type === 'blob' || type === 'tree') {
+    while (slicedBranchName.length) {
+      if (slicedBranchName[0] === path[0]) {
+        slicedBranchName.shift()
+        path.shift()
+      } else {
+        raiseError(new Error(`branch name and path prefix not match`))
+        return []
+      }
+    }
+  }
+  return path.map(decodeURIComponent)
 }
 
 export default {
