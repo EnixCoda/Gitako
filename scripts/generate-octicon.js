@@ -1,7 +1,8 @@
 const octicons = require('octicons')
 const fs = require('fs')
+const path = require('path')
 
-const pathToIconsFolder = `${__dirname}/src/assets/icons/octicons`
+const pathToIconsFolder = path.resolve(__dirname, `../src/assets/icons/octicons`)
 
 function generateIconSVGFiles() {
   Object.values(octicons).forEach(icon => {

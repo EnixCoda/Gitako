@@ -7,7 +7,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "postinstall": "node scripts/generate-octicons",
+    "postinstall": "node scripts/generate-octicon.js",
     "start": "webpack --watch",
     "postversion": "node scripts/version.js",
     "build": "NODE_ENV=production webpack && npm run postbuild",
