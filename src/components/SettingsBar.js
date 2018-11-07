@@ -247,8 +247,8 @@ export default class SettingsBar extends React.PureComponent {
               <div className={'gitako-settings-bar-content-section others'}>
                 <h4>More Options</h4>
                 {moreOptions.map(option => (
-                  <React.Fragment>
-                    <label key={option.key} htmlFor={option.key}>
+                  <React.Fragment key={option.key}>
+                    <label htmlFor={option.key}>
                       <input
                         id={option.key}
                         name={option.key}
