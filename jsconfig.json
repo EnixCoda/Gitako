@@ -4,6 +4,7 @@
         "target": "es2017",
         "experimentalDecorators": true,
         "baseUrl": "./",
+        "module": "commonjs",
         "paths": {
             "*" : ["src/*", "packages/*"]
         }
