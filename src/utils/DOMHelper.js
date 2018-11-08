@@ -40,8 +40,12 @@ function getBranches() {
 }
 
 function getCurrentBranch() {
-  const selectedBranchSelector = '.select-menu.branch-select-menu .select-menu-modal .select-menu-list .select-menu-item.selected svg.select-menu-item-icon + span'
-  return $(selectedBranchSelector, element => element.textContent.trim())
+  const title = document.title
+  const reg = /(.*?) at (.*?)($| )/
+  const match = title.match(reg)
+  if (!match) return
+  const [_, nameAndPath, branch] = match
+  return branch
 }
 
 /**
