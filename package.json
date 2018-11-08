@@ -9,7 +9,7 @@
   "scripts": {
     "postinstall": "node scripts/generate-octicon.js",
     "start": "webpack --watch",
-    "postversion": "node scripts/version.js",
+    "postversion": "node scripts/version.js && npm run build",
     "build": "NODE_ENV=production webpack && npm run postbuild",
     "postbuild": "cd dist && rm -f ./gitako.zip && zip gitako.zip -r *"
   },
