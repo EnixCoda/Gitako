@@ -12,9 +12,10 @@ const init = dispatch => async () => {
     const metaData = URLHelper.parse()
     if (DOMHelper.isInCodePage()) {
       // in case GitHub page structure changes, fallback to 'master'
-      const detectedBranchName = DOMHelper.getCurrentBranch() || 'master'
+      let detectedBranchName = DOMHelper.getCurrentBranch()
+      branchDetected = Boolean(detectedBranchName)
+      detectedBranchName = detectedBranchName || 'master'
       metaData.branchName = detectedBranchName
-      branchDetected = true
     } else {
       metaData.branchName = 'master'
       branchDetected = false
