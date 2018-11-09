@@ -2,9 +2,14 @@ import { raiseError } from 'analytics'
 export const NOT_FOUND = 'Repo Not Found'
 export const BAD_CREDENTIALS = 'Bad credentials'
 export const API_RATE_LIMIT = `API rate limit`
+export const EMPTY_PROJECT = `Empty project`
 
 function apiRateLimitExceeded(content) {
   return content && content['documentation_url'] === 'https://developer.github.com/v3/#rate-limiting'
+}
+
+function isEmptyProject(content) {
+  return content && content['message'] === 'Git Repository is empty.'
 }
 
 async function request(url, { accessToken } = {}) {
@@ -19,6 +24,7 @@ async function request(url, { accessToken } = {}) {
   else {
     const content = await res.json()
     if (apiRateLimitExceeded(content)) throw new Error(API_RATE_LIMIT)
+    else if (isEmptyProject(content)) throw new Error(EMPTY_PROJECT)
     else if (!res.ok) raiseError(new Error(`Got ${res.statusText} when requesting ${url}`))
     throw new Error(content && content.message)
   }
