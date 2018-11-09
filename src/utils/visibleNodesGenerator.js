@@ -148,6 +148,9 @@ export default class VisibleNodesGenerator {
       }
     }
     const node = findNode(root)
+    if (node) {
+      this.setExpand(node, true)
+    }
     this.focusNode(node)
     return node
   }
