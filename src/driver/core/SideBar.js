@@ -78,7 +78,6 @@ const init = dispatch => async () => {
 }
 
 const handleError = dispatch => async err => {
-  // TODO: detect request time exceeds limit
   if (err.message === EMPTY_PROJECT) {
     dispatch(setError, 'This project seems to be empty.')
   } else if (
