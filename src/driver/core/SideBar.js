@@ -67,7 +67,12 @@ const init = dispatch => async () => {
         }
       })
     }
-    getTreeData.then(treeData => dispatch({ treeData })).catch(err => dispatch(handleError, err))
+    getTreeData.then(treeData => {
+      if (treeData) {
+        // in an unknown rare case this NOT happen
+        dispatch({ treeData })
+      }
+    }).catch(err => dispatch(handleError, err))
     Object.assign(metaData, { api: metaDataFromAPI })
     dispatch(setMetaData, metaData)
     const shouldShow = URLHelper.isInCodePage(metaData)
