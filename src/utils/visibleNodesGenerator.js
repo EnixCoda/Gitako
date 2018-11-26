@@ -27,20 +27,30 @@ function getFilterFunc(keyRegex) {
   }
 }
 
+function filterDuplications(arr) {
+  return Array.from(new Set(arr))
+}
+
 function search(treeNodes, searchKey) {
   if (!searchKey) return treeNodes
   /**
    * if searchKey is 'abcd'
-   * then keyRegex will be /a.*?b.*?c.*?d/i
+   * then keyRegex will be /abcd/i and /a.*?b.*?c.*?d/i
    */
-  const keyRegex = new RegExp(
-    searchKey
-      .replace(/\//, '')
-      .split('')
-      .join('.*?'),
-    'i'
+  const keyRegexes = [
+    new RegExp(searchKey, 'i'),
+    new RegExp(
+      searchKey
+        .replace(/\//, '')
+        .split('')
+        .join('.*?'),
+      'i'
+    ),
+  ]
+  const searchResults = [].concat(
+    ...keyRegexes.map(keyRegex => treeNodes.filter(getFilterFunc(keyRegex)))
   )
-  return treeNodes.filter(getFilterFunc(keyRegex))
+  return filterDuplications(searchResults)
 }
 
 function debounce(func, delay) {
