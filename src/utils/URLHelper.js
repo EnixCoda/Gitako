@@ -1,9 +1,10 @@
-import { raiseError } from "analytics";
+import { raiseError } from 'analytics'
 
 function parse() {
   const { pathname } = window.location
   let [
-    , // ignore content before the first '/'
+    ,
+    // ignore content before the first '/'
     userName,
     repoName,
     type,
@@ -15,6 +16,11 @@ function parse() {
     type,
     path,
   }
+}
+
+function parseBlobSHA() {
+  const { type, path } = parse()
+  return type === 'blob' ? path[0] : false
 }
 
 function isInRepoPage() {
@@ -36,9 +42,9 @@ function isInCodePage(metaData = {}) {
   const { type, branchName } = mergedRepo
   return Boolean(
     isInRepoPage(mergedRepo) &&
-    (!type || type === TYPES.TREE || type === TYPES.BLOB) &&
-    type !== TYPES.COMMIT &&
-    (branchName || (!type && !branchName))
+      (!type || type === TYPES.TREE || type === TYPES.BLOB) &&
+      type !== TYPES.COMMIT &&
+      (branchName || (!type && !branchName))
   )
 }
 
@@ -75,4 +81,5 @@ export default {
   isInRepoPage,
   isInCodePage,
   parse,
+  parseBlobSHA,
 }
