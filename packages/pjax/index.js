@@ -3,14 +3,14 @@ var forEachEls = require("./lib/foreach-els.js")
 var parseOptions = require("./lib/parse-options.js")
 var switches = require("./lib/switches")
 var newUid = require("./lib/uniqueid.js")
-
 var on = require("./lib/events/on.js")
 var trigger = require("./lib/events/trigger.js")
-
 var clone = require("./lib/util/clone.js")
 var contains = require("./lib/util/contains.js")
 var extend = require("./lib/util/extend.js")
-var noop = require("./lib/util/noop")
+var parseElement = require("./lib/proto/parse-element")
+var forEachSelectors = require("./lib/foreach-selectors.js")
+var switchSelectors = require("./lib/switches-selectors.js")
 
 var Pjax = function(options) {
     this.state = {
@@ -19,19 +19,22 @@ var Pjax = function(options) {
       options: null
     }
 
-
     this.options = parseOptions(options)
     this.log("Pjax options", this.options)
 
     if (this.options.scrollRestoration && "scrollRestoration" in history) {
-      history.scrollRestoration = "manual"
+      history.scrollRestoration = "auto"
     }
 
     this.maxUid = this.lastUid = newUid()
 
     this.parseDOM(document)
 
+    on(window, "pushstate", function(st) {
+      console.log(`push state`)
+    })
     on(window, "popstate", function(st) {
+      console.log(`pop state`)
       if (st.state) {
         var opt = clone(this.options)
         opt.url = st.state.url
@@ -62,7 +65,6 @@ Pjax.prototype = {
   },
 
   parseDOM: function(el) {
-    var parseElement = require("./lib/proto/parse-element")
     forEachEls(this.getElements(el), parseElement, this)
   },
 
@@ -78,12 +80,12 @@ Pjax.prototype = {
 
   attachForm: require("./lib/proto/attach-form.js"),
 
-  forEachSelectors: function(cb, context, DOMcontext) {
-    return require("./lib/foreach-selectors.js").bind(this)(this.options.selectors, cb, context, DOMcontext)
+  forEachSelectors: function(cb, context, DOMContext) {
+    return forEachSelectors.bind(this)(this.options.selectors, cb, context, DOMContext)
   },
 
   switchSelectors: function(selectors, fromEl, toEl, options) {
-    return require("./lib/switches-selectors.js").bind(this)(this.options.switches, this.options.switchesOptions, selectors, fromEl, toEl, options)
+    return switchSelectors.bind(this)(this.options.switches, this.options.switchesOptions, selectors, fromEl, toEl, options)
   },
 
   latestChance: function(href) {
@@ -262,18 +264,4 @@ Pjax.prototype = {
 
 Pjax.isSupported = require("./lib/is-supported.js")
 
-// arguably could do `if( require("./lib/is-supported.js")()) {` but that might be a little to simple
-if (Pjax.isSupported()) {
-  module.exports = Pjax
-}
-// if there isn’t required browser functions, returning stupid api
-else {
-  var stupidPjax = noop
-  for (var key in Pjax.prototype) {
-    if (Pjax.prototype.hasOwnProperty(key) && typeof Pjax.prototype[key] === "function") {
-      stupidPjax[key] = noop
-    }
-  }
-
-  module.exports = stupidPjax
-}
+module.exports = Pjax
