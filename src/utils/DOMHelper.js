@@ -103,7 +103,7 @@ const pjax = new PJAX({
 
 function loadWithPJAX(URL) {
   NProgress.start()
-  pjax.loadUrl(URL)
+  pjax.loadUrl(URL, { scrollTo: 0 })
 }
 
 /**
