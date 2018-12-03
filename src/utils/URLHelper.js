@@ -18,9 +18,9 @@ function parse() {
   }
 }
 
-function parseBlobSHA() {
+function parseSHA() {
   const { type, path } = parse()
-  return type === 'blob' ? path[0] : false
+  return (type === 'blob' || type === 'tree') ? path[0] : false
 }
 
 function isInRepoPage() {
@@ -81,5 +81,5 @@ export default {
   isInRepoPage,
   isInCodePage,
   parse,
-  parseBlobSHA,
+  parseSHA,
 }

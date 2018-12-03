@@ -17,7 +17,7 @@ const init = dispatch => async () => {
     const metaData = URLHelper.parse()
     if (DOMHelper.isInCodePage()) {
       detectedBranchName = DOMHelper.getCurrentBranch() // not working well with non-branch blob
-        || URLHelper.parseBlobSHA() // cannot handle '/' split branch name, should not use when possibly on branch page
+        || URLHelper.parseSHA() // cannot handle '/' split branch name, should not use when possibly on branch page
     }
     metaData.branchName = detectedBranchName || 'master'
     dispatch(setMetaData, metaData)
