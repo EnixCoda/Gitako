@@ -1,4 +1,4 @@
-import { version } from '../package'
+import { version } from '../package.json'
 // TODO: set this through ENV or something else
 const LOG_ENDPOINT = 'https://enix.one/gitako/log'
 

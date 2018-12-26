@@ -1,0 +1,19 @@
+{
+  "files": ["src/content.jsx"],
+  "compilerOptions": {
+    "target": "es2015",
+    "outDir": "dist",
+    "jsx": "react",
+    "allowJs": true,
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "resolveJsonModule": true,
+    "lib": ["dom", "es2015"],
+    "baseUrl": ".",
+    "experimentalDecorators": true,
+    "paths": {
+      "*": ["src/*"]
+    }
+  },
+  "include": ["src"]
+}

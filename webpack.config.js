@@ -20,7 +20,8 @@ const plugins = [
   new webpack.SourceMapDevToolPlugin({}),
 ]
 
-if (process.env.NODE_ENV === 'production') {
+const IN_PRODUCTION_MODE = process.env.NODE_ENV === 'production'
+if (IN_PRODUCTION_MODE) {
   plugins.push(
     new UglifyJSWebpackPlugin({
       cache: true,
@@ -40,24 +41,31 @@ if (process.env.NODE_ENV === 'production') {
 
 module.exports = {
   entry: {
-    content: './src/content.js',
+    content: './src/content.jsx',
   },
+  mode: IN_PRODUCTION_MODE ? 'production' : 'development',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].js',
   },
   resolve: {
-    modules: [srcPath, packagesPath, 'node_modules']
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
+    modules: [srcPath, packagesPath, 'node_modules'],
   },
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         loader: 'babel-loader',
         options: {
           cacheDirectory: true,
         },
         include: [srcPath, packagesPath],
+      },
+      {
+        test: /\.tsx?$/,
+        include: [srcPath],
+        loader: 'awesome-typescript-loader',
       },
       {
         test: /\.less$/,
