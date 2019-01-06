@@ -1,10 +1,10 @@
-import React from 'react'
+import * as React from 'react'
 import Icon from 'components/Icon'
 import cx from 'utils/cx'
-import DOMHelper from 'utils/DOMHelper'
-import LoadingIndicator from 'components/LoadingIndicator';
+import LoadingIndicator from 'components/LoadingIndicator'
+import { TreeNode } from 'utils/VisibleNodesGenerator'
 
-function getIconType(node) {
+function getIconType(node: TreeNode) {
   switch (node.type) {
     case 'tree':
       return 'folder'
@@ -15,8 +15,15 @@ function getIconType(node) {
   }
 }
 
-export default class Node extends React.PureComponent {
-  onClick = (event) => {
+type Props = {
+  node: TreeNode
+  onClick(node: TreeNode): void
+  depth: number
+  expanded: boolean
+  focused: boolean
+}
+export default class Node extends React.PureComponent<Props> {
+  onClick: React.MouseEventHandler = event => {
     if (event.metaKey) return
     event.preventDefault()
     const { node, onClick } = this.props

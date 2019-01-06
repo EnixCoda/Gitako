@@ -1,11 +1,19 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import * as React from 'react'
 
-export default class AutoSizer extends React.Component {
-  static propTypes = {}
+type Props = {
+  children(size: Size): React.ReactNode
+}
 
-  static defaultProps = {}
+type Size = {
+  width: number
+  height: number
+}
 
+type State = {
+  size: Size
+}
+
+export default class AutoSizer extends React.Component<Props, State> {
   state = {
     size: {
       width: 0,
@@ -13,7 +21,7 @@ export default class AutoSizer extends React.Component {
     },
   }
 
-  ref = React.createRef()
+  ref = React.createRef<HTMLDivElement>()
 
   componentDidMount() {
     const container = this.ref.current

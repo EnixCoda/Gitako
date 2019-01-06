@@ -2,11 +2,11 @@ import { version } from '../package.json'
 // TODO: set this through ENV or something else
 const LOG_ENDPOINT = 'https://enix.one/gitako/log'
 
-export function raiseError(error) {
+export function raiseError(error: Error) {
   return reportError(error)
 }
 
-export function withErrorLog(method, args) {
+export function withErrorLog(method: Function, args: any[]) {
   return [
     function() {
       try {
@@ -19,13 +19,13 @@ export function withErrorLog(method, args) {
   ]
 }
 
-function encodeParams(params) {
+function encodeParams(params: any) {
   return Object.keys(params)
     .map(key => `${key}=${encodeURIComponent(JSON.stringify(params[key]))}`)
     .join('&')
 }
 
-function reportError(error) {
+function reportError(error: Error) {
   return fetch(
     `${LOG_ENDPOINT}?${encodeParams({
       error: (error && error.message) || error,
