@@ -1,18 +1,18 @@
 {
   "files": ["src/content.jsx"],
   "compilerOptions": {
-    "target": "es2015",
+    "target": "es2016",
     "outDir": "dist",
     "jsx": "react",
     "allowJs": true,
     "module": "commonjs",
     "noImplicitAny": true,
     "resolveJsonModule": true,
-    "lib": ["dom", "es2015"],
+    "lib": ["dom", "es2017.object", "es2016"],
     "baseUrl": ".",
     "experimentalDecorators": true,
     "paths": {
-      "*": ["src/*"]
+      "*": ["src/*", "packages/*"]
     }
   },
   "include": ["src"]

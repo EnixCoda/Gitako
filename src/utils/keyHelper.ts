@@ -1,6 +1,6 @@
 const keyCodeArray = [
   ...'1234567890abcdefghijklmnopqrstuvwxyz'.split(''),
-  ...'`[]\\;\',./'.split(''),
+  ..."`[]\\;',./".split(''),
   'alt',
   'shift',
   'ctrl',
@@ -8,7 +8,7 @@ const keyCodeArray = [
 ]
 const validKeyCodes = new Set(keyCodeArray)
 
-function isValidKey(key) {
+function isValidKey(key: string) {
   return validKeyCodes.has(key)
 }
 
@@ -18,7 +18,7 @@ function isValidKey(key) {
  * @param {string} keysString
  * @returns {string}
  */
-function parse(keysString) {
+function parse(keysString: string) {
   return (
     keysString
       .split('+')
@@ -32,13 +32,11 @@ function parse(keysString) {
   )
 }
 
-function parseKeyCode(code) {
-  return code
-    .toLowerCase()
-    .replace(/^control$/, 'ctrl')
+function parseKeyCode(code: string) {
+  return code.toLowerCase().replace(/^control$/, 'ctrl')
 }
 
-function parseEvent(e) {
+function parseEvent(e: KeyboardEvent) {
   const { altKey: alt, shiftKey: shift, metaKey: meta, ctrlKey: ctrl } = e
   const code = parseKeyCode(e.key)
   const keys = { meta, ctrl, shift, alt, [code]: true }

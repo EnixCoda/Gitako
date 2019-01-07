@@ -4,16 +4,24 @@ export const BAD_CREDENTIALS = 'Bad credentials'
 export const API_RATE_LIMIT = `API rate limit`
 export const EMPTY_PROJECT = `Empty project`
 
-function apiRateLimitExceeded(content) {
-  return content && content['documentation_url'] === 'https://developer.github.com/v3/#rate-limiting'
+function apiRateLimitExceeded(content: any) {
+  return (
+    content && content['documentation_url'] === 'https://developer.github.com/v3/#rate-limiting'
+  )
 }
 
-function isEmptyProject(content) {
+function isEmptyProject(content: any) {
   return content && content['message'] === 'Git Repository is empty.'
 }
 
-async function request(url, { accessToken } = {}) {
-  const headers = {}
+type Options = {
+  accessToken?: string
+}
+
+async function request(url: string, { accessToken }: Options = {}) {
+  const headers = {} as {
+    Authorization?: string
+  }
   if (accessToken) {
     headers.Authorization = `token ${accessToken}`
   }
@@ -30,22 +38,56 @@ async function request(url, { accessToken } = {}) {
   }
 }
 
-async function getRepoMeta({ userName, repoName, accessToken }) {
+export type MetaData = {
+  userName?: string
+  repoName?: string
+  branchName?: string
+  accessToken?: string
+}
+
+async function getRepoMeta({ userName, repoName, accessToken }: MetaData) {
   const url = `https://api.github.com/repos/${userName}/${repoName}`
   return await request(url, { accessToken })
 }
 
-async function getTreeData({ userName, repoName, branchName, accessToken }) {
+export type TreeItem = {
+  path: string
+}
+
+export type TreeData = {
+  userName: string
+  repoName: string
+  branchName: string
+  accessToken: string
+  tree: TreeItem[]
+}
+
+async function getTreeData({ userName, repoName, branchName, accessToken }: TreeData) {
   const url = `https://api.github.com/repos/${userName}/${repoName}/git/trees/${branchName}?recursive=1`
   return await request(url, { accessToken })
 }
 
-async function getBlobData({ userName, repoName, accessToken, fileSHA }) {
+export type ItemData = {
+  userName: string
+  repoName: string
+  branchName: string
+  accessToken: string
+}
+
+export type BlobData = {
+  fileSHA: string
+} & ItemData
+
+async function getBlobData({ userName, repoName, accessToken, fileSHA }: BlobData) {
   const url = `https://api.github.com/repos/${userName}/${repoName}/git/blobs/${fileSHA}`
   return await request(url, { accessToken })
 }
 
-function getUrlForRedirect({ userName, repoName, branchName }, type = 'blob', path) {
+function getUrlForRedirect(
+  { userName, repoName, branchName }: MetaData,
+  type = 'blob',
+  path?: string
+) {
   return `https://github.com/${userName}/${repoName}/${type}/${branchName}/${path}`
 }
 

@@ -1,6 +1,25 @@
-import GitHubHelper from 'utils/GitHubHelper'
+import GitHubHelper, { TreeData, MetaData } from 'utils/GitHubHelper'
 
-const nodeTemplate = {
+interface BasicItem {
+  name: string | null
+  path: string | null
+  parent?: BasicItem | null
+  mode: null
+  type: string | null
+  url: string | null
+}
+
+interface Folder extends BasicItem {
+  contents?: Item[]
+}
+
+interface Blob extends BasicItem {
+  sha: string | null
+}
+
+type Item = Folder & Blob
+
+const nodeTemplate: Blob = {
   name: null,
   path: null,
   mode: null,
@@ -9,10 +28,10 @@ const nodeTemplate = {
   url: null,
 }
 
-function sortFoldersToFront(root) {
-  const isFolder = node => node.type === 'tree'
-  const isNotFolder = node => !isFolder(node)
-  function depthFirstSearch(root) {
+const isFolder = (node: BasicItem) => node.type === 'tree'
+const isNotFolder = (node: BasicItem) => !isFolder(node)
+function sortFoldersToFront(root: Item) {
+  function depthFirstSearch(root: Item) {
     const nodes = root.contents
     if (nodes) {
       nodes.splice(0, Infinity, ...nodes.filter(isFolder), ...nodes.filter(isNotFolder))
@@ -23,14 +42,14 @@ function sortFoldersToFront(root) {
   return depthFirstSearch(root)
 }
 
-function setParentNode(root, parent = null) {
+function setParentNode(root: Item, parent: Item | null = null) {
   root.parent = parent
   if (root.contents) {
     root.contents.forEach(node => setParentNode(node, root))
   }
 }
 
-function findGitModules(root) {
+function findGitModules(root: Item) {
   if (root.contents) {
     const modulesFile = root.contents.find(content => content.name === '.gitmodules')
     if (modulesFile) {
@@ -40,14 +59,14 @@ function findGitModules(root) {
   return null
 }
 
-function parse(treeData, metaData) {
+function parse(treeData: TreeData, metaData: MetaData) {
   const { tree } = treeData
 
   // nodes are created from items and put onto tree
   const pathToNode = new Map()
   const pathToItem = new Map()
 
-  const root = { ...nodeTemplate, name: '', path: '', contents: [] }
+  const root: Item = { ...nodeTemplate, name: '', path: '', contents: [] }
   pathToNode.set('', root)
 
   tree.forEach(item => pathToItem.set(item.path, item))
@@ -69,9 +88,7 @@ function parse(treeData, metaData) {
         ...nodeTemplate,
         ...item,
         name: item.path.replace(/^.*\//, ''),
-        url: item.url
-          ? GitHubHelper.getUrlForRedirect(metaData, item.type, item.path)
-          : null,
+        url: item.url ? GitHubHelper.getUrlForRedirect(metaData, item.type, item.path) : null,
         contents: item.type === 'tree' ? [] : null,
       }
       pathToNode.get(path).contents.push(node)
@@ -81,7 +98,7 @@ function parse(treeData, metaData) {
   })
 
   setParentNode(root)
-  
+
   return {
     gitModules: findGitModules(root),
     root: sortFoldersToFront(root),

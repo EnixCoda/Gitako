@@ -1,9 +1,7 @@
 /**
  * cx('class1', { class2: true, class3: false }) --> 'class1 class2'
- * @param {string} baseClassNames
- * @param {object} optionalClassNames
  */
-export default function cx(...classNames) {
+export default function cx(...classNames: (string | object)[]): string {
   return classNames
     .filter(Boolean)
     .map(className => {

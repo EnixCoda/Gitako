@@ -22,6 +22,8 @@
     "react-dom": "^16.4.0"
   },
   "devDependencies": {
+    "@types/chrome": "^0.0.77",
+    "@types/nprogress": "^0.0.29",
     "@types/react": "^16.7.18",
     "@types/react-dom": "^16.0.11",
     "awesome-typescript-loader": "^5.2.1",

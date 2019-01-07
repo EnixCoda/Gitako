@@ -1,4 +1,5 @@
 import { raiseError } from 'analytics'
+import { MetaData } from './GitHubHelper'
 
 function parse() {
   const { pathname } = window.location
@@ -20,7 +21,7 @@ function parse() {
 
 function parseSHA() {
   const { type, path } = parse()
-  return (type === 'blob' || type === 'tree') ? path[0] : false
+  return type === 'blob' || type === 'tree' ? path[0] : false
 }
 
 function isInRepoPage() {
@@ -37,18 +38,18 @@ const TYPES = {
   // TODO: record more types
 }
 
-function isInCodePage(metaData = {}) {
+function isInCodePage(metaData: MetaData = {}) {
   const mergedRepo = { ...parse(), ...metaData }
   const { type, branchName } = mergedRepo
   return Boolean(
-    isInRepoPage(mergedRepo) &&
+    isInRepoPage() &&
       (!type || type === TYPES.TREE || type === TYPES.BLOB) &&
       type !== TYPES.COMMIT &&
       (branchName || (!type && !branchName))
   )
 }
 
-function isCommitPath(path) {
+function isCommitPath(path: string[]) {
   return /^[a-z0-9]{40}$/.test(path[0])
 }
 

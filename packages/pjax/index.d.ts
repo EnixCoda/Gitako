@@ -76,7 +76,7 @@ declare class Pjax {
    * @param {string} href
    * @param {Pjax.IOptions} options
    */
-  loadUrl(href: string, options?: Pjax.IOptions): void;
+  loadUrl(href: string, options?: Partial<Pjax.IOptions>): void;
 
   /**
    * Called after all switches complete (even async).
@@ -179,6 +179,11 @@ declare namespace Pjax {
       requestParams?: IRequestParams[];
       formData?: FormData;
     }
+
+    /**
+     * Cache accessed pages
+     */
+    forceCache?: boolean
   }
 
   export type Switch = (oldEl: Element, newEl: Element, options?: IOptions, switchesOptions?: StringKeyedObject) => void;

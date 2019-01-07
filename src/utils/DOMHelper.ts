@@ -2,8 +2,8 @@
  * this helper helps manipulating DOM
  */
 
-import PJAX from 'pjax'
-import NProgress from 'nprogress'
+import * as PJAX from 'pjax'
+import * as NProgress from 'nprogress'
 
 NProgress.configure({ showSpinner: false })
 
@@ -11,7 +11,7 @@ NProgress.configure({ showSpinner: false })
  * if should show gitako, then move body right to make space for showing gitako
  * otherwise, hide the space
  */
-function setBodyIndent(shouldShowGitako) {
+function setBodyIndent(shouldShowGitako: boolean) {
   const spacingClassName = 'with-gitako-spacing'
   if (shouldShowGitako) {
     document.body.classList.add(spacingClassName)
@@ -20,7 +20,7 @@ function setBodyIndent(shouldShowGitako) {
   }
 }
 
-function $(selector, existCallback, otherwise) {
+function $(selector: string, existCallback?: (element: Element) => any, otherwise?: () => any) {
   const element = document.querySelector(selector)
   if (element) {
     return existCallback ? existCallback(element) : element
@@ -40,12 +40,19 @@ function getBranches() {
 }
 
 function getCurrentBranch() {
-  const selectedBranchButtonSelector = '.repository-content > .file-navigation > .branch-select-menu > button'
-  const branchNameFromButtonElement = $(selectedBranchButtonSelector, element => element.title.trim())
+  const selectedBranchButtonSelector =
+    '.repository-content > .file-navigation > .branch-select-menu > button'
+  const branchNameFromButtonElement = $(
+    selectedBranchButtonSelector,
+    (element: HTMLButtonElement) => element.title.trim()
+  )
   if (branchNameFromButtonElement) return branchNameFromButtonElement
 
-  const selectedBranchSelector = '.select-menu.branch-select-menu .select-menu-modal .select-menu-list .select-menu-item.selected svg.select-menu-item-icon + span'
-  const branchNameFromSelectElement = $(selectedBranchSelector, element => element.textContent.trim())
+  const selectedBranchSelector =
+    '.select-menu.branch-select-menu .select-menu-modal .select-menu-list .select-menu-item.selected svg.select-menu-item-icon + span'
+  const branchNameFromSelectElement = $(selectedBranchSelector, element =>
+    element.textContent.trim()
+  )
   if (branchNameFromSelectElement) return branchNameFromSelectElement
 }
 
@@ -78,9 +85,8 @@ function scrollToRepoContent() {
 
 /**
  * scroll to index-th element in the list
- * @param {number} index index of node item in the list
  */
-function scrollToNodeElement(index) {
+function scrollToNodeElement(index: number) {
   const nodeElementSelector = '.node-item'
   const nodeElements = document.querySelectorAll(nodeElementSelector)
   const targetElement = nodeElements[index]
@@ -98,10 +104,10 @@ const pjax = new PJAX({
   scrollTo: false,
   analytics: false,
   cacheBust: false,
-  forceCache: true,
-})
+  forceCache: true, // TODO: merge namespace, add forceCache
+} as any)
 
-function loadWithPJAX(URL) {
+function loadWithPJAX(URL: string) {
   NProgress.start()
   pjax.loadUrl(URL, { scrollTo: 0 })
 }
@@ -130,9 +136,11 @@ const PAGE_TYPES = {
 function getCurrentPageType() {
   const blobWrapperSelector = '.repository-content .file .blob-wrapper table'
   const readmeSelector = '.repository-content .readme'
-  return $(blobWrapperSelector, () => PAGE_TYPES.RAW_TEXT)
-    || $(readmeSelector, () => PAGE_TYPES.RENDERED)
-    || PAGE_TYPES.OTHERS
+  return (
+    $(blobWrapperSelector, () => PAGE_TYPES.RAW_TEXT) ||
+    $(readmeSelector, () => PAGE_TYPES.RENDERED) ||
+    PAGE_TYPES.OTHERS
+  )
 }
 
 export const REPO_TYPE_PRIVATE = 'private'
@@ -169,7 +177,7 @@ function attachCopyFileBtn() {
    * @param {element} copyFileBtn
    * @param {string} text
    */
-  function setTempCopyFileBtnText(copyFileBtn, text) {
+  function setTempCopyFileBtnText(copyFileBtn: HTMLButtonElement, text: string) {
     copyFileBtn.innerText = text
     window.setTimeout(() => (copyFileBtn.innerText = 'Copy file'), 1000)
   }
@@ -195,7 +203,7 @@ function attachCopyFileBtn() {
           setTempCopyFileBtnText(copyFileBtn, 'Copy failed!')
         }
       })
-      btnGroup.insertBefore(copyFileBtn, btnGroups.lastChild)
+      btnGroup.insertBefore(copyFileBtn, btnGroup.lastChild)
     })
   }
 }
@@ -205,7 +213,7 @@ function attachCopyFileBtn() {
  * @param {element} element
  * @returns {boolean} whether copy is successful
  */
-function copyElementContent(element) {
+function copyElementContent(element: Element) {
   window.getSelection().removeAllRanges()
   const range = document.createRange()
   range.selectNode(element)
@@ -223,7 +231,7 @@ function copyElementContent(element) {
  * TODO: 'reactify' it
  */
 function createClippy() {
-  function setTempClippyIconFeedback(clippy, type) {
+  function setTempClippyIconFeedback(clippy: Element, type: 'success' | 'fail') {
     const tempIconClassName = type === 'success' ? 'success' : 'fail'
     clippy.classList.add(tempIconClassName)
     window.setTimeout(() => {
@@ -262,12 +270,13 @@ function createClippy() {
 
 const clippy = createClippy()
 
-let currentCodeSnippetElement
+let currentCodeSnippetElement: Element
 function attachCopySnippet() {
   const readmeSelector = '.repository-content #readme article'
   return $(readmeSelector, readmeElement =>
-    readmeElement.addEventListener('mouseover', ({ target }) => {
+    readmeElement.addEventListener('mouseover', e => {
       // only move clippy when mouse is over a new snippet(<pre>)
+      const target = e.target as Element
       if (target.nodeName === 'PRE') {
         if (currentCodeSnippetElement !== target) {
           currentCodeSnippetElement = target
@@ -291,12 +300,12 @@ function attachCopySnippet() {
  */
 function focusFileExplorer() {
   const sideBarContentSelector = '.gitako-side-bar .file-explorer'
-  $(sideBarContentSelector, sideBarElement => sideBarElement.focus())
+  $(sideBarContentSelector, (sideBarElement: HTMLElement) => sideBarElement.focus())
 }
 
 function focusSearchInput() {
   const searchInputSelector = '.search-input'
-  $(searchInputSelector, searchInputElement => {
+  $(searchInputSelector, (searchInputElement: HTMLElement) => {
     if (document.activeElement !== searchInputElement) {
       searchInputElement.focus()
     }
@@ -309,14 +318,20 @@ function focusSearchInput() {
  */
 function clickOnNodeElement(index = 0) {
   const nodeElementSelector = '.node-item'
-  const nodeElements = document.querySelectorAll(nodeElementSelector)
+  const nodeElements: NodeListOf<HTMLElement> = document.querySelectorAll(nodeElementSelector)
   nodeElements[index].click()
 }
 
 /**
  * a combination of few above functions
  */
-function decorateGitHubPageContent({ copyFileButton, copySnippetButton }) {
+function decorateGitHubPageContent({
+  copyFileButton,
+  copySnippetButton,
+}: {
+  copyFileButton: boolean
+  copySnippetButton: boolean
+}) {
   if (copyFileButton) attachCopyFileBtn()
   if (copySnippetButton) attachCopySnippet()
 }
