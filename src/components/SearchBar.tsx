@@ -1,6 +1,11 @@
-import React from 'react'
+import * as React from 'react'
 
-export default function SearchBar({ onSearchKeyChange, onFocus }) {
+type Props = {
+  onSearchKeyChange: React.FormEventHandler
+  onFocus: React.FocusEventHandler
+}
+
+export default function SearchBar({ onSearchKeyChange, onFocus }: Props) {
   return (
     <div className={'search-input-wrapper'}>
       <input

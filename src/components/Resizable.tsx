@@ -1,18 +1,19 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import * as React from 'react'
 import ResizeHandler from 'components/ResizeHandler'
-import cx from 'utils/cx';
+import cx from 'utils/cx'
 
-export default class Resizable extends React.PureComponent {
-  static propTypes = {
-    baseSize: PropTypes.number.isRequired,
-  }
+export type Size = number
+type Props = {
+  baseSize: Size
+  className?: string
+}
 
+export default class Resizable extends React.PureComponent<Props> {
   state = {
     size: this.props.baseSize,
   }
 
-  onResize = size => this.setState({ size: Math.max(this.props.baseSize, size) })
+  onResize = (size: Size) => this.setState({ size: Math.max(this.props.baseSize, size) })
 
   render() {
     const { className, children } = this.props

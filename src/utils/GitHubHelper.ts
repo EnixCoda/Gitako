@@ -43,6 +43,7 @@ export type MetaData = {
   repoName?: string
   branchName?: string
   accessToken?: string
+  api?: any
 }
 
 async function getRepoMeta({ userName, repoName, accessToken }: MetaData) {

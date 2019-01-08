@@ -1,6 +1,11 @@
-import React from 'react'
+import * as React from 'react'
+import { MetaData } from 'utils/GitHubHelper'
 
-export default function MetaBar({ metaData }) {
+type Props = {
+  metaData: MetaData
+}
+
+export default function MetaBar({ metaData }: Props) {
   const userUrl = metaData ? metaData.api && metaData.api.owner.html_url : undefined
   const repoUrl = metaData ? metaData.api && metaData.api.html_url : undefined
   return (

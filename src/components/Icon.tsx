@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import Submodule from 'assets/icons/octicons/file-submodule.svg?svgr'
 import Grabber from 'assets/icons/octicons/grabber.svg?svgr'
 import Octoface from 'assets/icons/octicons/octoface.svg?svgr'
@@ -17,7 +17,7 @@ import X from 'assets/icons/octicons/x.svg?svgr'
 import Gear from 'assets/icons/octicons/gear.svg?svgr'
 import cx from 'utils/cx'
 
-function getSVGIconComponent(type) {
+function getSVGIconComponent(type: string) {
   switch (type) {
     case 'submodule':
       return Submodule
@@ -69,7 +69,12 @@ function getSVGIconComponent(type) {
 
 const iconStyle = { width: '100%', height: '100%' }
 
-export default function Icon({ type, className = undefined, ...otherProps }) {
+type Props = {
+  type: string
+  className?: string
+}
+
+export default function Icon({ type, className = undefined, ...otherProps }: Props) {
   return (
     <div className={cx('octicon-wrapper', className)} {...otherProps}>
       {React.createElement(getSVGIconComponent(type), iconStyle)}

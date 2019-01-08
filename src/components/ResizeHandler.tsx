@@ -1,7 +1,14 @@
-import React from 'react'
+import * as React from 'react'
 import Icon from 'components/Icon'
+import Resizable, { Size } from './Resizable'
 
-export default class ResizeHandler extends React.PureComponent {
+type Props = {
+  size: Size
+  onResize: Resizable['onResize']
+  style?: React.CSSProperties
+}
+
+export default class ResizeHandler extends React.PureComponent<Props> {
   pointerDown = false
   startX = 0
   delta = 0
@@ -17,19 +24,14 @@ export default class ResizeHandler extends React.PureComponent {
     window.removeEventListener('mouseup', this.onPointerUp)
   }
 
-  /**
-   *
-   * @param {MouseEvent} e
-   * @memberof ResizeHandler
-   */
-  onPointerDown = e => {
+  onPointerDown = (e: React.MouseEvent) => {
     this.pointerDown = true
     const { clientX } = e
     this.startX = clientX
     this.subscribeEvents()
   }
 
-  onPointerMove = e => {
+  onPointerMove = (e: MouseEvent) => {
     if (!this.pointerDown) return
     const { clientX } = e
     const { onResize } = this.props
@@ -46,11 +48,7 @@ export default class ResizeHandler extends React.PureComponent {
   render() {
     const { style } = this.props
     return (
-      <div
-        className={'gitako-resize-handler'}
-        onMouseDown={this.onPointerDown}
-        style={style}
-      >
+      <div className={'gitako-resize-handler'} onMouseDown={this.onPointerDown} style={style}>
         <Icon type={'grabber'} className={'grabber-icon'} />
       </div>
     )
