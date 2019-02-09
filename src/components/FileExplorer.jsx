@@ -59,11 +59,7 @@ export default class FileExplorer extends React.Component {
   renderFiles(visibleNodes, onNodeClick) {
     const { nodes, depths, focusedNode, expandedNodes } = visibleNodes
     if (nodes.length === 0) {
-      return (
-        <label className={'no-results'}>
-          No results found.
-        </label>
-      )
+      return <label className={'no-results'}>No results found.</label>
     }
     return (
       <div className={'files'}>
@@ -82,19 +78,33 @@ export default class FileExplorer extends React.Component {
   }
 
   render() {
-    const { stateText, visibleNodes, freeze, handleKeyDown, handleSearchKeyChange, onNodeClick, toggleShowSettings, onFocusSearchBar } = this.props
+    const {
+      stateText,
+      visibleNodes,
+      freeze,
+      handleKeyDown,
+      handleSearchKeyChange,
+      onNodeClick,
+      toggleShowSettings,
+      onFocusSearchBar,
+    } = this.props
     return (
-      <div className={cx(`file-explorer`, { freeze })} tabIndex={-1} onKeyDown={handleKeyDown} onClick={ freeze ? toggleShowSettings : null}>
-        {
-          stateText
-          ? <LoadingIndicator text={stateText} />
-          : visibleNodes && (
+      <div
+        className={cx(`file-explorer`, { freeze })}
+        tabIndex={-1}
+        onKeyDown={handleKeyDown}
+        onClick={freeze ? toggleShowSettings : null}
+      >
+        {stateText ? (
+          <LoadingIndicator text={stateText} />
+        ) : (
+          visibleNodes && (
             <React.Fragment>
               <SearchBar onSearchKeyChange={handleSearchKeyChange} onFocus={onFocusSearchBar} />
               {this.renderFiles(visibleNodes, onNodeClick)}
             </React.Fragment>
           )
-        }
+        )}
       </div>
     )
   }
