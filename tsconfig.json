@@ -1,5 +1,5 @@
 {
-  "files": ["src/content.jsx"],
+  "files": ["src/content.tsx"],
   "compilerOptions": {
     "target": "es2016",
     "outDir": "dist",

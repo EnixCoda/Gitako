@@ -41,7 +41,7 @@ if (IN_PRODUCTION_MODE) {
 
 module.exports = {
   entry: {
-    content: './src/content.jsx',
+    content: './src/content.tsx',
   },
   mode: IN_PRODUCTION_MODE ? 'production' : 'development',
   output: {
