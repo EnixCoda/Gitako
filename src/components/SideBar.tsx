@@ -1,5 +1,4 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import * as React from 'react'
 import { SideBar as SideBarCore } from 'driver/core'
 import connect from 'driver/connect'
 import FileExplorer from 'components/FileExplorer'
@@ -9,48 +8,52 @@ import SettingsBar from 'components/SettingsBar'
 import Portal from 'components/Portal'
 import Resizable from 'components/Resizable'
 import cx from 'utils/cx'
+import VisibleNodesGenerator from 'utils/VisibleNodesGenerator'
 
-@connect(SideBarCore)
-export default class Gitako extends React.PureComponent {
-  static propTypes = {
-    // initial width of side bar
-    baseSize: PropTypes.number,
-    // error message
-    error: PropTypes.string,
-    // whether Gitako side bar should be shown
-    shouldShow: PropTypes.bool,
-    // whether show settings pane
-    showSettings: PropTypes.bool,
-    // whether failed loading the repo due to it is private
-    errorDueToAuth: PropTypes.bool,
-    // access token for GitHub
-    accessToken: PropTypes.string,
-    // the shortcut string for toggle sidebar
-    toggleShowSideBarShortcut: PropTypes.string,
-    // meta data for the repository
-    metaData: PropTypes.object,
-    // file tree data
-    treeData: PropTypes.object,
-    // few settings
-    compressSingletonFolder: PropTypes.bool,
-    copyFileButton: PropTypes.bool,
-    copySnippetButton: PropTypes.bool,
+export type TreeData = any
+export type MetaData = any
+export type VisibleNodes = VisibleNodesGenerator['visibleNodes']
 
-    init: PropTypes.func.isRequired,
-    onPJAXEnd: PropTypes.func.isRequired,
-    setShouldShow: PropTypes.func.isRequired,
-    toggleShowSideBar: PropTypes.func.isRequired,
-    toggleShowSettings: PropTypes.func.isRequired,
-    onAccessTokenChange: PropTypes.func.isRequired,
-    onKeyDown: PropTypes.func.isRequired,
-    onShortcutChange: PropTypes.func.isRequired,
-    setMetaData: PropTypes.func.isRequired,
-    setCopyFile: PropTypes.func.isRequired,
-    setCopySnippet: PropTypes.func.isRequired,
-    setCompressSingleton: PropTypes.func.isRequired,
-  }
+type Props = {
+  // initial width of side bar
+  baseSize?: number
+  // error message
+  error?: string
+  // whether Gitako side bar should be shown
+  shouldShow?: boolean
+  // whether show settings pane
+  showSettings?: boolean
+  // whether failed loading the repo due to it is private
+  errorDueToAuth?: boolean
+  // access token for GitHub
+  accessToken?: string
+  // the shortcut string for toggle sidebar
+  toggleShowSideBarShortcut?: string
+  // meta data for the repository
+  metaData: MetaData
+  // file tree data
+  treeData: TreeData
+  // few settings
+  compressSingletonFolder?: boolean
+  copyFileButton?: boolean
+  copySnippetButton?: boolean
+  logoContainerElement: HTMLElement | null
 
-  static defaultProps = {
+  init: () => void
+  onPJAXEnd: () => void
+  toggleShowSideBar: () => void
+  toggleShowSettings: () => void
+  onAccessTokenChange: SettingsBar['props']['onAccessTokenChange']
+  onKeyDown: EventListener
+  onShortcutChange: SettingsBar['props']['onShortcutChange']
+  setCopyFile: SettingsBar['props']['setCopyFile']
+  setCopySnippet: SettingsBar['props']['setCopySnippet']
+  setCompressSingleton: SettingsBar['props']['setCompressSingleton']
+}
+
+@(connect(SideBarCore) as any)
+export default class Gitako extends React.PureComponent<Props> {
+  static defaultProps: Partial<Props> = {
     baseSize: 260,
     shouldShow: false,
     showSettings: false,
@@ -102,15 +105,7 @@ export default class Gitako extends React.PureComponent {
   }
 
   renderContent() {
-    const {
-      errorDueToAuth,
-      metaData,
-      treeData,
-      showSettings,
-      accessToken,
-      compressSingletonFolder,
-      toggleShowSettings,
-    } = this.props
+    const { errorDueToAuth, metaData, treeData, showSettings, toggleShowSettings } = this.props
     return (
       <div className={'gitako-side-bar-content'}>
         {metaData && <MetaBar metaData={metaData} />}
@@ -122,8 +117,6 @@ export default class Gitako extends React.PureComponent {
                 metaData={metaData}
                 treeData={treeData}
                 freeze={showSettings}
-                accessToken={accessToken}
-                compressSingletonFolder={compressSingletonFolder}
               />
             )}
       </div>
@@ -154,7 +147,7 @@ export default class Gitako extends React.PureComponent {
       <div className={'gitako-side-bar'}>
         <Portal into={logoContainerElement}>
           <ToggleShowButton
-            error={error}
+            hasError={Boolean(error)}
             shouldShow={shouldShow}
             toggleShowSideBar={toggleShowSideBar}
           />

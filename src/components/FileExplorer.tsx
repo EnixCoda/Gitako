@@ -5,10 +5,7 @@ import SearchBar from 'components/SearchBar'
 import Node from 'components/Node'
 import LoadingIndicator from 'components/LoadingIndicator'
 import cx from 'utils/cx'
-
-type TreeData = any
-type MetaData = any
-type VisibleNodes = any
+import { TreeData, MetaData, VisibleNodes } from './SideBar'
 
 type Props = {
   treeData: TreeData
