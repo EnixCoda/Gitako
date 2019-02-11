@@ -1,5 +1,4 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import * as React from 'react'
 import connect from 'driver/connect'
 import { FileExplorer as FileExplorerCore } from 'driver/core'
 import SearchBar from 'components/SearchBar'
@@ -7,26 +6,31 @@ import Node from 'components/Node'
 import LoadingIndicator from 'components/LoadingIndicator'
 import cx from 'utils/cx'
 
-@connect(FileExplorerCore)
-export default class FileExplorer extends React.Component {
-  static propTypes = {
-    treeData: PropTypes.object,
-    metaData: PropTypes.object,
-    freeze: PropTypes.bool,
-    visibleNodes: PropTypes.object,
+type TreeData = any
+type MetaData = any
+type VisibleNodes = any
 
-    init: PropTypes.func.isRequired,
-    execAfterRender: PropTypes.func.isRequired,
-    handleKeyDown: PropTypes.func.isRequired,
-    handleSearchKeyChange: PropTypes.func.isRequired,
-    setExpand: PropTypes.func.isRequired,
-    toggleNodeExpansion: PropTypes.func.isRequired,
-    focusNode: PropTypes.func.isRequired,
-    onNodeClick: PropTypes.func.isRequired,
-    updateVisibleNodes: PropTypes.func.isRequired,
-  }
+type Props = {
+  treeData: TreeData
+  metaData: MetaData
+  visibleNodes: VisibleNodes
+  freeze: boolean
 
-  static defaultProps = {
+  stateText: string
+
+  init: () => void
+  execAfterRender: () => void
+  handleKeyDown: React.KeyboardEventHandler
+  handleSearchKeyChange: React.FormEventHandler
+  onNodeClick: Node['props']['onClick']
+  toggleShowSettings: React.MouseEventHandler
+  onFocusSearchBar: React.FocusEventHandler
+  setUpTree: (treeData?: TreeData) => void
+}
+
+@(connect(FileExplorerCore) as any)
+export default class FileExplorer extends React.Component<Props> {
+  static defaultProps: Partial<Props> = {
     treeData: null,
     metaData: null,
     freeze: false,
@@ -44,7 +48,7 @@ export default class FileExplorer extends React.Component {
     execAfterRender()
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps: Props) {
     if (nextProps.treeData !== this.props.treeData) {
       const { setUpTree } = nextProps
       setUpTree()
@@ -56,14 +60,14 @@ export default class FileExplorer extends React.Component {
     execAfterRender()
   }
 
-  renderFiles(visibleNodes, onNodeClick) {
+  renderFiles(visibleNodes: VisibleNodes, onNodeClick: Node['props']['onClick']) {
     const { nodes, depths, focusedNode, expandedNodes } = visibleNodes
     if (nodes.length === 0) {
       return <label className={'no-results'}>No results found.</label>
     }
     return (
       <div className={'files'}>
-        {nodes.map(node => (
+        {nodes.map((node: any) => (
           <Node
             key={node.path}
             node={node}
