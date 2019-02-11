@@ -1,3 +1,5 @@
+import { KeyboardEvent } from 'react'
+
 const keyCodeArray = [
   ...'1234567890abcdefghijklmnopqrstuvwxyz'.split(''),
   ..."`[]\\;',./".split(''),
@@ -36,7 +38,7 @@ function parseKeyCode(code: string) {
   return code.toLowerCase().replace(/^control$/, 'ctrl')
 }
 
-function parseEvent(e: KeyboardEvent) {
+function parseEvent(e: KeyboardEvent<HTMLInputElement>) {
   const { altKey: alt, shiftKey: shift, metaKey: meta, ctrlKey: ctrl } = e
   const code = parseKeyCode(e.key)
   const keys = { meta, ctrl, shift, alt, [code]: true }

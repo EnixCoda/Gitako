@@ -72,12 +72,15 @@ const iconStyle = { width: '100%', height: '100%' }
 type Props = {
   type: string
   className?: string
+  onClick?: (event: React.MouseEvent<HTMLDivElement>) => void
 }
 
-export default function Icon({ type, className = undefined, ...otherProps }: Props) {
+const Icon: React.SFC<Props> = function Icon({ type, className = undefined, ...otherProps }) {
   return (
     <div className={cx('octicon-wrapper', className)} {...otherProps}>
       {React.createElement(getSVGIconComponent(type), iconStyle)}
     </div>
   )
 }
+
+export default Icon

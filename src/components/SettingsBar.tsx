@@ -1,9 +1,8 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import * as React from 'react'
 import Icon from 'components/Icon'
 import configHelper, { config } from 'utils/configHelper'
 import keyHelper from 'utils/keyHelper'
-import { version } from '../../package'
+import { version } from '../../package.json'
 
 const wikiLinks = {
   compressSingletonFolder: 'https://github.com/EnixCoda/Gitako/wiki/Compress-Singleton-Folder',
@@ -29,8 +28,7 @@ function detectOS() {
   return OperatingSystems.others
 }
 
-function friendlyFormatShortcut(shortcut) {
-  if (typeof shortcut !== 'string') return ''
+function friendlyFormatShortcut(shortcut: string) {
   const OS = detectOS()
   if (OS === OperatingSystems.Windows) {
     return shortcut.replace(/meta/, 'win')
@@ -46,33 +44,51 @@ function friendlyFormatShortcut(shortcut) {
   }
 }
 
-export default class SettingsBar extends React.PureComponent {
-  static propTypes = {
-    accessToken: PropTypes.string.isRequired,
-    activated: PropTypes.bool.isRequired,
-    onAccessTokenChange: PropTypes.func.isRequired,
-    onShortcutChange: PropTypes.func.isRequired,
-    compressSingletonFolder: PropTypes.bool.isRequired,
-    copyFileButton: PropTypes.bool.isRequired,
-    copySnippetButton: PropTypes.bool.isRequired,
-    setCopyFile: PropTypes.func.isRequired,
-    setCopySnippet: PropTypes.func.isRequired,
-    setCompressSingleton: PropTypes.func.isRequired,
-    toggleShowSettings: PropTypes.func.isRequired,
-    toggleShowSideBarShortcut: PropTypes.string.isRequired,
-  }
+type Props = {
+  accessToken: string
+  activated: boolean
+  onAccessTokenChange: (accessToken: string) => void
+  onShortcutChange: (shortcut: string) => void
+  compressSingletonFolder: boolean
+  copyFileButton: boolean
+  copySnippetButton: boolean
+  setCopyFile: (copyFileButton: Props['copyFileButton']) => void
+  setCopySnippet: (copySnippetButton: Props['copySnippetButton']) => void
+  setCompressSingleton: (compressSingletonFolder: Props['compressSingletonFolder']) => void
+  toggleShowSettings: () => void
+  toggleShowSideBarShortcut: string
+}
 
+type State = {
+  accessToken: string
+  accessTokenHint: React.ReactNode
+  shortcutHint: string
+  toggleShowSideBarShortcut: string
+  reloadHint: React.ReactNode
+  varyOptions: {
+    key: string
+    label: string
+    onChange: (e: React.FormEvent<HTMLInputElement>) => Promise<void>
+    getValue: () => any
+    wikiLink: string
+  }[]
+}
+
+export default class SettingsBar extends React.PureComponent<Props, State> {
   state = {
     accessToken: '',
     accessTokenHint: '',
     shortcutHint: '',
-    toggleShowSideBarShortcut: '',
+    toggleShowSideBarShortcut: this.props.toggleShowSideBarShortcut,
     reloadHint: '',
-    moreOptions: [
+    varyOptions: [
       {
         key: 'compress-singleton',
         label: 'Compress singleton folder',
-        onChange: this.createOnChange(config.compressSingletonFolder, this.props.setCompressSingleton),
+        onChange: this.createOnChange(
+          config.compressSingletonFolder,
+          this.props.setCompressSingleton
+        ),
         getValue: () => this.props.compressSingletonFolder,
         wikiLink: wikiLinks.compressSingletonFolder,
       },
@@ -90,20 +106,17 @@ export default class SettingsBar extends React.PureComponent {
         getValue: () => this.props.copySnippetButton,
         wikiLink: wikiLinks.copySnippet,
       },
-    ]
+    ],
   }
 
-  componentWillMount() {
-    const { toggleShowSideBarShortcut, compressSingletonFolder, copyFileButton, copySnippetButton } = this.props
-    this.setState({ toggleShowSideBarShortcut, compressSingletonFolder, copyFileButton, copySnippetButton })
+  static getDerivedStateFromProps({ toggleShowSideBarShortcut }: Props) {
+    return {
+      toggleShowSideBarShortcut,
+    }
   }
 
-  componentWillReceiveProps({ toggleShowSideBarShortcut, compressSingletonFolder, copyFileButton, copySnippetButton }) {
-    this.setState({ toggleShowSideBarShortcut, compressSingletonFolder, copyFileButton, copySnippetButton })
-  }
-
-  onInputAccessToken = event => {
-    const value = event.target.value
+  onInputAccessToken = (event: React.FormEvent<HTMLInputElement>) => {
+    const { value } = event.currentTarget
     this.setState({
       accessToken: value,
       accessTokenHint: ACCESS_TOKEN_REGEXP.test(value) ? '' : 'This token is in unknown format.',
@@ -147,16 +160,13 @@ export default class SettingsBar extends React.PureComponent {
     })
   }
 
-  /**
-   * @param {KeyboardEvent} e
-   */
-  onShortCutInputKeyDown = e => {
+  onShortCutInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     e.preventDefault()
     const shortcut = keyHelper.parseEvent(e)
     this.setState({ toggleShowSideBarShortcut: shortcut })
   }
 
-  setReloadHint = () => {
+  showReloadHint = () => {
     this.setState({
       reloadHint: (
         <span>
@@ -170,13 +180,15 @@ export default class SettingsBar extends React.PureComponent {
     })
   }
 
-  // writing this method as arrow function would be more verbose
-  createOnChange(configKey, set ) {
+  createOnChange(
+    configKey: config,
+    set: (value: any) => void
+  ): (e: React.FormEvent<HTMLInputElement>) => Promise<void> {
     return async e => {
-      const enabled = e.target.checked
+      const enabled = e.currentTarget.checked
       await configHelper.setOne(configKey, enabled)
       set(enabled)
-      this.setReloadHint()
+      this.showReloadHint()
     }
   }
 
@@ -187,9 +199,10 @@ export default class SettingsBar extends React.PureComponent {
       shortcutHint,
       accessToken,
       reloadHint,
-      moreOptions,
+      varyOptions,
     } = this.state
-    const { toggleShowSettings, activated, accessToken: hasAccessToken } = this.props
+    const { toggleShowSettings, activated } = this.props
+    const hasAccessToken = Boolean(this.props.accessToken)
     return (
       <div className={'gitako-settings-bar'}>
         {activated && (
@@ -246,7 +259,7 @@ export default class SettingsBar extends React.PureComponent {
               </div>
               <div className={'gitako-settings-bar-content-section others'}>
                 <h4>More Options</h4>
-                {moreOptions.map(option => (
+                {varyOptions.map(option => (
                   <React.Fragment key={option.key}>
                     <label htmlFor={option.key}>
                       <input

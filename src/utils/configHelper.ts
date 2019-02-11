@@ -9,12 +9,12 @@ type Config = {
   copySnippetButton: boolean
 }
 
-export const config = {
-  shortcut: 'shortcut',
-  accessToken: 'access_token',
-  compressSingletonFolder: 'compressSingletonFolder',
-  copyFileButton: 'copyFileButton',
-  copySnippetButton: 'copySnippetButton',
+export enum config {
+  shortcut = 'shortcut',
+  accessToken = 'access_token',
+  compressSingletonFolder = 'compressSingletonFolder',
+  copyFileButton = 'copyFileButton',
+  copySnippetButton = 'copySnippetButton',
 }
 
 const configKeys = Object.values(config)
@@ -31,7 +31,7 @@ function set(partialConfig: Partial<Config>) {
   return storageHelper.set(pick(partialConfig, configKeys))
 }
 
-function setOne<K extends keyof Config>(key: K, value: Config[K]) {
+function setOne(key: config, value: any) {
   return set({
     [key]: value,
   })
