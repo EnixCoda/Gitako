@@ -9,51 +9,16 @@ import Portal from 'components/Portal'
 import Resizable from 'components/Resizable'
 import cx from 'utils/cx'
 import VisibleNodesGenerator from 'utils/VisibleNodesGenerator'
+import { ConnectorState } from 'driver/core/SideBar'
 
 export type TreeData = any
 export type MetaData = any
 export type VisibleNodes = VisibleNodesGenerator['visibleNodes']
 
-type Props = {
-  // initial width of side bar
-  baseSize?: number
-  // error message
-  error?: string
-  // whether Gitako side bar should be shown
-  shouldShow?: boolean
-  // whether show settings pane
-  showSettings?: boolean
-  // whether failed loading the repo due to it is private
-  errorDueToAuth?: boolean
-  // access token for GitHub
-  accessToken?: string
-  // the shortcut string for toggle sidebar
-  toggleShowSideBarShortcut?: string
-  // meta data for the repository
-  metaData: MetaData
-  // file tree data
-  treeData: TreeData
-  // few settings
-  compressSingletonFolder?: boolean
-  copyFileButton?: boolean
-  copySnippetButton?: boolean
-  logoContainerElement: HTMLElement | null
+export type Props = {}
 
-  init: () => void
-  onPJAXEnd: () => void
-  toggleShowSideBar: () => void
-  toggleShowSettings: () => void
-  onAccessTokenChange: SettingsBar['props']['onAccessTokenChange']
-  onKeyDown: EventListener
-  onShortcutChange: SettingsBar['props']['onShortcutChange']
-  setCopyFile: SettingsBar['props']['setCopyFile']
-  setCopySnippet: SettingsBar['props']['setCopySnippet']
-  setCompressSingleton: SettingsBar['props']['setCompressSingleton']
-}
-
-@(connect(SideBarCore) as any)
-export default class Gitako extends React.PureComponent<Props> {
-  static defaultProps: Partial<Props> = {
+class Gitako extends React.PureComponent<Props & ConnectorState> {
+  static defaultProps: Partial<Props & ConnectorState> = {
     baseSize: 260,
     shouldShow: false,
     showSettings: false,
@@ -105,7 +70,15 @@ export default class Gitako extends React.PureComponent<Props> {
   }
 
   renderContent() {
-    const { errorDueToAuth, metaData, treeData, showSettings, toggleShowSettings } = this.props
+    const {
+      errorDueToAuth,
+      metaData,
+      treeData,
+      showSettings,
+      toggleShowSettings,
+      compressSingletonFolder,
+      accessToken,
+    } = this.props
     return (
       <div className={'gitako-side-bar-content'}>
         {metaData && <MetaBar metaData={metaData} />}
@@ -113,10 +86,12 @@ export default class Gitako extends React.PureComponent<Props> {
           ? this.renderAccessDeniedError()
           : metaData && (
               <FileExplorer
+                compressSingletonFolder={compressSingletonFolder}
                 toggleShowSettings={toggleShowSettings}
                 metaData={metaData}
                 treeData={treeData}
                 freeze={showSettings}
+                accessToken={accessToken}
               />
             )}
       </div>
@@ -175,3 +150,5 @@ export default class Gitako extends React.PureComponent<Props> {
     )
   }
 }
+
+export default connect<Props, ConnectorState>(SideBarCore)(Gitako)

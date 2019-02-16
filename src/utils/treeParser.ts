@@ -1,4 +1,4 @@
-import GitHubHelper, { TreeData, MetaData } from 'utils/GitHubHelper'
+import GitHubHelper, { MetaData, TreeData } from 'utils/GitHubHelper'
 
 interface BasicItem {
   name: string | null

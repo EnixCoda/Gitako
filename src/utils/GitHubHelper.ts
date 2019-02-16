@@ -38,11 +38,14 @@ async function request(url: string, { accessToken }: Options = {}) {
   }
 }
 
+type PageType = 'blob' | 'tree' | string
+
 export type MetaData = {
   userName?: string
   repoName?: string
   branchName?: string
   accessToken?: string
+  type?: PageType
   api?: any
 }
 
@@ -63,7 +66,7 @@ export type TreeData = {
   tree: TreeItem[]
 }
 
-async function getTreeData({ userName, repoName, branchName, accessToken }: TreeData) {
+async function getTreeData({ userName, repoName, branchName, accessToken }: MetaData) {
   const url = `https://api.github.com/repos/${userName}/${repoName}/git/trees/${branchName}?recursive=1`
   return await request(url, { accessToken })
 }

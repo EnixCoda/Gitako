@@ -8,6 +8,6 @@ export default class Gitako extends React.PureComponent {
   }
 
   render() {
-    return React.createElement(SideBar as any)
+    return <SideBar />
   }
 }

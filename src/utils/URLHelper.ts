@@ -1,7 +1,7 @@
 import { raiseError } from 'analytics'
 import { MetaData } from './GitHubHelper'
 
-function parse() {
+function parse(): MetaData & { path: string[] } {
   const { pathname } = window.location
   let [
     ,
