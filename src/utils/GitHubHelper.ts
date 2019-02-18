@@ -5,12 +5,14 @@ export const API_RATE_LIMIT = `API rate limit`
 export const EMPTY_PROJECT = `Empty project`
 
 function apiRateLimitExceeded(content: any) {
+  // it's ok
   return (
     content && content['documentation_url'] === 'https://developer.github.com/v3/#rate-limiting'
   )
 }
 
 function isEmptyProject(content: any) {
+  // it's ok
   return content && content['message'] === 'Git Repository is empty.'
 }
 
@@ -46,7 +48,7 @@ export type MetaData = {
   branchName?: string
   accessToken?: string
   type?: PageType
-  api?: any
+  api?: any // it's ok
 }
 
 async function getRepoMeta({ userName, repoName, accessToken }: MetaData) {

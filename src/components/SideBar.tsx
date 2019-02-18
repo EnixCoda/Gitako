@@ -11,8 +11,6 @@ import cx from 'utils/cx'
 import VisibleNodesGenerator from 'utils/VisibleNodesGenerator'
 import { ConnectorState } from 'driver/core/SideBar'
 
-export type TreeData = any
-export type MetaData = any
 export type VisibleNodes = VisibleNodesGenerator['visibleNodes']
 
 export type Props = {}

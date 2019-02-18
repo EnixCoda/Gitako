@@ -5,12 +5,13 @@ import GitHubHelper, {
   API_RATE_LIMIT,
   EMPTY_PROJECT,
   MetaData,
+  TreeData,
 } from 'utils/GitHubHelper'
 import configHelper from 'utils/configHelper'
 import URLHelper from 'utils/URLHelper'
 import keyHelper from 'utils/keyHelper'
 import { MethodCreator, DispatchState, TriggerOtherMethod } from 'driver/connect'
-import { Props, TreeData } from 'components/SideBar'
+import { Props } from 'components/SideBar'
 import SettingsBar from 'components/SettingsBar'
 
 export type ConnectorState = {

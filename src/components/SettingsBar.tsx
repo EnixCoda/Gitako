@@ -68,8 +68,8 @@ type State = {
   varyOptions: {
     key: string
     label: string
-    onChange: (e: React.FormEvent<HTMLInputElement>) => Promise<void>
-    getValue: () => any
+    onChange: (e: React.FormEvent<HTMLInputElement>) => Promise<void> | void
+    getValue: () => boolean
     wikiLink: string
   }[]
 }
@@ -85,7 +85,7 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
       {
         key: 'compress-singleton',
         label: 'Compress singleton folder',
-        onChange: this.createOnChange(
+        onChange: this.createOnToggleChecked(
           config.compressSingletonFolder,
           this.props.setCompressSingleton
         ),
@@ -95,23 +95,23 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
       {
         key: 'copy-file',
         label: 'Copy File',
-        onChange: this.createOnChange(config.copyFileButton, this.props.setCopyFile),
+        onChange: this.createOnToggleChecked(config.copyFileButton, this.props.setCopyFile),
         getValue: () => this.props.copyFileButton,
         wikiLink: wikiLinks.copyFileButton,
       },
       {
         key: 'copy-snippet',
         label: 'Copy Snippet',
-        onChange: this.createOnChange(config.copySnippetButton, this.props.setCopySnippet),
+        onChange: this.createOnToggleChecked(config.copySnippetButton, this.props.setCopySnippet),
         getValue: () => this.props.copySnippetButton,
         wikiLink: wikiLinks.copySnippet,
       },
     ],
   }
 
-  static getDerivedStateFromProps({ toggleShowSideBarShortcut }: Props) {
-    return {
-      toggleShowSideBarShortcut,
+  componentWillReceiveProps({ toggleShowSideBarShortcut }: Props) {
+    if (toggleShowSideBarShortcut !== this.props.toggleShowSideBarShortcut) {
+      this.setState({ toggleShowSideBarShortcut })
     }
   }
 
@@ -180,9 +180,9 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
     })
   }
 
-  createOnChange(
+  createOnToggleChecked(
     configKey: config,
-    set: (value: any) => void
+    set: (value: boolean) => void
   ): (e: React.FormEvent<HTMLInputElement>) => Promise<void> {
     return async e => {
       const enabled = e.currentTarget.checked

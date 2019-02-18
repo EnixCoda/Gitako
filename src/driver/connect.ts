@@ -1,13 +1,13 @@
 import * as React from 'react'
 
 export type ParametersOfReturnedFunction<Func> = Func extends (<Args extends []>(
-  ...args: any[]
-) => (...args2: Args) => any)
+  ...args1: any[] // it's ok
+) => (...args2: Args) => any) // it's ok
   ? Args
   : never
 
 export type Method = (...args: Args) => void | Promise<void>
-type Args = any[] // This had to be any
+type Args = any[] // it's ok
 export type Middleware = <M extends Method, MM extends Method>(
   method: M,
   args: Parameters<M>

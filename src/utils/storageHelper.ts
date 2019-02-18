@@ -5,6 +5,7 @@ function get(mapping: string | string[] | object) {
 }
 
 function set(value: any) {
+  // it's ok
   return new Promise(resolve => localStorage.set(value, resolve))
 }
 

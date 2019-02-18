@@ -20,9 +20,9 @@ export const withErrorLog: Middleware = function withErrorLog(method, args) {
   ]
 }
 
-function encodeParams(params: any) {
+function encodeParams(params: object) {
   return Object.keys(params)
-    .map(key => `${key}=${encodeURIComponent(JSON.stringify(params[key]))}`)
+    .map((key: keyof object) => `${key}=${encodeURIComponent(JSON.stringify(params[key]))}`)
     .join('&')
 }
 

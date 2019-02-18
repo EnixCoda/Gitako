@@ -1,12 +1,12 @@
-export function pick<T extends any>(source: T, keys: string[]): T {
+export function pick<T>(source: T, keys: string[]): Partial<T> {
   if (keys && typeof keys === 'object') {
     return (Array.isArray(keys) ? keys : Object.keys(keys)).reduce(
       (copy, key) => {
-        copy[key] = source[key]
+        copy[key as keyof T] = source[key as keyof T]
         return copy
       },
-      {} as T
+      {} as Partial<T>
     )
   }
-  return {} as T
+  return {} as Partial<T>
 }

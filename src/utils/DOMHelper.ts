@@ -105,7 +105,7 @@ const pjax = new PJAX({
   analytics: false,
   cacheBust: false,
   forceCache: true, // TODO: merge namespace, add forceCache
-} as any)
+})
 
 function loadWithPJAX(URL: string) {
   NProgress.start()

@@ -5,8 +5,9 @@ import SearchBar from 'components/SearchBar'
 import Node from 'components/Node'
 import LoadingIndicator from 'components/LoadingIndicator'
 import cx from 'utils/cx'
-import { TreeData, MetaData, VisibleNodes } from './SideBar'
+import { VisibleNodes } from './SideBar'
 import { ConnectorState } from 'driver/core/FileExplorer'
+import { TreeData, MetaData } from 'utils/GitHubHelper'
 
 export type Props = {
   treeData: TreeData
@@ -55,7 +56,7 @@ class FileExplorer extends React.Component<Props & ConnectorState> {
     }
     return (
       <div className={'files'}>
-        {nodes.map((node: any) => (
+        {nodes.map(node => (
           <Node
             key={node.path}
             node={node}
