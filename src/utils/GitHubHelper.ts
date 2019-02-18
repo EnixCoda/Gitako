@@ -74,15 +74,21 @@ async function getTreeData({ userName, repoName, branchName, accessToken }: Meta
 export type ItemData = {
   userName: string
   repoName: string
-  branchName: string
   accessToken: string
 }
 
 export type BlobData = {
+  encoding: 'base64' | string
   fileSHA: string
-} & ItemData
+  content?: string
+}
 
-async function getBlobData({ userName, repoName, accessToken, fileSHA }: BlobData) {
+async function getBlobData({
+  userName,
+  repoName,
+  accessToken,
+  fileSHA,
+}: Pick<ItemData & BlobData, 'userName' | 'repoName' | 'accessToken' | 'fileSHA'>) {
   const url = `https://api.github.com/repos/${userName}/${repoName}/git/blobs/${fileSHA}`
   return await request(url, { accessToken })
 }
