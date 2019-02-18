@@ -1,7 +1,8 @@
 const webpack = require('webpack')
-const path = require('path')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const UglifyJSWebpackPlugin = require('uglifyjs-webpack-plugin')
+const { CheckerPlugin } = require('awesome-typescript-loader')
+const path = require('path')
 
 const srcPath = path.resolve(__dirname, 'src')
 const packagesPath = path.resolve(__dirname, 'packages')
@@ -18,6 +19,7 @@ const plugins = [
     },
   ]),
   new webpack.SourceMapDevToolPlugin({}),
+  new CheckerPlugin(),
 ]
 
 const IN_PRODUCTION_MODE = process.env.NODE_ENV === 'production'
