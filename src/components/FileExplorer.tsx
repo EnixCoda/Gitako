@@ -6,28 +6,19 @@ import Node from 'components/Node'
 import LoadingIndicator from 'components/LoadingIndicator'
 import cx from 'utils/cx'
 import { TreeData, MetaData, VisibleNodes } from './SideBar'
+import { ConnectorState } from 'driver/core/FileExplorer'
 
-type Props = {
+export type Props = {
   treeData: TreeData
   metaData: MetaData
-  visibleNodes: VisibleNodes
   freeze: boolean
-
-  stateText: string
-
-  init: () => void
-  execAfterRender: () => void
-  handleKeyDown: React.KeyboardEventHandler
-  handleSearchKeyChange: React.FormEventHandler
-  onNodeClick: Node['props']['onClick']
+  compressSingletonFolder: boolean
+  accessToken: string
   toggleShowSettings: React.MouseEventHandler
-  onFocusSearchBar: React.FocusEventHandler
-  setUpTree: (treeData?: TreeData) => void
 }
 
-@(connect(FileExplorerCore) as any)
-export default class FileExplorer extends React.Component<Props> {
-  static defaultProps: Partial<Props> = {
+class FileExplorer extends React.Component<Props & ConnectorState> {
+  static defaultProps: Partial<Props & ConnectorState> = {
     treeData: null,
     metaData: null,
     freeze: false,
@@ -45,7 +36,7 @@ export default class FileExplorer extends React.Component<Props> {
     execAfterRender()
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentWillReceiveProps(nextProps: Props & ConnectorState) {
     if (nextProps.treeData !== this.props.treeData) {
       const { setUpTree } = nextProps
       setUpTree()
@@ -110,3 +101,5 @@ export default class FileExplorer extends React.Component<Props> {
     )
   }
 }
+
+export default connect<Props, ConnectorState>(FileExplorerCore)(FileExplorer)
