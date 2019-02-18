@@ -48,9 +48,9 @@ export type TriggerOtherMethod = <MC extends MethodCreator>(
 ) => void
 
 export type Dispatch<Props, State> = {
-  state: DispatchState<Props>
-  prepare: PreDispatch<Props, State>
-  for: TriggerOtherMethod
+  set: DispatchState<Props>
+  get: PreDispatch<Props, State>
+  call: TriggerOtherMethod
 }
 
 export type MethodCreator<Props = {}, State = any> = (dispatch: Dispatch<Props, State>) => Method
@@ -74,8 +74,8 @@ function link<P, S>(instance: React.Component<P, S>, sources: Sources): WrappedM
   const prepareState: PreDispatch<P, S> = updater => {
     updater(instance.props, instance.state)
   }
-  const dispatch = {
-    for(createMethod: MethodCreator, ...otherArgs: ParametersOfReturnedFunction<MethodCreator>) {
+  const dispatch: Dispatch<P, S> = {
+    call(createMethod: MethodCreator, ...otherArgs: ParametersOfReturnedFunction<MethodCreator>) {
       const isFromSource = sourcesValues.includes(createMethod)
       if (isFromSource) {
         const method = map.get(createMethod)
@@ -83,8 +83,8 @@ function link<P, S>(instance: React.Component<P, S>, sources: Sources): WrappedM
         run(runnable)
       }
     },
-    prepare: prepareState,
-    state: dispatchState,
+    get: prepareState,
+    set: dispatchState,
   }
 
   Object.entries(sources).forEach(([key, createMethod]) => {

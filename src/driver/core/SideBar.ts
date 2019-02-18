@@ -54,7 +54,7 @@ export type ConnectorState = {
 const init: MethodCreator<Props> = dispatch => async () => {
   try {
     if (!URLHelper.isInRepoPage()) return
-    dispatch.state({
+    dispatch.set({
       logoContainerElement: DOMHelper.insertLogoMountPoint(),
     })
     let detectedBranchName
@@ -63,7 +63,7 @@ const init: MethodCreator<Props> = dispatch => async () => {
       detectedBranchName = DOMHelper.getCurrentBranch() || URLHelper.parseSHA() // not working well with non-branch blob // cannot handle '/' split branch name, should not use when possibly on branch page
     }
     metaData.branchName = detectedBranchName || 'master'
-    dispatch.for(setMetaData, metaData)
+    dispatch.call(setMetaData, metaData)
     const {
       access_token: accessToken,
       shortcut,
@@ -72,7 +72,7 @@ const init: MethodCreator<Props> = dispatch => async () => {
       copySnippetButton,
     } = await configHelper.get()
     DOMHelper.decorateGitHubPageContent({ copyFileButton, copySnippetButton })
-    dispatch.state({
+    dispatch.set({
       accessToken,
       toggleShowSideBarShortcut: shortcut,
       compressSingletonFolder,
@@ -112,7 +112,7 @@ const init: MethodCreator<Props> = dispatch => async () => {
       caughtAggressiveError.then(error => {
         // aggressive requested correct branch but ends in failure (e.g. project is empty)
         if (error instanceof Error) {
-          dispatch.for(handleError, error)
+          dispatch.call(handleError, error)
         }
       })
     }
@@ -120,93 +120,92 @@ const init: MethodCreator<Props> = dispatch => async () => {
       .then(treeData => {
         if (treeData) {
           // in an unknown rare case this NOT happen
-          dispatch.state({ treeData })
+          dispatch.set({ treeData })
         }
       })
-      .catch(err => dispatch.for(handleError, err))
+      .catch(err => dispatch.call(handleError, err))
     Object.assign(metaData, { api: metaDataFromAPI })
-    dispatch.for(setMetaData, metaData)
+    dispatch.call(setMetaData, metaData)
     const shouldShow = URLHelper.isInCodePage(metaData)
-    dispatch.for(setShouldShow, shouldShow)
+    dispatch.call(setShouldShow, shouldShow)
   } catch (err) {
-    dispatch.for(handleError, err)
+    dispatch.call(handleError, err)
   }
 }
 
 const handleError: MethodCreator = dispatch => async err => {
   if (err.message === EMPTY_PROJECT) {
-    dispatch.for(setError, 'This project seems to be empty.')
+    dispatch.call(setError, 'This project seems to be empty.')
   } else if (
     err.message === NOT_FOUND ||
     err.message === BAD_CREDENTIALS ||
     err.message === API_RATE_LIMIT
   ) {
-    dispatch.state({ errorDueToAuth: true })
-    dispatch.for(setShowSettings, true)
-    dispatch.for(setShouldShow, true)
+    dispatch.set({ errorDueToAuth: true })
+    dispatch.call(setShowSettings, true)
+    dispatch.call(setShouldShow, true)
   } else {
-    dispatch.for(setError, 'Gitako ate a bug, but it should recovery soon!')
+    dispatch.call(setError, 'Gitako ate a bug, but it should recovery soon!')
   }
 }
 
 const onPJAXEnd: MethodCreator<ConnectorState> = dispatch => () => {
-  dispatch.prepare(({ metaData, copyFileButton, copySnippetButton }) => {
+  dispatch.get(({ metaData, copyFileButton, copySnippetButton }) => {
     DOMHelper.unmountTopProgressBar()
     DOMHelper.decorateGitHubPageContent({ copyFileButton, copySnippetButton })
     const mergedMetaData = { ...metaData, ...URLHelper.parse() }
-    dispatch.for(setShouldShow, URLHelper.isInCodePage(mergedMetaData))
-    dispatch.for(setMetaData, mergedMetaData)
+    dispatch.call(setShouldShow, URLHelper.isInCodePage(mergedMetaData))
+    dispatch.call(setMetaData, mergedMetaData)
   })
 }
 
 const onKeyDown: MethodCreator = dispatch => e => {
-  dispatch.state(({ toggleShowSideBarShortcut }: { toggleShowSideBarShortcut: string }) => {
+  dispatch.set(({ toggleShowSideBarShortcut }: { toggleShowSideBarShortcut: string }) => {
     if (toggleShowSideBarShortcut) {
       const keys = keyHelper.parseEvent(e)
       if (keys === toggleShowSideBarShortcut) {
-        dispatch.for(toggleShowSideBar)
+        dispatch.call(toggleShowSideBar)
       }
     }
   })
 }
 
 const toggleShowSideBar: MethodCreator = dispatch => () =>
-  dispatch.state(({ shouldShow }: { shouldShow: boolean }) =>
-    dispatch.for(setShouldShow, !shouldShow)
+  dispatch.set(({ shouldShow }: { shouldShow: boolean }) =>
+    dispatch.call(setShouldShow, !shouldShow)
   )
 
 const setShouldShow: MethodCreator = dispatch => shouldShow => {
-  dispatch.state({ shouldShow }, shouldShow ? DOMHelper.focusFileExplorer : null)
+  dispatch.set({ shouldShow }, shouldShow ? DOMHelper.focusFileExplorer : null)
   DOMHelper.setBodyIndent(shouldShow)
 }
 
 const setError: MethodCreator = dispatch => error => {
-  dispatch.state({ error })
-  dispatch.for(setShouldShow, false)
+  dispatch.set({ error })
+  dispatch.call(setShouldShow, false)
 }
 
 const toggleShowSettings: MethodCreator = dispatch => () =>
-  dispatch.state(({ showSettings }: { showSettings: boolean }) => ({
+  dispatch.set(({ showSettings }: { showSettings: boolean }) => ({
     showSettings: !showSettings,
   }))
 
-const setShowSettings: MethodCreator = dispatch => showSettings => dispatch.state({ showSettings })
+const setShowSettings: MethodCreator = dispatch => showSettings => dispatch.set({ showSettings })
 
-const onAccessTokenChange: MethodCreator = dispatch => accessToken =>
-  dispatch.state({ accessToken })
+const onAccessTokenChange: MethodCreator = dispatch => accessToken => dispatch.set({ accessToken })
 
 const onShortcutChange: MethodCreator = dispatch => shortcut =>
-  dispatch.state({ toggleShowSideBarShortcut: shortcut })
+  dispatch.set({ toggleShowSideBarShortcut: shortcut })
 
-const setMetaData: MethodCreator = dispatch => metaData => dispatch.state({ metaData })
+const setMetaData: MethodCreator = dispatch => metaData => dispatch.set({ metaData })
 
 const setCompressSingleton: MethodCreator = dispatch => compressSingletonFolder =>
-  dispatch.state({ compressSingletonFolder })
+  dispatch.set({ compressSingletonFolder })
 
-const setCopyFile: MethodCreator = dispatch => copyFileButton => dispatch.state({ copyFileButton })
+const setCopyFile: MethodCreator = dispatch => copyFileButton => dispatch.set({ copyFileButton })
 
 const setCopySnippet: MethodCreator = dispatch => copySnippetButton =>
-  dispatch.state({ copySnippetButton })
+  dispatch.set({ copySnippetButton })
 
 export default {
   init,

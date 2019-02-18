@@ -39,7 +39,7 @@ type Task = () => void
 const tasksAfterRender: (Task)[] = []
 const visibleNodesGenerator = new VisibleNodesGenerator()
 
-const init: MethodCreator = dispatch => () => dispatch.for(setStateText, 'Fetching File List...')
+const init: MethodCreator = dispatch => () => dispatch.call(setStateText, 'Fetching File List...')
 
 function resolveGitModules(root: TreeNode, blobData: BlobData) {
   if (blobData) {
@@ -59,9 +59,9 @@ function resolveGitModules(root: TreeNode, blobData: BlobData) {
 }
 
 const setUpTree: MethodCreator<Props> = dispatch => () =>
-  dispatch.prepare(async ({ treeData, metaData, compressSingletonFolder, accessToken }) => {
+  dispatch.get(async ({ treeData, metaData, compressSingletonFolder, accessToken }) => {
     if (!treeData) return
-    dispatch.for(setStateText, 'Rendering File List...')
+    dispatch.call(setStateText, 'Rendering File List...')
     const { root, gitModules } = treeParser.parse(treeData, metaData)
 
     if (gitModules) {
@@ -79,7 +79,7 @@ const setUpTree: MethodCreator<Props> = dispatch => () =>
     await visibleNodesGenerator.plantTree(root as TreeNode)
 
     tasksAfterRender.push(DOMHelper.focusSearchInput)
-    dispatch.for(setStateText, null)
+    dispatch.call(setStateText, null)
     const currentPath = URLHelper.getCurrentPath(metaData.branchName)
     if (currentPath.length) {
       const nodeExpandedTo = visibleNodesGenerator.expandTo(currentPath.join('/'))
@@ -89,7 +89,7 @@ const setUpTree: MethodCreator<Props> = dispatch => () =>
         tasksAfterRender.push(() => DOMHelper.scrollToNodeElement(nodes.indexOf(nodeExpandedTo)))
       }
     }
-    dispatch.for(updateVisibleNodes)
+    dispatch.call(updateVisibleNodes)
   })
 
 const execAfterRender: MethodCreator = dispatch => () => {
@@ -100,19 +100,19 @@ const execAfterRender: MethodCreator = dispatch => () => {
 }
 
 const setStateText: MethodCreator<Props> = dispatch => (text: string) =>
-  dispatch.state({
+  dispatch.set({
     stateText: text,
   })
 
 const handleKeyDown: MethodCreator = dispatch => event =>
-  dispatch.prepare((_, { visibleNodes: { nodes, focusedNode, expandedNodes, depths } }) => {
+  dispatch.get((_, { visibleNodes: { nodes, focusedNode, expandedNodes, depths } }) => {
     function handleVerticalMove(index: number) {
       if (0 <= index && index < nodes.length) {
         DOMHelper.focusFileExplorer()
-        dispatch.for(focusNode, nodes[index])
+        dispatch.call(focusNode, nodes[index])
       } else {
         DOMHelper.focusSearchInput()
-        dispatch.for(focusNode, null)
+        dispatch.call(focusNode, null)
       }
     }
 
@@ -135,12 +135,12 @@ const handleKeyDown: MethodCreator = dispatch => event =>
         case 'ArrowLeft':
           // collapse node or go to parent node
           if (expandedNodes.has(focusedNode)) {
-            dispatch.for(setExpand, focusedNode, false)
+            dispatch.call(setExpand, focusedNode, false)
           } else {
             // go forward to the start of the list, find the closest node with lower depth
             const parentNode = getVisibleParentNode(nodes, focusedNode, depths)
             if (parentNode) {
-              dispatch.for(focusNode, parentNode)
+              dispatch.call(focusNode, parentNode)
             }
           }
           break
@@ -152,10 +152,10 @@ const handleKeyDown: MethodCreator = dispatch => event =>
             if (expandedNodes.has(focusedNode)) {
               const nextNode = nodes[focusedNodeIndex + 1]
               if (depths.get(nextNode) > depths.get(focusedNode)) {
-                dispatch.for(focusNode, nextNode)
+                dispatch.call(focusNode, nextNode)
               }
             } else {
-              dispatch.for(setExpand, focusedNode, true)
+              dispatch.call(setExpand, focusedNode, true)
             }
           } else if (focusedNode.type === 'blob') {
             DOMHelper.loadWithPJAX(focusedNode.url)
@@ -166,7 +166,7 @@ const handleKeyDown: MethodCreator = dispatch => event =>
         case 'Enter':
           // expand node or redirect to file page
           if (focusedNode.type === 'tree') {
-            dispatch.for(setExpand, focusedNode, true)
+            dispatch.call(setExpand, focusedNode, true)
           } else if (focusedNode.type === 'blob') {
             DOMHelper.loadWithPJAX(focusedNode.url)
           } else if (focusedNode.type === 'commit') {
@@ -185,11 +185,11 @@ const handleKeyDown: MethodCreator = dispatch => event =>
         switch (key) {
           case 'ArrowDown':
             DOMHelper.focusFileExplorer()
-            dispatch.for(focusNode, nodes[0])
+            dispatch.call(focusNode, nodes[0])
             break
           case 'ArrowUp':
             DOMHelper.focusFileExplorer()
-            dispatch.for(focusNode, nodes[nodes.length - 1])
+            dispatch.call(focusNode, nodes[nodes.length - 1])
             break
           default:
             muteEvent = false
@@ -201,7 +201,7 @@ const handleKeyDown: MethodCreator = dispatch => event =>
     }
   })
 
-const onFocusSearchBar: MethodCreator = dispatch => () => dispatch.for(focusNode, null)
+const onFocusSearchBar: MethodCreator = dispatch => () => dispatch.call(focusNode, null)
 
 const handleSearchKeyChange: MethodCreator = dispatch => {
   let i = 0
@@ -209,7 +209,7 @@ const handleSearchKeyChange: MethodCreator = dispatch => {
     const searchKey = event.target.value
     const j = (i += 1)
     await visibleNodesGenerator.search(searchKey)
-    if (i === j) dispatch.for(updateVisibleNodes)
+    if (i === j) dispatch.call(updateVisibleNodes)
   }
 }
 
@@ -223,9 +223,9 @@ function shouldDelayExpand(node: TreeNode) {
 
 const setExpand: MethodCreator = dispatch => (node, expand) => {
   visibleNodesGenerator.setExpand(node, expand)
-  const applyChanges = () => dispatch.for(focusNode, node)
+  const applyChanges = () => dispatch.call(focusNode, node)
   if (shouldDelayExpand(node)) {
-    dispatch.for(mountExpandingIndicator, node)
+    dispatch.call(mountExpandingIndicator, node)
     tasksAfterRender.push(() => setTimeout(applyChanges, 0))
   } else {
     applyChanges()
@@ -235,11 +235,11 @@ const setExpand: MethodCreator = dispatch => (node, expand) => {
 const toggleNodeExpansion: MethodCreator = dispatch => (node, skipScrollToNode) => {
   visibleNodesGenerator.toggleExpand(node)
   const applyChanges = () => {
-    dispatch.for(focusNode, node, skipScrollToNode)
+    dispatch.call(focusNode, node, skipScrollToNode)
     tasksAfterRender.push(DOMHelper.focusFileExplorer)
   }
   if (shouldDelayExpand(node)) {
-    dispatch.for(mountExpandingIndicator, node)
+    dispatch.call(mountExpandingIndicator, node)
     tasksAfterRender.push(() => setTimeout(applyChanges, 0))
   } else {
     applyChanges()
@@ -247,21 +247,21 @@ const toggleNodeExpansion: MethodCreator = dispatch => (node, skipScrollToNode) 
 }
 
 const focusNode: MethodCreator = dispatch => (node, skipScroll) =>
-  dispatch.prepare((_, { visibleNodes: { nodes } }) => {
+  dispatch.get((_, { visibleNodes: { nodes } }) => {
     visibleNodesGenerator.focusNode(node)
     if (node && !skipScroll) {
       // when focus a node not in viewport(by keyboard), scroll to it
       const indexOfToBeFocusedNode = nodes.indexOf(node)
       tasksAfterRender.push(() => DOMHelper.scrollToNodeElement(indexOfToBeFocusedNode))
     }
-    dispatch.for(updateVisibleNodes)
+    dispatch.call(updateVisibleNodes)
   })
 
 const onNodeClick: MethodCreator = dispatch => node => {
   if (node.type === 'tree') {
-    dispatch.for(toggleNodeExpansion, node, true)
+    dispatch.call(toggleNodeExpansion, node, true)
   } else if (node.type === 'blob') {
-    dispatch.for(focusNode, node, true)
+    dispatch.call(focusNode, node, true)
     DOMHelper.loadWithPJAX(node.url)
   } else if (node.type === 'commit') {
     window.open(node.url, '_blank')
@@ -269,7 +269,7 @@ const onNodeClick: MethodCreator = dispatch => node => {
 }
 
 const mountExpandingIndicator: MethodCreator = dispatch => node =>
-  dispatch.prepare((_, { visibleNodes }) => {
+  dispatch.get((_, { visibleNodes }) => {
     const dummyVisibleNodes = {
       ...visibleNodes,
       nodes: visibleNodes.nodes.slice(),
@@ -280,14 +280,14 @@ const mountExpandingIndicator: MethodCreator = dispatch => node =>
       path: '-',
       type: 'virtual',
     })
-    dispatch.state({
+    dispatch.set({
       visibleNodes: dummyVisibleNodes,
     })
   })
 
 const updateVisibleNodes: MethodCreator = dispatch => () => {
   const { visibleNodes } = visibleNodesGenerator
-  dispatch.state({ visibleNodes })
+  dispatch.set({ visibleNodes })
 }
 
 export default {
