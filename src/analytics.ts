@@ -1,5 +1,5 @@
 import { version } from '../package.json'
-import { Middleware } from 'driver/connect.js'
+import { Middleware, Method } from 'driver/connect.js'
 // TODO: set this through ENV or something else
 const LOG_ENDPOINT = 'https://enix.one/gitako/log'
 
@@ -15,7 +15,7 @@ export const withErrorLog: Middleware = function withErrorLog(method, args) {
       } catch (error) {
         raiseError(error)
       }
-    },
+    } as any, // TOFIX: not sure how to fix this yet
     args,
   ]
 }
