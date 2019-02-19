@@ -30,11 +30,8 @@ var Pjax = function(options) {
 
     this.parseDOM(document)
 
-    on(window, "pushstate", function(st) {
-      console.log(`push state`)
-    })
+    on(window, "pushstate", function(st) {})
     on(window, "popstate", function(st) {
-      console.log(`pop state`)
       if (st.state) {
         var opt = clone(this.options)
         opt.url = st.state.url
