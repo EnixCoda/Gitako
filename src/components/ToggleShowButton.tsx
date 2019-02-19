@@ -3,11 +3,11 @@ import Icon from 'components/Icon'
 import cx from 'utils/cx'
 
 type Props = {
-  hasError: boolean
+  error: string
   shouldShow: boolean
   toggleShowSideBar: React.MouseEventHandler
 }
-export default function Logo({ hasError: error, shouldShow, toggleShowSideBar }: Props) {
+export default function Logo({ error, shouldShow, toggleShowSideBar }: Props) {
   return (
     <div
       className={cx('gitako-toggle-show-button-wrapper', {

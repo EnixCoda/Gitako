@@ -120,7 +120,7 @@ class Gitako extends React.PureComponent<Props & ConnectorState> {
       <div className={'gitako-side-bar'}>
         <Portal into={logoContainerElement}>
           <ToggleShowButton
-            hasError={Boolean(error)}
+            error={(error)}
             shouldShow={shouldShow}
             toggleShowSideBar={toggleShowSideBar}
           />
