@@ -37,26 +37,26 @@ function run<M extends Method>([method, args]: [M, Parameters<M>]) {
   method.apply(null, args)
 }
 
-export type DispatchState<Props> = React.Component<Props, void>['setState']
+export type DispatchState<Props, State> = React.Component<Props, State>['setState']
 export type PreDispatch<Props, State> = (
-  dispatchCallback: (props: Props, state: State) => Props | Promise<void> | void,
+  dispatchCallback: (state: State, props: Props) => Props | Promise<void> | void,
   callback?: () => void
 ) => void
-export type TriggerOtherMethod = <MC extends MethodCreator>(
+export type TriggerOtherMethod = <MC extends MethodCreator<any, any>>(
   methodCreator: MC,
   ...args: ParametersOfReturnedFunction<MC>
 ) => void
 
 export type Dispatch<Props, State> = {
-  set: DispatchState<Props>
+  set: DispatchState<Props, State>
   get: PreDispatch<Props, State>
   call: TriggerOtherMethod
 }
 
-export type MethodCreator<Props = {}, State = any> = (dispatch: Dispatch<Props, State>) => Method
+export type MethodCreator<Props, State> = (dispatch: Dispatch<Props, State>) => Method
 
 type Sources = {
-  [key: string]: MethodCreator
+  [key: string]: MethodCreator<any, any>
 }
 type WrappedMethods = {
   [key: string]: Method
@@ -66,7 +66,7 @@ function link<P, S>(instance: React.Component<P, S>, sources: Sources): WrappedM
   const wrappedMethods: WrappedMethods = {
     /* [keyof sources] -> wrappedMethods.method */
   }
-  const map = new Map<MethodCreator, Method>(/* sources.creator -> wrappedMethods.method */)
+  const map = new Map<MethodCreator<P, S>, Method>(/* sources.creator -> wrappedMethods.method */)
 
   const dispatchCall: TriggerOtherMethod = (createMethod, ...otherArgs) => {
     const isFromSource = sourcesValues.includes(createMethod)
@@ -76,11 +76,11 @@ function link<P, S>(instance: React.Component<P, S>, sources: Sources): WrappedM
       run(runnable)
     }
   }
-  const dispatchState: DispatchState<P> = (updater, callback) => {
+  const dispatchState: DispatchState<P, S> = (updater, callback) => {
     instance.setState(updater, callback)
   }
   const prepareState: PreDispatch<P, S> = updater => {
-    updater(instance.props, instance.state)
+    updater(instance.state, instance.props)
   }
   const dispatch: Dispatch<P, S> = {
     call: dispatchCall,

@@ -39,7 +39,7 @@ type Task = () => void
 const tasksAfterRender: (Task)[] = []
 const visibleNodesGenerator = new VisibleNodesGenerator()
 
-const init: MethodCreator = dispatch => () => dispatch.call(setStateText, 'Fetching File List...')
+const init: MethodCreator<Props, ConnectorState> = dispatch => () => dispatch.call(setStateText, 'Fetching File List...')
 
 function resolveGitModules(root: TreeNode, blobData: BlobData) {
   if (blobData) {
@@ -58,8 +58,8 @@ function resolveGitModules(root: TreeNode, blobData: BlobData) {
   }
 }
 
-const setUpTree: MethodCreator<Props> = dispatch => () =>
-  dispatch.get(async ({ treeData, metaData, compressSingletonFolder, accessToken }) => {
+const setUpTree: MethodCreator<Props, ConnectorState> = dispatch => () =>
+  dispatch.get(async (_, { treeData, metaData, compressSingletonFolder, accessToken }) => {
     if (!treeData) return
     dispatch.call(setStateText, 'Rendering File List...')
     const { root, gitModules } = treeParser.parse(treeData, metaData)
@@ -92,20 +92,20 @@ const setUpTree: MethodCreator<Props> = dispatch => () =>
     dispatch.call(updateVisibleNodes)
   })
 
-const execAfterRender: MethodCreator = dispatch => () => {
+const execAfterRender: MethodCreator<Props, ConnectorState> = dispatch => () => {
   for (const task of tasksAfterRender) {
     task()
   }
   tasksAfterRender.length = 0
 }
 
-const setStateText: MethodCreator<Props> = dispatch => (text: string) =>
+const setStateText: MethodCreator<Props, ConnectorState> = dispatch => (text: string) =>
   dispatch.set({
     stateText: text,
   })
 
-const handleKeyDown: MethodCreator = dispatch => event =>
-  dispatch.get((_, { visibleNodes: { nodes, focusedNode, expandedNodes, depths } }) => {
+const handleKeyDown: MethodCreator<Props, ConnectorState> = dispatch => event =>
+  dispatch.get(({ visibleNodes: { nodes, focusedNode, expandedNodes, depths } }) => {
     function handleVerticalMove(index: number) {
       if (0 <= index && index < nodes.length) {
         DOMHelper.focusFileExplorer()
@@ -201,9 +201,9 @@ const handleKeyDown: MethodCreator = dispatch => event =>
     }
   })
 
-const onFocusSearchBar: MethodCreator = dispatch => () => dispatch.call(focusNode, null)
+const onFocusSearchBar: MethodCreator<Props, ConnectorState> = dispatch => () => dispatch.call(focusNode, null)
 
-const handleSearchKeyChange: MethodCreator = dispatch => {
+const handleSearchKeyChange: MethodCreator<Props, ConnectorState> = dispatch => {
   let i = 0
   return async event => {
     const searchKey = event.target.value
@@ -221,7 +221,7 @@ function shouldDelayExpand(node: TreeNode) {
   )
 }
 
-const setExpand: MethodCreator = dispatch => (node, expand) => {
+const setExpand: MethodCreator<Props, ConnectorState> = dispatch => (node, expand) => {
   visibleNodesGenerator.setExpand(node, expand)
   const applyChanges = () => dispatch.call(focusNode, node)
   if (shouldDelayExpand(node)) {
@@ -232,7 +232,7 @@ const setExpand: MethodCreator = dispatch => (node, expand) => {
   }
 }
 
-const toggleNodeExpansion: MethodCreator = dispatch => (node, skipScrollToNode) => {
+const toggleNodeExpansion: MethodCreator<Props, ConnectorState> = dispatch => (node, skipScrollToNode) => {
   visibleNodesGenerator.toggleExpand(node)
   const applyChanges = () => {
     dispatch.call(focusNode, node, skipScrollToNode)
@@ -246,8 +246,8 @@ const toggleNodeExpansion: MethodCreator = dispatch => (node, skipScrollToNode) 
   }
 }
 
-const focusNode: MethodCreator = dispatch => (node, skipScroll) =>
-  dispatch.get((_, { visibleNodes: { nodes } }) => {
+const focusNode: MethodCreator<Props, ConnectorState> = dispatch => (node, skipScroll) =>
+  dispatch.get(({ visibleNodes: { nodes } }) => {
     visibleNodesGenerator.focusNode(node)
     if (node && !skipScroll) {
       // when focus a node not in viewport(by keyboard), scroll to it
@@ -257,7 +257,7 @@ const focusNode: MethodCreator = dispatch => (node, skipScroll) =>
     dispatch.call(updateVisibleNodes)
   })
 
-const onNodeClick: MethodCreator = dispatch => node => {
+const onNodeClick: MethodCreator<Props, ConnectorState> = dispatch => node => {
   if (node.type === 'tree') {
     dispatch.call(toggleNodeExpansion, node, true)
   } else if (node.type === 'blob') {
@@ -268,8 +268,8 @@ const onNodeClick: MethodCreator = dispatch => node => {
   }
 }
 
-const mountExpandingIndicator: MethodCreator = dispatch => node =>
-  dispatch.get((_, { visibleNodes }) => {
+const mountExpandingIndicator: MethodCreator<Props, ConnectorState> = dispatch => node =>
+  dispatch.get(({ visibleNodes }) => {
     const dummyVisibleNodes = {
       ...visibleNodes,
       nodes: visibleNodes.nodes.slice(),
@@ -285,7 +285,7 @@ const mountExpandingIndicator: MethodCreator = dispatch => node =>
     })
   })
 
-const updateVisibleNodes: MethodCreator = dispatch => () => {
+const updateVisibleNodes: MethodCreator<Props, ConnectorState> = dispatch => () => {
   const { visibleNodes } = visibleNodesGenerator
   dispatch.set({ visibleNodes })
 }
