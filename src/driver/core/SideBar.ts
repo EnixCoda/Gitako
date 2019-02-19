@@ -10,7 +10,7 @@ import GitHubHelper, {
 import configHelper from 'utils/configHelper'
 import URLHelper from 'utils/URLHelper'
 import keyHelper from 'utils/keyHelper'
-import { MethodCreator, DispatchState, TriggerOtherMethod } from 'driver/connect'
+import { MethodCreator } from 'driver/connect'
 import { Props } from 'components/SideBar'
 import SettingsBar from 'components/SettingsBar'
 
@@ -150,7 +150,7 @@ const handleError: MethodCreator = dispatch => async err => {
 }
 
 const onPJAXEnd: MethodCreator<ConnectorState> = dispatch => () => {
-  dispatch.get(({ metaData, copyFileButton, copySnippetButton }) => {
+  dispatch.get((_, { metaData, copyFileButton, copySnippetButton }) => {
     DOMHelper.unmountTopProgressBar()
     DOMHelper.decorateGitHubPageContent({ copyFileButton, copySnippetButton })
     const mergedMetaData = { ...metaData, ...URLHelper.parse() }
