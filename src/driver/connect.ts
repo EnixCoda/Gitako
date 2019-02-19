@@ -68,6 +68,14 @@ function link<P, S>(instance: React.Component<P, S>, sources: Sources): WrappedM
   }
   const map = new Map<MethodCreator, Method>(/* sources.creator -> wrappedMethods.method */)
 
+  const dispatchCall: TriggerOtherMethod = (createMethod, ...otherArgs) => {
+    const isFromSource = sourcesValues.includes(createMethod)
+    if (isFromSource) {
+      const method = map.get(createMethod)
+      const runnable = applyMiddlewares(method, otherArgs)
+      run(runnable)
+    }
+  }
   const dispatchState: DispatchState<P> = (updater, callback) => {
     instance.setState(updater, callback)
   }
@@ -75,14 +83,7 @@ function link<P, S>(instance: React.Component<P, S>, sources: Sources): WrappedM
     updater(instance.props, instance.state)
   }
   const dispatch: Dispatch<P, S> = {
-    call(createMethod: MethodCreator, ...otherArgs: ParametersOfReturnedFunction<MethodCreator>) {
-      const isFromSource = sourcesValues.includes(createMethod)
-      if (isFromSource) {
-        const method = map.get(createMethod)
-        const runnable = applyMiddlewares(method, otherArgs)
-        run(runnable)
-      }
-    },
+    call: dispatchCall,
     get: prepareState,
     set: dispatchState,
   }
@@ -103,14 +104,14 @@ export default function connect<BaseP, ExtraP>(mapping: Sources) {
     ComponentClass: React.ComponentClass<BaseP & ExtraP, S>
   ): React.ComponentClass<BaseP, ExtraP> {
     return class AwesomeApp extends React.PureComponent<BaseP, ExtraP> {
-      static displayName = `Connected(${ComponentClass.name})`
+      static displayName = `Connected(${ComponentClass.displayName || ComponentClass.name})`
       static defaultProps = ComponentClass.defaultProps
 
       state = {} as ExtraP
-      boundCore = link<BaseP, ExtraP>(this, mapping) as WrappedMethods
+      connectedMethods = link<BaseP, ExtraP>(this, mapping) as WrappedMethods
 
       render() {
-        const props = Object.assign({}, this.props, this.boundCore, this.state)
+        const props = Object.assign({}, this.props, this.connectedMethods, this.state)
         return React.createElement(ComponentClass, props)
       }
     }
