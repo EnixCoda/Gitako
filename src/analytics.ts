@@ -1,5 +1,6 @@
 import { version } from '../package.json'
-import { Middleware, Method } from 'driver/connect.js'
+import { Middleware } from 'driver/connect.js'
+import { IN_PRODUCTION_MODE } from 'env'
 // TODO: set this through ENV or something else
 const LOG_ENDPOINT = 'https://enix.one/gitako/log'
 
@@ -27,6 +28,7 @@ function encodeParams(params: object) {
 }
 
 function reportError(error: Error) {
+  if (!IN_PRODUCTION_MODE) return
   return fetch(
     `${LOG_ENDPOINT}?${encodeParams({
       error: (error && error.message) || error,
