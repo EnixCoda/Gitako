@@ -225,7 +225,7 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
                     disabled={hasAccessToken}
                     placeholder={hasAccessToken ? 'Your token is saved' : 'Input your token here'}
                     value={accessToken}
-                    onInput={this.onInputAccessToken}
+                    onChange={this.onInputAccessToken}
                   />
                   {hasAccessToken && !accessToken ? (
                     <button className={'btn'} onClick={this.clearToken}>
