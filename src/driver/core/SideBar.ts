@@ -128,6 +128,7 @@ const init: MethodCreator<Props, ConnectorState> = dispatch => async () => {
     dispatch.call(setMetaData, metaData)
     const shouldShow = URLHelper.isInCodePage(metaData)
     dispatch.call(setShouldShow, shouldShow)
+    DOMHelper.markGitakoReadyState()
   } catch (err) {
     dispatch.call(handleError, err)
   }

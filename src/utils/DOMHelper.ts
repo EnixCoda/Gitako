@@ -8,6 +8,14 @@ import * as NProgress from 'nprogress'
 NProgress.configure({ showSpinner: false })
 
 /**
+ * when gitako is ready, make page's header narrower
+ */
+function markGitakoReadyState() {
+  const readyClassName = 'gitako-ready'
+  document.body.classList.add(readyClassName)
+}
+
+/**
  * if should show gitako, then move body right to make space for showing gitako
  * otherwise, hide the space
  */
@@ -355,6 +363,7 @@ export default {
   getCurrentPageType,
   getRepoPageType,
   insertLogoMountPoint,
+  markGitakoReadyState,
   setBodyIndent,
   scrollToNodeElement,
   scrollToRepoContent,
