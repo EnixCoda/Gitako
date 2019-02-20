@@ -147,6 +147,7 @@ const handleError: MethodCreator<Props, ConnectorState, [Error]> = dispatch => a
     dispatch.call(setShouldShow, true)
   } else {
     dispatch.call(setError, 'Gitako ate a bug, but it should recovery soon!')
+    throw err
   }
 }
 
