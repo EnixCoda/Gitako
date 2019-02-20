@@ -1,7 +1,7 @@
 /**
  * cx('class1', { class2: true, class3: false }) --> 'class1 class2'
  */
-export default function cx(...classNames: (string | object)[]): string {
+export default function cx(...classNames: any[]): string {
   return classNames
     .filter(Boolean)
     .map(className => {
@@ -10,7 +10,7 @@ export default function cx(...classNames: (string | object)[]): string {
           return className
         case 'object':
           return cx(
-            ...Object.entries(className).map(([key, value]) => (Boolean(value) ? key : null))
+            ...Object.entries(className).map(([key, value]) => (Boolean(value) ? key : null)),
           )
         default:
           return ''
