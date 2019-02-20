@@ -2,7 +2,7 @@ import * as React from 'react'
 import Icon from 'components/Icon'
 import configHelper, { configKeys } from 'utils/configHelper'
 import keyHelper from 'utils/keyHelper'
-import { friendlyFormatShortcut } from 'utils/general.js'
+import { friendlyFormatShortcut } from 'utils/general'
 import { version } from '../../package.json'
 
 const wikiLinks = {
