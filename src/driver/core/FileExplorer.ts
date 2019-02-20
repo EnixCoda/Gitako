@@ -118,10 +118,10 @@ const handleKeyDown: MethodCreator<
     function handleVerticalMove(index: number) {
       if (0 <= index && index < nodes.length) {
         DOMHelper.focusFileExplorer()
-        dispatch.call(focusNode, nodes[index])
+        dispatch.call(focusNode, nodes[index], false)
       } else {
         DOMHelper.focusSearchInput()
-        dispatch.call(focusNode, null)
+        dispatch.call(focusNode, null, false)
       }
     }
 
@@ -149,7 +149,7 @@ const handleKeyDown: MethodCreator<
             // go forward to the start of the list, find the closest node with lower depth
             const parentNode = getVisibleParentNode(nodes, focusedNode, depths)
             if (parentNode) {
-              dispatch.call(focusNode, parentNode)
+              dispatch.call(focusNode, parentNode, false)
             }
           }
           break
@@ -161,7 +161,7 @@ const handleKeyDown: MethodCreator<
             if (expandedNodes.has(focusedNode)) {
               const nextNode = nodes[focusedNodeIndex + 1]
               if (depths.get(nextNode) > depths.get(focusedNode)) {
-                dispatch.call(focusNode, nextNode)
+                dispatch.call(focusNode, nextNode, false)
               }
             } else {
               dispatch.call(setExpand, focusedNode, true)
@@ -194,11 +194,11 @@ const handleKeyDown: MethodCreator<
         switch (key) {
           case 'ArrowDown':
             DOMHelper.focusFileExplorer()
-            dispatch.call(focusNode, nodes[0])
+            dispatch.call(focusNode, nodes[0], false)
             break
           case 'ArrowUp':
             DOMHelper.focusFileExplorer()
-            dispatch.call(focusNode, nodes[nodes.length - 1])
+            dispatch.call(focusNode, nodes[nodes.length - 1], false)
             break
           default:
             muteEvent = false
@@ -211,7 +211,7 @@ const handleKeyDown: MethodCreator<
   })
 
 const onFocusSearchBar: MethodCreator<Props, ConnectorState> = dispatch => () =>
-  dispatch.call(focusNode, null)
+  dispatch.call(focusNode, null, false)
 
 const handleSearchKeyChange: MethodCreator<
   Props,
@@ -240,7 +240,7 @@ const setExpand: MethodCreator<Props, ConnectorState, [TreeNode, boolean]> = dis
   expand = false
 ) => {
   visibleNodesGenerator.setExpand(node, expand)
-  const applyChanges = () => dispatch.call(focusNode, node)
+  const applyChanges = () => dispatch.call(focusNode, node, false)
   if (shouldDelayExpand(node)) {
     dispatch.call(mountExpandingIndicator, node)
     tasksAfterRender.push(() => setTimeout(applyChanges, 0))
@@ -266,11 +266,10 @@ const toggleNodeExpansion: MethodCreator<Props, ConnectorState, [TreeNode, boole
   }
 }
 
-const focusNode: MethodCreator<
-  Props,
-  ConnectorState,
-  [TreeNode] | [TreeNode, boolean]
-> = dispatch => (node: TreeNode, skipScroll = false) =>
+const focusNode: MethodCreator<Props, ConnectorState, [TreeNode | null, boolean]> = dispatch => (
+  node: TreeNode | null,
+  skipScroll = false,
+) =>
   dispatch.get(({ visibleNodes: { nodes } }) => {
     visibleNodesGenerator.focusNode(node)
     if (node && !skipScroll) {
