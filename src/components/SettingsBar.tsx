@@ -2,6 +2,7 @@ import * as React from 'react'
 import Icon from 'components/Icon'
 import configHelper, { config } from 'utils/configHelper'
 import keyHelper from 'utils/keyHelper'
+import { friendlyFormatShortcut } from 'utils/general.js'
 import { version } from '../../package.json'
 
 const wikiLinks = {
@@ -12,38 +13,6 @@ const wikiLinks = {
 }
 
 const ACCESS_TOKEN_REGEXP = /^[0-9a-f]{40}$/
-
-const OperatingSystems = {
-  Windows: 'Windows',
-  macOS: 'Macintosh',
-  others: 'unknown',
-}
-
-function detectOS() {
-  const {
-    navigator: { userAgent },
-  } = window
-  if (userAgent.indexOf(OperatingSystems.Windows) !== -1) return OperatingSystems.Windows
-  else if (userAgent.indexOf(OperatingSystems.macOS) !== -1) return OperatingSystems.macOS
-  return OperatingSystems.others
-}
-
-function friendlyFormatShortcut(shortcut?: string) {
-  if (!shortcut) return ''
-  const OS = detectOS()
-  if (OS === OperatingSystems.Windows) {
-    return shortcut.replace(/meta/, 'win')
-  } else if (OS === OperatingSystems.macOS) {
-    return shortcut
-      .replace(/meta/, '⌘')
-      .replace(/ctrl/, '⌃')
-      .replace(/shift/, '⇧')
-      .replace(/alt/, '⌥')
-      .toUpperCase()
-  } else {
-    return shortcut
-  }
-}
 
 type Props = {
   accessToken?: string
