@@ -2,7 +2,7 @@ import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 
 type Props = {
-  into: HTMLElement
+  into: Element
 }
 
 class Portal extends React.PureComponent<Props> {

@@ -28,11 +28,17 @@ function setBodyIndent(shouldShowGitako: boolean) {
   }
 }
 
-function $<R1 = never, R2 = never>(
+function $<E extends (element: Element) => any, O extends () => any>(
   selector: string,
-  existCallback?: (element: Element) => R1,
-  otherwise?: () => R2,
-): R1 | R2 | Element {
+  existCallback?: E,
+  otherwise?: O,
+): E extends never
+  ? O extends never
+    ? (Element | null)
+    : ReturnType<O> | null
+  : O extends never
+  ? (ReturnType<E> | null)
+  : ReturnType<O> | ReturnType<E> {
   const element = document.querySelector(selector)
   if (element) {
     return existCallback ? existCallback(element) : element

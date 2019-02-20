@@ -37,7 +37,7 @@ export type ConnectorState = {
   compressSingletonFolder?: boolean
   copyFileButton?: boolean
   copySnippetButton?: boolean
-  logoContainerElement: HTMLElement | null
+  logoContainerElement: Element | null
 
   init: () => void
   onPJAXEnd: () => void
