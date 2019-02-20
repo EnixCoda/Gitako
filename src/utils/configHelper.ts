@@ -19,12 +19,12 @@ export enum config {
 
 const configKeys = Object.values(config)
 
-function get(): any {
+function getAll(): any {
   return storageHelper.get(configKeys) || {}
 }
 
 function getOne(key: keyof Config) {
-  return get()[key]
+  return getAll()[key]
 }
 
 function set(partialConfig: Partial<Config>) {
@@ -38,7 +38,7 @@ function setOne(key: config, value: any) {
 }
 
 export default {
-  get,
+  getAll,
   getOne,
   set,
   setOne,

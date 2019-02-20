@@ -70,7 +70,7 @@ const init: MethodCreator<Props, ConnectorState> = dispatch => async () => {
       compressSingletonFolder,
       copyFileButton,
       copySnippetButton,
-    } = await configHelper.get()
+    } = await configHelper.getAll()
     DOMHelper.decorateGitHubPageContent({ copyFileButton, copySnippetButton })
     dispatch.set({
       accessToken,
