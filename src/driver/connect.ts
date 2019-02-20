@@ -1,6 +1,10 @@
 import * as React from 'react'
 
-export type Method<Args = any[]> = (...args: Args extends any[] ? Args : []) => void | Promise<void>
+type x = [] extends any[] ? [] : any[]
+
+export type Method<Args = any[]> = (
+  ...args: Args extends any[] ? Args : any[]
+) => void | Promise<void>
 export type Middleware = <M extends Method, MM extends Method>(
   method: M,
   args: Parameters<M>,
@@ -35,7 +39,7 @@ export type PreDispatch<Props, State> = (
   dispatchCallback: (state: State, props: Props) => Props | Promise<void> | void,
   callback?: () => void,
 ) => void
-export type TriggerOtherMethod = <MC extends MethodCreator<any, any, any[]>>(
+export type TriggerOtherMethod<Props, State> = <Args, MC extends MethodCreator<Props, State, Args>>(
   methodCreator: MC,
   ...args: Parameters<ReturnType<MC>>
 ) => void
@@ -43,15 +47,13 @@ export type TriggerOtherMethod = <MC extends MethodCreator<any, any, any[]>>(
 export type Dispatch<Props, State> = {
   set: DispatchState<Props, State>
   get: PreDispatch<Props, State>
-  call: TriggerOtherMethod
+  call: TriggerOtherMethod<Props, State>
 }
 
-export type MethodCreator<Props, State, Args = []> = (
-  dispatch: Dispatch<Props, State>,
-) => Method<Args>
+export type MethodCreator<Props, State, Args> = (dispatch: Dispatch<Props, State>) => Method<Args>
 
 type Sources<P, S> = {
-  [key: string]: MethodCreator<P, S, any[]>
+  [key: string]: MethodCreator<P, S, any>
 }
 type WrappedMethods = {
   [key: string]: Method
@@ -62,14 +64,15 @@ function link<P, S>(instance: React.Component<P, S>, sources: Sources<P, S>): Wr
     /* [keyof sources] -> wrappedMethods.method */
   }
   const map = new Map<
-    MethodCreator<P, S, any[]>,
+    MethodCreator<P, S, any>,
     Method
   >(/* sources.creator -> wrappedMethods.method */)
 
-  const dispatchCall: TriggerOtherMethod = (createMethod, ...otherArgs) => {
+  const dispatchCall: TriggerOtherMethod<P, S> = (createMethod, ...otherArgs) => {
     const isFromSource = sourcesValues.includes(createMethod)
     if (isFromSource) {
       const method = map.get(createMethod)
+      if (!method) throw Error('Method not found')
       const runnable = applyMiddlewares(method, otherArgs)
       run(runnable)
     }
