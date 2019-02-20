@@ -23,8 +23,6 @@ class Gitako extends React.PureComponent<Props & ConnectorState> {
     errorDueToAuth: false,
     accessToken: '',
     toggleShowSideBarShortcut: '',
-    metaData: null,
-    treeData: null,
     compressSingletonFolder: true,
     copyFileButton: true,
     copySnippetButton: true,
@@ -120,7 +118,7 @@ class Gitako extends React.PureComponent<Props & ConnectorState> {
       <div className={'gitako-side-bar'}>
         <Portal into={logoContainerElement}>
           <ToggleShowButton
-            error={(error)}
+            error={error}
             shouldShow={shouldShow}
             toggleShowSideBar={toggleShowSideBar}
           />

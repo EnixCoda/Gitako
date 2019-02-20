@@ -3,7 +3,7 @@ import Icon from 'components/Icon'
 import cx from 'utils/cx'
 
 type Props = {
-  error: string
+  error?: string
   shouldShow: boolean
   toggleShowSideBar: React.MouseEventHandler
 }

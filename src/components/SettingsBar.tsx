@@ -28,7 +28,8 @@ function detectOS() {
   return OperatingSystems.others
 }
 
-function friendlyFormatShortcut(shortcut: string) {
+function friendlyFormatShortcut(shortcut?: string) {
+  if (!shortcut) return ''
   const OS = detectOS()
   if (OS === OperatingSystems.Windows) {
     return shortcut.replace(/meta/, 'win')
@@ -45,7 +46,7 @@ function friendlyFormatShortcut(shortcut: string) {
 }
 
 type Props = {
-  accessToken: string
+  accessToken?: string
   activated: boolean
   onAccessTokenChange: (accessToken: string) => void
   onShortcutChange: (shortcut: string) => void
@@ -56,14 +57,14 @@ type Props = {
   setCopySnippet: (copySnippetButton: Props['copySnippetButton']) => void
   setCompressSingleton: (compressSingletonFolder: Props['compressSingletonFolder']) => void
   toggleShowSettings: () => void
-  toggleShowSideBarShortcut: string
+  toggleShowSideBarShortcut?: string
 }
 
 type State = {
-  accessToken: string
+  accessToken?: string
   accessTokenHint: React.ReactNode
   shortcutHint: string
-  toggleShowSideBarShortcut: string
+  toggleShowSideBarShortcut?: string
   reloadHint: React.ReactNode
   varyOptions: {
     key: string
@@ -87,7 +88,7 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
         label: 'Compress singleton folder',
         onChange: this.createOnToggleChecked(
           config.compressSingletonFolder,
-          this.props.setCompressSingleton
+          this.props.setCompressSingleton,
         ),
         getValue: () => this.props.compressSingletonFolder,
         wikiLink: wikiLinks.compressSingletonFolder,
@@ -154,10 +155,12 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
     const { onShortcutChange } = this.props
     const { toggleShowSideBarShortcut } = this.state
     await configHelper.setOne(config.shortcut, toggleShowSideBarShortcut)
-    onShortcutChange(toggleShowSideBarShortcut)
-    this.setState({
-      shortcutHint: 'Shortcut is saved!',
-    })
+    if (typeof toggleShowSideBarShortcut === 'string') {
+      onShortcutChange(toggleShowSideBarShortcut)
+      this.setState({
+        shortcutHint: 'Shortcut is saved!',
+      })
+    }
   }
 
   onShortCutInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -182,7 +185,7 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
 
   createOnToggleChecked(
     configKey: config,
-    set: (value: boolean) => void
+    set: (value: boolean) => void,
   ): (e: React.FormEvent<HTMLInputElement>) => Promise<void> {
     return async e => {
       const enabled = e.currentTarget.checked

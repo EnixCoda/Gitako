@@ -16,27 +16,27 @@ import SettingsBar from 'components/SettingsBar'
 
 export type ConnectorState = {
   // initial width of side bar
-  baseSize?: number
+  baseSize: number
   // error message
   error?: string
   // whether Gitako side bar should be shown
-  shouldShow?: boolean
+  shouldShow: boolean
   // whether show settings pane
-  showSettings?: boolean
+  showSettings: boolean
   // whether failed loading the repo due to it is private
-  errorDueToAuth?: boolean
+  errorDueToAuth: boolean
   // access token for GitHub
   accessToken?: string
   // the shortcut string for toggle sidebar
   toggleShowSideBarShortcut?: string
   // meta data for the repository
-  metaData: MetaData
+  metaData?: MetaData
   // file tree data
-  treeData: TreeData
+  treeData?: TreeData
   // few settings
-  compressSingletonFolder?: boolean
-  copyFileButton?: boolean
-  copySnippetButton?: boolean
+  compressSingletonFolder: boolean
+  copyFileButton: boolean
+  copySnippetButton: boolean
   logoContainerElement: Element | null
 
   init: () => void
