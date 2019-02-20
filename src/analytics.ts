@@ -16,7 +16,7 @@ export const withErrorLog: Middleware = function withErrorLog(method, args) {
       } catch (error) {
         raiseError(error)
       }
-    } as any, // TOFIX: not sure how to fix this yet
+    } as any, // TO FIX: not sure how to fix this yet
     args,
   ]
 }
