@@ -28,7 +28,11 @@ function setBodyIndent(shouldShowGitako: boolean) {
   }
 }
 
-function $(selector: string, existCallback?: (element: Element) => any, otherwise?: () => any) {
+function $<R1 = never, R2 = never>(
+  selector: string,
+  existCallback?: (element: Element) => R1,
+  otherwise?: () => R2,
+): R1 | R2 | Element {
   const element = document.querySelector(selector)
   if (element) {
     return existCallback ? existCallback(element) : element
@@ -52,14 +56,14 @@ function getCurrentBranch() {
     '.repository-content > .file-navigation > .branch-select-menu > button'
   const branchNameFromButtonElement = $(
     selectedBranchButtonSelector,
-    (element: HTMLButtonElement) => element.title.trim()
+    (element: HTMLButtonElement) => element.title.trim(),
   )
   if (branchNameFromButtonElement) return branchNameFromButtonElement
 
   const selectedBranchSelector =
     '.select-menu.branch-select-menu .select-menu-modal .select-menu-list .select-menu-item.selected svg.select-menu-item-icon + span'
   const branchNameFromSelectElement = $(selectedBranchSelector, element =>
-    element.textContent.trim()
+    element.textContent.trim(),
   )
   if (branchNameFromSelectElement) return branchNameFromSelectElement
 }
@@ -299,7 +303,7 @@ function attachCopySnippet() {
           target.parentNode.insertBefore(clippy, target)
         }
       }
-    })
+    }),
   )
 }
 

@@ -44,7 +44,7 @@ export type ConnectorState = {
   toggleShowSideBar: () => void
   toggleShowSettings: () => void
   onAccessTokenChange: SettingsBar['props']['onAccessTokenChange']
-  onKeyDown: EventListener
+  onKeyDown: (e: KeyboardEvent) => string
   onShortcutChange: SettingsBar['props']['onShortcutChange']
   setCopyFile: SettingsBar['props']['setCopyFile']
   setCopySnippet: SettingsBar['props']['setCopySnippet']
@@ -134,7 +134,7 @@ const init: MethodCreator<Props, ConnectorState> = dispatch => async () => {
   }
 }
 
-const handleError: MethodCreator<Props, ConnectorState> = dispatch => async err => {
+const handleError: MethodCreator<Props, ConnectorState, [Error]> = dispatch => async err => {
   if (err.message === EMPTY_PROJECT) {
     dispatch.call(setError, 'This project seems to be empty.')
   } else if (
@@ -160,7 +160,7 @@ const onPJAXEnd: MethodCreator<Props, ConnectorState> = dispatch => () => {
   })
 }
 
-const onKeyDown: MethodCreator<Props, ConnectorState> = dispatch => e => {
+const onKeyDown: MethodCreator<Props, ConnectorState, [KeyboardEvent]> = dispatch => e => {
   dispatch.get(({ toggleShowSideBarShortcut }) => {
     if (toggleShowSideBarShortcut) {
       const keys = keyHelper.parseEvent(e)
@@ -172,16 +172,22 @@ const onKeyDown: MethodCreator<Props, ConnectorState> = dispatch => e => {
 }
 
 const toggleShowSideBar: MethodCreator<Props, ConnectorState> = dispatch => () =>
-  dispatch.get(({ shouldShow }) =>
-    dispatch.call(setShouldShow, !shouldShow)
-  )
+  dispatch.get(({ shouldShow }) => dispatch.call(setShouldShow, !shouldShow))
 
-const setShouldShow: MethodCreator<Props, ConnectorState> = dispatch => shouldShow => {
+const setShouldShow: MethodCreator<
+  Props,
+  ConnectorState,
+  [ConnectorState['shouldShow']]
+> = dispatch => shouldShow => {
   dispatch.set({ shouldShow }, shouldShow ? DOMHelper.focusFileExplorer : null)
   DOMHelper.setBodyIndent(shouldShow)
 }
 
-const setError: MethodCreator<Props, ConnectorState> = dispatch => error => {
+const setError: MethodCreator<
+  Props,
+  ConnectorState,
+  [ConnectorState['error']]
+> = dispatch => error => {
   dispatch.set({ error })
   dispatch.call(setShouldShow, false)
 }
@@ -191,22 +197,47 @@ const toggleShowSettings: MethodCreator<Props, ConnectorState> = dispatch => () 
     showSettings: !showSettings,
   }))
 
-const setShowSettings: MethodCreator<Props, ConnectorState> = dispatch => showSettings => dispatch.set({ showSettings })
+const setShowSettings: MethodCreator<
+  Props,
+  ConnectorState,
+  [ConnectorState['showSettings']]
+> = dispatch => showSettings => dispatch.set({ showSettings })
 
-const onAccessTokenChange: MethodCreator<Props, ConnectorState> = dispatch => accessToken => dispatch.set({ accessToken })
+const onAccessTokenChange: MethodCreator<
+  Props,
+  ConnectorState,
+  [ConnectorState['accessToken']]
+> = dispatch => accessToken => dispatch.set({ accessToken })
 
-const onShortcutChange: MethodCreator<Props, ConnectorState> = dispatch => shortcut =>
-  dispatch.set({ toggleShowSideBarShortcut: shortcut })
+const onShortcutChange: MethodCreator<
+  Props,
+  ConnectorState,
+  [ConnectorState['toggleShowSideBarShortcut']]
+> = dispatch => shortcut => dispatch.set({ toggleShowSideBarShortcut: shortcut })
 
-const setMetaData: MethodCreator<Props, ConnectorState> = dispatch => metaData => dispatch.set({ metaData })
+const setMetaData: MethodCreator<
+  Props,
+  ConnectorState,
+  [ConnectorState['metaData']]
+> = dispatch => metaData => dispatch.set({ metaData })
 
-const setCompressSingleton: MethodCreator<Props, ConnectorState> = dispatch => compressSingletonFolder =>
-  dispatch.set({ compressSingletonFolder })
+const setCompressSingleton: MethodCreator<
+  Props,
+  ConnectorState,
+  [ConnectorState['compressSingletonFolder']]
+> = dispatch => compressSingletonFolder => dispatch.set({ compressSingletonFolder })
 
-const setCopyFile: MethodCreator<Props, ConnectorState> = dispatch => copyFileButton => dispatch.set({ copyFileButton })
+const setCopyFile: MethodCreator<
+  Props,
+  ConnectorState,
+  [ConnectorState['copyFileButton']]
+> = dispatch => copyFileButton => dispatch.set({ copyFileButton })
 
-const setCopySnippet: MethodCreator<Props, ConnectorState> = dispatch => copySnippetButton =>
-  dispatch.set({ copySnippetButton })
+const setCopySnippet: MethodCreator<
+  Props,
+  ConnectorState,
+  [ConnectorState['copySnippetButton']]
+> = dispatch => copySnippetButton => dispatch.set({ copySnippetButton })
 
 export default {
   init,

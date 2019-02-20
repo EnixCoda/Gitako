@@ -1,16 +1,9 @@
 import * as React from 'react'
 
-export type ParametersOfReturnedFunction<Func> = Func extends (<Args extends []>(
-  ...args1: any[] // it's ok
-) => (...args2: Args) => any) // it's ok
-  ? Args
-  : never
-
-export type Method = (...args: Args) => void | Promise<void>
-type Args = any[] // it's ok
+export type Method<Args = any[]> = (...args: Args extends any[] ? Args : []) => void | Promise<void>
 export type Middleware = <M extends Method, MM extends Method>(
   method: M,
-  args: Parameters<M>
+  args: Parameters<M>,
 ) => [MM | M, Parameters<MM | M>]
 
 const middlewares: Middleware[] = []
@@ -40,11 +33,11 @@ function run<M extends Method>([method, args]: [M, Parameters<M>]) {
 export type DispatchState<Props, State> = React.Component<Props, State>['setState']
 export type PreDispatch<Props, State> = (
   dispatchCallback: (state: State, props: Props) => Props | Promise<void> | void,
-  callback?: () => void
+  callback?: () => void,
 ) => void
-export type TriggerOtherMethod = <MC extends MethodCreator<any, any>>(
+export type TriggerOtherMethod = <MC extends MethodCreator<any, any, any[]>>(
   methodCreator: MC,
-  ...args: ParametersOfReturnedFunction<MC>
+  ...args: Parameters<ReturnType<MC>>
 ) => void
 
 export type Dispatch<Props, State> = {
@@ -53,20 +46,25 @@ export type Dispatch<Props, State> = {
   call: TriggerOtherMethod
 }
 
-export type MethodCreator<Props, State> = (dispatch: Dispatch<Props, State>) => Method
+export type MethodCreator<Props, State, Args = []> = (
+  dispatch: Dispatch<Props, State>,
+) => Method<Args>
 
-type Sources = {
-  [key: string]: MethodCreator<any, any>
+type Sources<P, S> = {
+  [key: string]: MethodCreator<P, S, any[]>
 }
 type WrappedMethods = {
   [key: string]: Method
 }
 
-function link<P, S>(instance: React.Component<P, S>, sources: Sources): WrappedMethods {
+function link<P, S>(instance: React.Component<P, S>, sources: Sources<P, S>): WrappedMethods {
   const wrappedMethods: WrappedMethods = {
     /* [keyof sources] -> wrappedMethods.method */
   }
-  const map = new Map<MethodCreator<P, S>, Method>(/* sources.creator -> wrappedMethods.method */)
+  const map = new Map<
+    MethodCreator<P, S, any[]>,
+    Method
+  >(/* sources.creator -> wrappedMethods.method */)
 
   const dispatchCall: TriggerOtherMethod = (createMethod, ...otherArgs) => {
     const isFromSource = sourcesValues.includes(createMethod)
@@ -99,9 +97,9 @@ function link<P, S>(instance: React.Component<P, S>, sources: Sources): WrappedM
   return wrappedMethods
 }
 
-export default function connect<BaseP, ExtraP>(mapping: Sources) {
+export default function connect<BaseP, ExtraP>(mapping: Sources<BaseP, ExtraP>) {
   return function linkComponent<S>(
-    ComponentClass: React.ComponentClass<BaseP & ExtraP, S>
+    ComponentClass: React.ComponentClass<BaseP & ExtraP, S>,
   ): React.ComponentClass<BaseP, ExtraP> {
     return class AwesomeApp extends React.PureComponent<BaseP, ExtraP> {
       static displayName = `Connected(${ComponentClass.displayName || ComponentClass.name})`
