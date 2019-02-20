@@ -1,6 +1,6 @@
 import * as React from 'react'
 import Icon from 'components/Icon'
-import configHelper, { config } from 'utils/configHelper'
+import configHelper, { configKeys } from 'utils/configHelper'
 import keyHelper from 'utils/keyHelper'
 import { friendlyFormatShortcut } from 'utils/general.js'
 import { version } from '../../package.json'
@@ -56,7 +56,7 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
         key: 'compress-singleton',
         label: 'Compress singleton folder',
         onChange: this.createOnToggleChecked(
-          config.compressSingletonFolder,
+          configKeys.compressSingletonFolder,
           this.props.setCompressSingleton,
         ),
         getValue: () => this.props.compressSingletonFolder,
@@ -65,14 +65,17 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
       {
         key: 'copy-file',
         label: 'Copy File',
-        onChange: this.createOnToggleChecked(config.copyFileButton, this.props.setCopyFile),
+        onChange: this.createOnToggleChecked(configKeys.copyFileButton, this.props.setCopyFile),
         getValue: () => this.props.copyFileButton,
         wikiLink: wikiLinks.copyFileButton,
       },
       {
         key: 'copy-snippet',
         label: 'Copy Snippet',
-        onChange: this.createOnToggleChecked(config.copySnippetButton, this.props.setCopySnippet),
+        onChange: this.createOnToggleChecked(
+          configKeys.copySnippetButton,
+          this.props.setCopySnippet,
+        ),
         getValue: () => this.props.copySnippetButton,
         wikiLink: wikiLinks.copySnippet,
       },
@@ -97,7 +100,7 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
     const { onAccessTokenChange } = this.props
     const { accessToken } = this.state
     if (accessToken) {
-      await configHelper.setOne(config.accessToken, accessToken)
+      await configHelper.setOne(configKeys.accessToken, accessToken)
       onAccessTokenChange(accessToken)
       this.setState({
         accessToken: '',
@@ -115,7 +118,7 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
 
   clearToken = async () => {
     const { onAccessTokenChange } = this.props
-    await configHelper.setOne(config.accessToken, '')
+    await configHelper.setOne(configKeys.accessToken, '')
     onAccessTokenChange('')
     this.setState({ accessToken: '' })
   }
@@ -123,7 +126,7 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
   saveShortcut = async () => {
     const { onShortcutChange } = this.props
     const { toggleShowSideBarShortcut } = this.state
-    await configHelper.setOne(config.shortcut, toggleShowSideBarShortcut)
+    await configHelper.setOne(configKeys.shortcut, toggleShowSideBarShortcut)
     if (typeof toggleShowSideBarShortcut === 'string') {
       onShortcutChange(toggleShowSideBarShortcut)
       this.setState({
@@ -153,7 +156,7 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
   }
 
   createOnToggleChecked(
-    configKey: config,
+    configKey: configKeys,
     set: (value: boolean) => void,
   ): (e: React.FormEvent<HTMLInputElement>) => Promise<void> {
     return async e => {

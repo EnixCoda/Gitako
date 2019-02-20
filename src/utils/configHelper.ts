@@ -2,14 +2,14 @@ import storageHelper from 'utils/storageHelper'
 import { pick } from 'utils/general'
 
 type Config = {
-  shortcut: string
-  accessToken: string | null
+  shortcut: string | null
+  access_token: string | null
   compressSingletonFolder: boolean
   copyFileButton: boolean
   copySnippetButton: boolean
 }
 
-export enum config {
+export enum configKeys {
   shortcut = 'shortcut',
   accessToken = 'access_token',
   compressSingletonFolder = 'compressSingletonFolder',
@@ -17,22 +17,45 @@ export enum config {
   copySnippetButton = 'copySnippetButton',
 }
 
-const configKeys = Object.values(config)
-
-function getAll(): any {
-  return storageHelper.get(configKeys) || {}
+const defaultConfigs = {
+  shortcut: null,
+  access_token: null,
+  compressSingletonFolder: true,
+  copyFileButton: true,
+  copySnippetButton: true,
 }
 
-function getOne(key: keyof Config) {
-  return getAll()[key]
+function applyDefaultConfigs(configs: Config) {
+  return Object.keys(configs).reduce(
+    (applied, configKey) => {
+      const key = configKey as keyof Config
+      if (configs[key] === undefined) {
+        applied[key] = defaultConfigs[key]
+      } else {
+        applied[key] = configs[key]
+      }
+      return applied
+    },
+    {} as Config,
+  )
 }
 
-function set(partialConfig: Partial<Config>) {
-  return storageHelper.set(pick(partialConfig, configKeys))
+const configKeyArray = Object.values(configKeys)
+
+async function getAll(): Promise<Config> {
+  return applyDefaultConfigs(await storageHelper.get(configKeyArray))
 }
 
-function setOne(key: config, value: any) {
-  return set({
+async function getOne(key: keyof Config) {
+  return (await getAll())[key]
+}
+
+async function set(partialConfig: Partial<Config>) {
+  return await storageHelper.set(pick(partialConfig, configKeyArray))
+}
+
+async function setOne(key: configKeys, value: any) {
+  return await set({
     [key]: value,
   })
 }
