@@ -14,16 +14,13 @@ export type Props = {
   metaData: MetaData
   freeze: boolean
   compressSingletonFolder: boolean
-  accessToken: string
+  accessToken: string | undefined
   toggleShowSettings: React.MouseEventHandler
 }
 
 class FileExplorer extends React.Component<Props & ConnectorState> {
   static defaultProps: Partial<Props & ConnectorState> = {
-    treeData: null,
-    metaData: null,
     freeze: false,
-    visibleNodes: null,
   }
 
   componentWillMount() {
@@ -60,7 +57,7 @@ class FileExplorer extends React.Component<Props & ConnectorState> {
           <Node
             key={node.path}
             node={node}
-            depth={depths.get(node)}
+            depth={depths.get(node) || 0}
             focused={focusedNode === node}
             expanded={expandedNodes.has(node)}
             onClick={onNodeClick}
@@ -86,7 +83,7 @@ class FileExplorer extends React.Component<Props & ConnectorState> {
         className={cx(`file-explorer`, { freeze })}
         tabIndex={-1}
         onKeyDown={handleKeyDown}
-        onClick={freeze ? toggleShowSettings : null}
+        onClick={freeze ? toggleShowSettings : undefined}
       >
         {stateText ? (
           <LoadingIndicator text={stateText} />

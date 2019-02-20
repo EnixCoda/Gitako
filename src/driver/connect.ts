@@ -50,7 +50,9 @@ export type Dispatch<Props, State> = {
   call: TriggerOtherMethod<Props, State>
 }
 
-export type MethodCreator<Props, State, Args> = (dispatch: Dispatch<Props, State>) => Method<Args>
+export type MethodCreator<Props, State, Args = []> = (
+  dispatch: Dispatch<Props, State>,
+) => Method<Args>
 
 type Sources<P, S> = {
   [key: string]: MethodCreator<P, S, any>

@@ -28,7 +28,7 @@ function setBodyIndent(shouldShowGitako: boolean) {
   }
 }
 
-function $<E extends (element: Element) => any, O extends () => any>(
+function $<EE extends Element, E extends (element: EE) => any, O extends () => any>(
   selector: string,
   existCallback?: E,
   otherwise?: O,
@@ -41,7 +41,7 @@ function $<E extends (element: Element) => any, O extends () => any>(
   : ReturnType<O> | ReturnType<E> {
   const element = document.querySelector(selector)
   if (element) {
-    return existCallback ? existCallback(element) : element
+    return existCallback ? existCallback(element as EE) : element
   }
   return otherwise ? otherwise() : null
 }
@@ -60,16 +60,15 @@ function getBranches() {
 function getCurrentBranch() {
   const selectedBranchButtonSelector =
     '.repository-content > .file-navigation > .branch-select-menu > button'
-  const branchNameFromButtonElement = $(
-    selectedBranchButtonSelector,
-    (element: HTMLButtonElement) => element.title.trim(),
+  const branchNameFromButtonElement = $(selectedBranchButtonSelector, element =>
+    (element as HTMLButtonElement).title.trim(),
   )
   if (branchNameFromButtonElement) return branchNameFromButtonElement
 
   const selectedBranchSelector =
     '.select-menu.branch-select-menu .select-menu-modal .select-menu-list .select-menu-item.selected svg.select-menu-item-icon + span'
   const branchNameFromSelectElement = $(selectedBranchSelector, element =>
-    element.textContent.trim(),
+    element.textContent ? element.textContent.trim() : '',
   )
   if (branchNameFromSelectElement) return branchNameFromSelectElement
 }
@@ -306,7 +305,7 @@ function attachCopySnippet() {
            *    </div>
            *  </article>
            */
-          target.parentNode.insertBefore(clippy, target)
+          if (target.parentNode) target.parentNode.insertBefore(clippy, target)
         }
       }
     }),
@@ -318,13 +317,18 @@ function attachCopySnippet() {
  */
 function focusFileExplorer() {
   const sideBarContentSelector = '.gitako-side-bar .file-explorer'
-  $(sideBarContentSelector, (sideBarElement: HTMLElement) => sideBarElement.focus())
+  $(sideBarContentSelector, sideBarElement => {
+    if (sideBarElement instanceof HTMLElement) sideBarElement.focus()
+  })
 }
 
 function focusSearchInput() {
   const searchInputSelector = '.search-input'
-  $(searchInputSelector, (searchInputElement: HTMLElement) => {
-    if (document.activeElement !== searchInputElement) {
+  $(searchInputSelector, searchInputElement => {
+    if (
+      document.activeElement !== searchInputElement &&
+      searchInputElement instanceof HTMLElement
+    ) {
       searchInputElement.focus()
     }
   })

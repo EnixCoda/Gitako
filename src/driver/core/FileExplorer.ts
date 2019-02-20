@@ -28,7 +28,12 @@ function getVisibleParentNode(nodes: TreeNode[], focusedNode: TreeNode, depths: 
   const focusedNodeIndex = nodes.indexOf(focusedNode)
   const focusedNodeDepth = depths.get(focusedNode)
   let indexOfParentNode = focusedNodeIndex - 1
-  while (indexOfParentNode !== -1 && depths.get(nodes[indexOfParentNode]) >= focusedNodeDepth) {
+  let depth: number | undefined
+  while (indexOfParentNode !== -1) {
+    depth = depths.get(nodes[indexOfParentNode])
+    if (depth === undefined || focusedNodeDepth === undefined || !(depth >= focusedNodeDepth)) {
+      break
+    }
     --indexOfParentNode
   }
   const parentNode = nodes[indexOfParentNode]
@@ -44,13 +49,13 @@ const init: MethodCreator<Props, ConnectorState> = dispatch => () =>
 
 function resolveGitModules(root: TreeNode, blobData: BlobData) {
   if (blobData) {
-    if (blobData.encoding === 'base64') {
+    if (blobData.encoding === 'base64' && blobData.content && Array.isArray(root.contents)) {
       const content = atob(blobData.content)
       const parsed = ini.parse(content)
       Object.values(parsed).map((value: { url: string; path: string }) => {
         const { url, path } = value
         // for now, handle modules at root only
-        const node = root.contents.find(node => node.path === path)
+        const node = Array.isArray(root.contents) && root.contents.find(node => node.path === path)
         if (node) {
           node.url = url
         }
@@ -66,6 +71,7 @@ const setUpTree: MethodCreator<Props, ConnectorState> = dispatch => () =>
     const { root, gitModules } = treeParser.parse(treeData, metaData)
 
     if (gitModules) {
+      if (metaData.userName && metaData.repoName && gitModules.sha) {
       const blobData = await GitHubHelper.getBlobData({
         userName: metaData.userName,
         repoName: metaData.repoName,
@@ -160,14 +166,16 @@ const handleKeyDown: MethodCreator<
           if (focusedNode.type === 'tree') {
             if (expandedNodes.has(focusedNode)) {
               const nextNode = nodes[focusedNodeIndex + 1]
-              if (depths.get(nextNode) > depths.get(focusedNode)) {
+              const d1 = depths.get(nextNode)
+              const d2 = depths.get(focusedNode)
+              if (d1 !== undefined && d2 !== undefined && d1 > d2) {
                 dispatch.call(focusNode, nextNode, false)
               }
             } else {
               dispatch.call(setExpand, focusedNode, true)
             }
           } else if (focusedNode.type === 'blob') {
-            DOMHelper.loadWithPJAX(focusedNode.url)
+            if (focusedNode.url) DOMHelper.loadWithPJAX(focusedNode.url)
           } else if (focusedNode.type === 'commit') {
             window.open(focusedNode.url)
           }
@@ -177,7 +185,7 @@ const handleKeyDown: MethodCreator<
           if (focusedNode.type === 'tree') {
             dispatch.call(setExpand, focusedNode, true)
           } else if (focusedNode.type === 'blob') {
-            DOMHelper.loadWithPJAX(focusedNode.url)
+            if (focusedNode.url) DOMHelper.loadWithPJAX(focusedNode.url)
           } else if (focusedNode.type === 'commit') {
             window.open(focusedNode.url)
           }
@@ -231,13 +239,14 @@ const delayExpandThreshold = 400
 function shouldDelayExpand(node: TreeNode) {
   return (
     visibleNodesGenerator.visibleNodes.expandedNodes.has(node) &&
+    Array.isArray(node.contents) &&
     node.contents.length > delayExpandThreshold
   )
 }
 
 const setExpand: MethodCreator<Props, ConnectorState, [TreeNode, boolean]> = dispatch => (
   node,
-  expand = false
+  expand = false,
 ) => {
   visibleNodesGenerator.setExpand(node, expand)
   const applyChanges = () => dispatch.call(focusNode, node, false)
@@ -251,7 +260,7 @@ const setExpand: MethodCreator<Props, ConnectorState, [TreeNode, boolean]> = dis
 
 const toggleNodeExpansion: MethodCreator<Props, ConnectorState, [TreeNode, boolean]> = dispatch => (
   node,
-  skipScrollToNode
+  skipScrollToNode,
 ) => {
   visibleNodesGenerator.toggleExpand(node)
   const applyChanges = () => {
@@ -285,7 +294,7 @@ const onNodeClick: MethodCreator<Props, ConnectorState, [TreeNode]> = dispatch =
     dispatch.call(toggleNodeExpansion, node, true)
   } else if (node.type === 'blob') {
     dispatch.call(focusNode, node, true)
-    DOMHelper.loadWithPJAX(node.url)
+    if (node.url) DOMHelper.loadWithPJAX(node.url)
   } else if (node.type === 'commit') {
     window.open(node.url, '_blank')
   }

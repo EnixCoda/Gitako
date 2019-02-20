@@ -2,8 +2,8 @@ import storageHelper from 'utils/storageHelper'
 import { pick } from 'utils/general'
 
 type Config = {
-  shortcut: string | null
-  access_token: string | null
+  shortcut: string | undefined
+  access_token: string | undefined
   compressSingletonFolder: boolean
   copyFileButton: boolean
   copySnippetButton: boolean
@@ -18,8 +18,8 @@ export enum configKeys {
 }
 
 const defaultConfigs = {
-  shortcut: null,
-  access_token: null,
+  shortcut: undefined,
+  access_token: undefined,
   compressSingletonFolder: true,
   copyFileButton: true,
   copySnippetButton: true,

@@ -10,9 +10,9 @@ export function raiseError(error: Error) {
 
 export const withErrorLog: Middleware = function withErrorLog(method, args) {
   return [
-    async function() {
+    async function(...args: any[]) {
       try {
-        await method.apply(this, arguments)
+        await method.apply(null, args)
       } catch (error) {
         raiseError(error)
       }
@@ -21,9 +21,13 @@ export const withErrorLog: Middleware = function withErrorLog(method, args) {
   ]
 }
 
-function encodeParams(params: object) {
+function encodeParams<
+  T extends {
+    [key: string]: any
+  }
+>(params: T) {
   return Object.keys(params)
-    .map((key: keyof object) => `${key}=${encodeURIComponent(JSON.stringify(params[key]))}`)
+    .map((key: keyof T) => `${key}=${encodeURIComponent(JSON.stringify(params[key]))}`)
     .join('&')
 }
 

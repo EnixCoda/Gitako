@@ -21,7 +21,7 @@ type Options = {
 }
 
 async function request(url: string, { accessToken }: Options = {}) {
-  const headers = {} as {
+  const headers = {} as HeadersInit & {
     Authorization?: string
   }
   if (accessToken) {
@@ -76,7 +76,7 @@ async function getTreeData({ userName, repoName, branchName, accessToken }: Meta
 export type ItemData = {
   userName: string
   repoName: string
-  accessToken: string
+  accessToken?: string
 }
 
 export type BlobData = {
@@ -98,7 +98,7 @@ async function getBlobData({
 function getUrlForRedirect(
   { userName, repoName, branchName }: MetaData,
   type = 'blob',
-  path?: string
+  path?: string,
 ) {
   return `https://github.com/${userName}/${repoName}/${type}/${branchName}/${path}`
 }

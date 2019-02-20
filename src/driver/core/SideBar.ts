@@ -180,7 +180,7 @@ const setShouldShow: MethodCreator<
   ConnectorState,
   [ConnectorState['shouldShow']]
 > = dispatch => shouldShow => {
-  dispatch.set({ shouldShow }, shouldShow ? DOMHelper.focusFileExplorer : null)
+  dispatch.set({ shouldShow }, shouldShow ? DOMHelper.focusFileExplorer : undefined)
   DOMHelper.setBodyIndent(shouldShow)
 }
 
