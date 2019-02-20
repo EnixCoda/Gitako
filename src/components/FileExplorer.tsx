@@ -5,9 +5,9 @@ import SearchBar from 'components/SearchBar'
 import Node from 'components/Node'
 import LoadingIndicator from 'components/LoadingIndicator'
 import cx from 'utils/cx'
-import { VisibleNodes } from './SideBar'
 import { ConnectorState } from 'driver/core/FileExplorer'
 import { TreeData, MetaData } from 'utils/GitHubHelper'
+import { VisibleNodes } from 'utils/VisibleNodesGenerator'
 
 export type Props = {
   treeData: TreeData

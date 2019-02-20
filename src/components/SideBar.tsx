@@ -8,10 +8,7 @@ import SettingsBar from 'components/SettingsBar'
 import Portal from 'components/Portal'
 import Resizable from 'components/Resizable'
 import cx from 'utils/cx'
-import VisibleNodesGenerator from 'utils/VisibleNodesGenerator'
 import { ConnectorState } from 'driver/core/SideBar'
-
-export type VisibleNodes = VisibleNodesGenerator['visibleNodes']
 
 export type Props = {}
 

@@ -2,12 +2,11 @@ import * as ini from 'ini'
 import DOMHelper from 'utils/DOMHelper'
 import treeParser from 'utils/treeParser'
 import URLHelper from 'utils/URLHelper'
-import VisibleNodesGenerator, { TreeNode } from 'utils/VisibleNodesGenerator'
+import VisibleNodesGenerator, { TreeNode, VisibleNodes } from 'utils/VisibleNodesGenerator'
 import GitHubHelper, { BlobData, TreeData, MetaData } from 'utils/GitHubHelper'
 import { MethodCreator } from 'driver/connect'
 import { Props } from 'components/FileExplorer'
 import Node from 'components/Node'
-import { VisibleNodes } from 'components/SideBar'
 
 export type ConnectorState = {
   stateText: string
@@ -42,7 +41,7 @@ function getVisibleParentNode(nodes: TreeNode[], focusedNode: TreeNode, depths: 
 
 type Task = () => void
 const tasksAfterRender: (Task)[] = []
-const visibleNodesGenerator = new VisibleNodesGenerator()
+let visibleNodesGenerator: VisibleNodesGenerator
 
 const init: MethodCreator<Props, ConnectorState> = dispatch => () =>
   dispatch.call(setStateText, 'Fetching File List...')
@@ -72,18 +71,22 @@ const setUpTree: MethodCreator<Props, ConnectorState> = dispatch => () =>
 
     if (gitModules) {
       if (metaData.userName && metaData.repoName && gitModules.sha) {
-      const blobData = await GitHubHelper.getBlobData({
-        userName: metaData.userName,
-        repoName: metaData.repoName,
-        fileSHA: gitModules.sha,
-        accessToken,
-      })
+        const blobData = await GitHubHelper.getBlobData({
+          userName: metaData.userName,
+          repoName: metaData.repoName,
+          fileSHA: gitModules.sha,
+          accessToken,
+        })
 
-      resolveGitModules(root as TreeNode, blobData)
+        resolveGitModules(root as TreeNode, blobData)
+      }
     }
 
-    visibleNodesGenerator.setCompress(compressSingletonFolder)
-    await visibleNodesGenerator.plantTree(root as TreeNode)
+    visibleNodesGenerator = new VisibleNodesGenerator(root as TreeNode, {
+      compress: compressSingletonFolder,
+    })
+
+    await visibleNodesGenerator.init()
 
     tasksAfterRender.push(DOMHelper.focusSearchInput)
     dispatch.call(setStateText, '')

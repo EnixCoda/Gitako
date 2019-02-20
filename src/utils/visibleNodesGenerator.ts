@@ -53,19 +53,19 @@ function search(treeNodes: TreeNode[], searchKey: string): TreeNode[] {
         .replace(/\//, '')
         .split('')
         .join('.*?'),
-      'i'
+      'i',
     ),
   ]
-  const searchResults = [].concat(
-    ...keyRegexes.map(keyRegex => treeNodes.filter(getFilterFunc(keyRegex)))
+  const searchResults = ([] as TreeNode[]).concat(
+    ...keyRegexes.map(keyRegex => treeNodes.filter(getFilterFunc(keyRegex))),
   )
   return filterDuplications(searchResults)
 }
 
-function debounce<T, Arg>(
-  func: (...args: Arg[]) => T,
-  delay: number
-): (...args: Arg[]) => Promise<T> {
+function debounce<T, Args extends any[]>(
+  func: (...args: Args) => T,
+  delay: number,
+): (...args: Args) => Promise<T> {
   let timer: number
   return (...args) =>
     new Promise(resolve => {
@@ -77,11 +77,12 @@ function debounce<T, Arg>(
 export const debouncedSearch = debounce(search, SEARCH_DELAY)
 
 function getNodes(root: TreeNode, nodes: TreeNode[] = []) {
-  if (!root.contents) return
-  root.contents.forEach(node => {
-    nodes.push(node)
-    getNodes(node, nodes)
-  })
+  if (root.contents) {
+    root.contents.forEach(node => {
+      nodes.push(node)
+      getNodes(node, nodes)
+    })
+  }
   return nodes
 }
 
@@ -101,50 +102,64 @@ function compressTree(root: TreeNode, prefix: string[] = []): TreeNode {
   }
 }
 
-export default class VisibleNodesGenerator {
-  // LEVEL 1
-  root: TreeNode = null
-  nodes: TreeNode[] = null
-  compress = false
-  compressed = false
-  compressedRoot: TreeNode | undefined
+class L1 {
+  root: TreeNode
+  nodes: TreeNode[]
+  compressedRoot: TreeNode
 
-  getRoot() {
-    return this.compress && this.compressed ? this.compressedRoot : this.root
-  }
-
-  async plantTree(root: TreeNode) {
+  constructor(root: TreeNode) {
     this.root = root
     this.nodes = getNodes(root)
     this.compressedRoot = compressTree(root)
+  }
+}
 
-    await this.search('')
+class L2 {
+  l1: L1
+  couldCompress: boolean
+  compressed: boolean
+  searchedNodes: TreeNode[] | null
+
+  constructor(l1: L1, options: Options) {
+    this.l1 = l1
+    this.couldCompress = Boolean(options.compress)
+    this.compressed = false
+    this.searchedNodes = null
   }
 
-  // LEVEL 2
-  searchedNodes: TreeNode[] | null = null
-  async search(searchKey: string) {
-    this.compressed = !Boolean(searchKey)
+  search = async (searchKey: string) => {
+    this.compressed = !searchKey
     this.searchedNodes = searchKey
-      ? await debouncedSearch(this.nodes, searchKey)
-      : this.getRoot().contents
-
-    this.expandedNodes.clear()
-    this.generateVisibleNodes()
+      ? await debouncedSearch(this.l1.nodes, searchKey)
+      : this.getRoot().contents || []
   }
 
-  setCompress(compress: VisibleNodesGenerator['compress']) {
-    this.compress = compress
+  getRoot = () => {
+    return this.couldCompress && this.compressed ? this.l1.compressedRoot : this.l1.root
+  }
+}
+
+class L3 {
+  l1: L1
+  l2: L2
+
+  nodes: TreeNode[]
+  expandedNodes: Set<TreeNode>
+  depths: Map<TreeNode, number>
+
+  constructor(l1: L1, l2: L2) {
+    this.l1 = l1
+    this.l2 = l2
+    this.expandedNodes = new Set<TreeNode>()
+    this.depths = new Map()
+    this.nodes = []
   }
 
-  // LEVEL 3
-  expandedNodes = new Set<TreeNode>()
-  depths = new Map()
-  toggleExpand(node: TreeNode) {
+  toggleExpand = (node: TreeNode) => {
     this.setExpand(node, !this.expandedNodes.has(node))
   }
 
-  setExpand(node: TreeNode, expand: boolean) {
+  setExpand = (node: TreeNode, expand: boolean) => {
     if (expand && node.contents) {
       // only node with contents is expandable
       this.expandedNodes.add(node)
@@ -154,9 +169,9 @@ export default class VisibleNodesGenerator {
     this.generateVisibleNodes()
   }
 
-  expandTo(path: string) {
-    let root = this.getRoot()
-    const findNode: (root: TreeNode) => TreeNode = root => {
+  expandTo = (path: string) => {
+    let root = this.l2.getRoot()
+    const findNode: (root: TreeNode) => TreeNode | undefined = root => {
       if (path.indexOf(root.path) === 0) {
         if (root.path === path) return root
         this.setExpand(root, true)
@@ -172,26 +187,19 @@ export default class VisibleNodesGenerator {
     if (node) {
       this.setExpand(node, true)
     }
-    this.focusNode(node)
     return node
   }
 
-  visibleNodes: {
-    nodes: VisibleNodesGenerator['nodes']
-    depths: VisibleNodesGenerator['depths']
-    expandedNodes: VisibleNodesGenerator['expandedNodes']
-    focusedNode: TreeNode
-  } = null
-  generateVisibleNodes() {
-    this.focusedNode = null
+  generateVisibleNodes = () => {
+    if (this.l2.searchedNodes === null) return
     this.depths.clear()
     const nodesSet = new Set() // prevent duplication
     const nodes = [],
-      stack = this.searchedNodes.slice().reverse()
-    let current,
+      stack: (TreeNode | null)[] = this.l2.searchedNodes.slice().reverse()
+    let current: TreeNode | null,
       depth = 0
     while (stack.length) {
-      current = stack.pop()
+      current = stack.pop()!
       if (current === null) {
         depth -= 1
         continue
@@ -200,28 +208,88 @@ export default class VisibleNodesGenerator {
       nodes.push(current)
       nodesSet.add(current)
       this.depths.set(current, depth)
-      if (this.expandedNodes.has(current)) {
+      if (current && this.expandedNodes.has(current)) {
         stack.push(null) // use null as pop depth flag
-        stack.push(...current.contents.slice().reverse())
+        if (current.contents) stack.push(...current.contents.slice().reverse())
         depth += 1
       }
     }
-    this.visibleNodes = {
-      nodes,
-      depths: this.depths,
-      expandedNodes: this.expandedNodes,
-      focusedNode: null,
-    }
-    this.focusNode(null)
+    this.nodes = nodes
+  }
+}
+
+export type VisibleNodes = {
+  nodes: L1['nodes']
+  depths: L3['depths']
+  expandedNodes: L3['expandedNodes']
+  focusedNode: L4['focusedNode']
+}
+
+class L4 {
+  l1: L1
+  l2: L2
+  l3: L3
+
+  focusedNode: TreeNode | null
+
+  constructor(l1: L1, l2: L2, l3: L3) {
+    this.l1 = l1
+    this.l2 = l2
+    this.l3 = l3
+    this.focusedNode = null
+    this.l3.generateVisibleNodes()
   }
 
-  // LEVEL 4
-  focusedNode: TreeNode = null
-  focusNode(node: TreeNode) {
+  focusNode = (node: TreeNode | null) => {
     this.focusedNode = node
-    this.visibleNodes = {
-      ...this.visibleNodes,
-      focusedNode: node,
+  }
+}
+
+type Options = {
+  compress?: boolean
+}
+
+export default class VisibleNodesGenerator {
+  l1: L1
+  l2: L2
+  l3: L3
+  l4: L4
+
+  search: L2['search']
+  setExpand: L3['setExpand']
+  toggleExpand: L3['toggleExpand']
+  expandTo: L3['expandTo']
+  focusNode: L4['focusNode']
+
+  constructor(root: TreeNode, options: Options) {
+    this.l1 = new L1(root)
+    this.l2 = new L2(this.l1, options)
+    this.l3 = new L3(this.l1, this.l2)
+    this.l4 = new L4(this.l1, this.l2, this.l3)
+
+    this.search = async (...args) => {
+      const r = await this.l2.search(...args)
+      this.l3.generateVisibleNodes()
+      this.l4 = new L4(this.l1, this.l2, this.l3)
+      return r
+    }
+    this.setExpand = (...args) => this.l3.setExpand(...args)
+    this.toggleExpand = (...args) => this.l3.toggleExpand(...args)
+    this.expandTo = (...args) => this.l3.expandTo(...args)
+    this.focusNode = (...args) => this.l4.focusNode(...args)
+  }
+
+  async init() {
+    await this.l2.search('')
+    this.l3.generateVisibleNodes()
+  }
+
+  get visibleNodes() {
+    return {
+      nodes: this.l3.nodes,
+      depths: this.l3.depths,
+      expandedNodes: this.l3.expandedNodes,
+      focusedNode: this.l4.focusedNode,
     }
   }
 }
