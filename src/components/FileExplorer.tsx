@@ -11,7 +11,7 @@ import { VisibleNodes, TreeNode } from 'utils/VisibleNodesGenerator'
 import Icon from './Icon'
 
 export type Props = {
-  treeData: TreeData
+  treeData?: TreeData
   metaData: MetaData
   freeze: boolean
   compressSingletonFolder: boolean

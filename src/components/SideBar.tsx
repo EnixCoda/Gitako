@@ -76,8 +76,7 @@ class Gitako extends React.PureComponent<Props & ConnectorState> {
         {metaData && <MetaBar metaData={metaData} />}
         {errorDueToAuth
           ? this.renderAccessDeniedError()
-          : metaData &&
-            treeData && (
+          : metaData && (
               <FileExplorer
                 compressSingletonFolder={compressSingletonFolder}
                 toggleShowSettings={toggleShowSettings}
