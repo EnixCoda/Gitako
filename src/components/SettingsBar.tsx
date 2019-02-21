@@ -96,6 +96,13 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
     })
   }
 
+  onPressAccessToken = (event: React.KeyboardEvent) => {
+    const { key } = event
+    if (key === 'Enter') {
+      this.saveToken()
+    }
+  }
+
   saveToken = async () => {
     const { onAccessTokenChange } = this.props
     const { accessToken } = this.state
@@ -201,6 +208,7 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
                     placeholder={hasAccessToken ? 'Your token is saved' : 'Input your token here'}
                     value={accessToken}
                     onChange={this.onInputAccessToken}
+                    onKeyPress={this.onPressAccessToken}
                   />
                   {hasAccessToken && !accessToken ? (
                     <button className={'btn'} onClick={this.clearToken}>
