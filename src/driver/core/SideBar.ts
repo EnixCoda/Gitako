@@ -1,4 +1,4 @@
-import DOMHelper, { REPO_TYPE_PRIVATE } from 'utils/DOMHelper'
+import DOMHelper from 'utils/DOMHelper'
 import GitHubHelper, {
   NOT_FOUND,
   BAD_CREDENTIALS,
@@ -38,13 +38,15 @@ export type ConnectorState = {
   copyFileButton: boolean
   copySnippetButton: boolean
   logoContainerElement: Element | null
+  disabled: boolean
 
   init: () => void
   onPJAXEnd: () => void
+  onKeyDown: (e: KeyboardEvent) => string
   toggleShowSideBar: () => void
   toggleShowSettings: () => void
+  useListeners: (on: boolean) => void
   onAccessTokenChange: SettingsBar['props']['onAccessTokenChange']
-  onKeyDown: (e: KeyboardEvent) => string
   onShortcutChange: SettingsBar['props']['onShortcutChange']
   setCopyFile: SettingsBar['props']['setCopyFile']
   setCopySnippet: SettingsBar['props']['setCopySnippet']
@@ -53,7 +55,10 @@ export type ConnectorState = {
 
 const init: MethodCreator<Props, ConnectorState> = dispatch => async () => {
   try {
-    if (!URLHelper.isInRepoPage()) return
+    if (!URLHelper.isInRepoPage()) {
+      dispatch.set({ disabled: true })
+      return
+    }
     dispatch.set({
       logoContainerElement: DOMHelper.insertLogoMountPoint(),
     })
@@ -146,6 +151,7 @@ const handleError: MethodCreator<Props, ConnectorState, [Error]> = dispatch => a
     dispatch.call(setShowSettings, true)
     dispatch.call(setShouldShow, true)
   } else {
+    dispatch.call(useListeners, false)
     dispatch.call(setError, 'Gitako ate a bug, but it should recovery soon!')
     throw err
   }
@@ -240,6 +246,22 @@ const setCopySnippet: MethodCreator<
   [ConnectorState['copySnippetButton']]
 > = dispatch => copySnippetButton => dispatch.set({ copySnippetButton })
 
+const useListeners: MethodCreator<Props, ConnectorState, [boolean]> = dispatch => {
+  const $onPJAXEnd = dispatch.call.bind(dispatch, onPJAXEnd)
+  const $onKeyDown = dispatch.call.bind(dispatch, onKeyDown)
+  return on => {
+    dispatch.get(({ disabled }, _) => {
+      if (on && !disabled) {
+        window.addEventListener('pjax:complete', $onPJAXEnd)
+        window.addEventListener('keydown', $onKeyDown)
+      } else {
+        window.removeEventListener('pjax:complete', $onPJAXEnd)
+        window.removeEventListener('keydown', $onKeyDown)
+      }
+    })
+  }
+}
+
 export default {
   init,
   onPJAXEnd,
@@ -256,4 +278,5 @@ export default {
   setCopySnippet,
   setError,
   handleError,
+  useListeners,
 }

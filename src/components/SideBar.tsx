@@ -23,6 +23,7 @@ class Gitako extends React.PureComponent<Props & ConnectorState> {
     compressSingletonFolder: true,
     copyFileButton: true,
     copySnippetButton: true,
+    disabled: false,
   }
 
   componentWillMount() {
@@ -31,15 +32,13 @@ class Gitako extends React.PureComponent<Props & ConnectorState> {
   }
 
   componentDidMount() {
-    const { onPJAXEnd, onKeyDown } = this.props
-    window.addEventListener('pjax:complete', onPJAXEnd)
-    window.addEventListener('keydown', onKeyDown)
+    const { useListeners } = this.props
+    useListeners(true)
   }
 
   componentWillUnmount() {
-    const { onPJAXEnd, onKeyDown } = this.props
-    window.removeEventListener('pjax:complete', onPJAXEnd)
-    window.removeEventListener('keydown', onKeyDown)
+    const { useListeners } = this.props
+    useListeners(false)
   }
 
   renderAccessDeniedError() {
