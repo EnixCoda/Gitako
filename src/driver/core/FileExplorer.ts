@@ -94,7 +94,6 @@ const setUpTree: MethodCreator<Props, ConnectorState> = dispatch => () =>
     tasksAfterRender.push(DOMHelper.focusSearchInput)
     dispatch.call(setStateText, '')
     dispatch.call(goTo, URLHelper.getCurrentPath(metaData.branchName))
-    dispatch.call(updateVisibleNodes)
   })
 
 const execAfterRender: MethodCreator<Props, ConnectorState> = dispatch => () => {
@@ -118,7 +117,7 @@ const handleKeyDown: MethodCreator<
   ConnectorState,
   [React.KeyboardEvent]
 > = dispatch => event =>
-  dispatch.get(({ visibleNodes: { nodes, focusedNode, expandedNodes, depths } }) => {
+  dispatch.get(({ searched, visibleNodes: { nodes, focusedNode, expandedNodes, depths } }) => {
     function handleVerticalMove(index: number) {
       if (0 <= index && index < nodes.length) {
         DOMHelper.focusFileExplorer()
@@ -181,9 +180,14 @@ const handleKeyDown: MethodCreator<
         case 'Enter':
           // expand node or redirect to file page
           if (focusedNode.type === 'tree') {
-            dispatch.call(setExpand, focusedNode, true)
+            if (searched) {
+              dispatch.call(goTo, focusedNode.path.split('/'))
+            } else {
+              dispatch.call(setExpand, focusedNode, true)
+            }
           } else if (focusedNode.type === 'blob') {
-            if (focusedNode.url) DOMHelper.loadWithPJAX(focusedNode.url)
+            if (searched) dispatch.call(goTo, focusedNode.path.split('/'))
+            else if (focusedNode.url) DOMHelper.loadWithPJAX(focusedNode.url)
           } else if (focusedNode.type === 'commit') {
             window.open(focusedNode.url)
           }
