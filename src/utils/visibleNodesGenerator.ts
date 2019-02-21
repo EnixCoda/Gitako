@@ -1,3 +1,5 @@
+import { findNode } from './general'
+
 /**
  * This is the stack for generating an array of nodes for rendering
  *
@@ -170,23 +172,9 @@ class L3 {
   }
 
   expandTo = (path: string) => {
-    let root = this.l2.getRoot()
-    const findNode: (root: TreeNode) => TreeNode | undefined = root => {
-      if (path.indexOf(root.path) === 0) {
-        if (root.path === path) return root
-        this.setExpand(root, true)
-        if (root.contents) {
-          for (const content of root.contents) {
-            const node = findNode(content)
-            if (node) return node
-          }
-        }
-      }
-    }
-    const node = findNode(root)
-    if (node) {
-      this.setExpand(node, true)
-    }
+    const root = this.l2.getRoot()
+    const node = findNode(root, path.split('/'), node => this.setExpand(node, true))
+    if (node) this.setExpand(node, true)
     return node
   }
 

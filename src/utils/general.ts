@@ -1,3 +1,5 @@
+import { TreeNode } from './VisibleNodesGenerator'
+
 export function pick<T>(source: T, keys: string[]): Partial<T> {
   if (keys && typeof keys === 'object') {
     return (Array.isArray(keys) ? keys : Object.keys(keys)).reduce(
@@ -42,5 +44,21 @@ export function friendlyFormatShortcut(shortcut?: string) {
       .toUpperCase()
   } else {
     return shortcut
+  }
+}
+
+export function findNode(
+  root: TreeNode,
+  path: string[],
+  callback?: (node: TreeNode) => void,
+): TreeNode | undefined {
+  if (Array.isArray(root.contents)) {
+    for (const content of root.contents) {
+      if (content.name === path[0]) {
+        if (callback) callback(content)
+        if (path.length === 1) return content
+        return findNode(content, path.slice(1), callback)
+      }
+    }
   }
 }

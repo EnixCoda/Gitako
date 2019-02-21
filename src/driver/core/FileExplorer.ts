@@ -3,7 +3,8 @@ import DOMHelper from 'utils/DOMHelper'
 import treeParser from 'utils/treeParser'
 import URLHelper from 'utils/URLHelper'
 import VisibleNodesGenerator, { TreeNode, VisibleNodes } from 'utils/VisibleNodesGenerator'
-import GitHubHelper, { BlobData, TreeData, MetaData } from 'utils/GitHubHelper'
+import GitHubHelper, { BlobData, TreeData } from 'utils/GitHubHelper'
+import { findNode } from 'utils/general'
 import { MethodCreator } from 'driver/connect'
 import { Props } from 'components/FileExplorer'
 import Node from 'components/Node'
@@ -56,8 +57,7 @@ function resolveGitModules(root: TreeNode, blobData: BlobData) {
       const parsed = ini.parse(content)
       Object.values(parsed).map((value: { url: string; path: string }) => {
         const { url, path } = value
-        // for now, handle modules at root only
-        const node = Array.isArray(root.contents) && root.contents.find(node => node.path === path)
+        const node = findNode(root, path.split('/'))
         if (node) {
           node.url = url
         }
