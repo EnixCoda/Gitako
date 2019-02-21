@@ -144,7 +144,8 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
 
   onShortCutInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     e.preventDefault()
-    const shortcut = keyHelper.parseEvent(e)
+    // Clear shortcut with backspace
+    const shortcut = e.key === 'Backspace' ? '' : keyHelper.parseEvent(e)
     this.setState({ toggleShowSideBarShortcut: shortcut })
   }
 
