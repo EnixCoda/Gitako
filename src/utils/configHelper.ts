@@ -25,11 +25,13 @@ const defaultConfigs = {
   copySnippetButton: true,
 }
 
+const configKeyArray = Object.values(configKeys)
+
 function applyDefaultConfigs(configs: Config) {
-  return Object.keys(configs).reduce(
+  return configKeyArray.reduce(
     (applied, configKey) => {
       const key = configKey as keyof Config
-      if (configs[key] === undefined) {
+      if (!(key in configs)) {
         applied[key] = defaultConfigs[key]
       } else {
         applied[key] = configs[key]
@@ -39,8 +41,6 @@ function applyDefaultConfigs(configs: Config) {
     {} as Config,
   )
 }
-
-const configKeyArray = Object.values(configKeys)
 
 async function getAll(): Promise<Config> {
   return applyDefaultConfigs(await storageHelper.get(configKeyArray))
