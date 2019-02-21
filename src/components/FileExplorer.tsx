@@ -51,7 +51,7 @@ class FileExplorer extends React.Component<Props & ConnectorState> {
 
   renderFiles(visibleNodes: VisibleNodes, onNodeClick: Node['props']['onClick']) {
     const { nodes, depths, focusedNode, expandedNodes } = visibleNodes
-    const { goTo, searchKey, searched } = this.props
+    const { searchKey, searched } = this.props
     const inSearch = searchKey !== ''
     if (inSearch && nodes.length === 0) {
       return <label className={'no-results'}>No results found.</label>
@@ -66,20 +66,25 @@ class FileExplorer extends React.Component<Props & ConnectorState> {
             focused={focusedNode === node}
             expanded={expandedNodes.has(node)}
             onClick={onNodeClick}
-            renderActions={() =>
-              inSearch &&
-              searched && (
-                <div className={'go-to-wrapper'}>
-                  <button className={'go-to-button'} onClick={this.revealNode(goTo, node)}>
-                    <Icon type="go-to" />
-                    &nbsp;Reveal in file tree
-                  </button>
-                </div>
-              )
-            }
+            renderActions={this.renderActions}
           />
         ))}
       </div>
+    )
+  }
+
+  private renderActions: Node['props']['renderActions'] = node => {
+    const { searchKey, searched, goTo } = this.props
+    return (
+      searchKey &&
+      searched && (
+        <div className={'go-to-wrapper'}>
+          <button className={'go-to-button'} onClick={this.revealNode(goTo, node)}>
+            <Icon type="go-to" />
+            &nbsp; Reveal in file tree
+          </button>
+        </div>
+      )
     )
   }
 

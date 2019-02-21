@@ -21,7 +21,7 @@ type Props = {
   depth: number
   expanded: boolean
   focused: boolean
-  renderActions?(): React.ReactNode
+  renderActions?(node: TreeNode): React.ReactNode
 }
 export default class Node extends React.PureComponent<Props> {
   onClick: React.MouseEventHandler = event => {
@@ -56,7 +56,7 @@ export default class Node extends React.PureComponent<Props> {
               <Icon type={getIconType(node)} />
               <span className={'node-item-name'}>{name}</span>
             </div>
-            {renderActions && <div>{renderActions()}</div>}
+            {renderActions && <div>{renderActions(node)}</div>}
           </div>
         </a>
       </div>
