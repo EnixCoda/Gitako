@@ -304,12 +304,14 @@
           }
 
           .node-item {
+            display: flex;
+            justify-content: space-between;
             word-wrap: normal;
             word-break: break-all;
             margin: 0;
             color: #0366d6;
             line-height: 20px;
-            padding: 6px 0;
+            padding: 6px 10px;
             cursor: pointer;
             border-top: 1px solid #eaecef;
             transition: all 0.5s ease;
@@ -328,6 +330,21 @@
               text-decoration: underline;
             }
           }
+        }
+      }
+
+      .go-to-wrapper {
+        max-width: 16px;
+        overflow: hidden;
+        transition: max-width 0.5s linear;
+        &:hover {
+          max-width: 160px;
+        }
+        .go-to-button {
+          white-space: nowrap;
+          background: transparent;
+          border: none;
+          padding: 0;
         }
       }
     }

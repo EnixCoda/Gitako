@@ -3,9 +3,10 @@ import * as React from 'react'
 type Props = {
   onSearchKeyChange: React.FormEventHandler
   onFocus: React.FocusEventHandler
+  searchKey: string
 }
 
-export default function SearchBar({ onSearchKeyChange, onFocus }: Props) {
+export default function SearchBar({ onSearchKeyChange, onFocus, searchKey }: Props) {
   return (
     <div className={'search-input-wrapper'}>
       <input
@@ -15,7 +16,8 @@ export default function SearchBar({ onSearchKeyChange, onFocus }: Props) {
         aria-label="search files"
         placeholder="Search files (RegEx)"
         type="text"
-        onInput={onSearchKeyChange}
+        onChange={onSearchKeyChange}
+        value={searchKey}
       />
     </div>
   )

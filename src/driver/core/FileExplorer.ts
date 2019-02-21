@@ -11,6 +11,8 @@ import Node from 'components/Node'
 export type ConnectorState = {
   stateText: string
   visibleNodes: VisibleNodes
+  searchKey: string
+  searched: boolean
 
   init: () => void
   execAfterRender: () => void
@@ -19,6 +21,7 @@ export type ConnectorState = {
   onNodeClick: Node['props']['onClick']
   onFocusSearchBar: React.FocusEventHandler
   setUpTree: (treeData?: TreeData) => void
+  goTo: (path: string[]) => void
 }
 
 type DepthMap = Map<TreeNode, number>
@@ -90,15 +93,7 @@ const setUpTree: MethodCreator<Props, ConnectorState> = dispatch => () =>
 
     tasksAfterRender.push(DOMHelper.focusSearchInput)
     dispatch.call(setStateText, '')
-    const currentPath = URLHelper.getCurrentPath(metaData.branchName)
-    if (currentPath.length) {
-      const nodeExpandedTo = visibleNodesGenerator.expandTo(currentPath.join('/'))
-      if (nodeExpandedTo) {
-        visibleNodesGenerator.focusNode(nodeExpandedTo)
-        const { nodes } = visibleNodesGenerator.visibleNodes
-        tasksAfterRender.push(() => DOMHelper.scrollToNodeElement(nodes.indexOf(nodeExpandedTo)))
-      }
-    }
+    dispatch.call(goTo, URLHelper.getCurrentPath(metaData.branchName))
     dispatch.call(updateVisibleNodes)
   })
 
@@ -228,17 +223,40 @@ const handleSearchKeyChange: MethodCreator<
   Props,
   ConnectorState,
   [React.FormEvent<HTMLInputElement>]
-> = dispatch => {
+> = dispatch => async event => {
+  const searchKey = event.currentTarget.value
+  await dispatch.call(search, searchKey)
+}
+
+const search: MethodCreator<Props, ConnectorState, [string]> = dispatch => {
   let i = 0
-  return async event => {
-    const searchKey = event.currentTarget.value
+  return async searchKey => {
+    dispatch.set({ searchKey })
     const j = (i += 1)
     await visibleNodesGenerator.search(searchKey)
-    if (i === j) dispatch.call(updateVisibleNodes)
+    if (i === j) {
+      dispatch.set(({ searched }) => ({ searched: !(searched && searchKey === '') }))
+      dispatch.call(updateVisibleNodes)
+    }
   }
 }
 
 const delayExpandThreshold = 400
+
+const goTo: MethodCreator<Props, ConnectorState, [string[]]> = dispatch => async currentPath => {
+  if (currentPath.length) {
+    await visibleNodesGenerator.search('')
+    dispatch.set({ searchKey: '', searched: false })
+    const nodeExpandedTo = visibleNodesGenerator.expandTo(currentPath.join('/'))
+    if (nodeExpandedTo) {
+      visibleNodesGenerator.focusNode(nodeExpandedTo)
+      const { nodes } = visibleNodesGenerator.visibleNodes
+      tasksAfterRender.push(() => DOMHelper.scrollToNodeElement(nodes.indexOf(nodeExpandedTo)))
+      dispatch.call(updateVisibleNodes)
+    }
+  }
+}
+
 function shouldDelayExpand(node: TreeNode) {
   return (
     visibleNodesGenerator.visibleNodes.expandedNodes.has(node) &&
@@ -336,8 +354,10 @@ export default {
   setStateText,
   handleKeyDown,
   onFocusSearchBar,
+  search,
   handleSearchKeyChange,
   setExpand,
+  goTo,
   toggleNodeExpansion,
   focusNode,
   onNodeClick,

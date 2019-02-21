@@ -21,6 +21,7 @@ type Props = {
   depth: number
   expanded: boolean
   focused: boolean
+  renderActions?(): React.ReactNode
 }
 export default class Node extends React.PureComponent<Props> {
   onClick: React.MouseEventHandler = event => {
@@ -31,7 +32,7 @@ export default class Node extends React.PureComponent<Props> {
   }
 
   render() {
-    const { node, depth, expanded, focused } = this.props
+    const { node, depth, expanded, focused, renderActions } = this.props
     const { name, path, virtual } = node
     if (virtual) {
       // this is not a real node
@@ -51,8 +52,11 @@ export default class Node extends React.PureComponent<Props> {
             className={cx('node-item', { expanded })}
             style={{ paddingLeft: `${10 + 20 * depth}px` }}
           >
-            <Icon type={getIconType(node)} />
-            <span className={'node-item-name'}>{name}</span>
+            <div>
+              <Icon type={getIconType(node)} />
+              <span className={'node-item-name'}>{name}</span>
+            </div>
+            {renderActions && <div>{renderActions()}</div>}
           </div>
         </a>
       </div>

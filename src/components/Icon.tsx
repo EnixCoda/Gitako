@@ -10,6 +10,7 @@ import FileZip from 'assets/icons/octicons/file-zip.svg?svgr'
 import Markdown from 'assets/icons/octicons/markdown.svg?svgr'
 import FileMedia from 'assets/icons/octicons/file-media.svg?svgr'
 import FileCode from 'assets/icons/octicons/file-code.svg?svgr'
+import Reply from 'assets/icons/octicons/reply.svg?svgr'
 // import FileBinary from 'assets/icons/octicons/file-binary.svg?svgr'
 // import FileSymlinkDirectory from 'assets/icons/octicons/file-symlink-directory.svg?svgr'
 // import FileSymlinkFile from 'assets/icons/octicons/file-symlink-file.svg?svgr'
@@ -33,6 +34,8 @@ function getSVGIconComponent(type: string) {
       return Gear
     case 'folder':
       return TriangleRight
+    case 'go-to':
+      return Reply
     case '.pdf':
       return FilePdf
     case '.zip':
@@ -72,7 +75,7 @@ const iconStyle = { width: '100%', height: '100%' }
 type Props = {
   type: string
   className?: string
-  onClick?: (event: React.MouseEvent<HTMLDivElement>) => void
+  onClick?: (event: React.MouseEvent<HTMLElement>) => void
 }
 
 const Icon: React.SFC<Props> = function Icon({ type, className = undefined, ...otherProps }) {
