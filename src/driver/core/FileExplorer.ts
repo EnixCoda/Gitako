@@ -248,17 +248,15 @@ const search: MethodCreator<Props, ConnectorState, [string]> = dispatch => {
 const delayExpandThreshold = 400
 
 const goTo: MethodCreator<Props, ConnectorState, [string[]]> = dispatch => async currentPath => {
-  if (currentPath.length) {
-    await visibleNodesGenerator.search('')
-    dispatch.set({ searchKey: '', searched: false })
-    const nodeExpandedTo = visibleNodesGenerator.expandTo(currentPath.join('/'))
-    if (nodeExpandedTo) {
-      visibleNodesGenerator.focusNode(nodeExpandedTo)
-      const { nodes } = visibleNodesGenerator.visibleNodes
-      tasksAfterRender.push(() => DOMHelper.scrollToNodeElement(nodes.indexOf(nodeExpandedTo)))
-      dispatch.call(updateVisibleNodes)
-    }
+  await visibleNodesGenerator.search('')
+  dispatch.set({ searchKey: '', searched: false })
+  const nodeExpandedTo = visibleNodesGenerator.expandTo(currentPath.join('/'))
+  if (nodeExpandedTo) {
+    visibleNodesGenerator.focusNode(nodeExpandedTo)
+    const { nodes } = visibleNodesGenerator.visibleNodes
+    tasksAfterRender.push(() => DOMHelper.scrollToNodeElement(nodes.indexOf(nodeExpandedTo)))
   }
+  dispatch.call(updateVisibleNodes)
 }
 
 function shouldDelayExpand(node: TreeNode) {
