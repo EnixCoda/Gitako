@@ -21,7 +21,7 @@ export enum OperatingSystems {
   others = 'unknown',
 }
 
-export function detectOS(): OperatingSystems {
+function detectOS(): OperatingSystems {
   const {
     navigator: { userAgent },
   } = window
@@ -30,12 +30,13 @@ export function detectOS(): OperatingSystems {
   return OperatingSystems.others
 }
 
+export const os = detectOS()
+
 export function friendlyFormatShortcut(shortcut?: string) {
   if (!shortcut) return ''
-  const OS = detectOS()
-  if (OS === OperatingSystems.Windows) {
+  if (os === OperatingSystems.Windows) {
     return shortcut.replace(/meta/, 'win')
-  } else if (OS === OperatingSystems.macOS) {
+  } else if (os === OperatingSystems.macOS) {
     return shortcut
       .replace(/meta/, '⌘')
       .replace(/ctrl/, '⌃')
