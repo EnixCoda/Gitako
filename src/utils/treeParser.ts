@@ -3,7 +3,6 @@ import GitHubHelper, { MetaData, TreeData } from 'utils/GitHubHelper'
 interface BasicItem {
   name: string | null
   path: string | null
-  parent?: BasicItem | null
   mode: null
   type: string | null
   url: string | null
@@ -40,13 +39,6 @@ function sortFoldersToFront(root: Item) {
     return root
   }
   return depthFirstSearch(root)
-}
-
-function setParentNode(root: Item, parent: Item | null = null) {
-  root.parent = parent
-  if (root.contents) {
-    root.contents.forEach(node => setParentNode(node, root))
-  }
 }
 
 function findGitModules(root: Item) {
@@ -96,8 +88,6 @@ function parse(treeData: TreeData, metaData: MetaData) {
       path = node.path
     }
   })
-
-  setParentNode(root)
 
   return {
     gitModules: findGitModules(root),

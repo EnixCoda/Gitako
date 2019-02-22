@@ -145,7 +145,6 @@ const handleKeyDown: MethodCreator<
           break
 
         case 'ArrowLeft':
-          // collapse node or go to parent node
           if (expandedNodes.has(focusedNode)) {
             dispatch.call(setExpand, focusedNode, false)
           } else {
