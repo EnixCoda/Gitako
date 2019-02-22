@@ -1,36 +1,21 @@
 import GitHubHelper, { MetaData, TreeData } from 'utils/GitHubHelper'
+import { TreeNode } from './VisibleNodesGenerator'
 
-interface BasicItem {
-  name: string | null
-  path: string | null
-  mode: null
-  type: string | null
-  url: string | null
+interface RawItem {
+  name?: string | null
+  path?: string | null
+  mode?: string | null
+  type?: string | null
+  url?: string | null
+  sha?: string | null
 }
 
-interface Folder extends BasicItem {
-  contents?: Item[]
-}
+const revert = <T extends (...args: any[]) => any>(f: T) => (...args: Parameters<T>) => !f(...args)
 
-interface Blob extends BasicItem {
-  sha: string | null
-}
-
-type Item = Folder & Blob
-
-const nodeTemplate: Blob = {
-  name: null,
-  path: null,
-  mode: null,
-  type: null,
-  sha: null,
-  url: null,
-}
-
-const isFolder = (node: BasicItem) => node.type === 'tree'
-const isNotFolder = (node: BasicItem) => !isFolder(node)
-function sortFoldersToFront(root: Item) {
-  function depthFirstSearch(root: Item) {
+const isFolder = (node: TreeNode) => node.type === 'tree'
+const isNotFolder = revert(isFolder)
+function sortFoldersToFront(root: TreeNode) {
+  function depthFirstSearch(root: TreeNode) {
     const nodes = root.contents
     if (nodes) {
       nodes.splice(0, Infinity, ...nodes.filter(isFolder), ...nodes.filter(isNotFolder))
@@ -41,7 +26,7 @@ function sortFoldersToFront(root: Item) {
   return depthFirstSearch(root)
 }
 
-function findGitModules(root: Item) {
+function findGitModules(root: TreeNode) {
   if (root.contents) {
     const modulesFile = root.contents.find(content => content.name === '.gitmodules')
     if (modulesFile) {
@@ -55,19 +40,22 @@ function parse(treeData: TreeData, metaData: MetaData) {
   const { tree } = treeData
 
   // nodes are created from items and put onto tree
-  const pathToNode = new Map()
-  const pathToItem = new Map()
+  const pathToNode = new Map<string, TreeNode>()
+  const pathToItem = new Map<string, RawItem>()
 
-  const root: Item = { ...nodeTemplate, name: '', path: '', contents: [] }
+  const root: TreeNode = { name: '', path: '', contents: [], type: 'tree' }
   pathToNode.set('', root)
 
   tree.forEach(item => pathToItem.set(item.path, item))
   tree.forEach(item => {
     // bottom-up search for the deepest node created
     let path = item.path
-    const itemsToCreateTreeNode = []
+    const itemsToCreateTreeNode: RawItem[] = []
     while (path !== '' && !pathToNode.has(path)) {
-      itemsToCreateTreeNode.push(pathToItem.get(path))
+      const item = pathToItem.get(path)
+      if (item) {
+        itemsToCreateTreeNode.push(item)
+      }
       // 'a/b' -> 'a'
       // 'a' -> ''
       path = path.substring(0, path.lastIndexOf('/'))
@@ -76,14 +64,20 @@ function parse(treeData: TreeData, metaData: MetaData) {
     // top-down create nodes
     while (itemsToCreateTreeNode.length) {
       const item = itemsToCreateTreeNode.pop()
+      if (!item) continue
       const node = {
-        ...nodeTemplate,
         ...item,
-        name: item.path.replace(/^.*\//, ''),
-        url: item.url ? GitHubHelper.getUrlForRedirect(metaData, item.type, item.path) : null,
+        name: item.path && item.path.replace(/^.*\//, ''),
+        url:
+          item.url && item.type && item.path
+            ? GitHubHelper.getUrlForRedirect(metaData, item.type, item.path)
+            : null,
         contents: item.type === 'tree' ? [] : null,
+      } as TreeNode
+      const parentNode = pathToNode.get(path)
+      if (parentNode && parentNode.contents) {
+        parentNode.contents.push(node)
       }
-      pathToNode.get(path).contents.push(node)
       pathToNode.set(node.path, node)
       path = node.path
     }

@@ -26,8 +26,10 @@ export type TreeNode = {
   contents?: TreeNode[]
   path: string
   url?: string
+  sha?: string
   virtual?: boolean
   type: 'tree' | 'blob' | 'commit' | 'virtual'
+  accessDenied?: boolean
 }
 
 const SEARCH_DELAY = 250

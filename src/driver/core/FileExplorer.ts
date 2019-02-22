@@ -77,7 +77,7 @@ const setUpTree: MethodCreator<Props, ConnectorState> = dispatch => () =>
         const blobData = await GitHubHelper.getBlobData({
           userName: metaData.userName,
           repoName: metaData.repoName,
-          fileSHA: gitModules.sha,
+          sha: gitModules.sha,
           accessToken,
         })
 

@@ -48,50 +48,65 @@ export type MetaData = {
   branchName?: string
   accessToken?: string
   type?: PageType
-  api?: any // it's ok
+  api?: RepoMetaData
 }
 
-async function getRepoMeta({ userName, repoName, accessToken }: MetaData) {
+type RepoMetaData = {
+  default_branch: string
+  html_url: string
+  owner: {
+    html_url: string
+  }
+}
+
+async function getRepoMeta({ userName, repoName, accessToken }: MetaData): Promise<RepoMetaData> {
   const url = `https://api.github.com/repos/${userName}/${repoName}`
   return await request(url, { accessToken })
 }
 
 export type TreeItem = {
   path: string
+  mode: string
+  sha: string
+  size: number
+  url: string
+  type: 'blob' | 'commit' | 'tree'
 }
 
 export type TreeData = {
-  userName: string
-  repoName: string
-  branchName: string
-  accessToken: string
+  sha: string
+  truncated: boolean
   tree: TreeItem[]
+  url: string
 }
 
-async function getTreeData({ userName, repoName, branchName, accessToken }: MetaData) {
+async function getTreeData({
+  userName,
+  repoName,
+  branchName,
+  accessToken,
+}: MetaData): Promise<TreeData> {
   const url = `https://api.github.com/repos/${userName}/${repoName}/git/trees/${branchName}?recursive=1`
   return await request(url, { accessToken })
 }
 
-export type ItemData = {
-  userName: string
-  repoName: string
-  accessToken?: string
-}
-
 export type BlobData = {
   encoding: 'base64' | string
-  fileSHA: string
+  sha: string
   content?: string
+  size: number
+  url: string
 }
 
 async function getBlobData({
   userName,
   repoName,
   accessToken,
-  fileSHA,
-}: Pick<ItemData & BlobData, 'userName' | 'repoName' | 'accessToken' | 'fileSHA'>) {
-  const url = `https://api.github.com/repos/${userName}/${repoName}/git/blobs/${fileSHA}`
+  sha,
+}: Pick<MetaData, 'userName' | 'repoName' | 'accessToken'> & {
+  sha: string
+}): Promise<BlobData> {
+  const url = `https://api.github.com/repos/${userName}/${repoName}/git/blobs/${sha}`
   return await request(url, { accessToken })
 }
 
