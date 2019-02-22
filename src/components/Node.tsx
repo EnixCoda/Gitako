@@ -3,6 +3,7 @@ import Icon from 'components/Icon'
 import cx from 'utils/cx'
 import LoadingIndicator from 'components/LoadingIndicator'
 import { TreeNode } from 'utils/VisibleNodesGenerator'
+import { detectOS, OperatingSystems } from 'utils/general'
 
 function getIconType(node: TreeNode) {
   switch (node.type) {
@@ -25,7 +26,13 @@ type Props = {
 }
 export default class Node extends React.PureComponent<Props> {
   onClick: React.MouseEventHandler = event => {
-    if (event.metaKey) return
+    if (
+      (detectOS() === OperatingSystems.macOS && event.metaKey) ||
+      (detectOS() === OperatingSystems.Windows && event.ctrlKey)
+    ) {
+      // Open in new tab
+      return
+    }
     event.preventDefault()
     const { node, onClick } = this.props
     onClick(node)

@@ -15,13 +15,13 @@ export function pick<T>(source: T, keys: string[]): Partial<T> {
   return {} as Partial<T>
 }
 
-const OperatingSystems = {
-  Windows: 'Windows',
-  macOS: 'Macintosh',
-  others: 'unknown',
+export enum OperatingSystems {
+  Windows = 'Windows',
+  macOS = 'Macintosh',
+  others = 'unknown',
 }
 
-function detectOS() {
+export function detectOS(): OperatingSystems {
   const {
     navigator: { userAgent },
   } = window
