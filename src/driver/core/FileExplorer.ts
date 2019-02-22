@@ -8,6 +8,7 @@ import { findNode } from 'utils/general'
 import { MethodCreator } from 'driver/connect'
 import { Props } from 'components/FileExplorer'
 import Node from 'components/Node'
+import { raiseError } from 'analytics'
 
 export type ConnectorState = {
   stateText: string
@@ -50,16 +51,39 @@ let visibleNodesGenerator: VisibleNodesGenerator
 const init: MethodCreator<Props, ConnectorState> = dispatch => () =>
   dispatch.call(setStateText, 'Fetching File List...')
 
+const githubSubModuleURLRegex = {
+  HTTP: /^https:\/\/github.com\/.*?\/.*?\.git$/,
+  git: /^git@github.com:(.*?)\/(.*?)\.git$/,
+}
+
+function transformModuleGitURL(node: TreeNode, URL: string) {
+  const matched = URL.match(githubSubModuleURLRegex.git)
+  if (!matched) return
+  const [_, userName, repoName] = matched
+  return `https://github.com/${userName}/${repoName}/tree/${node.sha}`
+}
+
+function transformModuleHTTPURL(node: TreeNode, URL: string) {
+  return URL.replace(/\.git/, `/tree/${node.sha}`)
+}
 function resolveGitModules(root: TreeNode, blobData: BlobData) {
   if (blobData) {
     if (blobData.encoding === 'base64' && blobData.content && Array.isArray(root.contents)) {
       const content = atob(blobData.content)
       const parsed = ini.parse(content)
-      Object.values(parsed).map((value: { url: string; path: string }) => {
+      Object.values(parsed).forEach((value: { url: string; path: string }) => {
         const { url, path } = value
         const node = findNode(root, path.split('/'))
         if (node) {
-          node.url = url
+          if (githubSubModuleURLRegex.HTTP.test(url)) {
+            node.url = transformModuleHTTPURL(node, url)
+          } else if (githubSubModuleURLRegex.git.test(url)) {
+            node.url = transformModuleGitURL(node, url)
+          } else {
+            node.accessDenied = true
+          }
+        } else {
+          raiseError(Error(`Sub-module node ${path} not found`))
         }
       })
     }
@@ -318,7 +342,9 @@ const onNodeClick: MethodCreator<Props, ConnectorState, [TreeNode]> = dispatch =
     dispatch.call(focusNode, node, true)
     if (node.url) DOMHelper.loadWithPJAX(node.url)
   } else if (node.type === 'commit') {
-    window.open(node.url, '_blank')
+    if (node.url) {
+      window.open(node.url, '_blank')
+    }
   }
 }
 

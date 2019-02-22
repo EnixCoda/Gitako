@@ -53,7 +53,7 @@ export default class Node extends React.PureComponent<Props> {
       )
     }
     return (
-      <div className={cx(`node-item-row`, { focused })} title={path}>
+      <div className={cx(`node-item-row`, { focused, disabled: node.accessDenied })} title={path}>
         <a href={node.url} onClick={this.onClick}>
           <div
             className={cx('node-item', { expanded })}
