@@ -227,7 +227,6 @@ class L4 {
     this.l2 = l2
     this.l3 = l3
     this.focusedNode = null
-    this.l3.generateVisibleNodes()
   }
 
   focusNode = (node: TreeNode | null) => {
@@ -260,7 +259,7 @@ export default class VisibleNodesGenerator {
     this.search = async (...args) => {
       const r = await this.l2.search(...args)
       this.l3.generateVisibleNodes()
-      this.l4 = new L4(this.l1, this.l2, this.l3)
+      this.l4.focusNode(null)
       return r
     }
     this.setExpand = (...args) => this.l3.setExpand(...args)
