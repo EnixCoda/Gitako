@@ -74,7 +74,7 @@ function link<P, S>(instance: React.Component<P, S>, sources: Sources<P, S>): Wr
     const isFromSource = sourcesValues.includes(createMethod)
     if (isFromSource) {
       const method = map.get(createMethod)
-      if (!method) throw Error('Method not found')
+      if (!method) throw new Error('Method not found')
       const runnable = applyMiddlewares(method, otherArgs)
       run(runnable)
     }
