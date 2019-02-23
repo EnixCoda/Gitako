@@ -28,15 +28,22 @@ async function request(url: string, { accessToken }: Options = {}) {
     headers.Authorization = `token ${accessToken}`
   }
   const res = await fetch(url, { headers })
-  if (res.status === 200) return res.json()
-  // for private repo, GitHub api also responses with 404 when unauthorized
-  else if (res.status === 404) throw new Error(NOT_FOUND)
-  else {
-    const content = await res.json()
-    if (apiRateLimitExceeded(content)) throw new Error(API_RATE_LIMIT)
-    else if (isEmptyProject(content)) throw new Error(EMPTY_PROJECT)
-    else if (!res.ok) raiseError(new Error(`Got ${res.statusText} when requesting ${url}`))
-    throw new Error(content && content.message)
+  // About res.ok:
+  // True if res.status between 200~299
+  // Ref: https://developer.mozilla.org/en-US/docs/Web/API/Response/ok
+  if (res.ok) {
+    return res.json()
+  } else {
+    // for private repo, GitHub api also responses with 404 when unauthorized
+    if (res.status === 404) throw new Error(NOT_FOUND)
+    else {
+      const content = await res.json()
+      if (apiRateLimitExceeded(content)) throw new Error(API_RATE_LIMIT)
+      if (isEmptyProject(content)) throw new Error(EMPTY_PROJECT)
+      // Unknown type of error, report it!
+      raiseError(new Error(`Got ${res.statusText} when requesting ${url}`))
+      throw new Error(content && content.message)
+    }
   }
 }
 
