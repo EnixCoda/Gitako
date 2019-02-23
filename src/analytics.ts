@@ -32,13 +32,15 @@ function encodeParams<
 }
 
 function reportError(error: Error) {
-  if (!IN_PRODUCTION_MODE) return
-  return fetch(
-    `${LOG_ENDPOINT}?${encodeParams({
-      stack: error.stack,
-      error: (error && error.message) || error,
-      path: window.location.href,
-      version,
-    })}`,
-  )
+  const reportBody = {
+    stack: error.stack,
+    error: (error && error.message) || error,
+    path: window.location.href,
+    version,
+  }
+  if (!IN_PRODUCTION_MODE) {
+    console.error(reportBody)
+    return
+  }
+  return fetch(`${LOG_ENDPOINT}?${encodeParams(reportBody)}`)
 }
