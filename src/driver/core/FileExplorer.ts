@@ -12,7 +12,7 @@ import { raiseError } from 'analytics'
 
 export type ConnectorState = {
   stateText: string
-  visibleNodes: VisibleNodes
+  visibleNodes: VisibleNodes | null
   searchKey: string
   searched: boolean
 
@@ -141,7 +141,9 @@ const handleKeyDown: MethodCreator<
   ConnectorState,
   [React.KeyboardEvent]
 > = dispatch => event =>
-  dispatch.get(({ searched, visibleNodes: { nodes, focusedNode, expandedNodes, depths } }) => {
+  dispatch.get(({ searched, visibleNodes }) => {
+    if (!visibleNodes) return
+    const { nodes, focusedNode, expandedNodes, depths } = visibleNodes
     function handleVerticalMove(index: number) {
       if (0 <= index && index < nodes.length) {
         DOMHelper.focusFileExplorer()
@@ -325,7 +327,9 @@ const focusNode: MethodCreator<Props, ConnectorState, [TreeNode | null, boolean]
   node: TreeNode | null,
   skipScroll = false,
 ) =>
-  dispatch.get(({ visibleNodes: { nodes } }) => {
+  dispatch.get(({ visibleNodes }) => {
+    if (!visibleNodes) return
+    const { nodes } = visibleNodes
     visibleNodesGenerator.focusNode(node)
     if (node && !skipScroll) {
       // when focus a node not in viewport(by keyboard), scroll to it
@@ -354,6 +358,7 @@ const mountExpandingIndicator: MethodCreator<
   [TreeNode]
 > = dispatch => node =>
   dispatch.get(({ visibleNodes }) => {
+    if (!visibleNodes) return
     const dummyVisibleNodes = {
       ...visibleNodes,
       nodes: visibleNodes.nodes.slice(),

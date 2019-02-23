@@ -24,6 +24,7 @@ class FileExplorer extends React.Component<Props & ConnectorState> {
     freeze: false,
     searchKey: '',
     searched: false,
+    visibleNodes: null,
   }
 
   componentWillMount() {
