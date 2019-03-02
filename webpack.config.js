@@ -1,7 +1,6 @@
 const webpack = require('webpack')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
-const TerserPlugin = require('terser-webpack-plugin');
 const path = require('path')
 
 const srcPath = path.resolve(__dirname, 'src')
@@ -36,9 +35,6 @@ if (IN_PRODUCTION_MODE) {
 module.exports = {
   entry: {
     content: './src/content.tsx',
-  },
-  optimization: {
-    minimizer: IN_PRODUCTION_MODE ? [new TerserPlugin()] : [],
   },
   mode: IN_PRODUCTION_MODE ? 'production' : 'development',
   output: {

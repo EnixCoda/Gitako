@@ -52,7 +52,6 @@
     "less-loader": "^4.0.5",
     "react-life-hook": "^0.2.0",
     "style-loader": "^0.23.1",
-    "terser-webpack-plugin": "^1.2.3",
     "typescript": "^3.3.3333",
     "uglifyjs-webpack-plugin": "^2.1.2",
     "url-loader": "^1.1.2",
