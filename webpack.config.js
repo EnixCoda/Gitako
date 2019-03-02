@@ -1,7 +1,6 @@
 const webpack = require('webpack')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const UglifyJSWebpackPlugin = require('uglifyjs-webpack-plugin')
-const { CheckerPlugin } = require('awesome-typescript-loader')
 const path = require('path')
 
 const srcPath = path.resolve(__dirname, 'src')
@@ -19,7 +18,6 @@ const plugins = [
     },
   ]),
   new webpack.SourceMapDevToolPlugin({}),
-  new CheckerPlugin(),
 ]
 
 const IN_PRODUCTION_MODE = process.env.NODE_ENV === 'production'
@@ -57,17 +55,12 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
+        test: /\.tsx?$/,
         loader: 'babel-loader',
         options: {
           cacheDirectory: true,
         },
         include: [srcPath, packagesPath],
-      },
-      {
-        test: /\.tsx?$/,
-        include: [srcPath],
-        loader: 'awesome-typescript-loader',
       },
       {
         test: /\.less$/,

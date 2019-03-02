@@ -1,18 +1,18 @@
 {
   "presets": [
     [
-      "babel-preset-env",
+      "@babel/preset-env",
       {
         "targets": {
-          "chrome": "60"
-        }
+          "chrome": "67"
+        },
       }
     ],
-    "react"
+    "@babel/preset-typescript",
+    "@babel/preset-react",
   ],
   "plugins": [
-    "transform-decorators-legacy",
-    "transform-class-properties",
-    ["transform-object-rest-spread", { "useBuiltIns": true }]
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-proposal-object-rest-spread"
   ]
 }
