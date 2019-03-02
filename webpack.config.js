@@ -1,6 +1,6 @@
 const webpack = require('webpack')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-const UglifyJSWebpackPlugin = require('uglifyjs-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin');
 const path = require('path')
 
 const srcPath = path.resolve(__dirname, 'src')
@@ -23,14 +23,6 @@ const plugins = [
 const IN_PRODUCTION_MODE = process.env.NODE_ENV === 'production'
 if (IN_PRODUCTION_MODE) {
   plugins.push(
-    new UglifyJSWebpackPlugin({
-      cache: true,
-      uglifyOptions: {
-        ecma: 6,
-      },
-    })
-  )
-  plugins.push(
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: JSON.stringify('production'),
@@ -42,6 +34,9 @@ if (IN_PRODUCTION_MODE) {
 module.exports = {
   entry: {
     content: './src/content.tsx',
+  },
+  optimization: {
+    minimizer: IN_PRODUCTION_MODE ? [new TerserPlugin()] : [],
   },
   mode: IN_PRODUCTION_MODE ? 'production' : 'development',
   output: {
