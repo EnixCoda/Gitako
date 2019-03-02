@@ -1,5 +1,6 @@
 const webpack = require('webpack')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin');
 const path = require('path')
 
@@ -17,6 +18,7 @@ const plugins = [
       to: 'icons/[name].[ext]',
     },
   ]),
+  new ForkTsCheckerWebpackPlugin(),
   new webpack.SourceMapDevToolPlugin({}),
 ]
 

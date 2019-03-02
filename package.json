@@ -45,6 +45,7 @@
     "eslint": "^5.15.0",
     "eslint-plugin-babel": "^5.1.0",
     "file-loader": "^3.0.1",
+    "fork-ts-checker-webpack-plugin": "^0.5.2",
     "fsevents": "^1.2.4",
     "json-loader": "^0.5.7",
     "less": "^3.9.0",
