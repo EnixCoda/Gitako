@@ -18,7 +18,6 @@ const plugins = [
     },
   ]),
   new ForkTsCheckerWebpackPlugin(),
-  new webpack.SourceMapDevToolPlugin({}),
 ]
 
 const IN_PRODUCTION_MODE = process.env.NODE_ENV === 'production'
@@ -36,6 +35,7 @@ module.exports = {
   entry: {
     content: './src/content.tsx',
   },
+  devtool: IN_PRODUCTION_MODE ? 'source-map' : 'eval-source-map',
   mode: IN_PRODUCTION_MODE ? 'production' : 'development',
   output: {
     path: path.resolve(__dirname, 'dist'),
