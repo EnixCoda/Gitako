@@ -1,13 +1,14 @@
 import * as React from 'react'
 import { MetaData } from 'utils/GitHubHelper'
+import { safeTouch } from 'safe-touch'
 
 type Props = {
   metaData: MetaData
 }
 
 export default function MetaBar({ metaData }: Props) {
-  const userUrl = metaData ? metaData.api && metaData.api.owner.html_url : undefined
-  const repoUrl = metaData ? metaData.api && metaData.api.html_url : undefined
+  const userUrl = safeTouch(metaData).api.owner.html_url()
+  const repoUrl = safeTouch(metaData).api.html_url()
   return (
     <div className={'meta-bar'}>
       <a className={'username'} href={userUrl}>
