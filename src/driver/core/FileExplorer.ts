@@ -1,4 +1,5 @@
 import * as ini from 'ini'
+import { Base64 } from 'js-base64'
 import DOMHelper from 'utils/DOMHelper'
 import treeParser from 'utils/treeParser'
 import URLHelper from 'utils/URLHelper'
@@ -79,7 +80,7 @@ type ParsedModule = {
 function resolveGitModules(root: TreeNode, blobData: BlobData) {
   if (blobData) {
     if (blobData.encoding === 'base64' && blobData.content && Array.isArray(root.contents)) {
-      const content = atob(blobData.content)
+      const content = Base64.decode(blobData.content)
       const parsed: Parsed = ini.parse(content)
       handleParsed(root, parsed)
     }
