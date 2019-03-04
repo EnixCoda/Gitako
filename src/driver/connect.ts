@@ -1,6 +1,5 @@
 import * as React from 'react'
-
-type x = [] extends any[] ? [] : any[]
+import { raiseError } from 'analytics'
 
 export type Method<Args = any[]> = (
   ...args: Args extends any[] ? Args : any[]
@@ -82,8 +81,12 @@ function link<P, S>(instance: React.Component<P, S>, sources: Sources<P, S>): Wr
   const dispatchState: DispatchState<P, S> = (updater, callback) => {
     instance.setState(updater, callback)
   }
-  const prepareState: PreDispatch<P, S> = updater => {
-    updater(instance.state, instance.props)
+  const prepareState: PreDispatch<P, S> = async updater => {
+    try {
+      await updater(instance.state, instance.props)
+    } catch (error) {
+      raiseError(error)
+    }
   }
   const dispatch: Dispatch<P, S> = {
     call: dispatchCall,
