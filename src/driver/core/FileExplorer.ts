@@ -66,28 +66,46 @@ function transformModuleGitURL(node: TreeNode, URL: string) {
 function transformModuleHTTPURL(node: TreeNode, URL: string) {
   return URL.replace(/\.git/, `/tree/${node.sha}`)
 }
+
+type Parsed = {
+  [key: string]: ParsedModule | Parsed
+}
+
+type ParsedModule = {
+  path: string
+  url: string
+}
+
 function resolveGitModules(root: TreeNode, blobData: BlobData) {
   if (blobData) {
     if (blobData.encoding === 'base64' && blobData.content && Array.isArray(root.contents)) {
       const content = atob(blobData.content)
-      const parsed = ini.parse(content)
-      Object.values(parsed).forEach((value: { url: string; path: string }) => {
-        const { url, path } = value
-        const node = findNode(root, path.split('/'))
-        if (node) {
-          if (githubSubModuleURLRegex.HTTP.test(url)) {
-            node.url = transformModuleHTTPURL(node, url)
-          } else if (githubSubModuleURLRegex.git.test(url)) {
-            node.url = transformModuleGitURL(node, url)
-          } else {
-            node.accessDenied = true
-          }
-        } else {
-          raiseError(Error(`Sub-module node ${path} not found`))
-        }
-      })
+      const parsed: Parsed = ini.parse(content)
+      handleParsed(root, parsed)
     }
   }
+}
+
+function handleParsed(root: TreeNode, parsed: Parsed) {
+  Object.values(parsed).forEach(value => {
+    const { url, path } = value
+    if (typeof url === 'string' && typeof path === 'string') {
+      const node = findNode(root, path.split('/'))
+      if (node) {
+        if (githubSubModuleURLRegex.HTTP.test(url)) {
+          node.url = transformModuleHTTPURL(node, url)
+        } else if (githubSubModuleURLRegex.git.test(url)) {
+          node.url = transformModuleGitURL(node, url)
+        } else {
+          node.accessDenied = true
+        }
+      } else {
+        raiseError(Error(`Sub-module node ${path} not found`))
+      }
+    } else {
+      handleParsed(root, value as Parsed)
+    }
+  })
 }
 
 const setUpTree: MethodCreator<Props, ConnectorState> = dispatch => () =>
