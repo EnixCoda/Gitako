@@ -3,8 +3,8 @@ import SideBar from 'components/SideBar'
 import { raiseError } from 'analytics'
 
 export default class Gitako extends React.PureComponent {
-  componentDidCatch(error: Error) {
-    raiseError(error)
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    raiseError(error, errorInfo)
   }
 
   render() {

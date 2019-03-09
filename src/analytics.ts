@@ -1,11 +1,19 @@
 import { Middleware } from 'driver/connect.js'
 import { IN_PRODUCTION_MODE } from 'env'
+import * as Sentry from '@sentry/browser'
 import { version } from '../package.json'
-// TODO: set this through ENV or something else
-const LOG_ENDPOINT = 'https://enix.one/gitako/log'
 
-export function raiseError(error: Error) {
-  return reportError(error)
+const PUBLIC_KEY = 'd22ec5c9cc874539a51c78388c12e3b0'
+const PROJECT_ID = '1406497'
+
+Sentry.init({
+  dsn: `https://${PUBLIC_KEY}@sentry.io/${PROJECT_ID}`,
+  release: version,
+  environment: IN_PRODUCTION_MODE ? 'production' : 'development',
+})
+
+export function raiseError(error: Error, extra?: any) {
+  return reportError(error, extra)
 }
 
 export const withErrorLog: Middleware = function withErrorLog(method, args) {
@@ -21,26 +29,19 @@ export const withErrorLog: Middleware = function withErrorLog(method, args) {
   ]
 }
 
-function encodeParams<
-  T extends {
-    [key: string]: any
-  }
->(params: T) {
-  return Object.keys(params)
-    .map((key: keyof T) => `${key}=${encodeURIComponent(JSON.stringify(params[key]))}`)
-    .join('&')
-}
-
-function reportError(error: Error) {
-  const reportBody = {
-    stack: error.stack,
-    error: (error && error.message) || error,
-    path: window.location.href,
-    version,
-  }
+function reportError(error: Error, extra?: any) {
   if (!IN_PRODUCTION_MODE) {
-    console.error(reportBody)
-    return
+    console.error(error)
+    console.error('Extra:\n', extra)
+    // return
   }
-  return fetch(`${LOG_ENDPOINT}?${encodeParams(reportBody)}`)
+
+  Sentry.captureException(error)
+  if (extra) {
+    Sentry.withScope(scope => {
+      Object.keys(extra).forEach(key => {
+        scope.setExtra(key, extra[key])
+      })
+    })
+  }
 }

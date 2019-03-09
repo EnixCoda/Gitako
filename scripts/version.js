@@ -8,23 +8,22 @@ const path = require('path')
 const cp = require('child_process')
 
 const rootPath = path.resolve(__dirname, '../')
-const packagePath = path.resolve(rootPath, 'package.json')
 const manifestPath = path.resolve(rootPath, 'src/manifest.json')
 
-const packageJSON = require(packagePath)
 const manifest = require(manifestPath)
+const version = require('./get-version')
 
-const version = packageJSON.version
 manifest.version = version
 fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, '  '), 'utf-8')
 
-const exec = command => new Promise((resolve, reject) => cp.exec(command, (error, stdout, stderr) =>
-  error ? reject(error) : resolve(stdout || stderr)
-))
+const exec = command =>
+  new Promise((resolve, reject) =>
+    cp.exec(command, (error, stdout, stderr) =>
+      error ? reject(error) : resolve(stdout || stderr),
+    ),
+  )
 
 exec(`git tag -d v${version}`)
-  .then(() =>
-    exec(`git add src/manifest.json && git commit --amend --no-edit`)
-  ).then(() =>
-    exec(`git tag v${version}`)
-  ).catch(console.error)
+  .then(() => exec(`git add src/manifest.json && git commit --amend --no-edit`))
+  .then(() => exec(`git tag v${version}`))
+  .catch(console.error)
