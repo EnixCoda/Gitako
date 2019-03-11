@@ -53,7 +53,8 @@ const init: MethodCreator<Props, ConnectorState> = dispatch => () =>
   dispatch.call(setStateText, 'Fetching File List...')
 
 const githubSubModuleURLRegex = {
-  HTTP: /^https:\/\/github.com\/.*?\/.*?\.git$/,
+  HTTP: /^https?:\/\/.*?$/,
+  HTTPGit: /^https:\/\/github.com\/.*?\/.*?\.git$/,
   git: /^git@github.com:(.*?)\/(.*?)\.git$/,
 }
 
@@ -61,11 +62,23 @@ function transformModuleGitURL(node: TreeNode, URL: string) {
   const matched = URL.match(githubSubModuleURLRegex.git)
   if (!matched) return
   const [_, userName, repoName] = matched
-  return `https://github.com/${userName}/${repoName}/tree/${node.sha}`
+  return appendCommitPath(`https://github.com/${userName}/${repoName}`, node)
+}
+
+function cutDotGit(URL: string) {
+  return URL.replace(/\.git$/, '')
+}
+
+function appendCommitPath(URL: string, node: TreeNode) {
+  return URL.replace(/\/?$/, `/tree/${node.sha}`)
+}
+
+function transformModuleHTTPDotGitURL(node: TreeNode, URL: string) {
+  return appendCommitPath(cutDotGit(URL), node)
 }
 
 function transformModuleHTTPURL(node: TreeNode, URL: string) {
-  return URL.replace(/\.git/, `/tree/${node.sha}`)
+  return appendCommitPath(URL, node)
 }
 
 type Parsed = {
@@ -93,10 +106,12 @@ function handleParsed(root: TreeNode, parsed: Parsed) {
     if (typeof url === 'string' && typeof path === 'string') {
       const node = findNode(root, path.split('/'))
       if (node) {
-        if (githubSubModuleURLRegex.HTTP.test(url)) {
-          node.url = transformModuleHTTPURL(node, url)
+        if (githubSubModuleURLRegex.HTTPGit.test(url)) {
+          node.url = transformModuleHTTPDotGitURL(node, url)
         } else if (githubSubModuleURLRegex.git.test(url)) {
           node.url = transformModuleGitURL(node, url)
+        } else if (githubSubModuleURLRegex.HTTP.test(url)) {
+          node.url = transformModuleHTTPURL(node, url)
         } else {
           node.accessDenied = true
         }
