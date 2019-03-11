@@ -10,6 +10,8 @@ const wikiLinks = {
   changeLog: 'https://github.com/EnixCoda/Gitako/wiki/Change-Log',
   copyFileButton: 'https://github.com/EnixCoda/Gitako/wiki/Copy-file-and-snippet',
   copySnippet: 'https://github.com/EnixCoda/Gitako/wiki/Copy-file-and-snippet',
+  createAccessToken:
+    'https://github.com/EnixCoda/Gitako/wiki/How-to-create-access-token-for-Gitako%3F',
 }
 
 const ACCESS_TOKEN_REGEXP = /^[0-9a-f]{40}$/
@@ -195,10 +197,7 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
               <div className={'shadow-shelter'} />
               <div className={'gitako-settings-bar-content-section access-token'}>
                 <h4>Access Token</h4>
-                <a
-                  href="https://github.com/EnixCoda/Gitako/wiki/How-to-create-access-token-for-Gitako%3F"
-                  target="_blank"
-                >
+                <a href={wikiLinks.createAccessToken} target="_blank">
                   Why & how to create it?
                 </a>
                 <br />
