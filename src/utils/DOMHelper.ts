@@ -59,11 +59,27 @@ function getBranches() {
 
 function getCurrentBranch() {
   const selectedBranchButtonSelector =
-    '.repository-content > .file-navigation > .branch-select-menu > button'
+    '.repository-content .file-navigation .branch-select-menu summary'
   const branchNameFromButtonElement = $(selectedBranchButtonSelector, element =>
     (element as HTMLButtonElement).title.trim(),
   )
-  if (branchNameFromButtonElement) return branchNameFromButtonElement
+  const defaultTitle = 'Switch branches or tags'
+  if (branchNameFromButtonElement && branchNameFromButtonElement !== defaultTitle)
+    return branchNameFromButtonElement
+
+  const commitButtonSelector = '.repository-content .overall-summary .commits a'
+  const urlFromCommitButton: string | undefined = $(
+    commitButtonSelector,
+    element => (element as HTMLAnchorElement).href,
+  )
+  if (urlFromCommitButton) {
+    const commitPathRegex = /^(.*?)\/(.*?)\/commits\/(.*?)$/
+    const result = urlFromCommitButton.match(commitPathRegex)
+    if (result) {
+      const [_, userName, repoName, branchName] = result
+      return branchName
+    }
+  }
 
   const selectedBranchSelector =
     '.select-menu.branch-select-menu .select-menu-modal .select-menu-list .select-menu-item.selected svg.select-menu-item-icon + span'
