@@ -86,8 +86,8 @@ type Parsed = {
 }
 
 type ParsedModule = {
-  path: string
-  url: string
+  path?: string
+  url?: string
 }
 
 function resolveGitModules(root: TreeNode, blobData: BlobData) {
@@ -102,6 +102,7 @@ function resolveGitModules(root: TreeNode, blobData: BlobData) {
 
 function handleParsed(root: TreeNode, parsed: Parsed) {
   Object.values(parsed).forEach(value => {
+    if (typeof value === 'string') return
     const { url, path } = value
     if (typeof url === 'string' && typeof path === 'string') {
       const node = findNode(root, path.split('/'))
