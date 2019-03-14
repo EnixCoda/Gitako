@@ -8,7 +8,7 @@ const PROJECT_ID = '1406497'
 
 Sentry.init({
   dsn: `https://${PUBLIC_KEY}@sentry.io/${PROJECT_ID}`,
-  release: version,
+  release: `v${version}`,
   environment: IN_PRODUCTION_MODE ? 'production' : 'development',
 })
 

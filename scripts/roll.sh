@@ -1,7 +1,10 @@
 #!/bin/sh
 rm -rf dist
 NODE_ENV=production yarn webpack
-GITAKO_VERSION=$(node scripts/get-version.js)
+
+git push
+
+GITAKO_VERSION=v$(node scripts/get-version.js)
 echo "Got version $GITAKO_VERSION"
 
 # sentry
