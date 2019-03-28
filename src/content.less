@@ -7,6 +7,10 @@
 @side-bar-base-width: (@min-screen-width - @github-content-width);
 @width-with-gitako: (@min-screen-width + @side-bar-base-width);
 
+@github-header-z-index: 32;
+@github-pull-request-float-header-z-index: 110;
+@minimal-z-index: max(@github-header-z-index, @github-pull-request-float-header-z-index) + 1;
+
 .with-@{name}-spacing {
   margin-left: @side-bar-base-width;
   @media (min-width: @min-screen-width) and (max-width: @width-with-gitako) {
@@ -18,7 +22,8 @@
 }
 
 .@{name}-ready {
-  .Header > div {
+  .Header > div, // legacy selector, remove when github deprecate this
+  header > div {
     width: 1012px;
     margin: 0 auto;
   }
@@ -81,7 +86,7 @@
   top: 5px;
   left: 0;
   transform: translate((@side-bar-base-width - 30px));
-  z-index: 32;
+  z-index: @minimal-z-index;
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -142,7 +147,7 @@
     top: 0;
     left: 0;
     height: 100vh;
-    z-index: 32; // be more aggressive, against header in guest mode
+    z-index: @minimal-z-index;
     min-width: @side-bar-base-width;
     display: flex;
     justify-content: flex-end;
