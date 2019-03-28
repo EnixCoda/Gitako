@@ -50,16 +50,23 @@ function search(treeNodes: TreeNode[], searchKey: string): TreeNode[] {
    * if searchKey is 'abcd'
    * then keyRegex will be /abcd/i and /a.*?b.*?c.*?d/i
    */
-  const keyRegexes = [
-    new RegExp(searchKey, 'i'),
-    new RegExp(
-      searchKey
-        .replace(/\//, '')
-        .split('')
-        .join('.*?'),
-      'i',
-    ),
+  const regexpGenerators: ((raw: string) => RegExp)[] = [
+    raw => new RegExp(raw, 'i'),
+    raw => new RegExp(raw.split('').join('.*?'), 'i'),
   ]
+
+  const keyRegexes: RegExp[] = []
+  for (const generator of regexpGenerators) {
+    try {
+      const regExp = generator(searchKey)
+      if (keyRegexes.find(keyRegex => keyRegex.source === regExp.source)) continue
+      // prevent duplicated regExp
+      keyRegexes.push(regExp)
+    } catch (err) {
+      // ignore invalid regexp
+    }
+  }
+
   const searchResults = ([] as TreeNode[]).concat(
     ...keyRegexes.map(keyRegex => treeNodes.filter(getFilterFunc(keyRegex))),
   )
