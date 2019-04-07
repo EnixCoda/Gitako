@@ -4,6 +4,7 @@
 
 import * as PJAX from 'pjax'
 import * as NProgress from 'nprogress'
+import { raiseError } from 'analytics'
 
 NProgress.configure({ showSpinner: false })
 
@@ -58,8 +59,7 @@ function getBranches() {
 }
 
 function getCurrentBranch() {
-  const selectedBranchButtonSelector =
-    '.repository-content .file-navigation .branch-select-menu summary'
+  const selectedBranchButtonSelector = '.repository-content .branch-select-menu summary'
   const branchNameFromButtonElement = $(selectedBranchButtonSelector, element =>
     (element as HTMLButtonElement).title.trim(),
   )
@@ -87,6 +87,8 @@ function getCurrentBranch() {
     element.textContent ? element.textContent.trim() : '',
   )
   if (branchNameFromSelectElement) return branchNameFromSelectElement
+
+  raiseError(new Error('cannot get current branch'))
 }
 
 /**
@@ -110,10 +112,11 @@ function createLogoMountPoint() {
  * use this function to scroll down a bit to hide them
  */
 function scrollToRepoContent() {
-  const fileNavigationSelector = '.file-navigation.js-zeroclipboard-container'
-  const scrollTarget = $(fileNavigationSelector) || document.body
+  const repositoryContentSelector = '.repository-content'
   // do NOT use behavior: smooth here as it will scroll horizontally
-  return scrollTarget.scrollIntoView()
+  $(repositoryContentSelector, repositoryContentElement =>
+    repositoryContentElement.scrollIntoView(),
+  )
 }
 
 /**
@@ -128,6 +131,8 @@ function scrollToNodeElement(index: number) {
       behavior: 'smooth',
       block: 'center',
     })
+  } else {
+    raiseError(new Error('cannot find DOM node to scroll to'))
   }
 }
 
@@ -187,6 +192,7 @@ function getRepoPageType() {
         return repoPageType
       }
     }
+    raiseError(new Error('cannot get repo page type'))
   })
 }
 
@@ -201,7 +207,11 @@ function attachCopyFileBtn() {
   function getCodeElement() {
     if (getCurrentPageType() === PAGE_TYPES.RAW_TEXT) {
       const codeContentSelector = '.repository-content .file .data table'
-      return $(codeContentSelector)
+      const codeContentElement = $(codeContentSelector)
+      if (!codeContentElement) {
+        raiseError(new Error('cannot find code content element'))
+      }
+      return codeContentElement
     }
   }
 
@@ -230,10 +240,12 @@ function attachCopyFileBtn() {
       copyFileBtn.innerText = 'Copy file'
       copyFileBtn.addEventListener('click', () => {
         const codeElement = getCodeElement()
-        if (copyElementContent(codeElement)) {
-          setTempCopyFileBtnText(copyFileBtn, 'Success!')
-        } else {
-          setTempCopyFileBtnText(copyFileBtn, 'Copy failed!')
+        if (codeElement) {
+          if (copyElementContent(codeElement)) {
+            setTempCopyFileBtnText(copyFileBtn, 'Success!')
+          } else {
+            setTempCopyFileBtnText(copyFileBtn, 'Copy failed!')
+          }
         }
       })
       btnGroup.insertBefore(copyFileBtn, btnGroup.lastChild)
@@ -247,12 +259,15 @@ function attachCopyFileBtn() {
  * @returns {boolean} whether copy is successful
  */
 function copyElementContent(element: Element) {
-  window.getSelection().removeAllRanges()
+  let selection = window.getSelection()
+  if (selection) selection.removeAllRanges()
   const range = document.createRange()
   range.selectNode(element)
-  window.getSelection().addRange(range)
+  selection = window.getSelection()
+  if (selection) selection.addRange(range)
   const isCopySuccessful = document.execCommand('copy')
-  window.getSelection().removeAllRanges()
+  selection = window.getSelection()
+  if (selection) selection.removeAllRanges()
   return isCopySuccessful
 }
 
@@ -306,25 +321,28 @@ const clippy = createClippy()
 let currentCodeSnippetElement: Element
 function attachCopySnippet() {
   const readmeSelector = '.repository-content #readme article'
-  return $(readmeSelector, readmeElement =>
-    readmeElement.addEventListener('mouseover', e => {
-      // only move clippy when mouse is over a new snippet(<pre>)
-      const target = e.target as Element
-      if (target.nodeName === 'PRE') {
-        if (currentCodeSnippetElement !== target) {
-          currentCodeSnippetElement = target
-          /**
-           *  <article>
-           *    <pre></pre>     <!-- case A -->
-           *    <div class="highlight">
-           *      <pre></pre>   <!-- case B -->
-           *    </div>
-           *  </article>
-           */
-          if (target.parentNode) target.parentNode.insertBefore(clippy, target)
+  return $(
+    readmeSelector,
+    readmeElement =>
+      readmeElement.addEventListener('mouseover', e => {
+        // only move clippy when mouse is over a new snippet(<pre>)
+        const target = e.target as Element
+        if (target.nodeName === 'PRE') {
+          if (currentCodeSnippetElement !== target) {
+            currentCodeSnippetElement = target
+            /**
+             *  <article>
+             *    <pre></pre>     <!-- case A -->
+             *    <div class="highlight">
+             *      <pre></pre>   <!-- case B -->
+             *    </div>
+             *  </article>
+             */
+            if (target.parentNode) target.parentNode.insertBefore(clippy, target)
+          }
         }
-      }
-    }),
+      }),
+    () => raiseError(new Error('cannot mount point for copy snippet button')),
   )
 }
 
@@ -348,16 +366,6 @@ function focusSearchInput() {
       searchInputElement.focus()
     }
   })
-}
-
-/**
- * simulate click on node item, for triggering pjax
- * @param {number} index
- */
-function clickOnNodeElement(index = 0) {
-  const nodeElementSelector = '.node-item'
-  const nodeElements: NodeListOf<HTMLElement> = document.querySelectorAll(nodeElementSelector)
-  nodeElements[index].click()
 }
 
 /**
@@ -386,7 +394,6 @@ export default {
   loadWithPJAX,
   attachCopyFileBtn,
   attachCopySnippet,
-  clickOnNodeElement,
   decorateGitHubPageContent,
   focusSearchInput,
   focusFileExplorer,
