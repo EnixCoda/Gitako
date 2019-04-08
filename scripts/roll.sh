@@ -1,6 +1,6 @@
 #!/bin/sh
 rm -rf dist
-NODE_ENV=production yarn webpack
+yarn build
 
 GITAKO_VERSION=v$(node scripts/get-version.js)
 echo "Got version $GITAKO_VERSION"
@@ -12,4 +12,4 @@ yarn sentry-cli releases finalize "$GITAKO_VERSION"
 
 cd dist
 rm -f ./gitako.zip
-zip -r gitako.zip * -x *.map 
+zip -r gitako.zip * -x *.map
