@@ -9,8 +9,9 @@
   "scripts": {
     "postinstall": "node scripts/generate-octicon.js",
     "start": "webpack --watch",
-    "postversion": "node scripts/version.js && npm run build",
-    "build": "./scripts/roll.sh"
+    "postversion": "node scripts/version.js && npm run roll",
+    "build": "NODE_ENV=production webpack",
+    "roll": "./scripts/roll.sh"
   },
   "dependencies": {
     "@sentry/browser": "^4.6.4",
