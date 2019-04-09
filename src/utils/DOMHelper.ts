@@ -318,9 +318,9 @@ const clippy = createClippy()
 
 let currentCodeSnippetElement: Element
 function attachCopySnippet() {
-  const readmeSelector = '.repository-content #readme article'
+  const readmeArticleSelector = '.repository-content #readme article'
   return $(
-    readmeSelector,
+    readmeArticleSelector,
     readmeElement =>
       readmeElement.addEventListener('mouseover', e => {
         // only move clippy when mouse is over a new snippet(<pre>)
@@ -340,7 +340,12 @@ function attachCopySnippet() {
           }
         }
       }),
-    () => raiseError(new Error('cannot mount point for copy snippet button')),
+    () => {
+      const readmeSelector = '.repository-content #readme'
+      $(readmeSelector, undefined, () =>
+        raiseError(new Error('cannot find mount point for copy snippet button while readme exists'))
+      )
+    },
   )
 }
 
