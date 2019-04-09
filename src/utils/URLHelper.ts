@@ -21,7 +21,7 @@ function parse(): MetaData & { path: string[] } {
 
 function parseSHA() {
   const { type, path } = parse()
-  return type === 'blob' || type === 'tree' ? path[0] : false
+  return type === 'blob' || type === 'tree' ? path[0] : undefined
 }
 
 function isInRepoPage() {
@@ -43,9 +43,9 @@ function isInCodePage(metaData: MetaData = {}) {
   const { type, branchName } = mergedRepo
   return Boolean(
     isInRepoPage() &&
-      (!type || type === TYPES.TREE || type === TYPES.BLOB) &&
-      type !== TYPES.COMMIT &&
-      (branchName || (!type && !branchName))
+    (!type || type === TYPES.TREE || type === TYPES.BLOB) &&
+    type !== TYPES.COMMIT &&
+    (branchName || (!type && !branchName))
   )
 }
 
