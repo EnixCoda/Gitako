@@ -33,7 +33,7 @@ function reportError(error: Error, extra?: any) {
   if (!IN_PRODUCTION_MODE) {
     console.error(error)
     console.error('Extra:\n', extra)
-    // return
+    return
   }
 
   Sentry.captureException(error)
