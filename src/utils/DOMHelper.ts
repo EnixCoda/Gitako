@@ -35,8 +35,8 @@ function $<EE extends Element, E extends (element: EE) => any, O extends () => a
   otherwise?: O,
 ): E extends never
   ? O extends never
-    ? (Element | null)
-    : ReturnType<O> | null
+  ? (Element | null)
+  : ReturnType<O> | null
   : O extends never
   ? (ReturnType<E> | null)
   : ReturnType<O> | ReturnType<E> {
@@ -60,33 +60,31 @@ function getBranches() {
 
 function getCurrentBranch() {
   const selectedBranchButtonSelector = '.repository-content .branch-select-menu summary'
-  const branchNameFromButtonElement = $(selectedBranchButtonSelector, element =>
-    (element as HTMLButtonElement).title.trim(),
-  )
-  const defaultTitle = 'Switch branches or tags'
-  if (branchNameFromButtonElement && branchNameFromButtonElement !== defaultTitle)
-    return branchNameFromButtonElement
+  const branchButtonElement: HTMLElement = $(selectedBranchButtonSelector)
+  if (branchButtonElement) {
+    const branchNameSpanElement = branchButtonElement.querySelector('span');
+    if (branchNameSpanElement) {
+      const partialBranchNameFromInnerText = branchNameSpanElement.innerText
+      if (!partialBranchNameFromInnerText.includes('…')) return partialBranchNameFromInnerText
+    }
+    const defaultTitle = 'Switch branches or tags'
+    const title = (branchButtonElement).title.trim()
+    if (title !== defaultTitle) return title
+  }
 
-  const commitButtonSelector = '.repository-content .overall-summary .commits a'
-  const urlFromCommitButton: string | undefined = $(
-    commitButtonSelector,
+  const findFileButtonSelector = '#js-repo-pjax-container .repository-content .file-navigation a[data-hotkey="t"]'
+  const urlFromFindFileButton: string | undefined = $(
+    findFileButtonSelector,
     element => (element as HTMLAnchorElement).href,
   )
-  if (urlFromCommitButton) {
-    const commitPathRegex = /^(.*?)\/(.*?)\/commits\/(.*?)$/
-    const result = urlFromCommitButton.match(commitPathRegex)
+  if (urlFromFindFileButton) {
+    const commitPathRegex = /^(.*?)\/(.*?)\/find\/(.*?)$/
+    const result = urlFromFindFileButton.match(commitPathRegex)
     if (result) {
       const [_, userName, repoName, branchName] = result
       return branchName
     }
   }
-
-  const selectedBranchSelector =
-    '.select-menu.branch-select-menu .select-menu-modal .select-menu-list .select-menu-item.selected svg.select-menu-item-icon + span'
-  const branchNameFromSelectElement = $(selectedBranchSelector, element =>
-    element.textContent ? element.textContent.trim() : '',
-  )
-  if (branchNameFromSelectElement) return branchNameFromSelectElement
 
   raiseError(new Error('cannot get current branch'))
 }
