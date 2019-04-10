@@ -35,8 +35,8 @@ function $<EE extends Element, E extends (element: EE) => any, O extends () => a
   otherwise?: O,
 ): E extends never
   ? O extends never
-  ? (Element | null)
-  : ReturnType<O> | null
+    ? (Element | null)
+    : ReturnType<O> | null
   : O extends never
   ? (ReturnType<E> | null)
   : ReturnType<O> | ReturnType<E> {
@@ -62,17 +62,18 @@ function getCurrentBranch() {
   const selectedBranchButtonSelector = '.repository-content .branch-select-menu summary'
   const branchButtonElement: HTMLElement = $(selectedBranchButtonSelector)
   if (branchButtonElement) {
-    const branchNameSpanElement = branchButtonElement.querySelector('span');
+    const branchNameSpanElement = branchButtonElement.querySelector('span')
     if (branchNameSpanElement) {
       const partialBranchNameFromInnerText = branchNameSpanElement.innerText
       if (!partialBranchNameFromInnerText.includes('…')) return partialBranchNameFromInnerText
     }
     const defaultTitle = 'Switch branches or tags'
-    const title = (branchButtonElement).title.trim()
+    const title = branchButtonElement.title.trim()
     if (title !== defaultTitle) return title
   }
 
-  const findFileButtonSelector = '#js-repo-pjax-container .repository-content .file-navigation a[data-hotkey="t"]'
+  const findFileButtonSelector =
+    '#js-repo-pjax-container .repository-content .file-navigation a[data-hotkey="t"]'
   const urlFromFindFileButton: string | undefined = $(
     findFileButtonSelector,
     element => (element as HTMLAnchorElement).href,
@@ -342,8 +343,10 @@ function attachCopySnippet() {
       }),
     () => {
       const readmeSelector = '.repository-content #readme'
-      $(readmeSelector, undefined, () =>
-        raiseError(new Error('cannot find mount point for copy snippet button while readme exists'))
+      $(readmeSelector, () =>
+        raiseError(
+          new Error('cannot find mount point for copy snippet button while readme exists'),
+        ),
       )
     },
   )
