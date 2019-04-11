@@ -319,37 +319,40 @@ const clippy = createClippy()
 
 let currentCodeSnippetElement: Element
 function attachCopySnippet() {
-  const readmeArticleSelector = '.repository-content #readme article'
-  return $(
-    readmeArticleSelector,
-    readmeElement =>
-      readmeElement.addEventListener('mouseover', e => {
-        // only move clippy when mouse is over a new snippet(<pre>)
-        const target = e.target as Element
-        if (target.nodeName === 'PRE') {
-          if (currentCodeSnippetElement !== target) {
-            currentCodeSnippetElement = target
-            /**
-             *  <article>
-             *    <pre></pre>     <!-- case A -->
-             *    <div class="highlight">
-             *      <pre></pre>   <!-- case B -->
-             *    </div>
-             *  </article>
-             */
-            if (target.parentNode) target.parentNode.insertBefore(clippy, target)
+  const readmeSelector = '.repository-content #readme'
+  return $(readmeSelector, () => {
+    const readmeArticleSelector = '.repository-content #readme article'
+    $(
+      readmeArticleSelector,
+      readmeElement =>
+        readmeElement.addEventListener('mouseover', e => {
+          // only move clippy when mouse is over a new snippet(<pre>)
+          const target = e.target as Element
+          if (target.nodeName === 'PRE') {
+            if (currentCodeSnippetElement !== target) {
+              currentCodeSnippetElement = target
+              /**
+               *  <article>
+               *    <pre></pre>     <!-- case A -->
+               *    <div class="highlight">
+               *      <pre></pre>   <!-- case B -->
+               *    </div>
+               *  </article>
+               */
+              if (target.parentNode) target.parentNode.insertBefore(clippy, target)
+            }
           }
-        }
-      }),
-    () => {
-      const readmeSelector = '.repository-content #readme'
-      $(readmeSelector, () =>
-        raiseError(
-          new Error('cannot find mount point for copy snippet button while readme exists'),
-        ),
-      )
-    },
-  )
+        }),
+      () => {
+        const plainReadmeSelector = '.repository-content #readme .plain'
+        $(plainReadmeSelector, undefined, () =>
+          raiseError(
+            new Error('cannot find mount point for copy snippet button while readme exists'),
+          ),
+        )
+      },
+    )
+  })
 }
 
 /**
