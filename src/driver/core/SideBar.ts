@@ -6,6 +6,7 @@ import GitHubHelper, {
   EMPTY_PROJECT,
   MetaData,
   TreeData,
+  BLOCKED_PROJECT,
 } from 'utils/GitHubHelper'
 import configHelper from 'utils/configHelper'
 import URLHelper from 'utils/URLHelper'
@@ -142,6 +143,8 @@ const init: MethodCreator<Props, ConnectorState> = dispatch => async () => {
 const handleError: MethodCreator<Props, ConnectorState, [Error]> = dispatch => async err => {
   if (err.message === EMPTY_PROJECT) {
     dispatch.call(setError, 'This project seems to be empty.')
+  } else if (err.message === BLOCKED_PROJECT) {
+    dispatch.call(setError, 'This project is blocked.')
   } else if (
     err.message === NOT_FOUND ||
     err.message === BAD_CREDENTIALS ||

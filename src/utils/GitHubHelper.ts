@@ -3,17 +3,20 @@ export const NOT_FOUND = 'Repo Not Found'
 export const BAD_CREDENTIALS = 'Bad credentials'
 export const API_RATE_LIMIT = `API rate limit`
 export const EMPTY_PROJECT = `Empty project`
+export const BLOCKED_PROJECT = `Blocked project`
 
-function apiRateLimitExceeded(content: any) {
-  // it's ok
+function apiRateLimitExceeded(content: any /* examined any */) {
   return (
     content && content['documentation_url'] === 'https://developer.github.com/v3/#rate-limiting'
   )
 }
 
-function isEmptyProject(content: any) {
-  // it's ok
+function isEmptyProject(content: any /* examined any */) {
   return content && content['message'] === 'Git Repository is empty.'
+}
+
+function isBlockedProject(content: any /* examined any */) {
+  return content && content['message'] === "Repository access blocked"
 }
 
 type Options = {
@@ -40,6 +43,7 @@ async function request(url: string, { accessToken }: Options = {}) {
       const content = await res.json()
       if (apiRateLimitExceeded(content)) throw new Error(API_RATE_LIMIT)
       if (isEmptyProject(content)) throw new Error(EMPTY_PROJECT)
+      if (isBlockedProject(content)) throw new Error(BLOCKED_PROJECT)
       // Unknown type of error, report it!
       raiseError(new Error(`Got ${res.statusText} when requesting ${url}`))
       throw new Error(content && content.message)
