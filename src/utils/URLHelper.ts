@@ -60,15 +60,19 @@ function getCurrentPath(branchName = '') {
       // path = commit-SHA/path/to/item
       path.shift()
     } else {
-      // path = branch/name/path/to/item
-      const slicedBranchName = branchName.split('/')
-      while (slicedBranchName.length) {
-        if (slicedBranchName[0] === path[0]) {
-          slicedBranchName.shift()
-          path.shift()
-        } else {
-          raiseError(new Error(`branch name and path prefix not match`))
-          return []
+      // path = branch/name/path/to/item or HEAD/path/to/item
+      // HEAD is not a valid branch name. Coming up with HEAD, means currently detached.
+      if (path[0] === 'HEAD') path.shift()
+      else {
+        const slicedBranchName = branchName.split('/')
+        while (slicedBranchName.length) {
+          if (slicedBranchName[0] === path[0]) {
+            slicedBranchName.shift()
+            path.shift()
+          } else {
+            raiseError(new Error(`branch name and path prefix not match`))
+            return []
+          }
         }
       }
     }
