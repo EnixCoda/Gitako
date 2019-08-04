@@ -1,4 +1,4 @@
-const octicons = require('octicons')
+const octicons = require('@primer/octicons')
 const fs = require('fs')
 const path = require('path')
 
@@ -11,7 +11,7 @@ function generateIconSVGFiles() {
       icon.toSVG({ xmlns: 'http://www.w3.org/2000/svg' }),
       err => {
         if (err) throw err
-      }
+      },
     )
   })
 }
