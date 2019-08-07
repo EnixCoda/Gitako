@@ -17,7 +17,7 @@ export enum configKeys {
   copySnippetButton = 'copySnippetButton',
 }
 
-const defaultConfigs = {
+const defaultConfigs: Config = {
   shortcut: undefined,
   access_token: undefined,
   compressSingletonFolder: true,
