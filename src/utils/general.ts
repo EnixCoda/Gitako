@@ -82,3 +82,14 @@ export function findNode(
     }
   }
 }
+
+export function createStyleSheet(content: string) {
+  const style = document.createElement('style')
+  style.appendChild(document.createTextNode(content))
+  document.head.appendChild(style)
+  return style
+}
+
+export function setStyleSheetMedia(style: HTMLStyleElement, media: string) {
+  style.setAttribute('media', media)
+}

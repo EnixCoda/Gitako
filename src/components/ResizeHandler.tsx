@@ -1,18 +1,24 @@
 import * as React from 'react'
 import Icon from 'components/Icon'
-import Resizable, { Size } from './Resizable'
+import { Size } from './Resizable'
 
 type Props = {
   size: Size
-  onResize: Resizable['onResize']
+  onResize(size: Size): void
   style?: React.CSSProperties
 }
 
-export default class ResizeHandler extends React.PureComponent<Props> {
+export default class HorizontalResizeHandler extends React.PureComponent<Props> {
   pointerDown = false
   startX = 0
-  delta = 0
   baseSize = this.props.size
+
+  componentWillReceiveProps(nextProps: Props) {
+    if (!this.pointerDown) {
+      // update baseSize when not resizing
+      this.baseSize = this.props.size
+    }
+  }
 
   subscribeEvents = () => {
     window.addEventListener('mousemove', this.onPointerMove)
@@ -24,24 +30,20 @@ export default class ResizeHandler extends React.PureComponent<Props> {
     window.removeEventListener('mouseup', this.onPointerUp)
   }
 
-  onPointerDown = (e: React.MouseEvent) => {
-    this.pointerDown = true
-    const { clientX } = e
+  onPointerDown = ({ clientX }: React.MouseEvent) => {
     this.startX = clientX
+    this.pointerDown = true
     this.subscribeEvents()
   }
 
-  onPointerMove = (e: MouseEvent) => {
+  onPointerMove = ({ clientX }: MouseEvent) => {
     if (!this.pointerDown) return
-    const { clientX } = e
-    const { onResize } = this.props
-    this.delta = this.startX - clientX
-    onResize(this.delta + this.baseSize)
+    this.props.onResize(clientX - this.startX + this.baseSize)
   }
 
   onPointerUp = () => {
     this.pointerDown = false
-    this.baseSize = Math.max(this.baseSize + this.delta, this.props.size)
+    this.baseSize = this.props.size
     this.unsubscribeEvents()
   }
 
