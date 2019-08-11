@@ -32,8 +32,6 @@ export type TreeNode = {
   accessDenied?: boolean
 }
 
-const SEARCH_DELAY = 250
-
 function getFilterFunc(keyRegex: RegExp) {
   return function filterFunc({ name }: TreeNode) {
     return keyRegex.test(name)
@@ -72,20 +70,6 @@ function search(treeNodes: TreeNode[], searchKey: string): TreeNode[] {
   )
   return filterDuplications(searchResults)
 }
-
-function debounce<T, Args extends any[]>(
-  func: (...args: Args) => T,
-  delay: number,
-): (...args: Args) => Promise<T> {
-  let timer: number
-  return (...args) =>
-    new Promise(resolve => {
-      window.clearTimeout(timer)
-      timer = window.setTimeout(() => resolve(func(...args)), delay)
-    })
-}
-
-export const debouncedSearch = debounce(search, SEARCH_DELAY)
 
 function getNodes(root: TreeNode, nodes: TreeNode[] = []) {
   if (root.contents) {
@@ -141,7 +125,7 @@ class L2 {
   search = async (searchKey: string) => {
     this.compressed = !searchKey
     this.searchedNodes = searchKey
-      ? await debouncedSearch(this.l1.nodes, searchKey)
+      ? search(this.l1.nodes, searchKey)
       : this.getRoot().contents || []
   }
 
