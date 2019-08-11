@@ -305,8 +305,6 @@ const search: MethodCreator<Props, ConnectorState, [string]> = dispatch => {
   }
 }
 
-const delayExpandThreshold = 400
-
 const goTo: MethodCreator<Props, ConnectorState, [string[]]> = dispatch => async currentPath => {
   await visibleNodesGenerator.search('')
   dispatch.set({ searchKey: '', searched: false })
@@ -319,26 +317,12 @@ const goTo: MethodCreator<Props, ConnectorState, [string[]]> = dispatch => async
   dispatch.call(updateVisibleNodes)
 }
 
-function shouldDelayExpand(node: TreeNode) {
-  return (
-    visibleNodesGenerator.visibleNodes.expandedNodes.has(node) &&
-    Array.isArray(node.contents) &&
-    node.contents.length > delayExpandThreshold
-  )
-}
-
 const setExpand: MethodCreator<Props, ConnectorState, [TreeNode, boolean]> = dispatch => (
   node,
   expand = false,
 ) => {
   visibleNodesGenerator.setExpand(node, expand)
-  const applyChanges = () => dispatch.call(focusNode, node, false)
-  if (shouldDelayExpand(node)) {
-    dispatch.call(mountExpandingIndicator, node)
-    tasksAfterRender.push(() => setTimeout(applyChanges, 0))
-  } else {
-    applyChanges()
-  }
+  dispatch.call(focusNode, node, false)
 }
 
 const toggleNodeExpansion: MethodCreator<Props, ConnectorState, [TreeNode, boolean]> = dispatch => (
@@ -346,16 +330,8 @@ const toggleNodeExpansion: MethodCreator<Props, ConnectorState, [TreeNode, boole
   skipScrollToNode,
 ) => {
   visibleNodesGenerator.toggleExpand(node)
-  const applyChanges = () => {
     dispatch.call(focusNode, node, skipScrollToNode)
     tasksAfterRender.push(DOMHelper.focusFileExplorer)
-  }
-  if (shouldDelayExpand(node)) {
-    dispatch.call(mountExpandingIndicator, node)
-    tasksAfterRender.push(() => setTimeout(applyChanges, 0))
-  } else {
-    applyChanges()
-  }
 }
 
 const focusNode: MethodCreator<Props, ConnectorState, [TreeNode | null, boolean]> = dispatch => (
@@ -387,28 +363,6 @@ const onNodeClick: MethodCreator<Props, ConnectorState, [TreeNode]> = dispatch =
   }
 }
 
-const mountExpandingIndicator: MethodCreator<
-  Props,
-  ConnectorState,
-  [TreeNode]
-> = dispatch => node =>
-  dispatch.get(({ visibleNodes }) => {
-    if (!visibleNodes) return
-    const dummyVisibleNodes = {
-      ...visibleNodes,
-      nodes: visibleNodes.nodes.slice(),
-    }
-    dummyVisibleNodes.nodes.splice(dummyVisibleNodes.nodes.indexOf(node) + 1, 0, {
-      virtual: true,
-      name: 'Loading',
-      path: '-',
-      type: 'virtual',
-    })
-    dispatch.set({
-      visibleNodes: dummyVisibleNodes,
-    })
-  })
-
 const updateVisibleNodes: MethodCreator<Props, ConnectorState> = dispatch => () => {
   const { visibleNodes } = visibleNodesGenerator
   dispatch.set({ visibleNodes })
@@ -429,5 +383,4 @@ export default {
   focusNode,
   onNodeClick,
   updateVisibleNodes,
-  mountExpandingIndicator,
 }

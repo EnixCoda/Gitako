@@ -27,8 +27,7 @@ export type TreeNode = {
   path: string
   url?: string
   sha?: string
-  virtual?: boolean
-  type: 'tree' | 'blob' | 'commit' | 'virtual'
+  type: 'tree' | 'blob' | 'commit'
   accessDenied?: boolean
 }
 

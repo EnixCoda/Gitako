@@ -1,7 +1,6 @@
 import * as React from 'react'
 import Icon from 'components/Icon'
 import cx from 'utils/cx'
-import LoadingIndicator from 'components/LoadingIndicator'
 import { TreeNode } from 'utils/VisibleNodesGenerator'
 import { os, OperatingSystems } from 'utils/general'
 
@@ -41,18 +40,7 @@ export default class Node extends React.PureComponent<Props> {
 
   render() {
     const { node, depth, expanded, focused, renderActions, style } = this.props
-    const { name, path, virtual } = node
-    if (virtual) {
-      // this is not a real node
-      // for now, all virtual nodes are indicators for pending state
-      return (
-        <div className={cx(`node-item-row`, { focused })} style={style}>
-          <div className={'node-item'}>
-            <LoadingIndicator text={name} />
-          </div>
-        </div>
-      )
-    }
+    const { name, path } = node
     return (
       <div
         className={cx(`node-item-row`, { focused, disabled: node.accessDenied })}
