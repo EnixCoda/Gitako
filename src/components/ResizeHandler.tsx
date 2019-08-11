@@ -16,7 +16,7 @@ export default class HorizontalResizeHandler extends React.PureComponent<Props> 
   componentWillReceiveProps(nextProps: Props) {
     if (!this.pointerDown) {
       // update baseSize when not resizing
-      this.baseSize = this.props.size
+      this.baseSize = nextProps.size
     }
   }
 
