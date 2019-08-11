@@ -171,23 +171,29 @@
     &.hidden {
       .hidden;
     }
+
+    .gitako-position-content {
+      width: var(--gitako-width);
+    }
   }
   .@{name}-resize-handler {
     display: flex;
     align-items: center;
     cursor: ew-resize;
     user-select: none;
-    border-left: 1px solid #e1e4e8;
-    width: 2px;
+    width: 0;
     background: #e1e4e8;
+    border-left: 1px solid #e1e4e8;
     &:hover {
       width: 16px;
       background: #fafbfc;
+      border-right: 1px solid #e1e4e8;
     }
 
     .grabber-icon {
       transform: rotate(90deg);
       width: 12px;
+      font-size: 0;
     }
   }
   .@{name}-side-bar-body {

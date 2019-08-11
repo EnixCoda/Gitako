@@ -52,9 +52,7 @@ export default function Resizable({
 
   return (
     <div className={cx('gitako-position-wrapper', className)}>
-      <div className={'gitako-position-content'} style={{ width: size }}>
-        {children}
-      </div>
+      <div className={'gitako-position-content'}>{children}</div>
       <HorizontalResizeHandler
         onResize={size => {
           if (size < window.innerWidth - MINIMAL_CONTENT_VIEWPORT_WIDTH) setSize(size)
