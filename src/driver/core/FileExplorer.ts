@@ -16,6 +16,7 @@ export type ConnectorState = {
   visibleNodes: VisibleNodes | null
   searchKey: string
   searched: boolean
+  focusedNode: TreeNode | null
 
   init: () => void
   execAfterRender: () => void
@@ -307,14 +308,17 @@ const search: MethodCreator<Props, ConnectorState, [string]> = dispatch => {
 
 const goTo: MethodCreator<Props, ConnectorState, [string[]]> = dispatch => async currentPath => {
   await visibleNodesGenerator.search('')
+  tasksAfterRender.push(() => {
+    const nodeExpandedTo = visibleNodesGenerator.expandTo(currentPath.join('/'))
+    if (nodeExpandedTo) {
+      visibleNodesGenerator.focusNode(nodeExpandedTo)
+      dispatch.set({
+        focusedNode: nodeExpandedTo,
+      })
+    }
+    dispatch.call(updateVisibleNodes)
+  })
   dispatch.set({ searchKey: '', searched: false })
-  const nodeExpandedTo = visibleNodesGenerator.expandTo(currentPath.join('/'))
-  if (nodeExpandedTo) {
-    visibleNodesGenerator.focusNode(nodeExpandedTo)
-    const { nodes } = visibleNodesGenerator.visibleNodes
-    tasksAfterRender.push(() => DOMHelper.scrollToNodeElement(nodes.indexOf(nodeExpandedTo)))
-  }
-  dispatch.call(updateVisibleNodes)
 }
 
 const setExpand: MethodCreator<Props, ConnectorState, [TreeNode, boolean]> = dispatch => (
@@ -330,8 +334,8 @@ const toggleNodeExpansion: MethodCreator<Props, ConnectorState, [TreeNode, boole
   skipScrollToNode,
 ) => {
   visibleNodesGenerator.toggleExpand(node)
-    dispatch.call(focusNode, node, skipScrollToNode)
-    tasksAfterRender.push(DOMHelper.focusFileExplorer)
+  dispatch.call(focusNode, node, skipScrollToNode)
+  tasksAfterRender.push(DOMHelper.focusFileExplorer)
 }
 
 const focusNode: MethodCreator<Props, ConnectorState, [TreeNode | null, boolean]> = dispatch => (
@@ -340,12 +344,12 @@ const focusNode: MethodCreator<Props, ConnectorState, [TreeNode | null, boolean]
 ) =>
   dispatch.get(({ visibleNodes }) => {
     if (!visibleNodes) return
-    const { nodes } = visibleNodes
     visibleNodesGenerator.focusNode(node)
     if (node && !skipScroll) {
       // when focus a node not in viewport(by keyboard), scroll to it
-      const indexOfToBeFocusedNode = nodes.indexOf(node)
-      tasksAfterRender.push(() => DOMHelper.scrollToNodeElement(indexOfToBeFocusedNode))
+      dispatch.set({
+        focusedNode: node,
+      })
     }
     dispatch.call(updateVisibleNodes)
   })

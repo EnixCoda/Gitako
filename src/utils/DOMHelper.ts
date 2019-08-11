@@ -118,23 +118,6 @@ function scrollToRepoContent() {
   )
 }
 
-/**
- * scroll to index-th element in the list
- */
-function scrollToNodeElement(index: number) {
-  const nodeElementSelector = '.node-item'
-  const nodeElements = document.querySelectorAll(nodeElementSelector)
-  const targetElement = nodeElements[index]
-  if (targetElement) {
-    targetElement.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center',
-    })
-  } else {
-    raiseError(new Error('cannot find DOM node to scroll to'))
-  }
-}
-
 const pjax = new PJAX({
   elements: '.pjax-link',
   selectors: ['.repository-content', 'title'],
@@ -411,7 +394,6 @@ export default {
   insertLogoMountPoint,
   markGitakoReadyState,
   setBodyIndent,
-  scrollToNodeElement,
   scrollToRepoContent,
   mountTopProgressBar,
   unmountTopProgressBar,

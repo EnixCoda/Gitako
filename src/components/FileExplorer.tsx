@@ -52,6 +52,54 @@ class FileExplorer extends React.Component<Props & ConnectorState> {
     execAfterRender()
   }
 
+  renderFiles(visibleNodes: VisibleNodes) {
+    const { nodes } = visibleNodes
+    const { searchKey, focusedNode } = this.props
+    const inSearch = searchKey !== ''
+    if (inSearch && nodes.length === 0) {
+      return <label className={'no-results'}>No results found.</label>
+    }
+    return (
+      <SizeObserver className={'files'}>
+        {({ width = 0, height = 0 }) => (
+          <this.ListV focusedNode={focusedNode} nodes={nodes} height={height} width={width} />
+        )}
+      </SizeObserver>
+    )
+  }
+
+  ListV = React.memo<{
+    nodes: TreeNode[]
+    height: number
+    width: number
+    focusedNode: TreeNode | null
+  }>(({ nodes, width, height, focusedNode }) => {
+    const listRef = React.useRef<List>(null)
+    React.useEffect(() => {
+      const { visibleNodes } = this.props
+      const nodes = visibleNodes && visibleNodes.nodes
+      if (nodes && focusedNode && listRef.current) {
+        listRef.current.scrollToItem(nodes.indexOf(focusedNode), 'smart')
+      }
+    }, [listRef.current, focusedNode])
+    return (
+      <List
+        ref={listRef}
+        itemKey={(index, { nodes }) => {
+          const node = nodes[index]
+          return node && node.path
+        }}
+        itemData={{ nodes }}
+        itemCount={nodes.length}
+        itemSize={35}
+        height={height}
+        width={width}
+      >
+        {this.VirtualNode}
+      </List>
+    )
+  })
+
   VirtualNode = React.memo<ListChildComponentProps>(({ index, style }) => {
     const { visibleNodes, onNodeClick } = this.props
     if (!visibleNodes) return null
@@ -70,37 +118,6 @@ class FileExplorer extends React.Component<Props & ConnectorState> {
       />
     )
   })
-
-  renderFiles(visibleNodes: VisibleNodes) {
-    const { nodes } = visibleNodes
-    const { searchKey } = this.props
-    const inSearch = searchKey !== ''
-    if (inSearch && nodes.length === 0) {
-      return <label className={'no-results'}>No results found.</label>
-    }
-    return (
-      <SizeObserver className={'files'}>
-        {({ width, height }) =>
-          height &&
-          width && (
-            <List
-              itemKey={(index, { nodes }) => {
-                const node = nodes[index]
-                return node && node.path
-              }}
-              itemData={{ nodes }}
-              height={height}
-              itemCount={nodes.length}
-              itemSize={35}
-              width={width}
-            >
-              {this.VirtualNode}
-            </List>
-          )
-        }
-      </SizeObserver>
-    )
-  }
 
   private renderActions: Node['props']['renderActions'] = node => {
     const { searchKey, searched, goTo } = this.props
@@ -135,7 +152,6 @@ class FileExplorer extends React.Component<Props & ConnectorState> {
       freeze,
       handleKeyDown,
       handleSearchKeyChange,
-      onNodeClick,
       toggleShowSettings,
       onFocusSearchBar,
       searchKey,
