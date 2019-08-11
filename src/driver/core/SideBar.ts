@@ -71,6 +71,7 @@ const init: MethodCreator<Props, ConnectorState> = dispatch => async () => {
     metaData.branchName = detectedBranchName || 'master'
     dispatch.call(setMetaData, metaData)
     const {
+      sideBarWidth,
       access_token: accessToken,
       shortcut,
       compressSingletonFolder,
@@ -79,6 +80,7 @@ const init: MethodCreator<Props, ConnectorState> = dispatch => async () => {
     } = await configHelper.getAll()
     DOMHelper.decorateGitHubPageContent({ copyFileButton, copySnippetButton })
     dispatch.set({
+      baseSize: sideBarWidth,
       accessToken,
       toggleShowSideBarShortcut: shortcut,
       compressSingletonFolder,

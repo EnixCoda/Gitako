@@ -3,6 +3,7 @@ import HorizontalResizeHandler from 'components/ResizeHandler'
 import cx from 'utils/cx'
 import { useWindowSize, useMediaStyleSheet } from 'utils/hooks'
 import { bodySpacingClassName } from 'utils/DOMHelper'
+import configHelper, { configKeys } from 'utils/configHelper'
 
 export type Size = number
 type Props = {
@@ -20,6 +21,10 @@ export default function Resizable({
 }: React.PropsWithChildren<Props>) {
   const [size, setSize] = React.useState(baseSize)
 
+  React.useEffect(() => {
+    setSize(baseSize)
+  }, [baseSize])
+
   useWindowSize(
     width => {
       if (size > width - MINIMAL_CONTENT_VIEWPORT_WIDTH)
@@ -30,6 +35,7 @@ export default function Resizable({
 
   React.useEffect(() => {
     document.documentElement.style.setProperty('--gitako-width', size + 'px')
+    configHelper.setOne(configKeys.sideBarWidth, size)
   }, [size])
 
   useMediaStyleSheet(

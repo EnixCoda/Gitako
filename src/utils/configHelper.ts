@@ -2,6 +2,7 @@ import storageHelper from 'utils/storageHelper'
 import { pick } from 'utils/general'
 
 type Config = {
+  sideBarWidth: number
   shortcut: string | undefined
   access_token: string | undefined
   compressSingletonFolder: boolean
@@ -10,6 +11,7 @@ type Config = {
 }
 
 export enum configKeys {
+  sideBarWidth = 'sideBarWidth',
   shortcut = 'shortcut',
   accessToken = 'access_token',
   compressSingletonFolder = 'compressSingletonFolder',
@@ -18,6 +20,7 @@ export enum configKeys {
 }
 
 const defaultConfigs: Config = {
+  sideBarWidth: 260,
   shortcut: undefined,
   access_token: undefined,
   compressSingletonFolder: true,
