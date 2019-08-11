@@ -20,12 +20,12 @@ function markGitakoReadyState() {
  * if should show gitako, then move body right to make space for showing gitako
  * otherwise, hide the space
  */
+export const bodySpacingClassName = 'with-gitako-spacing'
 function setBodyIndent(shouldShowGitako: boolean) {
-  const spacingClassName = 'with-gitako-spacing'
   if (shouldShowGitako) {
-    document.body.classList.add(spacingClassName)
+    document.body.classList.add(bodySpacingClassName)
   } else {
-    document.body.classList.remove(spacingClassName)
+    document.body.classList.remove(bodySpacingClassName)
   }
 }
 

@@ -5,20 +5,14 @@
 @min-screen-width: 1280px;
 @github-content-width: 1020px;
 @side-bar-base-width: (@min-screen-width - @github-content-width);
-@width-with-gitako: (@min-screen-width + @side-bar-base-width);
+@min-width-with-gitako: (@min-screen-width + @side-bar-base-width);
 
 @github-header-z-index: 32;
 @github-pull-request-float-header-z-index: 110;
 @minimal-z-index: max(@github-header-z-index, @github-pull-request-float-header-z-index) + 1;
 
-.with-@{name}-spacing {
-  margin-left: @side-bar-base-width;
-  @media (min-width: @min-screen-width) and (max-width: @width-with-gitako) {
-    margin-left: ~'calc(' @width-with-gitako ~' - 100vw)';
-  }
-  @media (min-width: @width-with-gitako) {
-    margin-left: 0;
-  }
+:root {
+  --gitako-width: @side-bar-base-width;
 }
 
 .@{name}-ready {
@@ -26,8 +20,9 @@
     background: #24292e;
   }
   .Header {
-    width: 1012px;
+    max-width: 1012px;
     margin: 0 auto;
+    overflow: auto;
   }
 }
 
@@ -87,7 +82,6 @@
   position: fixed;
   top: 5px;
   left: 0;
-  transform: translate((@side-bar-base-width - 30px));
   z-index: @minimal-z-index;
   display: inline-flex;
   justify-content: center;
@@ -97,35 +91,45 @@
   height: 30px;
   will-change: transform;
   border: 1px solid transparent;
-  transition: all @animation-duration ease;
 
-  @media screen and (min-width: @width-with-gitako) {
-    transform: translate(~'calc(50vw - (' @github-content-width ~') / 2 - 30px)');
+  .transform-expanded {
+    transform: translate(calc(var(--gitako-width) - 30px));
+  }
+  .transform-collapsed {
+    transform: translate(5px);
   }
 
-  &:hover {
-    .error-message {
-      display: inline;
-    }
-  }
+  .transform-expanded;
+  animation: toggle-show-button-wrapper-expand @animation-duration;
 
   &.collapsed {
     border-color: #999999;
     border-radius: 3px;
     background: #f5f5f5;
 
-    @media screen and (max-width: @width-with-gitako) {
-      transform: translate(5px);
-    }
+    .transform-collapsed;
+    animation: toggle-show-button-wrapper-collapse @animation-duration;
 
     .action-icon {
       color: #0366d6d0;
     }
   }
 
-  &.error {
-    .action-icon {
-      color: #cb2431;
+  @keyframes toggle-show-button-wrapper-expand {
+    from {
+      .transform-collapsed;
+    }
+    to {
+      .transform-expanded;
+    }
+  }
+
+  @keyframes toggle-show-button-wrapper-collapse {
+    from {
+      .transform-expanded;
+    }
+    to {
+      .transform-collapsed;
     }
   }
 
@@ -135,6 +139,18 @@
     height: 20px;
     margin: 5px 6px;
     transition: all @animation-duration ease;
+  }
+
+  &:hover {
+    .error-message {
+      display: inline;
+    }
+  }
+
+  &.error {
+    .action-icon {
+      color: #cb2431;
+    }
   }
 
   .error-message {
@@ -150,39 +166,34 @@
     left: 0;
     height: 100vh;
     z-index: @minimal-z-index;
-    min-width: @side-bar-base-width;
     display: flex;
-    justify-content: flex-end;
-    @media screen and (min-width: @min-screen-width) {
-      width: ~'calc((100vw - ' @github-content-width ~') / 2)';
-    }
 
     &.hidden {
       .hidden;
     }
 
     .gitako-position-content {
-      max-width: 100%;
+      width: var(--gitako-width);
     }
   }
   .@{name}-resize-handler {
-    @resize-handler-width: 16px;
-    @side-bar-and-handler-width: (@min-screen-width + @resize-handler-width);
-    display: none;
-    width: @resize-handler-width;
-    background: #fafbfc;
+    display: flex;
+    align-items: center;
     cursor: ew-resize;
     user-select: none;
+    width: 0;
+    background: #e1e4e8;
     border-left: 1px solid #e1e4e8;
-
-    @media screen and (min-width: (@min-screen-width + @side-bar-base-width + @resize-handler-width * 2)) {
-      display: flex;
-      align-items: center;
+    &:hover {
+      width: 16px;
+      background: #fafbfc;
+      border-right: 1px solid #e1e4e8;
     }
 
     .grabber-icon {
       transform: rotate(90deg);
       width: 12px;
+      font-size: 0;
     }
   }
   .@{name}-side-bar-body {
