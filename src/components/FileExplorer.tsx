@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { FixedSizeList as List, ListChildComponentProps } from 'react-window'
 import connect from 'driver/connect'
 import { FileExplorer as FileExplorerCore } from 'driver/core'
 import SearchBar from 'components/SearchBar'
@@ -9,6 +10,7 @@ import { ConnectorState } from 'driver/core/FileExplorer'
 import { TreeData, MetaData } from 'utils/GitHubHelper'
 import { VisibleNodes, TreeNode } from 'utils/VisibleNodesGenerator'
 import Icon from './Icon'
+import SizeObserver from './SizeObserver'
 
 export type Props = {
   treeData?: TreeData
@@ -50,27 +52,53 @@ class FileExplorer extends React.Component<Props & ConnectorState> {
     execAfterRender()
   }
 
-  renderFiles(visibleNodes: VisibleNodes, onNodeClick: Node['props']['onClick']) {
+  VirtualNode = React.memo<ListChildComponentProps>(({ index, style }) => {
+    const { visibleNodes, onNodeClick } = this.props
+    if (!visibleNodes) return null
     const { nodes, depths, focusedNode, expandedNodes } = visibleNodes
-    const { searchKey, searched } = this.props
+    const node = nodes[index]
+    return (
+      <Node
+        style={style}
+        key={node.path}
+        node={node}
+        depth={depths.get(node) || 0}
+        focused={focusedNode === node}
+        expanded={expandedNodes.has(node)}
+        onClick={onNodeClick}
+        renderActions={this.renderActions}
+      />
+    )
+  })
+
+  renderFiles(visibleNodes: VisibleNodes) {
+    const { nodes } = visibleNodes
+    const { searchKey } = this.props
     const inSearch = searchKey !== ''
     if (inSearch && nodes.length === 0) {
       return <label className={'no-results'}>No results found.</label>
     }
     return (
-      <div className={'files'}>
-        {nodes.map(node => (
-          <Node
-            key={node.path}
-            node={node}
-            depth={depths.get(node) || 0}
-            focused={focusedNode === node}
-            expanded={expandedNodes.has(node)}
-            onClick={onNodeClick}
-            renderActions={this.renderActions}
-          />
-        ))}
-      </div>
+      <SizeObserver className={'files'}>
+        {({ width, height }) =>
+          height &&
+          width && (
+            <List
+              itemKey={(index, { nodes }) => {
+                const node = nodes[index]
+                return node && node.path
+              }}
+              itemData={{ nodes }}
+              height={height}
+              itemCount={nodes.length}
+              itemSize={35}
+              width={width}
+            >
+              {this.VirtualNode}
+            </List>
+          )
+        }
+      </SizeObserver>
     )
   }
 
@@ -129,7 +157,7 @@ class FileExplorer extends React.Component<Props & ConnectorState> {
                 onSearchKeyChange={handleSearchKeyChange}
                 onFocus={onFocusSearchBar}
               />
-              {this.renderFiles(visibleNodes, onNodeClick)}
+              {this.renderFiles(visibleNodes)}
             </React.Fragment>
           )
         )}

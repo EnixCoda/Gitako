@@ -23,6 +23,7 @@ type Props = {
   expanded: boolean
   focused: boolean
   renderActions?(node: TreeNode): React.ReactNode
+  style?: React.CSSProperties
 }
 export default class Node extends React.PureComponent<Props> {
   onClick: React.MouseEventHandler = event => {
@@ -39,13 +40,13 @@ export default class Node extends React.PureComponent<Props> {
   }
 
   render() {
-    const { node, depth, expanded, focused, renderActions } = this.props
+    const { node, depth, expanded, focused, renderActions, style } = this.props
     const { name, path, virtual } = node
     if (virtual) {
       // this is not a real node
       // for now, all virtual nodes are indicators for pending state
       return (
-        <div className={cx(`node-item-row`, { focused })}>
+        <div className={cx(`node-item-row`, { focused })} style={style}>
           <div className={'node-item'}>
             <LoadingIndicator text={name} />
           </div>
@@ -53,7 +54,11 @@ export default class Node extends React.PureComponent<Props> {
       )
     }
     return (
-      <div className={cx(`node-item-row`, { focused, disabled: node.accessDenied })} title={path}>
+      <div
+        className={cx(`node-item-row`, { focused, disabled: node.accessDenied })}
+        style={style}
+        title={path}
+      >
         <a href={node.url} onClick={this.onClick}>
           <div
             className={cx('node-item', { expanded })}

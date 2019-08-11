@@ -332,8 +332,6 @@
           .node-item {
             display: flex;
             justify-content: space-between;
-            word-wrap: normal;
-            word-break: break-all;
             margin: 0;
             color: #0366d6;
             line-height: 20px;
@@ -341,6 +339,7 @@
             cursor: pointer;
             border-top: 1px solid #eaecef;
             transition: all 0.5s ease;
+            white-space: nowrap;
 
             // folder icon rotate when expand
             &.expanded .octicon.octicon-triangle-right {
