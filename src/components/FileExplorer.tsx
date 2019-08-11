@@ -11,6 +11,7 @@ import { TreeData, MetaData } from 'utils/GitHubHelper'
 import { VisibleNodes, TreeNode } from 'utils/VisibleNodesGenerator'
 import Icon from './Icon'
 import SizeObserver from './SizeObserver'
+import { usePrevious } from 'utils/hooks'
 
 export type Props = {
   treeData?: TreeData
@@ -53,8 +54,8 @@ class FileExplorer extends React.Component<Props & ConnectorState> {
   }
 
   renderFiles(visibleNodes: VisibleNodes) {
-    const { nodes } = visibleNodes
-    const { searchKey, focusedNode } = this.props
+    const { nodes, focusedNode } = visibleNodes
+    const { searchKey } = this.props
     const inSearch = searchKey !== ''
     if (inSearch && nodes.length === 0) {
       return <label className={'no-results'}>No results found.</label>
@@ -76,12 +77,17 @@ class FileExplorer extends React.Component<Props & ConnectorState> {
   }>(({ nodes, width, height, focusedNode }) => {
     const listRef = React.useRef<List>(null)
     React.useEffect(() => {
-      const { visibleNodes } = this.props
-      const nodes = visibleNodes && visibleNodes.nodes
-      if (nodes && focusedNode && listRef.current) {
+      if (focusedNode && listRef.current) {
         listRef.current.scrollToItem(nodes.indexOf(focusedNode), 'smart')
       }
     }, [listRef.current, focusedNode])
+
+    const lastNodeLength = usePrevious(nodes.length)
+    React.useEffect(() => {
+      if (listRef.current && !focusedNode && lastNodeLength !== nodes.length) {
+        listRef.current.scrollTo(0)
+      }
+    }, [listRef.current, focusedNode, nodes.length])
     return (
       <List
         ref={listRef}

@@ -39,3 +39,11 @@ export function useMediaStyleSheet(
       )
   }
 }
+
+export function usePrevious<T>(newValue: T) {
+  const previousRef = React.useRef(newValue)
+  React.useEffect(() => {
+    previousRef.current = newValue
+  })
+  return previousRef.current
+}

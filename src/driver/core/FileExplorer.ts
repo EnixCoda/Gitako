@@ -16,7 +16,6 @@ export type ConnectorState = {
   visibleNodes: VisibleNodes | null
   searchKey: string
   searched: boolean
-  focusedNode: TreeNode | null
 
   init: () => void
   execAfterRender: () => void
@@ -312,9 +311,6 @@ const goTo: MethodCreator<Props, ConnectorState, [string[]]> = dispatch => async
     const nodeExpandedTo = visibleNodesGenerator.expandTo(currentPath.join('/'))
     if (nodeExpandedTo) {
       visibleNodesGenerator.focusNode(nodeExpandedTo)
-      dispatch.set({
-        focusedNode: nodeExpandedTo,
-      })
     }
     dispatch.call(updateVisibleNodes)
   })
@@ -345,12 +341,6 @@ const focusNode: MethodCreator<Props, ConnectorState, [TreeNode | null, boolean]
   dispatch.get(({ visibleNodes }) => {
     if (!visibleNodes) return
     visibleNodesGenerator.focusNode(node)
-    if (node && !skipScroll) {
-      // when focus a node not in viewport(by keyboard), scroll to it
-      dispatch.set({
-        focusedNode: node,
-      })
-    }
     dispatch.call(updateVisibleNodes)
   })
 
