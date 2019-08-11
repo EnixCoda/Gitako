@@ -24,16 +24,13 @@ export default function SizeObserver({
 
   React.useEffect(() => {
     const observer = new window.ResizeObserver(entries => {
-      for (let entry of entries) {
-        const rect = entry.contentRect
-        console.log('Element:', entry.target)
-        console.log(`Element size: ${rect.width}px x ${rect.height}px`)
-        console.log(`Element padding: ${rect.top}px ; ${rect.left}px`)
-        setSize({
-          width: rect.width,
-          height: rect.height,
-        })
-      }
+      const entry = entries[0]
+      if (!entry) return
+      const rect = entry.contentRect
+      setSize({
+        width: rect.width,
+        height: rect.height,
+      })
     })
 
     if (ref.current) observer.observe(ref.current)
