@@ -27,13 +27,17 @@ export default function SizeObserver({
       const entry = entries[0]
       if (!entry) return
       const rect = entry.contentRect
-      setSize({
-        width: rect.width,
-        height: rect.height,
-      })
+      // requestAnimationFrame fixes "ResizeObserver loop limit exceeded" error
+      requestAnimationFrame(() =>
+        setSize({
+          width: rect.width,
+          height: rect.height,
+        }),
+      )
     })
 
     if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
   }, [])
 
   const props: any = { ...rest, ref } // :)
