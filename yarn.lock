@@ -772,6 +772,13 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
+"@primer/octicons-react@^9.2.0":
+  version "9.2.0"
+  resolved "https://registry.yarnpkg.com/@primer/octicons-react/-/octicons-react-9.2.0.tgz#76446c36346fef67cbf91c78bd329c8f860c35d5"
+  integrity sha512-IWY8tJ6j40R5ks6KYORxVxBsmKax/ttXcH7SyHfku0IrYYc/3TSwaPhUDh9hGKDoyE9TUmrku101XJgCbfKhmg==
+  dependencies:
+    prop-types "^15.6.1"
+
 "@primer/octicons@^9.1.1":
   version "9.1.1"
   resolved "https://registry.yarnpkg.com/@primer/octicons/-/octicons-9.1.1.tgz#a72a59e8ec77521cc2eefb36c345f780a61c79fb"
@@ -4158,7 +4165,7 @@ promise@^7.1.1:
   dependencies:
     asap "~2.0.3"
 
-prop-types@^15.6.2:
+prop-types@^15.6.1, prop-types@^15.6.2:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
