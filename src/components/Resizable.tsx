@@ -4,6 +4,7 @@ import cx from 'utils/cx'
 import { useWindowSize, useMediaStyleSheet } from 'utils/hooks'
 import { bodySpacingClassName } from 'utils/DOMHelper'
 import configHelper, { configKeys } from 'utils/configHelper'
+import * as features from 'utils/features'
 
 export type Size = number
 type Props = {
@@ -53,12 +54,14 @@ export default function Resizable({
   return (
     <div className={cx('gitako-position-wrapper', className)}>
       <div className={'gitako-position-content'}>{children}</div>
-      <HorizontalResizeHandler
-        onResize={size => {
-          if (size < window.innerWidth - MINIMAL_CONTENT_VIEWPORT_WIDTH) setSize(size)
-        }}
-        size={size}
-      />
+      {features.resize && (
+        <HorizontalResizeHandler
+          onResize={size => {
+            if (size < window.innerWidth - MINIMAL_CONTENT_VIEWPORT_WIDTH) setSize(size)
+          }}
+          size={size}
+        />
+      )}
     </div>
   )
 }
