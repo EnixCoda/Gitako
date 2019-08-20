@@ -1,4 +1,5 @@
 import * as React from 'react'
+import * as features from 'utils/features'
 
 type Size = {
   width: number
@@ -23,24 +24,37 @@ export default function SizeObserver({
   })
 
   React.useEffect(() => {
-    const observer = new window.ResizeObserver(entries => {
-      const entry = entries[0]
-      if (!entry) return
-      const rect = entry.contentRect
-      // requestAnimationFrame fixes "ResizeObserver loop limit exceeded" error
-      requestAnimationFrame(() =>
-        setSize({
-          width: rect.width,
-          height: rect.height,
-        }),
-      )
-    })
+    if (features.resize) {
+      const observer = new window.ResizeObserver(entries => {
+        const entry = entries[0]
+        if (!entry) return
+        const rect = entry.contentRect
+        safeSetSize(rect)
+      })
 
-    if (ref.current) observer.observe(ref.current)
-    return () => observer.disconnect()
+      if (ref.current) observer.observe(ref.current)
+      return () => observer.disconnect()
+    } else {
+      if (ref.current) {
+        if ('getBoundingClientRect' in ref.current) {
+          const rect = ref.current.getBoundingClientRect()
+          setSize(rect)
+        }
+      }
+    }
   }, [])
 
   const props: any = { ...rest, ref } // :)
 
   return React.createElement(type, props, children(size))
+
+  function safeSetSize(rect: DOMRectReadOnly) {
+    // requestAnimationFrame fixes "ResizeObserver loop limit exceeded" error
+    requestAnimationFrame(() =>
+      setSize({
+        width: rect.width,
+        height: rect.height,
+      }),
+    )
+  }
 }
