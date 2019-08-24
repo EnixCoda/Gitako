@@ -123,3 +123,9 @@ export default function connect<BaseP, ExtraP>(mapping: Sources<BaseP, ExtraP>) 
     }
   }
 }
+
+export function promisifyGetState<Props, State>(
+  get: PreDispatch<Props, State>,
+): () => Promise<State> {
+  return () => new Promise(resolve => get(state => resolve(state)))
+}
