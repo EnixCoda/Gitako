@@ -232,9 +232,14 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
                 </h4>
                 {!hasAccessToken && (
                   <a
-                    href={`https://github.com/login/oauth/authorize?client_id=${
-                      oauth.clientId
-                    }&scope=repo&redirect_uri=${encodeURIComponent(window.location.href)}`}
+                    href="#"
+                    onClick={() => {
+                      // use js here to make sure redirect_uri is latest url
+                      const url = `https://github.com/login/oauth/authorize?client_id=${
+                        oauth.clientId
+                      }&scope=repo&redirect_uri=${encodeURIComponent(window.location.href)}`
+                      window.location.href = url
+                    }}
                   >
                     Create with OAuth
                   </a>
