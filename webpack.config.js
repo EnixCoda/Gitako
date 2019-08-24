@@ -2,6 +2,7 @@ const webpack = require('webpack')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const path = require('path')
+const Dotenv = require('dotenv-webpack')
 
 const srcPath = path.resolve(__dirname, 'src')
 const packagesPath = path.resolve(__dirname, 'packages')
@@ -18,6 +19,7 @@ const plugins = [
     },
   ]),
   new ForkTsCheckerWebpackPlugin(),
+  new Dotenv(),
 ]
 
 const IN_PRODUCTION_MODE = process.env.NODE_ENV === 'production'
@@ -27,7 +29,7 @@ if (IN_PRODUCTION_MODE) {
       'process.env': {
         NODE_ENV: JSON.stringify('production'),
       },
-    })
+    }),
   )
 }
 

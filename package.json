@@ -45,6 +45,7 @@
     "babel-loader": "^8.0.5",
     "copy-webpack-plugin": "^5.0.0",
     "css-loader": "^2.1.0",
+    "dotenv-webpack": "^1.7.0",
     "file-loader": "^3.0.1",
     "fork-ts-checker-webpack-plugin": "^0.5.2",
     "fsevents": "^1.2.4",
