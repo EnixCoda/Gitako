@@ -241,14 +241,14 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
                       window.location.href = url
                     }}
                   >
-                    Create with OAuth
+                    Create with OAuth (recommended)
                   </a>
                 )}
                 <div className={'access-token-input-control'}>
                   <input
                     className={'access-token-input form-control'}
                     disabled={hasAccessToken}
-                    placeholder={hasAccessToken ? 'Your token is saved' : 'Input your token here'}
+                    placeholder={hasAccessToken ? 'Your token is saved' : 'Or input here manually'}
                     value={accessToken}
                     onChange={this.onInputAccessToken}
                     onKeyPress={this.onPressAccessToken}
