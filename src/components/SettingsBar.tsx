@@ -2,7 +2,7 @@ import * as React from 'react'
 import Icon from 'components/Icon'
 import configHelper, { configKeys } from 'utils/configHelper'
 import keyHelper from 'utils/keyHelper'
-import { friendlyFormatShortcut } from 'utils/general'
+import { friendlyFormatShortcut, parseURLSearch, JSONRequest } from 'utils/general'
 import { version } from '../../package.json'
 
 const wikiLinks = {
@@ -12,6 +12,11 @@ const wikiLinks = {
   copySnippet: 'https://github.com/EnixCoda/Gitako/wiki/Copy-file-and-snippet',
   createAccessToken:
     'https://github.com/EnixCoda/Gitako/wiki/How-to-create-access-token-for-Gitako%3F',
+}
+
+const oauth = {
+  clientId: process.env.GITHUB_OAUTH_CLIENT_ID,
+  clientSecret: process.env.GITHUB_OAUTH_CLIENT_SECRET,
 }
 
 const ACCESS_TOKEN_REGEXP = /^[0-9a-f]{40}$/
@@ -84,9 +89,30 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
     ],
   }
 
+  componentDidMount() {
+    if (!this.props.accessToken) this.trySetUpAccessTokenWithCode()
+  }
+
   componentWillReceiveProps({ toggleShowSideBarShortcut }: Props) {
     if (toggleShowSideBarShortcut !== this.props.toggleShowSideBarShortcut) {
       this.setState({ toggleShowSideBarShortcut })
+    }
+  }
+
+  private async trySetUpAccessTokenWithCode() {
+    const search = parseURLSearch()
+    if ('code' in search) {
+      const res = await JSONRequest('https://github.com/login/oauth/access_token', {
+        code: search.code,
+        client_id: oauth.clientId,
+        client_secret: oauth.clientSecret,
+      })
+      const { access_token: accessToken, scope } = res
+      if (scope !== 'repo' || !accessToken) {
+        throw new Error(`Cannot resolve token response: '${JSON.stringify(res)}'`)
+      }
+      window.history.pushState({}, 'removed code', window.location.pathname.replace(/#.*$/, ''))
+      this.setState({ accessToken }, () => this.saveToken())
     }
   }
 
@@ -197,6 +223,13 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
               <div className={'shadow-shelter'} />
               <div className={'gitako-settings-bar-content-section access-token'}>
                 <h4>Access Token</h4>
+                <a
+                  href={`https://github.com/login/oauth/authorize?client_id=${
+                    oauth.clientId
+                  }&scope=repo&redirect_uri=${encodeURIComponent(window.location.href)}`}
+                >
+                  Create token
+                </a>
                 <a href={wikiLinks.createAccessToken} target="_blank">
                   Why & how to create it?
                 </a>
