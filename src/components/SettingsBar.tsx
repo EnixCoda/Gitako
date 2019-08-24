@@ -112,7 +112,7 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
         throw new Error(`Cannot resolve token response: '${JSON.stringify(res)}'`)
       }
       window.history.pushState({}, 'removed code', window.location.pathname.replace(/#.*$/, ''))
-      this.setState({ accessToken }, () => this.saveToken())
+      this.setState({ accessToken }, () => this.saveToken(''))
     }
   }
 
@@ -131,7 +131,16 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
     }
   }
 
-  saveToken = async () => {
+  saveToken = async (
+    hint: State['accessTokenHint'] = (
+      <span>
+        <a href="#" onClick={() => window.location.reload()}>
+          Reload
+        </a>{' '}
+        to activate!
+      </span>
+    ),
+  ) => {
     const { onAccessTokenChange } = this.props
     const { accessToken } = this.state
     if (accessToken) {
@@ -139,14 +148,7 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
       onAccessTokenChange(accessToken)
       this.setState({
         accessToken: '',
-        accessTokenHint: (
-          <span>
-            <a href="#" onClick={() => window.location.reload()}>
-              Reload
-            </a>{' '}
-            to activate!
-          </span>
-        ),
+        accessTokenHint: hint,
       })
     }
   }
@@ -222,18 +224,21 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
             <div className={'gitako-settings-bar-content'}>
               <div className={'shadow-shelter'} />
               <div className={'gitako-settings-bar-content-section access-token'}>
-                <h4>Access Token</h4>
-                <a
-                  href={`https://github.com/login/oauth/authorize?client_id=${
-                    oauth.clientId
-                  }&scope=repo&redirect_uri=${encodeURIComponent(window.location.href)}`}
-                >
-                  Create token
-                </a>
-                <a href={wikiLinks.createAccessToken} target="_blank">
-                  Why & how to create it?
-                </a>
-                <br />
+                <h4>
+                  Access Token
+                  <a href={wikiLinks.createAccessToken} target="_blank">
+                    &nbsp;(?)
+                  </a>
+                </h4>
+                {!hasAccessToken && (
+                  <a
+                    href={`https://github.com/login/oauth/authorize?client_id=${
+                      oauth.clientId
+                    }&scope=repo&redirect_uri=${encodeURIComponent(window.location.href)}`}
+                  >
+                    Create with OAuth
+                  </a>
+                )}
                 <div className={'access-token-input-control'}>
                   <input
                     className={'access-token-input form-control'}

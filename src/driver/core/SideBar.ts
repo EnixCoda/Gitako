@@ -11,7 +11,7 @@ import GitHubHelper, {
 import configHelper from 'utils/configHelper'
 import URLHelper from 'utils/URLHelper'
 import keyHelper from 'utils/keyHelper'
-import { MethodCreator } from 'driver/connect'
+import { MethodCreator, promisifyGetState } from 'driver/connect'
 import { Props } from 'components/SideBar'
 import SettingsBar from 'components/SettingsBar'
 
@@ -40,6 +40,7 @@ export type ConnectorState = {
   copySnippetButton: boolean
   logoContainerElement: Element | null
   disabled: boolean
+  initializingPromise: Promise<void> | null
 
   init: () => void
   onPJAXEnd: () => void
@@ -55,12 +56,24 @@ export type ConnectorState = {
 }
 
 const init: MethodCreator<Props, ConnectorState> = dispatch => async () => {
+  const { initializingPromise } = await promisifyGetState(dispatch.get)()
+  if (initializingPromise) await initializingPromise
+
+  let done: any = null // cannot use type `(() => void) | null` here
+  dispatch.set({
+    initializingPromise: new Promise(resolve => {
+      done = () => resolve()
+    }),
+  })
+
   try {
     if (!URLHelper.isInRepoPage()) {
       dispatch.set({ disabled: true })
       return
     }
     dispatch.set({
+      errorDueToAuth: false,
+      showSettings: false,
       logoContainerElement: DOMHelper.insertLogoMountPoint(),
     })
     let detectedBranchName
@@ -139,6 +152,8 @@ const init: MethodCreator<Props, ConnectorState> = dispatch => async () => {
     DOMHelper.markGitakoReadyState()
   } catch (err) {
     dispatch.call(handleError, err)
+  } finally {
+    if (done) done()
   }
 }
 
@@ -219,7 +234,13 @@ const onAccessTokenChange: MethodCreator<
   Props,
   ConnectorState,
   [ConnectorState['accessToken']]
-> = dispatch => accessToken => dispatch.set({ accessToken })
+> = dispatch => accessToken => {
+  dispatch.set({ accessToken })
+  // reload when setting new accessToken
+  if (accessToken) {
+    dispatch.call(init)
+  }
+}
 
 const onShortcutChange: MethodCreator<
   Props,
