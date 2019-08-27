@@ -11,9 +11,8 @@ import GitHubHelper, {
 import configHelper from 'utils/configHelper'
 import URLHelper from 'utils/URLHelper'
 import keyHelper from 'utils/keyHelper'
-import { MethodCreator, promisifyGetState } from 'driver/connect'
+import { MethodCreator, GetCreatedMethod } from 'driver/connect'
 import { Props } from 'components/SideBar'
-import SettingsBar from 'components/SettingsBar'
 
 export type ConnectorState = {
   // initial width of side bar
@@ -42,17 +41,17 @@ export type ConnectorState = {
   disabled: boolean
   initializingPromise: Promise<void> | null
 
-  init: () => void
-  onPJAXEnd: () => void
-  onKeyDown: (e: KeyboardEvent) => string
-  toggleShowSideBar: () => void
-  toggleShowSettings: () => void
-  useListeners: (on: boolean) => void
-  onAccessTokenChange: SettingsBar['props']['onAccessTokenChange']
-  onShortcutChange: SettingsBar['props']['onShortcutChange']
-  setCopyFile: SettingsBar['props']['setCopyFile']
-  setCopySnippet: SettingsBar['props']['setCopySnippet']
-  setCompressSingleton: SettingsBar['props']['setCompressSingleton']
+  init: GetCreatedMethod<typeof init>
+  onPJAXEnd: GetCreatedMethod<typeof onPJAXEnd>
+  onKeyDown: GetCreatedMethod<typeof onKeyDown>
+  toggleShowSideBar: GetCreatedMethod<typeof toggleShowSideBar>
+  toggleShowSettings: GetCreatedMethod<typeof toggleShowSettings>
+  useListeners: GetCreatedMethod<typeof useListeners>
+  onAccessTokenChange: GetCreatedMethod<typeof onAccessTokenChange>
+  onShortcutChange: GetCreatedMethod<typeof onShortcutChange>
+  setCopyFile: GetCreatedMethod<typeof setCopyFile>
+  setCopySnippet: GetCreatedMethod<typeof setCopySnippet>
+  setCompressSingleton: GetCreatedMethod<typeof setCompressSingleton>
 }
 
 const init: MethodCreator<Props, ConnectorState> = dispatch => async () => {
@@ -179,21 +178,21 @@ const handleError: MethodCreator<Props, ConnectorState, [Error]> = dispatch => a
 
 const onPJAXEnd: MethodCreator<Props, ConnectorState> = dispatch => () => {
   const { metaData, copyFileButton, copySnippetButton } = dispatch.get()
-    DOMHelper.unmountTopProgressBar()
-    DOMHelper.decorateGitHubPageContent({ copyFileButton, copySnippetButton })
-    const mergedMetaData = { ...metaData, ...URLHelper.parse() }
-    dispatch.call(setShouldShow, URLHelper.isInCodePage(mergedMetaData))
-    dispatch.call(setMetaData, mergedMetaData)
+  DOMHelper.unmountTopProgressBar()
+  DOMHelper.decorateGitHubPageContent({ copyFileButton, copySnippetButton })
+  const mergedMetaData = { ...metaData, ...URLHelper.parse() }
+  dispatch.call(setShouldShow, URLHelper.isInCodePage(mergedMetaData))
+  dispatch.call(setMetaData, mergedMetaData)
 }
 
 const onKeyDown: MethodCreator<Props, ConnectorState, [KeyboardEvent]> = dispatch => e => {
   const { toggleShowSideBarShortcut } = dispatch.get()
-    if (toggleShowSideBarShortcut) {
-      const keys = keyHelper.parseEvent(e)
-      if (keys === toggleShowSideBarShortcut) {
-        dispatch.call(toggleShowSideBar)
-      }
+  if (toggleShowSideBarShortcut) {
+    const keys = keyHelper.parseEvent(e)
+    if (keys === toggleShowSideBarShortcut) {
+      dispatch.call(toggleShowSideBar)
     }
+  }
 }
 
 const toggleShowSideBar: MethodCreator<Props, ConnectorState> = dispatch => () =>
@@ -275,13 +274,13 @@ const useListeners: MethodCreator<Props, ConnectorState, [boolean]> = dispatch =
   const $onKeyDown = dispatch.call.bind(dispatch, onKeyDown)
   return on => {
     const { disabled } = dispatch.get()
-      if (on && !disabled) {
-        window.addEventListener('pjax:complete', $onPJAXEnd)
-        window.addEventListener('keydown', $onKeyDown)
-      } else {
-        window.removeEventListener('pjax:complete', $onPJAXEnd)
-        window.removeEventListener('keydown', $onKeyDown)
-      }
+    if (on && !disabled) {
+      window.addEventListener('pjax:complete', $onPJAXEnd)
+      window.addEventListener('keydown', $onKeyDown)
+    } else {
+      window.removeEventListener('pjax:complete', $onPJAXEnd)
+      window.removeEventListener('keydown', $onKeyDown)
+    }
   }
 }
 

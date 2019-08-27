@@ -4,11 +4,10 @@ import DOMHelper from 'utils/DOMHelper'
 import treeParser from 'utils/treeParser'
 import URLHelper from 'utils/URLHelper'
 import VisibleNodesGenerator, { TreeNode, VisibleNodes } from 'utils/VisibleNodesGenerator'
-import GitHubHelper, { BlobData, TreeData } from 'utils/GitHubHelper'
+import GitHubHelper, { BlobData } from 'utils/GitHubHelper'
 import { findNode } from 'utils/general'
-import { MethodCreator } from 'driver/connect'
+import { MethodCreator, GetCreatedMethod } from 'driver/connect'
 import { Props } from 'components/FileExplorer'
-import Node from 'components/Node'
 import { raiseError } from 'analytics'
 
 export type ConnectorState = {
@@ -17,14 +16,14 @@ export type ConnectorState = {
   searchKey: string
   searched: boolean
 
-  init: () => void
-  execAfterRender: () => void
-  handleKeyDown: React.KeyboardEventHandler
-  handleSearchKeyChange: React.FormEventHandler
-  onNodeClick: Node['props']['onClick']
-  onFocusSearchBar: React.FocusEventHandler
-  setUpTree: (treeData?: TreeData) => void
-  goTo: (path: string[]) => void
+  init: GetCreatedMethod<typeof init>
+  execAfterRender: GetCreatedMethod<typeof execAfterRender>
+  handleKeyDown: GetCreatedMethod<typeof handleKeyDown>
+  handleSearchKeyChange: GetCreatedMethod<typeof handleSearchKeyChange>
+  onNodeClick: GetCreatedMethod<typeof onNodeClick>
+  onFocusSearchBar: GetCreatedMethod<typeof onFocusSearchBar>
+  setUpTree: GetCreatedMethod<typeof setUpTree>
+  goTo: GetCreatedMethod<typeof goTo>
 }
 
 type DepthMap = Map<TreeNode, number>
@@ -130,32 +129,32 @@ const setUpTree: MethodCreator<
   ConnectorState,
   [Pick<Props, 'treeData' | 'metaData' | 'compressSingletonFolder' | 'accessToken'>]
 > = dispatch => async ({ treeData, metaData, compressSingletonFolder, accessToken }) => {
-    if (!treeData) return
-    dispatch.call(setStateText, 'Rendering File List...')
-    const { root, gitModules } = treeParser.parse(treeData, metaData)
+  if (!treeData) return
+  dispatch.call(setStateText, 'Rendering File List...')
+  const { root, gitModules } = treeParser.parse(treeData, metaData)
 
-    if (gitModules) {
-      if (metaData.userName && metaData.repoName && gitModules.sha) {
-        const blobData = await GitHubHelper.getBlobData({
-          userName: metaData.userName,
-          repoName: metaData.repoName,
-          sha: gitModules.sha,
-          accessToken,
-        })
+  if (gitModules) {
+    if (metaData.userName && metaData.repoName && gitModules.sha) {
+      const blobData = await GitHubHelper.getBlobData({
+        userName: metaData.userName,
+        repoName: metaData.repoName,
+        sha: gitModules.sha,
+        accessToken,
+      })
 
-        resolveGitModules(root as TreeNode, blobData)
-      }
+      resolveGitModules(root as TreeNode, blobData)
     }
+  }
 
-    visibleNodesGenerator = new VisibleNodesGenerator(root as TreeNode, {
-      compress: compressSingletonFolder,
-    })
+  visibleNodesGenerator = new VisibleNodesGenerator(root as TreeNode, {
+    compress: compressSingletonFolder,
+  })
 
-    await visibleNodesGenerator.init()
+  await visibleNodesGenerator.init()
 
-    tasksAfterRender.push(DOMHelper.focusSearchInput)
-    dispatch.call(setStateText, '')
-    dispatch.call(goTo, URLHelper.getCurrentPath(metaData.branchName))
+  tasksAfterRender.push(DOMHelper.focusSearchInput)
+  dispatch.call(setStateText, '')
+  dispatch.call(goTo, URLHelper.getCurrentPath(metaData.branchName))
 }
 
 const execAfterRender: MethodCreator<Props, ConnectorState> = dispatch => () => {
@@ -180,80 +179,98 @@ const handleKeyDown: MethodCreator<
   [React.KeyboardEvent]
 > = dispatch => event => {
   const { searched, visibleNodes } = dispatch.get()
-    if (!visibleNodes) return
-    const { nodes, focusedNode, expandedNodes, depths } = visibleNodes
-    function handleVerticalMove(index: number) {
-      if (0 <= index && index < nodes.length) {
-        DOMHelper.focusFileExplorer()
-        dispatch.call(focusNode, nodes[index], false)
-      } else {
-        DOMHelper.focusSearchInput()
-        dispatch.call(focusNode, null, false)
-      }
+  if (!visibleNodes) return
+  const { nodes, focusedNode, expandedNodes, depths } = visibleNodes
+  function handleVerticalMove(index: number) {
+    if (0 <= index && index < nodes.length) {
+      DOMHelper.focusFileExplorer()
+      dispatch.call(focusNode, nodes[index], false)
+    } else {
+      DOMHelper.focusSearchInput()
+      dispatch.call(focusNode, null, false)
     }
+  }
 
-    const { key } = event
-    // prevent document body scrolling if the keypress results in Gitako action
-    let muteEvent = true
-    if (focusedNode) {
-      const focusedNodeIndex = nodes.indexOf(focusedNode)
-      switch (key) {
-        case 'ArrowUp':
-          // focus on previous node
-          handleVerticalMove(focusedNodeIndex - 1)
-          break
+  const { key } = event
+  // prevent document body scrolling if the keypress results in Gitako action
+  let muteEvent = true
+  if (focusedNode) {
+    const focusedNodeIndex = nodes.indexOf(focusedNode)
+    switch (key) {
+      case 'ArrowUp':
+        // focus on previous node
+        handleVerticalMove(focusedNodeIndex - 1)
+        break
 
-        case 'ArrowDown':
-          // focus on next node
-          handleVerticalMove(focusedNodeIndex + 1)
-          break
+      case 'ArrowDown':
+        // focus on next node
+        handleVerticalMove(focusedNodeIndex + 1)
+        break
 
-        case 'ArrowLeft':
+      case 'ArrowLeft':
+        if (expandedNodes.has(focusedNode)) {
+          dispatch.call(setExpand, focusedNode, false)
+        } else {
+          // go forward to the start of the list, find the closest node with lower depth
+          const parentNode = getVisibleParentNode(nodes, focusedNode, depths)
+          if (parentNode) {
+            dispatch.call(focusNode, parentNode, false)
+          }
+        }
+        break
+
+      // consider the two keys as 'confirm' key
+      case 'ArrowRight':
+        // expand node or focus on first content node or redirect to file page
+        if (focusedNode.type === 'tree') {
           if (expandedNodes.has(focusedNode)) {
-            dispatch.call(setExpand, focusedNode, false)
+            const nextNode = nodes[focusedNodeIndex + 1]
+            const d1 = depths.get(nextNode)
+            const d2 = depths.get(focusedNode)
+            if (d1 !== undefined && d2 !== undefined && d1 > d2) {
+              dispatch.call(focusNode, nextNode, false)
+            }
           } else {
-            // go forward to the start of the list, find the closest node with lower depth
-            const parentNode = getVisibleParentNode(nodes, focusedNode, depths)
-            if (parentNode) {
-              dispatch.call(focusNode, parentNode, false)
-            }
+            dispatch.call(setExpand, focusedNode, true)
           }
+        } else if (focusedNode.type === 'blob') {
+          if (focusedNode.url) DOMHelper.loadWithPJAX(focusedNode.url)
+        } else if (focusedNode.type === 'commit') {
+          window.open(focusedNode.url)
+        }
+        break
+      case 'Enter':
+        // expand node or redirect to file page
+        if (focusedNode.type === 'tree') {
+          if (searched) {
+            dispatch.call(goTo, focusedNode.path.split('/'))
+          } else {
+            dispatch.call(setExpand, focusedNode, true)
+          }
+        } else if (focusedNode.type === 'blob') {
+          if (searched) dispatch.call(goTo, focusedNode.path.split('/'))
+          else if (focusedNode.url) DOMHelper.loadWithPJAX(focusedNode.url)
+        } else if (focusedNode.type === 'commit') {
+          window.open(focusedNode.url)
+        }
+        break
+      default:
+        muteEvent = false
+    }
+    if (muteEvent) {
+      event.preventDefault()
+    }
+  } else {
+    // now search input is focused
+    if (nodes.length) {
+      switch (key) {
+        case 'ArrowDown':
+          DOMHelper.focusFileExplorer()
+          dispatch.call(focusNode, nodes[0], false)
           break
-
-        // consider the two keys as 'confirm' key
-        case 'ArrowRight':
-          // expand node or focus on first content node or redirect to file page
-          if (focusedNode.type === 'tree') {
-            if (expandedNodes.has(focusedNode)) {
-              const nextNode = nodes[focusedNodeIndex + 1]
-              const d1 = depths.get(nextNode)
-              const d2 = depths.get(focusedNode)
-              if (d1 !== undefined && d2 !== undefined && d1 > d2) {
-                dispatch.call(focusNode, nextNode, false)
-              }
-            } else {
-              dispatch.call(setExpand, focusedNode, true)
-            }
-          } else if (focusedNode.type === 'blob') {
-            if (focusedNode.url) DOMHelper.loadWithPJAX(focusedNode.url)
-          } else if (focusedNode.type === 'commit') {
-            window.open(focusedNode.url)
-          }
-          break
-        case 'Enter':
-          // expand node or redirect to file page
-          if (focusedNode.type === 'tree') {
-            if (searched) {
-              dispatch.call(goTo, focusedNode.path.split('/'))
-            } else {
-              dispatch.call(setExpand, focusedNode, true)
-            }
-          } else if (focusedNode.type === 'blob') {
-            if (searched) dispatch.call(goTo, focusedNode.path.split('/'))
-            else if (focusedNode.url) DOMHelper.loadWithPJAX(focusedNode.url)
-          } else if (focusedNode.type === 'commit') {
-            window.open(focusedNode.url)
-          }
+        case 'ArrowUp':
+          DOMHelper.focusFileExplorer()
+          dispatch.call(focusNode, nodes[nodes.length - 1], false)
           break
         default:
           muteEvent = false
@@ -261,26 +278,8 @@ const handleKeyDown: MethodCreator<
       if (muteEvent) {
         event.preventDefault()
       }
-    } else {
-      // now search input is focused
-      if (nodes.length) {
-        switch (key) {
-          case 'ArrowDown':
-            DOMHelper.focusFileExplorer()
-            dispatch.call(focusNode, nodes[0], false)
-            break
-          case 'ArrowUp':
-            DOMHelper.focusFileExplorer()
-            dispatch.call(focusNode, nodes[nodes.length - 1], false)
-            break
-          default:
-            muteEvent = false
-        }
-        if (muteEvent) {
-          event.preventDefault()
-        }
-      }
     }
+  }
 }
 
 const onFocusSearchBar: MethodCreator<Props, ConnectorState> = dispatch => () =>
@@ -342,9 +341,9 @@ const focusNode: MethodCreator<Props, ConnectorState, [TreeNode | null, boolean]
   skipScroll = false,
 ) => {
   const { visibleNodes } = dispatch.get()
-    if (!visibleNodes) return
-    visibleNodesGenerator.focusNode(node)
-    dispatch.call(updateVisibleNodes)
+  if (!visibleNodes) return
+  visibleNodesGenerator.focusNode(node)
+  dispatch.call(updateVisibleNodes)
 }
 
 const onNodeClick: MethodCreator<Props, ConnectorState, [TreeNode]> = dispatch => node => {
