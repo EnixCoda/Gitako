@@ -48,7 +48,9 @@ type Task = () => void
 const tasksAfterRender: (Task)[] = []
 let visibleNodesGenerator: VisibleNodesGenerator
 
-const init: MethodCreator<Props, ConnectorState> = dispatch => () =>
+type BoundMethodCreator<Args = []> = MethodCreator<Props, ConnectorState, Args>
+
+const init: BoundMethodCreator = dispatch => () =>
   dispatch.call(setStateText, 'Fetching File List...')
 
 const githubSubModuleURLRegex = {
@@ -124,9 +126,7 @@ function handleParsed(root: TreeNode, parsed: Parsed) {
   })
 }
 
-const setUpTree: MethodCreator<
-  Props,
-  ConnectorState,
+const setUpTree: BoundMethodCreator<
   [Pick<Props, 'treeData' | 'metaData' | 'compressSingletonFolder' | 'accessToken'>]
 > = dispatch => async ({ treeData, metaData, compressSingletonFolder, accessToken }) => {
   if (!treeData) return
@@ -157,27 +157,21 @@ const setUpTree: MethodCreator<
   dispatch.call(goTo, URLHelper.getCurrentPath(metaData.branchName))
 }
 
-const execAfterRender: MethodCreator<Props, ConnectorState> = dispatch => () => {
+const execAfterRender: BoundMethodCreator = dispatch => () => {
   for (const task of tasksAfterRender) {
     task()
   }
   tasksAfterRender.length = 0
 }
 
-const setStateText: MethodCreator<
-  Props,
-  ConnectorState,
-  [ConnectorState['stateText']]
-> = dispatch => (text: string) =>
+const setStateText: BoundMethodCreator<[ConnectorState['stateText']]> = dispatch => (
+  text: string,
+) =>
   dispatch.set({
     stateText: text,
   })
 
-const handleKeyDown: MethodCreator<
-  Props,
-  ConnectorState,
-  [React.KeyboardEvent]
-> = dispatch => event => {
+const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch => event => {
   const { searched, visibleNodes } = dispatch.get()
   if (!visibleNodes) return
   const { nodes, focusedNode, expandedNodes, depths } = visibleNodes
@@ -282,19 +276,16 @@ const handleKeyDown: MethodCreator<
   }
 }
 
-const onFocusSearchBar: MethodCreator<Props, ConnectorState> = dispatch => () =>
-  dispatch.call(focusNode, null, false)
+const onFocusSearchBar: BoundMethodCreator = dispatch => () => dispatch.call(focusNode, null, false)
 
-const handleSearchKeyChange: MethodCreator<
-  Props,
-  ConnectorState,
+const handleSearchKeyChange: BoundMethodCreator<
   [React.FormEvent<HTMLInputElement>]
 > = dispatch => async event => {
   const searchKey = event.currentTarget.value
   await dispatch.call(search, searchKey)
 }
 
-const search: MethodCreator<Props, ConnectorState, [string]> = dispatch => {
+const search: BoundMethodCreator<[string]> = dispatch => {
   let i = 0
   return async searchKey => {
     dispatch.set({ searchKey })
@@ -307,7 +298,7 @@ const search: MethodCreator<Props, ConnectorState, [string]> = dispatch => {
   }
 }
 
-const goTo: MethodCreator<Props, ConnectorState, [string[]]> = dispatch => async currentPath => {
+const goTo: BoundMethodCreator<[string[]]> = dispatch => async currentPath => {
   await visibleNodesGenerator.search('')
   tasksAfterRender.push(() => {
     const nodeExpandedTo = visibleNodesGenerator.expandTo(currentPath.join('/'))
@@ -319,15 +310,12 @@ const goTo: MethodCreator<Props, ConnectorState, [string[]]> = dispatch => async
   dispatch.set({ searchKey: '', searched: false })
 }
 
-const setExpand: MethodCreator<Props, ConnectorState, [TreeNode, boolean]> = dispatch => (
-  node,
-  expand = false,
-) => {
+const setExpand: BoundMethodCreator<[TreeNode, boolean]> = dispatch => (node, expand = false) => {
   visibleNodesGenerator.setExpand(node, expand)
   dispatch.call(focusNode, node, false)
 }
 
-const toggleNodeExpansion: MethodCreator<Props, ConnectorState, [TreeNode, boolean]> = dispatch => (
+const toggleNodeExpansion: BoundMethodCreator<[TreeNode, boolean]> = dispatch => (
   node,
   skipScrollToNode,
 ) => {
@@ -336,7 +324,7 @@ const toggleNodeExpansion: MethodCreator<Props, ConnectorState, [TreeNode, boole
   tasksAfterRender.push(DOMHelper.focusFileExplorer)
 }
 
-const focusNode: MethodCreator<Props, ConnectorState, [TreeNode | null, boolean]> = dispatch => (
+const focusNode: BoundMethodCreator<[TreeNode | null, boolean]> = dispatch => (
   node: TreeNode | null,
   skipScroll = false,
 ) => {
@@ -346,7 +334,7 @@ const focusNode: MethodCreator<Props, ConnectorState, [TreeNode | null, boolean]
   dispatch.call(updateVisibleNodes)
 }
 
-const onNodeClick: MethodCreator<Props, ConnectorState, [TreeNode]> = dispatch => node => {
+const onNodeClick: BoundMethodCreator<[TreeNode]> = dispatch => node => {
   if (node.type === 'tree') {
     dispatch.call(toggleNodeExpansion, node, true)
   } else if (node.type === 'blob') {
@@ -359,7 +347,7 @@ const onNodeClick: MethodCreator<Props, ConnectorState, [TreeNode]> = dispatch =
   }
 }
 
-const updateVisibleNodes: MethodCreator<Props, ConnectorState> = dispatch => () => {
+const updateVisibleNodes: BoundMethodCreator = dispatch => () => {
   const { visibleNodes } = visibleNodesGenerator
   dispatch.set({ visibleNodes })
 }

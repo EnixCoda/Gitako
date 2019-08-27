@@ -54,7 +54,9 @@ export type ConnectorState = {
   setCompressSingleton: GetCreatedMethod<typeof setCompressSingleton>
 }
 
-const init: MethodCreator<Props, ConnectorState> = dispatch => async () => {
+type BoundMethodCreator<Args = []> = MethodCreator<Props, ConnectorState, Args>
+
+const init: BoundMethodCreator = dispatch => async () => {
   const { initializingPromise } = dispatch.get()
   if (initializingPromise) await initializingPromise
 
@@ -156,7 +158,7 @@ const init: MethodCreator<Props, ConnectorState> = dispatch => async () => {
   }
 }
 
-const handleError: MethodCreator<Props, ConnectorState, [Error]> = dispatch => async err => {
+const handleError: BoundMethodCreator<[Error]> = dispatch => async err => {
   if (err.message === EMPTY_PROJECT) {
     dispatch.call(setError, 'This project seems to be empty.')
   } else if (err.message === BLOCKED_PROJECT) {
@@ -176,7 +178,7 @@ const handleError: MethodCreator<Props, ConnectorState, [Error]> = dispatch => a
   }
 }
 
-const onPJAXEnd: MethodCreator<Props, ConnectorState> = dispatch => () => {
+const onPJAXEnd: BoundMethodCreator = dispatch => () => {
   const { metaData, copyFileButton, copySnippetButton } = dispatch.get()
   DOMHelper.unmountTopProgressBar()
   DOMHelper.decorateGitHubPageContent({ copyFileButton, copySnippetButton })
@@ -185,7 +187,7 @@ const onPJAXEnd: MethodCreator<Props, ConnectorState> = dispatch => () => {
   dispatch.call(setMetaData, mergedMetaData)
 }
 
-const onKeyDown: MethodCreator<Props, ConnectorState, [KeyboardEvent]> = dispatch => e => {
+const onKeyDown: BoundMethodCreator<[KeyboardEvent]> = dispatch => e => {
   const { toggleShowSideBarShortcut } = dispatch.get()
   if (toggleShowSideBarShortcut) {
     const keys = keyHelper.parseEvent(e)
@@ -195,41 +197,31 @@ const onKeyDown: MethodCreator<Props, ConnectorState, [KeyboardEvent]> = dispatc
   }
 }
 
-const toggleShowSideBar: MethodCreator<Props, ConnectorState> = dispatch => () =>
+const toggleShowSideBar: BoundMethodCreator = dispatch => () =>
   dispatch.call(setShouldShow, !dispatch.get().shouldShow)
 
-const setShouldShow: MethodCreator<
-  Props,
-  ConnectorState,
+const setShouldShow: BoundMethodCreator<
   [ConnectorState['shouldShow']]
 > = dispatch => shouldShow => {
   dispatch.set({ shouldShow }, shouldShow ? DOMHelper.focusFileExplorer : undefined)
   DOMHelper.setBodyIndent(shouldShow)
 }
 
-const setError: MethodCreator<
-  Props,
-  ConnectorState,
-  [ConnectorState['error']]
-> = dispatch => error => {
+const setError: BoundMethodCreator<[ConnectorState['error']]> = dispatch => error => {
   dispatch.set({ error })
   dispatch.call(setShouldShow, false)
 }
 
-const toggleShowSettings: MethodCreator<Props, ConnectorState> = dispatch => () =>
+const toggleShowSettings: BoundMethodCreator = dispatch => () =>
   dispatch.set(({ showSettings }) => ({
     showSettings: !showSettings,
   }))
 
-const setShowSettings: MethodCreator<
-  Props,
-  ConnectorState,
+const setShowSettings: BoundMethodCreator<
   [ConnectorState['showSettings']]
 > = dispatch => showSettings => dispatch.set({ showSettings })
 
-const onAccessTokenChange: MethodCreator<
-  Props,
-  ConnectorState,
+const onAccessTokenChange: BoundMethodCreator<
   [ConnectorState['accessToken']]
 > = dispatch => accessToken => {
   dispatch.set({ accessToken })
@@ -239,37 +231,26 @@ const onAccessTokenChange: MethodCreator<
   }
 }
 
-const onShortcutChange: MethodCreator<
-  Props,
-  ConnectorState,
+const onShortcutChange: BoundMethodCreator<
   [ConnectorState['toggleShowSideBarShortcut']]
 > = dispatch => shortcut => dispatch.set({ toggleShowSideBarShortcut: shortcut })
 
-const setMetaData: MethodCreator<
-  Props,
-  ConnectorState,
-  [ConnectorState['metaData']]
-> = dispatch => metaData => dispatch.set({ metaData })
+const setMetaData: BoundMethodCreator<[ConnectorState['metaData']]> = dispatch => metaData =>
+  dispatch.set({ metaData })
 
-const setCompressSingleton: MethodCreator<
-  Props,
-  ConnectorState,
+const setCompressSingleton: BoundMethodCreator<
   [ConnectorState['compressSingletonFolder']]
 > = dispatch => compressSingletonFolder => dispatch.set({ compressSingletonFolder })
 
-const setCopyFile: MethodCreator<
-  Props,
-  ConnectorState,
+const setCopyFile: BoundMethodCreator<
   [ConnectorState['copyFileButton']]
 > = dispatch => copyFileButton => dispatch.set({ copyFileButton })
 
-const setCopySnippet: MethodCreator<
-  Props,
-  ConnectorState,
+const setCopySnippet: BoundMethodCreator<
   [ConnectorState['copySnippetButton']]
 > = dispatch => copySnippetButton => dispatch.set({ copySnippetButton })
 
-const useListeners: MethodCreator<Props, ConnectorState, [boolean]> = dispatch => {
+const useListeners: BoundMethodCreator<[boolean]> = dispatch => {
   const $onPJAXEnd = dispatch.call.bind(dispatch, onPJAXEnd)
   const $onKeyDown = dispatch.call.bind(dispatch, onKeyDown)
   return on => {
