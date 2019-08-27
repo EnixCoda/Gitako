@@ -31,9 +31,9 @@ class FileExplorer extends React.Component<Props & ConnectorState> {
   }
 
   componentWillMount() {
-    const { init, setUpTree, treeData } = this.props
+    const { init, setUpTree, treeData, metaData, compressSingletonFolder, accessToken } = this.props
     init()
-    setUpTree(treeData)
+    setUpTree({ treeData, metaData, compressSingletonFolder, accessToken })
   }
 
   componentDidMount() {
@@ -43,8 +43,8 @@ class FileExplorer extends React.Component<Props & ConnectorState> {
 
   componentWillReceiveProps(nextProps: Props & ConnectorState) {
     if (nextProps.treeData !== this.props.treeData) {
-      const { setUpTree } = nextProps
-      setUpTree()
+      const { setUpTree, treeData, metaData, compressSingletonFolder, accessToken } = nextProps
+      setUpTree({ treeData, metaData, compressSingletonFolder, accessToken })
     }
   }
 

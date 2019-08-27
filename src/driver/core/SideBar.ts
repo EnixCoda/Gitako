@@ -56,7 +56,7 @@ export type ConnectorState = {
 }
 
 const init: MethodCreator<Props, ConnectorState> = dispatch => async () => {
-  const { initializingPromise } = await promisifyGetState(dispatch.get)()
+  const { initializingPromise } = dispatch.get()
   if (initializingPromise) await initializingPromise
 
   let done: any = null // cannot use type `(() => void) | null` here
@@ -178,28 +178,26 @@ const handleError: MethodCreator<Props, ConnectorState, [Error]> = dispatch => a
 }
 
 const onPJAXEnd: MethodCreator<Props, ConnectorState> = dispatch => () => {
-  dispatch.get(({ metaData, copyFileButton, copySnippetButton }) => {
+  const { metaData, copyFileButton, copySnippetButton } = dispatch.get()
     DOMHelper.unmountTopProgressBar()
     DOMHelper.decorateGitHubPageContent({ copyFileButton, copySnippetButton })
     const mergedMetaData = { ...metaData, ...URLHelper.parse() }
     dispatch.call(setShouldShow, URLHelper.isInCodePage(mergedMetaData))
     dispatch.call(setMetaData, mergedMetaData)
-  })
 }
 
 const onKeyDown: MethodCreator<Props, ConnectorState, [KeyboardEvent]> = dispatch => e => {
-  dispatch.get(({ toggleShowSideBarShortcut }) => {
+  const { toggleShowSideBarShortcut } = dispatch.get()
     if (toggleShowSideBarShortcut) {
       const keys = keyHelper.parseEvent(e)
       if (keys === toggleShowSideBarShortcut) {
         dispatch.call(toggleShowSideBar)
       }
     }
-  })
 }
 
 const toggleShowSideBar: MethodCreator<Props, ConnectorState> = dispatch => () =>
-  dispatch.get(({ shouldShow }) => dispatch.call(setShouldShow, !shouldShow))
+  dispatch.call(setShouldShow, !dispatch.get().shouldShow)
 
 const setShouldShow: MethodCreator<
   Props,
@@ -276,7 +274,7 @@ const useListeners: MethodCreator<Props, ConnectorState, [boolean]> = dispatch =
   const $onPJAXEnd = dispatch.call.bind(dispatch, onPJAXEnd)
   const $onKeyDown = dispatch.call.bind(dispatch, onKeyDown)
   return on => {
-    dispatch.get(({ disabled }, _) => {
+    const { disabled } = dispatch.get()
       if (on && !disabled) {
         window.addEventListener('pjax:complete', $onPJAXEnd)
         window.addEventListener('keydown', $onKeyDown)
@@ -284,7 +282,6 @@ const useListeners: MethodCreator<Props, ConnectorState, [boolean]> = dispatch =
         window.removeEventListener('pjax:complete', $onPJAXEnd)
         window.removeEventListener('keydown', $onKeyDown)
       }
-    })
   }
 }
 

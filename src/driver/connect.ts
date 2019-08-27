@@ -34,10 +34,7 @@ function run<M extends Method>([method, args]: [M, Parameters<M>]) {
 }
 
 export type DispatchState<Props, State> = React.Component<Props, State>['setState']
-export type PreDispatch<Props, State> = (
-  dispatchCallback: (state: State, props: Props) => Props | Promise<void> | void,
-  callback?: () => void,
-) => void
+export type GetState<State> = () => State
 export type TriggerOtherMethod<Props, State> = <Args, MC extends MethodCreator<Props, State, Args>>(
   methodCreator: MC,
   ...args: Parameters<ReturnType<MC>>
@@ -45,7 +42,7 @@ export type TriggerOtherMethod<Props, State> = <Args, MC extends MethodCreator<P
 
 export type Dispatch<Props, State> = {
   set: DispatchState<Props, State>
-  get: PreDispatch<Props, State>
+  get: GetState<State>
   call: TriggerOtherMethod<Props, State>
 }
 
@@ -81,13 +78,7 @@ function link<P, S>(instance: React.Component<P, S>, sources: Sources<P, S>): Wr
   const dispatchState: DispatchState<P, S> = (updater, callback) => {
     instance.setState(updater, callback)
   }
-  const prepareState: PreDispatch<P, S> = async updater => {
-    try {
-      await updater(instance.state, instance.props)
-    } catch (error) {
-      raiseError(error)
-    }
-  }
+  const prepareState: GetState<S> = () => instance.state
   const dispatch: Dispatch<P, S> = {
     call: dispatchCall,
     get: prepareState,
@@ -124,8 +115,3 @@ export default function connect<BaseP, ExtraP>(mapping: Sources<BaseP, ExtraP>) 
   }
 }
 
-export function promisifyGetState<Props, State>(
-  get: PreDispatch<Props, State>,
-): () => Promise<State> {
-  return () => new Promise(resolve => get(state => resolve(state)))
-}

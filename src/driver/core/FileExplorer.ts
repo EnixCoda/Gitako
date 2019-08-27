@@ -125,8 +125,11 @@ function handleParsed(root: TreeNode, parsed: Parsed) {
   })
 }
 
-const setUpTree: MethodCreator<Props, ConnectorState> = dispatch => () =>
-  dispatch.get(async (_, { treeData, metaData, compressSingletonFolder, accessToken }) => {
+const setUpTree: MethodCreator<
+  Props,
+  ConnectorState,
+  [Pick<Props, 'treeData' | 'metaData' | 'compressSingletonFolder' | 'accessToken'>]
+> = dispatch => async ({ treeData, metaData, compressSingletonFolder, accessToken }) => {
     if (!treeData) return
     dispatch.call(setStateText, 'Rendering File List...')
     const { root, gitModules } = treeParser.parse(treeData, metaData)
@@ -153,7 +156,7 @@ const setUpTree: MethodCreator<Props, ConnectorState> = dispatch => () =>
     tasksAfterRender.push(DOMHelper.focusSearchInput)
     dispatch.call(setStateText, '')
     dispatch.call(goTo, URLHelper.getCurrentPath(metaData.branchName))
-  })
+}
 
 const execAfterRender: MethodCreator<Props, ConnectorState> = dispatch => () => {
   for (const task of tasksAfterRender) {
@@ -175,8 +178,8 @@ const handleKeyDown: MethodCreator<
   Props,
   ConnectorState,
   [React.KeyboardEvent]
-> = dispatch => event =>
-  dispatch.get(({ searched, visibleNodes }) => {
+> = dispatch => event => {
+  const { searched, visibleNodes } = dispatch.get()
     if (!visibleNodes) return
     const { nodes, focusedNode, expandedNodes, depths } = visibleNodes
     function handleVerticalMove(index: number) {
@@ -278,7 +281,7 @@ const handleKeyDown: MethodCreator<
         }
       }
     }
-  })
+}
 
 const onFocusSearchBar: MethodCreator<Props, ConnectorState> = dispatch => () =>
   dispatch.call(focusNode, null, false)
@@ -337,12 +340,12 @@ const toggleNodeExpansion: MethodCreator<Props, ConnectorState, [TreeNode, boole
 const focusNode: MethodCreator<Props, ConnectorState, [TreeNode | null, boolean]> = dispatch => (
   node: TreeNode | null,
   skipScroll = false,
-) =>
-  dispatch.get(({ visibleNodes }) => {
+) => {
+  const { visibleNodes } = dispatch.get()
     if (!visibleNodes) return
     visibleNodesGenerator.focusNode(node)
     dispatch.call(updateVisibleNodes)
-  })
+}
 
 const onNodeClick: MethodCreator<Props, ConnectorState, [TreeNode]> = dispatch => node => {
   if (node.type === 'tree') {
