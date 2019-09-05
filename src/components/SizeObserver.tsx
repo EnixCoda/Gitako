@@ -11,11 +11,7 @@ type Props = {
   children(size: Partial<Size>): React.ReactNode
 } & React.HTMLAttributes<HTMLElement>
 
-export default function SizeObserver({
-  type = 'div',
-  children,
-  ...rest
-}: React.PropsWithChildren<Props>) {
+export default function SizeObserver({ type = 'div', children, ...rest }: Props) {
   const ref = React.useRef<any>()
 
   const [size, setSize] = React.useState<Partial<Size>>({
