@@ -1,8 +1,8 @@
-import * as React from 'react'
 import Icon from 'components/Icon'
+import * as React from 'react'
 import configHelper, { configKeys } from 'utils/configHelper'
+import { friendlyFormatShortcut, JSONRequest, parseURLSearch } from 'utils/general'
 import keyHelper from 'utils/keyHelper'
-import { friendlyFormatShortcut, parseURLSearch, JSONRequest } from 'utils/general'
 import { version } from '../../package.json'
 
 const wikiLinks = {
@@ -258,7 +258,11 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
                       Clear
                     </button>
                   ) : (
-                    <button className={'btn'} onClick={this.saveToken} disabled={!accessToken}>
+                    <button
+                      className={'btn'}
+                      onClick={() => this.saveToken()}
+                      disabled={!accessToken}
+                    >
                       Save
                     </button>
                   )}
