@@ -6,19 +6,17 @@ Yet another Chrome extension for GitHub. Inspired by [Octotree](https://github.c
 
 - 📂 neat file tree
 - 🔎 instant file search
-- 🏎 super fast even in gigantic projects
+- 🏎 extremely fast even in gigantic projects
 - ⌨️ intuitive keyboard accessibility
   - navigate file using arrow keys
   - shortcut for toggling sidebar
 - 🚀 boosts loading speed
-- ↔️ customizable size
-- 📋 copy with single click
-  - copy code snippets from markdown preview
-  - copy whole content of a file
-- 🤖 support private repo and frequent usages
-- 🎨 UI consistent to GitHub's
-- 🎈 light size (~60kb) & low memory usage
+- ↔️ customizable layout
+- 📋 shortcuts for copy snippets and file
+- 🕶️ support private repositories
 - 🗂 support git submodule
+- 🎨 GitHub-friendly UI
+- 🎈 light weight in size and memory usage
 
 ### Install
 
