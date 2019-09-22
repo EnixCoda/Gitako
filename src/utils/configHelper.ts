@@ -1,4 +1,3 @@
-import { pick } from 'utils/general'
 import storageHelper from 'utils/storageHelper'
 
 export type Config = {
@@ -48,16 +47,16 @@ async function getAll(): Promise<Config> {
   return applyDefaultConfigs(await storageHelper.get(configKeyArray))
 }
 
-async function getOne(key: keyof Config) {
+async function getOne(key: configKeys) {
   return (await getAll())[key]
 }
 
-async function set(partialConfig: Partial<Config>) {
-  return await storageHelper.set(pick(partialConfig, configKeyArray))
+async function setAll(partialConfig: Partial<Config>) {
+  return await storageHelper.set(partialConfig)
 }
 
 async function setOne(key: configKeys, value: any) {
-  return await set({
+  return await setAll({
     [key]: value,
   })
 }
@@ -65,6 +64,6 @@ async function setOne(key: configKeys, value: any) {
 export default {
   getAll,
   getOne,
-  set,
+  setAll,
   setOne,
 }

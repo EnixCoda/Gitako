@@ -1,6 +1,6 @@
 const localStorage = chrome.storage.local
 
-function get(mapping: string | string[] | object): Promise<any> {
+function get(mapping: string[] | null): Promise<any> {
   return new Promise(resolve => localStorage.get(mapping, resolve))
 }
 
