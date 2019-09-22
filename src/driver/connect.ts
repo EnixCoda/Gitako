@@ -1,9 +1,6 @@
 import * as React from 'react'
-import { raiseError } from 'analytics'
 
-export type Method<Args = any[]> = (
-  ...args: Args extends any[] ? Args : any[]
-) => void | Promise<void>
+export type Method<Args extends any[] = any[]> = (...args: Args) => void | Promise<void>
 export type Middleware = <M extends Method, MM extends Method>(
   method: M,
   args: Parameters<M>,
@@ -35,9 +32,9 @@ function run<M extends Method>([method, args]: [M, Parameters<M>]) {
 
 export type DispatchState<Props, State> = React.Component<Props, State>['setState']
 export type GetState<State> = () => State
-export type TriggerOtherMethod<Props, State> = <Args, MC extends MethodCreator<Props, State, Args>>(
-  methodCreator: MC,
-  ...args: Parameters<ReturnType<MC>>
+export type TriggerOtherMethod<Props, State> = <Args extends any[]>(
+  methodCreator: MethodCreator<Props, State, Args>,
+  ...args: Parameters<ReturnType<MethodCreator<Props, State, Args>>>
 ) => void
 
 export type Dispatch<Props, State> = {
@@ -46,7 +43,7 @@ export type Dispatch<Props, State> = {
   call: TriggerOtherMethod<Props, State>
 }
 
-export type MethodCreator<Props, State, Args = []> = (
+export type MethodCreator<Props, State, Args extends any[] = []> = (
   dispatch: Dispatch<Props, State>,
 ) => Method<Args>
 

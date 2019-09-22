@@ -1,14 +1,14 @@
+import { raiseError } from 'analytics'
+import { Props } from 'components/FileExplorer'
+import { GetCreatedMethod, MethodCreator } from 'driver/connect'
 import * as ini from 'ini'
 import { Base64 } from 'js-base64'
 import DOMHelper from 'utils/DOMHelper'
+import { findNode } from 'utils/general'
+import GitHubHelper, { BlobData } from 'utils/GitHubHelper'
 import treeParser from 'utils/treeParser'
 import URLHelper from 'utils/URLHelper'
 import VisibleNodesGenerator, { TreeNode, VisibleNodes } from 'utils/VisibleNodesGenerator'
-import GitHubHelper, { BlobData } from 'utils/GitHubHelper'
-import { findNode } from 'utils/general'
-import { MethodCreator, GetCreatedMethod } from 'driver/connect'
-import { Props } from 'components/FileExplorer'
-import { raiseError } from 'analytics'
 
 export type ConnectorState = {
   stateText: string
@@ -48,7 +48,7 @@ type Task = () => void
 const tasksAfterRender: (Task)[] = []
 let visibleNodesGenerator: VisibleNodesGenerator
 
-type BoundMethodCreator<Args = []> = MethodCreator<Props, ConnectorState, Args>
+type BoundMethodCreator<Args extends any[] = []> = MethodCreator<Props, ConnectorState, Args>
 
 const init: BoundMethodCreator = dispatch => () =>
   dispatch.call(setStateText, 'Fetching File List...')

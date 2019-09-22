@@ -34,11 +34,7 @@ function applyDefaultConfigs(configs: Config) {
   return configKeyArray.reduce(
     (applied, configKey) => {
       const key = configKey as keyof Config
-      if (!(key in configs)) {
-        applied[key] = defaultConfigs[key]
-      } else {
-        applied[key] = configs[key]
-      }
+      Object.assign(applied, { [key]: key in configs ? configs[key] : defaultConfigs[key] })
       return applied
     },
     {} as Config,

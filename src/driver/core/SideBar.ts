@@ -1,22 +1,20 @@
+import { Props } from 'components/SideBar'
+import { GetCreatedMethod, MethodCreator } from 'driver/connect'
+import configHelper, { Config } from 'utils/configHelper'
 import DOMHelper from 'utils/DOMHelper'
 import GitHubHelper, {
-  NOT_FOUND,
-  BAD_CREDENTIALS,
   API_RATE_LIMIT,
+  BAD_CREDENTIALS,
+  BLOCKED_PROJECT,
   EMPTY_PROJECT,
   MetaData,
+  NOT_FOUND,
   TreeData,
-  BLOCKED_PROJECT,
 } from 'utils/GitHubHelper'
-import configHelper from 'utils/configHelper'
-import URLHelper from 'utils/URLHelper'
 import keyHelper from 'utils/keyHelper'
-import { MethodCreator, GetCreatedMethod } from 'driver/connect'
-import { Props } from 'components/SideBar'
+import URLHelper from 'utils/URLHelper'
 
 export type ConnectorState = {
-  // initial width of side bar
-  baseSize: number
   // error message
   error?: string
   // whether Gitako side bar should be shown
@@ -25,22 +23,14 @@ export type ConnectorState = {
   showSettings: boolean
   // whether failed loading the repo due to it is private
   errorDueToAuth: boolean
-  // access token for GitHub
-  accessToken?: string
-  // the shortcut string for toggle sidebar
-  toggleShowSideBarShortcut?: string
   // meta data for the repository
   metaData?: MetaData
   // file tree data
   treeData?: TreeData
-  // few settings
-  compressSingletonFolder: boolean
-  copyFileButton: boolean
-  copySnippetButton: boolean
   logoContainerElement: Element | null
   disabled: boolean
   initializingPromise: Promise<void> | null
-
+} & {
   init: GetCreatedMethod<typeof init>
   onPJAXEnd: GetCreatedMethod<typeof onPJAXEnd>
   onKeyDown: GetCreatedMethod<typeof onKeyDown>
@@ -52,9 +42,16 @@ export type ConnectorState = {
   setCopyFile: GetCreatedMethod<typeof setCopyFile>
   setCopySnippet: GetCreatedMethod<typeof setCopySnippet>
   setCompressSingleton: GetCreatedMethod<typeof setCompressSingleton>
-}
+} & {
+  baseSize: number
+  toggleShowSideBarShortcut?: string
+  accessToken?: string
+} & Pick<
+    Config,
+    'compressSingletonFolder' | 'copyFileButton' | 'copySnippetButton' | 'sideBarOpenStatus'
+  >
 
-type BoundMethodCreator<Args = []> = MethodCreator<Props, ConnectorState, Args>
+type BoundMethodCreator<Args extends any[] = []> = MethodCreator<Props, ConnectorState, Args>
 
 const init: BoundMethodCreator = dispatch => async () => {
   const { initializingPromise } = dispatch.get()
@@ -251,8 +248,8 @@ const setCopySnippet: BoundMethodCreator<
 > = dispatch => copySnippetButton => dispatch.set({ copySnippetButton })
 
 const useListeners: BoundMethodCreator<[boolean]> = dispatch => {
-  const $onPJAXEnd = dispatch.call.bind(dispatch, onPJAXEnd)
-  const $onKeyDown = dispatch.call.bind(dispatch, onKeyDown)
+  const $onPJAXEnd = () => dispatch.call(onPJAXEnd)
+  const $onKeyDown = (e: KeyboardEvent) => dispatch.call(onKeyDown, e)
   return on => {
     const { disabled } = dispatch.get()
     if (on && !disabled) {
