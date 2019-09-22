@@ -118,7 +118,7 @@ function handleParsed(root: TreeNode, parsed: Parsed) {
           node.accessDenied = true
         }
       } else {
-        raiseError(Error(`Sub-module node ${path} not found`))
+        raiseError(new Error(`Sub-module node not found`), { path })
       }
     } else {
       handleParsed(root, value as Parsed)

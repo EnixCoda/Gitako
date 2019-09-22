@@ -16,7 +16,7 @@ function isEmptyProject(content: any /* examined any */) {
 }
 
 function isBlockedProject(content: any /* examined any */) {
-  return content && content['message'] === "Repository access blocked"
+  return content && content['message'] === 'Repository access blocked'
 }
 
 type Options = {
@@ -45,7 +45,7 @@ async function request(url: string, { accessToken }: Options = {}) {
       if (isEmptyProject(content)) throw new Error(EMPTY_PROJECT)
       if (isBlockedProject(content)) throw new Error(BLOCKED_PROJECT)
       // Unknown type of error, report it!
-      raiseError(new Error(`Got ${res.statusText} when requesting ${url}`))
+      raiseError(new Error(res.statusText))
       throw new Error(content && content.message)
     }
   }

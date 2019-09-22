@@ -1,6 +1,6 @@
+import * as Sentry from '@sentry/browser'
 import { Middleware } from 'driver/connect.js'
 import { IN_PRODUCTION_MODE } from 'env'
-import * as Sentry from '@sentry/browser'
 import { version } from '../package.json'
 
 const PUBLIC_KEY = 'd22ec5c9cc874539a51c78388c12e3b0'
@@ -29,7 +29,12 @@ export const withErrorLog: Middleware = function withErrorLog(method, args) {
   ]
 }
 
-function reportError(error: Error, extra?: any) {
+function reportError(
+  error: Error,
+  extra?: {
+    [key: string]: any
+  },
+) {
   if (!IN_PRODUCTION_MODE) {
     console.error(error)
     console.error('Extra:\n', extra)
