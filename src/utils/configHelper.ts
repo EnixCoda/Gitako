@@ -1,13 +1,14 @@
-import storageHelper from 'utils/storageHelper'
 import { pick } from 'utils/general'
+import storageHelper from 'utils/storageHelper'
 
-type Config = {
+export type Config = {
   sideBarWidth: number
   shortcut: string | undefined
   access_token: string | undefined
   compressSingletonFolder: boolean
   copyFileButton: boolean
   copySnippetButton: boolean
+  intelligentToggle: boolean | null // `null` stands for intelligent, boolean for sidebar open status
 }
 
 export enum configKeys {
@@ -17,6 +18,7 @@ export enum configKeys {
   compressSingletonFolder = 'compressSingletonFolder',
   copyFileButton = 'copyFileButton',
   copySnippetButton = 'copySnippetButton',
+  intelligentToggle = 'intelligentToggle',
 }
 
 const defaultConfigs: Config = {
@@ -26,6 +28,7 @@ const defaultConfigs: Config = {
   compressSingletonFolder: true,
   copyFileButton: true,
   copySnippetButton: true,
+  intelligentToggle: null,
 }
 
 const configKeyArray = Object.values(configKeys)

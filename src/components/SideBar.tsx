@@ -1,14 +1,14 @@
-import * as React from 'react'
-import { SideBar as SideBarCore } from 'driver/core'
-import connect from 'driver/connect'
 import FileExplorer from 'components/FileExplorer'
-import ToggleShowButton from 'components/ToggleShowButton'
 import MetaBar from 'components/MetaBar'
-import SettingsBar from 'components/SettingsBar'
 import Portal from 'components/Portal'
 import Resizable from 'components/Resizable'
-import cx from 'utils/cx'
+import SettingsBar from 'components/SettingsBar'
+import ToggleShowButton from 'components/ToggleShowButton'
+import connect from 'driver/connect'
+import { SideBar as SideBarCore } from 'driver/core'
 import { ConnectorState } from 'driver/core/SideBar'
+import * as React from 'react'
+import cx from 'utils/cx'
 
 export type Props = {}
 
@@ -100,6 +100,7 @@ class Gitako extends React.PureComponent<Props & ConnectorState> {
       compressSingletonFolder,
       copyFileButton,
       copySnippetButton,
+      intelligentToggle,
       toggleShowSideBarShortcut,
       logoContainerElement,
       toggleShowSideBar,
@@ -109,6 +110,7 @@ class Gitako extends React.PureComponent<Props & ConnectorState> {
       setCompressSingleton,
       setCopyFile,
       setCopySnippet,
+      setIntelligentToggle,
     } = this.props
     return (
       <div className={'gitako-side-bar'}>
@@ -132,9 +134,11 @@ class Gitako extends React.PureComponent<Props & ConnectorState> {
               compressSingletonFolder={compressSingletonFolder}
               copyFileButton={copyFileButton}
               copySnippetButton={copySnippetButton}
+              intelligentToggle={intelligentToggle}
               setCompressSingleton={setCompressSingleton}
               setCopyFile={setCopyFile}
               setCopySnippet={setCopySnippet}
+              setIntelligentToggle={setIntelligentToggle}
             />
           </div>
         </Resizable>
