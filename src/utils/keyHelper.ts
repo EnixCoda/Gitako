@@ -38,15 +38,20 @@ function parseKeyCode(code: string) {
 
 function parseEvent(e: KeyboardEvent | React.KeyboardEvent) {
   const { altKey: alt, shiftKey: shift, metaKey: meta, ctrlKey: ctrl } = e
-  const code = parseKeyCode(e.key)
-  const keys = { meta, ctrl, shift, alt, [code]: true }
-  const combination = parse(
-    Object.entries(keys)
-      .filter(([key, pressed]) => pressed)
-      .map(([key, pressed]) => key)
-      .join('+')
-  )
-  return combination
+  try {
+    const code = parseKeyCode(e.key)
+    const keys = { meta, ctrl, shift, alt, [code]: true }
+    const combination = parse(
+      Object.entries(keys)
+        .filter(([key, pressed]) => pressed)
+        .map(([key, pressed]) => key)
+        .join('+'),
+    )
+    return combination
+  } catch (err) {
+    const serializedKeyData = JSON.stringify({ keyCode: e.keyCode, key: e.key })
+    throw new Error(`Error parse keyboard event: ${serializedKeyData}`)
+  }
 }
 
 export default {
