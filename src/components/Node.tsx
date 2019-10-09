@@ -1,8 +1,8 @@
-import * as React from 'react'
 import Icon from 'components/Icon'
+import * as React from 'react'
 import cx from 'utils/cx'
+import { OperatingSystems, os } from 'utils/general'
 import { TreeNode } from 'utils/VisibleNodesGenerator'
-import { os, OperatingSystems } from 'utils/general'
 
 function getIconType(node: TreeNode) {
   switch (node.type) {
@@ -52,7 +52,7 @@ export default class Node extends React.PureComponent<Props> {
             className={cx('node-item', { expanded })}
             style={{ paddingLeft: `${10 + 20 * depth}px` }}
           >
-            <div>
+            <div className={'node-item-label'}>
               <Icon type={getIconType(node)} />
               <span className={'node-item-name'}>{name}</span>
             </div>
