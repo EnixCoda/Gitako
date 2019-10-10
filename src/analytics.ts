@@ -41,12 +41,12 @@ function reportError(
     return
   }
 
-  Sentry.captureException(error)
-  if (extra) {
-    Sentry.withScope(scope => {
+  Sentry.withScope(scope => {
+    if (extra) {
       Object.keys(extra).forEach(key => {
         scope.setExtra(key, extra[key])
       })
-    })
-  }
+    }
+    Sentry.captureException(error)
+  })
 }
