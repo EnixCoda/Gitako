@@ -49,7 +49,11 @@ function parseEvent(e: KeyboardEvent | React.KeyboardEvent) {
     )
     return combination
   } catch (err) {
-    const serializedKeyData = JSON.stringify({ keyCode: e.keyCode, key: e.key })
+    const serializedKeyData = JSON.stringify({
+      keyCode: e.keyCode,
+      key: e.key,
+      charCode: e.charCode,
+    })
     throw new Error(`Error parse keyboard event: ${serializedKeyData}`)
   }
 }
