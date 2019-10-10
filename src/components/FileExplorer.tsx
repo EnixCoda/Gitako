@@ -26,7 +26,6 @@ class FileExplorer extends React.Component<Props & ConnectorState> {
   static defaultProps: Partial<Props & ConnectorState> = {
     freeze: false,
     searchKey: '',
-    searched: false,
     visibleNodes: null,
   }
 
@@ -126,10 +125,9 @@ class FileExplorer extends React.Component<Props & ConnectorState> {
   })
 
   private renderActions: Node['props']['renderActions'] = node => {
-    const { searchKey, searched, goTo } = this.props
+    const { searchKey, goTo } = this.props
     return (
-      searchKey &&
-      searched && (
+      searchKey && (
         <button
           title={'Reveal in file tree'}
           className={'go-to-button'}
@@ -158,7 +156,7 @@ class FileExplorer extends React.Component<Props & ConnectorState> {
       visibleNodes,
       freeze,
       handleKeyDown,
-      handleSearchKeyChange,
+      search,
       toggleShowSettings,
       onFocusSearchBar,
       searchKey,
@@ -175,11 +173,7 @@ class FileExplorer extends React.Component<Props & ConnectorState> {
         ) : (
           visibleNodes && (
             <React.Fragment>
-              <SearchBar
-                searchKey={searchKey}
-                onSearchKeyChange={handleSearchKeyChange}
-                onFocus={onFocusSearchBar}
-              />
+              <SearchBar searchKey={searchKey} onSearch={search} onFocus={onFocusSearchBar} />
               {this.renderFiles(visibleNodes)}
             </React.Fragment>
           )

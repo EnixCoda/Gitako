@@ -9,9 +9,7 @@ export default function cx(...classNames: any[]): string {
         case 'string':
           return className
         case 'object':
-          return cx(
-            ...Object.entries(className).map(([key, value]) => (Boolean(value) ? key : null)),
-          )
+          return cx(...Object.entries(className).map(([key, value]) => (value ? key : null)))
         default:
           return ''
       }
