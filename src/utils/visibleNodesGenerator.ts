@@ -31,41 +31,15 @@ export type TreeNode = {
   accessDenied?: boolean
 }
 
-function getFilterFunc(keyRegex: RegExp) {
-  return function filterFunc({ name }: TreeNode) {
-    return keyRegex.test(name)
-  }
-}
-
 function filterDuplications<T>(arr: T[]) {
   return Array.from(new Set(arr))
 }
 
-function search(treeNodes: TreeNode[], searchKey: string): TreeNode[] {
-  if (!searchKey) return treeNodes
-  /**
-   * if searchKey is 'abcd'
-   * then keyRegex will be /abcd/i and /a.*?b.*?c.*?d/i
-   */
-  const regexpGenerators: ((raw: string) => RegExp)[] = [
-    raw => new RegExp(raw, 'i'),
-    raw => new RegExp(raw.split('').join('.*?'), 'i'),
-  ]
-
-  const keyRegexes: RegExp[] = []
-  for (const generator of regexpGenerators) {
-    try {
-      const regExp = generator(searchKey)
-      if (keyRegexes.find(keyRegex => keyRegex.source === regExp.source)) continue
-      // prevent duplicated regExp
-      keyRegexes.push(regExp)
-    } catch (err) {
-      // ignore invalid regexp
-    }
-  }
+function search(treeNodes: TreeNode[], regexps: RegExp[]): TreeNode[] {
+  if (!regexps.length) return treeNodes
 
   const searchResults = ([] as TreeNode[]).concat(
-    ...keyRegexes.map(keyRegex => treeNodes.filter(getFilterFunc(keyRegex))),
+    ...regexps.map(keyRegex => treeNodes.filter(({ name }) => keyRegex.test(name))),
   )
   return filterDuplications(searchResults)
 }
@@ -121,10 +95,10 @@ class L2 {
     this.searchedNodes = null
   }
 
-  search = async (searchKey: string) => {
-    this.compressed = !searchKey
-    this.searchedNodes = searchKey
-      ? search(this.l1.nodes, searchKey)
+  search = (regexps: RegExp[]) => {
+    this.compressed = !regexps.length
+    this.searchedNodes = regexps.length
+      ? search(this.l1.nodes, regexps)
       : this.getRoot().contents || []
   }
 
@@ -246,8 +220,8 @@ export default class VisibleNodesGenerator {
     this.l3 = new L3(this.l1, this.l2)
     this.l4 = new L4(this.l1, this.l2, this.l3)
 
-    this.search = async (...args) => {
-      const r = await this.l2.search(...args)
+    this.search = (...args) => {
+      const r = this.l2.search(...args)
       this.l3.generateVisibleNodes()
       this.l4.focusNode(null)
       return r
@@ -258,8 +232,8 @@ export default class VisibleNodesGenerator {
     this.focusNode = (...args) => this.l4.focusNode(...args)
   }
 
-  async init() {
-    await this.l2.search('')
+  init() {
+    this.l2.search([])
     this.l3.generateVisibleNodes()
   }
 

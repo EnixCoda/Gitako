@@ -128,3 +128,14 @@ export async function JSONRequest(url: string, data: any, method = 'post') {
     body: JSON.stringify(data),
   })).json()
 }
+
+export function searchKeyToRegexps(searchKey: string) {
+  if (!searchKey) return []
+
+  try {
+    // case-sensitive when searchKey contains uppercase char
+    return [new RegExp(searchKey, /[A-Z]/i.test(searchKey) ? '' : 'i')]
+  } catch (err) {
+    return [/$^/] // matching nothing if failed transforming regexp
+  }
+}
