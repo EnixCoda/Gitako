@@ -7,6 +7,7 @@ echo "Got version $GITAKO_VERSION"
 
 # sentry
 yarn sentry-cli releases new "$GITAKO_VERSION"
+yarn sentry-cli releases set-commits --auto $GITAKO_VERSION
 yarn sentry-cli releases files "$GITAKO_VERSION" upload-sourcemaps dist --no-rewrite
 yarn sentry-cli releases finalize "$GITAKO_VERSION"
 
