@@ -2,9 +2,9 @@
  * this helper helps manipulating DOM
  */
 
-import * as PJAX from 'pjax'
-import * as NProgress from 'nprogress'
 import { raiseError } from 'analytics'
+import * as NProgress from 'nprogress'
+import * as PJAX from 'pjax'
 
 NProgress.configure({ showSpinner: false })
 
@@ -48,7 +48,7 @@ function $<EE extends Element, E extends (element: EE) => any, O extends () => a
 }
 
 function isInCodePage() {
-  const branchListSelector = '.branch-select-menu'
+  const branchListSelector = '#branch-select-menu.branch-select-menu'
   return Boolean($(branchListSelector))
 }
 
@@ -69,7 +69,7 @@ function getCurrentBranch() {
     }
     const defaultTitle = 'Switch branches or tags'
     const title = branchButtonElement.title.trim()
-    if (title !== defaultTitle) return title
+    if (title !== defaultTitle && !title.includes(' ')) return title
   }
 
   const findFileButtonSelector =
@@ -83,7 +83,7 @@ function getCurrentBranch() {
     const result = urlFromFindFileButton.match(commitPathRegex)
     if (result) {
       const [_, userName, repoName, branchName] = result
-      return branchName
+      if (!branchName.includes(' ')) return branchName
     }
   }
 
