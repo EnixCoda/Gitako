@@ -3,6 +3,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const path = require('path')
 const Dotenv = require('dotenv-webpack')
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
 const srcPath = path.resolve(__dirname, 'src')
 const packagesPath = path.resolve(__dirname, 'packages')
@@ -21,6 +22,12 @@ const plugins = [
   new ForkTsCheckerWebpackPlugin(),
   new Dotenv(),
 ]
+
+const analyse = process.env.ANALYSE !== undefined
+if (analyse) {
+  plugins.push(new BundleAnalyzerPlugin())
+  console.log(`BundleAnalyzerPlugin added`)
+}
 
 const IN_PRODUCTION_MODE = process.env.NODE_ENV === 'production'
 if (IN_PRODUCTION_MODE) {
