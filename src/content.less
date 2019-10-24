@@ -92,8 +92,9 @@
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  min-width: 30px;
+  width: 30px;
   height: 30px;
+  padding: 4px;
   will-change: transform;
   border: 1px solid transparent;
 
@@ -140,10 +141,14 @@
 
   .action-icon {
     color: #666666;
-    width: 16px;
-    height: 20px;
-    margin: 5px 6px;
+    width: 100%;
+    height: 100%;
+    text-align: center;
     transition: all @animation-duration ease;
+    .octicon {
+      width: 100%;
+      height: 100%;
+    }
   }
 
   &:hover {
@@ -189,15 +194,17 @@
     width: 0;
     background: #e1e4e8;
     border-left: 1px solid #e1e4e8;
+    overflow: hidden;
     &:hover {
       width: 16px;
       background: #fafbfc;
       border-right: 1px solid #e1e4e8;
     }
 
-    .grabber-icon {
+    .octicon {
       transform: rotate(90deg);
-      width: 12px;
+      width: 14px;
+      height: 22px;
       font-size: 0;
     }
   }
@@ -216,9 +223,10 @@
     }
 
     .octicon {
-      transition: 0.3s ease;
+      transition: transform 0.3s ease;
       color: rgba(3, 47, 98, 0.55);
-      vertical-align: initial;
+      width: 100%;
+      height: 100%;
     }
 
     .octicon-wrapper {
@@ -226,7 +234,6 @@
       width: 16px;
       height: 16px;
       text-align: center;
-      vertical-align: middle;
     }
 
     .octicon-color {
@@ -275,12 +282,12 @@
         .loading-indicator {
           display: flex;
           align-items: center;
-        }
 
-        .loading-indicator-icon {
-          width: 20px;
-          height: 20px;
-          animation: rotate 2s infinite linear;
+          .octicon {
+            width: 20px;
+            height: 20px;
+            animation: rotate 2s infinite linear;
+          }
         }
       }
 
@@ -352,7 +359,7 @@
             white-space: nowrap;
 
             // folder icon rotate when expand
-            &.expanded .octicon.octicon-triangle-right {
+            &.expanded .octicon.TriangleRight {
               transform: rotate(90deg);
             }
 
@@ -362,7 +369,6 @@
 
               .node-item-name {
                 padding-left: 6px;
-                vertical-align: middle;
               }
             }
             .node-item:hover .node-item-name {
@@ -391,6 +397,7 @@
       background: #fafbfc;
       display: flex;
       flex-direction: column;
+      max-height: 100%;
       &-title {
         border-top: 1px solid #eaecef;
         padding: 6px 10px;
