@@ -1,13 +1,13 @@
 import storageHelper from 'utils/storageHelper'
-import { pick } from 'utils/general'
 
-type Config = {
+export type Config = {
   sideBarWidth: number
   shortcut: string | undefined
   access_token: string | undefined
   compressSingletonFolder: boolean
   copyFileButton: boolean
   copySnippetButton: boolean
+  intelligentToggle: boolean | null // `null` stands for intelligent, boolean for sidebar open status
 }
 
 export enum configKeys {
@@ -17,6 +17,7 @@ export enum configKeys {
   compressSingletonFolder = 'compressSingletonFolder',
   copyFileButton = 'copyFileButton',
   copySnippetButton = 'copySnippetButton',
+  intelligentToggle = 'intelligentToggle',
 }
 
 const defaultConfigs: Config = {
@@ -26,6 +27,7 @@ const defaultConfigs: Config = {
   compressSingletonFolder: true,
   copyFileButton: true,
   copySnippetButton: true,
+  intelligentToggle: null,
 }
 
 const configKeyArray = Object.values(configKeys)
@@ -34,11 +36,7 @@ function applyDefaultConfigs(configs: Config) {
   return configKeyArray.reduce(
     (applied, configKey) => {
       const key = configKey as keyof Config
-      if (!(key in configs)) {
-        applied[key] = defaultConfigs[key]
-      } else {
-        applied[key] = configs[key]
-      }
+      Object.assign(applied, { [key]: key in configs ? configs[key] : defaultConfigs[key] })
       return applied
     },
     {} as Config,
@@ -49,16 +47,16 @@ async function getAll(): Promise<Config> {
   return applyDefaultConfigs(await storageHelper.get(configKeyArray))
 }
 
-async function getOne(key: keyof Config) {
+async function getOne(key: configKeys) {
   return (await getAll())[key]
 }
 
-async function set(partialConfig: Partial<Config>) {
-  return await storageHelper.set(pick(partialConfig, configKeyArray))
+async function setAll(partialConfig: Partial<Config>) {
+  return await storageHelper.set(partialConfig)
 }
 
 async function setOne(key: configKeys, value: any) {
-  return await set({
+  return await setAll({
     [key]: value,
   })
 }
@@ -66,6 +64,6 @@ async function setOne(key: configKeys, value: any) {
 export default {
   getAll,
   getOne,
-  set,
+  setAll,
   setOne,
 }

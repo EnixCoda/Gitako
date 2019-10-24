@@ -1,24 +1,36 @@
 import * as React from 'react'
+import cx from 'utils/cx'
 
 type Props = {
-  onSearchKeyChange: React.FormEventHandler
+  onSearch: (searchKey: string) => void
   onFocus: React.FocusEventHandler
   searchKey: string
 }
 
-export default function SearchBar({ onSearchKeyChange, onFocus, searchKey }: Props) {
+export default function SearchBar({ onSearch, onFocus, searchKey }: Props) {
   return (
     <div className={'search-input-wrapper'}>
       <input
         onFocus={onFocus}
         tabIndex={0}
-        className="form-control search-input"
+        className={cx('form-control search-input', {
+          error: !isValidRegexpSource(searchKey),
+        })}
         aria-label="search files"
-        placeholder="Search files (RegEx)"
+        placeholder="Search files (use RegExp)"
         type="text"
-        onChange={onSearchKeyChange}
+        onChange={({ target: { value } }) => onSearch(value)}
         value={searchKey}
       />
     </div>
   )
+}
+
+function isValidRegexpSource(source: string) {
+  try {
+    new RegExp(source)
+    return true
+  } catch (err) {
+    return false
+  }
 }

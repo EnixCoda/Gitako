@@ -1,17 +1,17 @@
 import Icon from 'components/Icon'
 import * as React from 'react'
-import configHelper, { configKeys } from 'utils/configHelper'
+import configHelper, { Config, configKeys } from 'utils/configHelper'
 import { friendlyFormatShortcut, JSONRequest, parseURLSearch } from 'utils/general'
 import keyHelper from 'utils/keyHelper'
 import { version } from '../../package.json'
 
+const WIKI_HOME_LINK = 'https://github.com/EnixCoda/Gitako/wiki'
 const wikiLinks = {
-  compressSingletonFolder: 'https://github.com/EnixCoda/Gitako/wiki/Compress-Singleton-Folder',
-  changeLog: 'https://github.com/EnixCoda/Gitako/wiki/Change-Log',
-  copyFileButton: 'https://github.com/EnixCoda/Gitako/wiki/Copy-file-and-snippet',
-  copySnippet: 'https://github.com/EnixCoda/Gitako/wiki/Copy-file-and-snippet',
-  createAccessToken:
-    'https://github.com/EnixCoda/Gitako/wiki/How-to-create-access-token-for-Gitako%3F',
+  compressSingletonFolder: `${WIKI_HOME_LINK}/Compress-Singleton-Folder`,
+  changeLog: `${WIKI_HOME_LINK}/Change-Log`,
+  copyFileButton: `${WIKI_HOME_LINK}/Copy-file-and-snippet`,
+  copySnippet: `${WIKI_HOME_LINK}/Copy-file-and-snippet`,
+  createAccessToken: `${WIKI_HOME_LINK}/How-to-create-access-token-for-Gitako%3F`,
 }
 
 const oauth = {
@@ -26,15 +26,16 @@ type Props = {
   activated: boolean
   onAccessTokenChange: (accessToken: string) => void
   onShortcutChange: (shortcut: string) => void
-  compressSingletonFolder: boolean
-  copyFileButton: boolean
-  copySnippetButton: boolean
   setCopyFile: (copyFileButton: Props['copyFileButton']) => void
   setCopySnippet: (copySnippetButton: Props['copySnippetButton']) => void
   setCompressSingleton: (compressSingletonFolder: Props['compressSingletonFolder']) => void
+  setIntelligentToggle: (intelligentToggle: Props['intelligentToggle']) => void
   toggleShowSettings: () => void
   toggleShowSideBarShortcut?: string
-}
+} & Pick<
+  Config,
+  'compressSingletonFolder' | 'copyFileButton' | 'copySnippetButton' | 'intelligentToggle'
+>
 
 type State = {
   accessToken?: string
@@ -47,7 +48,8 @@ type State = {
     label: string
     onChange: (e: React.FormEvent<HTMLInputElement>) => Promise<void> | void
     getValue: () => boolean
-    wikiLink: string
+    wikiLink?: string
+    description?: string
   }[]
 }
 
@@ -71,20 +73,32 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
       },
       {
         key: 'copy-file',
-        label: 'Copy File',
+        label: 'Copy File Shortcut',
         onChange: this.createOnToggleChecked(configKeys.copyFileButton, this.props.setCopyFile),
         getValue: () => this.props.copyFileButton,
         wikiLink: wikiLinks.copyFileButton,
       },
       {
         key: 'copy-snippet',
-        label: 'Copy Snippet',
+        label: 'Copy Snippet Shortcut',
         onChange: this.createOnToggleChecked(
           configKeys.copySnippetButton,
           this.props.setCopySnippet,
         ),
         getValue: () => this.props.copySnippetButton,
         wikiLink: wikiLinks.copySnippet,
+      },
+      {
+        key: 'intelligent-toggle',
+        label: 'Intelligent Toggle',
+        onChange: async (e: React.FormEvent<HTMLInputElement>) => {
+          const { checked } = e.currentTarget
+          const intelligentToggle = checked ? null : true
+          await configHelper.setOne(configKeys.intelligentToggle, intelligentToggle)
+          this.props.setIntelligentToggle(intelligentToggle)
+        },
+        getValue: () => this.props.intelligentToggle === null,
+        description: `Gitako will open/close automatically according to page content when this is enabled.`,
       },
     ],
   }
@@ -300,9 +314,17 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
                         checked={option.getValue()}
                       />
                       &nbsp;{option.label}&nbsp;
-                      <a href={option.wikiLink} target={'_blank'}>
-                        (?)
-                      </a>
+                      {option.wikiLink ? (
+                        <a href={option.wikiLink} target={'_blank'}>
+                          (?)
+                        </a>
+                      ) : (
+                        option.description && (
+                          <span className={'description'} title={option.description}>
+                            (?)
+                          </span>
+                        )
+                      )}
                     </label>
                     <br />
                   </React.Fragment>

@@ -1,22 +1,20 @@
+import { Props } from 'components/SideBar'
+import { GetCreatedMethod, MethodCreator } from 'driver/connect'
+import configHelper, { Config, configKeys } from 'utils/configHelper'
 import DOMHelper from 'utils/DOMHelper'
 import GitHubHelper, {
-  NOT_FOUND,
-  BAD_CREDENTIALS,
   API_RATE_LIMIT,
+  BAD_CREDENTIALS,
+  BLOCKED_PROJECT,
   EMPTY_PROJECT,
   MetaData,
+  NOT_FOUND,
   TreeData,
-  BLOCKED_PROJECT,
 } from 'utils/GitHubHelper'
-import configHelper from 'utils/configHelper'
-import URLHelper from 'utils/URLHelper'
 import keyHelper from 'utils/keyHelper'
-import { MethodCreator, GetCreatedMethod } from 'driver/connect'
-import { Props } from 'components/SideBar'
+import URLHelper from 'utils/URLHelper'
 
 export type ConnectorState = {
-  // initial width of side bar
-  baseSize: number
   // error message
   error?: string
   // whether Gitako side bar should be shown
@@ -25,22 +23,14 @@ export type ConnectorState = {
   showSettings: boolean
   // whether failed loading the repo due to it is private
   errorDueToAuth: boolean
-  // access token for GitHub
-  accessToken?: string
-  // the shortcut string for toggle sidebar
-  toggleShowSideBarShortcut?: string
   // meta data for the repository
   metaData?: MetaData
   // file tree data
   treeData?: TreeData
-  // few settings
-  compressSingletonFolder: boolean
-  copyFileButton: boolean
-  copySnippetButton: boolean
   logoContainerElement: Element | null
   disabled: boolean
   initializingPromise: Promise<void> | null
-
+} & {
   init: GetCreatedMethod<typeof init>
   onPJAXEnd: GetCreatedMethod<typeof onPJAXEnd>
   onKeyDown: GetCreatedMethod<typeof onKeyDown>
@@ -52,9 +42,17 @@ export type ConnectorState = {
   setCopyFile: GetCreatedMethod<typeof setCopyFile>
   setCopySnippet: GetCreatedMethod<typeof setCopySnippet>
   setCompressSingleton: GetCreatedMethod<typeof setCompressSingleton>
-}
+  setIntelligentToggle: GetCreatedMethod<typeof setIntelligentToggle>
+} & {
+  baseSize: number
+  toggleShowSideBarShortcut?: string
+  accessToken?: string
+} & Pick<
+    Config,
+    'compressSingletonFolder' | 'copyFileButton' | 'copySnippetButton' | 'intelligentToggle'
+  >
 
-type BoundMethodCreator<Args = []> = MethodCreator<Props, ConnectorState, Args>
+type BoundMethodCreator<Args extends any[] = []> = MethodCreator<Props, ConnectorState, Args>
 
 const init: BoundMethodCreator = dispatch => async () => {
   const { initializingPromise } = dispatch.get()
@@ -91,6 +89,7 @@ const init: BoundMethodCreator = dispatch => async () => {
       compressSingletonFolder,
       copyFileButton,
       copySnippetButton,
+      intelligentToggle,
     } = await configHelper.getAll()
     DOMHelper.decorateGitHubPageContent({ copyFileButton, copySnippetButton })
     dispatch.set({
@@ -100,6 +99,7 @@ const init: BoundMethodCreator = dispatch => async () => {
       compressSingletonFolder,
       copyFileButton,
       copySnippetButton,
+      intelligentToggle,
     })
 
     if (!metaData.branchName || !metaData.userName) return
@@ -148,7 +148,8 @@ const init: BoundMethodCreator = dispatch => async () => {
       .catch(err => dispatch.call(handleError, err))
     Object.assign(metaData, { api: metaDataFromAPI })
     dispatch.call(setMetaData, metaData)
-    const shouldShow = URLHelper.isInCodePage(metaData)
+    const shouldShow =
+      intelligentToggle === null ? URLHelper.isInCodePage(metaData) : intelligentToggle
     dispatch.call(setShouldShow, shouldShow)
     DOMHelper.markGitakoReadyState()
   } catch (err) {
@@ -179,12 +180,15 @@ const handleError: BoundMethodCreator<[Error]> = dispatch => async err => {
 }
 
 const onPJAXEnd: BoundMethodCreator = dispatch => () => {
-  const { metaData, copyFileButton, copySnippetButton } = dispatch.get()
+  const { metaData, copyFileButton, copySnippetButton, intelligentToggle } = dispatch.get()
   DOMHelper.unmountTopProgressBar()
   DOMHelper.decorateGitHubPageContent({ copyFileButton, copySnippetButton })
   const mergedMetaData = { ...metaData, ...URLHelper.parse() }
-  dispatch.call(setShouldShow, URLHelper.isInCodePage(mergedMetaData))
   dispatch.call(setMetaData, mergedMetaData)
+
+  if (intelligentToggle === null) {
+    dispatch.call(setShouldShow, URLHelper.isInCodePage(mergedMetaData))
+  }
 }
 
 const onKeyDown: BoundMethodCreator<[KeyboardEvent]> = dispatch => e => {
@@ -197,8 +201,15 @@ const onKeyDown: BoundMethodCreator<[KeyboardEvent]> = dispatch => e => {
   }
 }
 
-const toggleShowSideBar: BoundMethodCreator = dispatch => () =>
-  dispatch.call(setShouldShow, !dispatch.get().shouldShow)
+const toggleShowSideBar: BoundMethodCreator = dispatch => () => {
+  const { intelligentToggle } = dispatch.get()
+  const shouldShow = !dispatch.get().shouldShow
+  dispatch.call(setShouldShow, shouldShow)
+
+  if (intelligentToggle !== null) {
+    dispatch.call(setIntelligentToggle, shouldShow)
+  }
+}
 
 const setShouldShow: BoundMethodCreator<
   [ConnectorState['shouldShow']]
@@ -250,9 +261,16 @@ const setCopySnippet: BoundMethodCreator<
   [ConnectorState['copySnippetButton']]
 > = dispatch => copySnippetButton => dispatch.set({ copySnippetButton })
 
+const setIntelligentToggle: BoundMethodCreator<
+  [ConnectorState['intelligentToggle']]
+> = dispatch => intelligentToggle => {
+  configHelper.setOne(configKeys.intelligentToggle, intelligentToggle)
+  dispatch.set({ intelligentToggle })
+}
+
 const useListeners: BoundMethodCreator<[boolean]> = dispatch => {
-  const $onPJAXEnd = dispatch.call.bind(dispatch, onPJAXEnd)
-  const $onKeyDown = dispatch.call.bind(dispatch, onKeyDown)
+  const $onPJAXEnd = () => dispatch.call(onPJAXEnd)
+  const $onKeyDown = (e: KeyboardEvent) => dispatch.call(onKeyDown, e)
   return on => {
     const { disabled } = dispatch.get()
     if (on && !disabled) {
@@ -279,6 +297,7 @@ export default {
   setCompressSingleton,
   setCopyFile,
   setCopySnippet,
+  setIntelligentToggle,
   setError,
   handleError,
   useListeners,

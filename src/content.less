@@ -306,6 +306,10 @@
           input[type='text'].form-control {
             box-shadow: none;
             width: 100%;
+
+            &.error {
+              border-color: #d73a49;
+            }
           }
         }
 
@@ -352,30 +356,32 @@
               transform: rotate(90deg);
             }
 
-            .node-item-name {
-              padding-left: 6px;
-              vertical-align: middle;
-            }
+            .node-item-label {
+              overflow: hidden;
+              text-overflow: ellipsis;
 
+              .node-item-name {
+                padding-left: 6px;
+                vertical-align: middle;
+              }
+            }
             .node-item:hover .node-item-name {
               text-decoration: underline;
             }
-          }
-        }
-      }
 
-      .go-to-wrapper {
-        max-width: 16px;
-        overflow: hidden;
-        transition: max-width 0.5s linear;
-        &:hover {
-          max-width: 160px;
-        }
-        .go-to-button {
-          white-space: nowrap;
-          background: transparent;
-          border: none;
-          padding: 0;
+            .go-to-button {
+              display: none;
+              white-space: nowrap;
+              background: transparent;
+              border: none;
+              padding: 0;
+            }
+            &:hover {
+              .go-to-button {
+                display: inline-block;
+              }
+            }
+          }
         }
       }
     }
@@ -409,6 +415,10 @@
         }
         &-section {
           padding-bottom: 16px;
+
+          .description:hover {
+            cursor: help;
+          }
         }
 
         /* inputs for access token & shortcut were too wide */

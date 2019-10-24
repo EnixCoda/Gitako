@@ -1,17 +1,17 @@
-import * as React from 'react'
-import { FixedSizeList as List, ListChildComponentProps } from 'react-window'
+import LoadingIndicator from 'components/LoadingIndicator'
+import Node from 'components/Node'
+import SearchBar from 'components/SearchBar'
 import connect from 'driver/connect'
 import { FileExplorer as FileExplorerCore } from 'driver/core'
-import SearchBar from 'components/SearchBar'
-import Node from 'components/Node'
-import LoadingIndicator from 'components/LoadingIndicator'
-import cx from 'utils/cx'
 import { ConnectorState } from 'driver/core/FileExplorer'
-import { TreeData, MetaData } from 'utils/GitHubHelper'
-import { VisibleNodes, TreeNode } from 'utils/VisibleNodesGenerator'
+import * as React from 'react'
+import { FixedSizeList as List, ListChildComponentProps } from 'react-window'
+import cx from 'utils/cx'
+import { MetaData, TreeData } from 'utils/GitHubHelper'
+import { usePrevious } from 'utils/hooks'
+import { TreeNode, VisibleNodes } from 'utils/VisibleNodesGenerator'
 import Icon from './Icon'
 import SizeObserver from './SizeObserver'
-import { usePrevious } from 'utils/hooks'
 
 export type Props = {
   treeData?: TreeData
@@ -26,7 +26,6 @@ class FileExplorer extends React.Component<Props & ConnectorState> {
   static defaultProps: Partial<Props & ConnectorState> = {
     freeze: false,
     searchKey: '',
-    searched: false,
     visibleNodes: null,
   }
 
@@ -126,16 +125,16 @@ class FileExplorer extends React.Component<Props & ConnectorState> {
   })
 
   private renderActions: Node['props']['renderActions'] = node => {
-    const { searchKey, searched, goTo } = this.props
+    const { searchKey, goTo } = this.props
     return (
-      searchKey &&
-      searched && (
-        <div className={'go-to-wrapper'}>
-          <button className={'go-to-button'} onClick={this.revealNode(goTo, node)}>
-            <Icon type="go-to" />
-            &nbsp; Reveal in file tree
-          </button>
-        </div>
+      searchKey && (
+        <button
+          title={'Reveal in file tree'}
+          className={'go-to-button'}
+          onClick={this.revealNode(goTo, node)}
+        >
+          <Icon type="go-to" />
+        </button>
       )
     )
   }
@@ -157,7 +156,7 @@ class FileExplorer extends React.Component<Props & ConnectorState> {
       visibleNodes,
       freeze,
       handleKeyDown,
-      handleSearchKeyChange,
+      search,
       toggleShowSettings,
       onFocusSearchBar,
       searchKey,
@@ -174,11 +173,7 @@ class FileExplorer extends React.Component<Props & ConnectorState> {
         ) : (
           visibleNodes && (
             <React.Fragment>
-              <SearchBar
-                searchKey={searchKey}
-                onSearchKeyChange={handleSearchKeyChange}
-                onFocus={onFocusSearchBar}
-              />
+              <SearchBar searchKey={searchKey} onSearch={search} onFocus={onFocusSearchBar} />
               {this.renderFiles(visibleNodes)}
             </React.Fragment>
           )

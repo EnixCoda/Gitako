@@ -1,25 +1,25 @@
+import { raiseError } from 'analytics'
+import { Props } from 'components/FileExplorer'
+import { GetCreatedMethod, MethodCreator } from 'driver/connect'
 import * as ini from 'ini'
 import { Base64 } from 'js-base64'
 import DOMHelper from 'utils/DOMHelper'
+import { findNode, searchKeyToRegexps } from 'utils/general'
+import GitHubHelper, { BlobData } from 'utils/GitHubHelper'
 import treeParser from 'utils/treeParser'
 import URLHelper from 'utils/URLHelper'
 import VisibleNodesGenerator, { TreeNode, VisibleNodes } from 'utils/VisibleNodesGenerator'
-import GitHubHelper, { BlobData } from 'utils/GitHubHelper'
-import { findNode } from 'utils/general'
-import { MethodCreator, GetCreatedMethod } from 'driver/connect'
-import { Props } from 'components/FileExplorer'
-import { raiseError } from 'analytics'
 
 export type ConnectorState = {
   stateText: string
   visibleNodes: VisibleNodes | null
   searchKey: string
-  searched: boolean
+  searched: boolean // derived state from searchKey, = !!searchKey
 
   init: GetCreatedMethod<typeof init>
   execAfterRender: GetCreatedMethod<typeof execAfterRender>
   handleKeyDown: GetCreatedMethod<typeof handleKeyDown>
-  handleSearchKeyChange: GetCreatedMethod<typeof handleSearchKeyChange>
+  search: GetCreatedMethod<typeof search>
   onNodeClick: GetCreatedMethod<typeof onNodeClick>
   onFocusSearchBar: GetCreatedMethod<typeof onFocusSearchBar>
   setUpTree: GetCreatedMethod<typeof setUpTree>
@@ -48,7 +48,7 @@ type Task = () => void
 const tasksAfterRender: (Task)[] = []
 let visibleNodesGenerator: VisibleNodesGenerator
 
-type BoundMethodCreator<Args = []> = MethodCreator<Props, ConnectorState, Args>
+type BoundMethodCreator<Args extends any[] = []> = MethodCreator<Props, ConnectorState, Args>
 
 const init: BoundMethodCreator = dispatch => () =>
   dispatch.call(setStateText, 'Fetching File List...')
@@ -118,7 +118,7 @@ function handleParsed(root: TreeNode, parsed: Parsed) {
           node.accessDenied = true
         }
       } else {
-        raiseError(Error(`Sub-module node ${path} not found`))
+        raiseError(new Error(`Sub-module node not found`), { path })
       }
     } else {
       handleParsed(root, value as Parsed)
@@ -150,7 +150,7 @@ const setUpTree: BoundMethodCreator<
     compress: compressSingletonFolder,
   })
 
-  await visibleNodesGenerator.init()
+  visibleNodesGenerator.init()
 
   tasksAfterRender.push(DOMHelper.focusSearchInput)
   dispatch.call(setStateText, '')
@@ -278,28 +278,15 @@ const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch => eve
 
 const onFocusSearchBar: BoundMethodCreator = dispatch => () => dispatch.call(focusNode, null, false)
 
-const handleSearchKeyChange: BoundMethodCreator<
-  [React.FormEvent<HTMLInputElement>]
-> = dispatch => async event => {
-  const searchKey = event.currentTarget.value
-  await dispatch.call(search, searchKey)
-}
-
-const search: BoundMethodCreator<[string]> = dispatch => {
-  let i = 0
-  return async searchKey => {
-    dispatch.set({ searchKey })
-    const j = (i += 1)
-    await visibleNodesGenerator.search(searchKey)
-    if (i === j) {
-      dispatch.set(({ searched }) => ({ searched: !(searched && searchKey === '') }))
-      dispatch.call(updateVisibleNodes)
-    }
-  }
+const search: BoundMethodCreator<[string]> = dispatch => searchKey => {
+  dispatch.set({ searchKey, searched: searchKey !== '' })
+  const regexps = searchKeyToRegexps(searchKey)
+  visibleNodesGenerator.search(regexps)
+  dispatch.call(updateVisibleNodes)
 }
 
 const goTo: BoundMethodCreator<[string[]]> = dispatch => async currentPath => {
-  await visibleNodesGenerator.search('')
+  visibleNodesGenerator.search([])
   tasksAfterRender.push(() => {
     const nodeExpandedTo = visibleNodesGenerator.expandTo(currentPath.join('/'))
     if (nodeExpandedTo) {
@@ -360,7 +347,6 @@ export default {
   handleKeyDown,
   onFocusSearchBar,
   search,
-  handleSearchKeyChange,
   setExpand,
   goTo,
   toggleNodeExpansion,
