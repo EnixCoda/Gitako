@@ -69,17 +69,6 @@ module.exports = {
         include: [srcPath],
       },
       {
-        test: /\.svg$/,
-        resourceQuery: /svgr/,
-        use: [
-          {
-            loader: '@svgr/webpack',
-            options: { svgo: false },
-          },
-        ],
-        include: [srcPath],
-      },
-      {
         test: /\.json$/,
         loader: ['json-loader'],
         include: [srcPath],
