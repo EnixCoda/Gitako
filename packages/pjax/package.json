@@ -1,0 +1,72 @@
+{
+  "name": "pjax",
+  "version": "0.2.8",
+  "description": "Easily enable fast AJAX navigation on any website (using pushState + XHR)",
+  "keywords": [
+    "pjax",
+    "pushstate",
+    "ajax",
+    "navigation",
+    "transition",
+    "animation"
+  ],
+  "repository": "https://github.com/MoOx/pjax.git",
+  "author": "Maxime Thirouin",
+  "contributors": [
+    "BehindTheMath",
+    "Robin North (http://robinnorth.co.uk)"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "lib",
+    "pjax.js",
+    "pjax.min.js",
+    "index.d.ts"
+  ],
+  "types": "index.d.ts",
+  "devDependencies": {
+    "browserify": "^15.0.0",
+    "eslint": "^5.7.0",
+    "eslint-config-i-am-meticulous": "^11.0.0",
+    "husky": "^1.2.0",
+    "jsdom": "^11.5.1",
+    "jsdom-global": "^3.0.2",
+    "lint-staged": "^8.1.0",
+    "npmpub": "^3.1.0",
+    "nyc": "^11.4.1",
+    "opn-cli": "^3.1.0",
+    "prettier": "^1.14.3",
+    "serve": "^6.4.4",
+    "tap-nyc": "^1.0.3",
+    "tap-spec": "^4.1.1",
+    "tape": "^4.8.0",
+    "uglify-js": "^3.3.8"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "standalone": "browserify index.js --standalone Pjax > pjax.js",
+    "build": "npm run standalone && uglifyjs pjax.js -o pjax.min.js",
+    "build-debug": "browserify index.js --debug --standalone Pjax > pjax.js",
+    "tests": "tape -r ./tests/setup.js \"./tests/**/*.js\"",
+    "test": "npm run lint && npm run tests | tap-spec",
+    "coverage-tests": "npm run tests | tap-nyc",
+    "coverage": "nyc -x \"tests/**\" npm run coverage-tests",
+    "example": "opn http://localhost:3000/example/ && serve -p 3000 .",
+    "prepublish": "npm run build",
+    "release": "npmpub"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm test && lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "prettier --write",
+      "git add"
+    ]
+  }
+}
