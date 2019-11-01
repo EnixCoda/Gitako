@@ -23,7 +23,7 @@ var Pjax = function(options) {
   this.log("Pjax options", this.options);
 
   if (this.options.scrollRestoration && "scrollRestoration" in history) {
-    history.scrollRestoration = "manual";
+    history.scrollRestoration = "auto";
   }
 
   this.maxUid = this.lastUid = newUid();

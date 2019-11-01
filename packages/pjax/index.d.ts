@@ -179,6 +179,11 @@ declare namespace Pjax {
       requestParams?: IRequestParams[];
       formData?: FormData;
     }
+
+    /**
+     * Cache accessed pages
+     */
+    forceCache?: boolean
   }
 
   export type Switch = (oldEl: Element, newEl: Element, options?: IOptions, switchesOptions?: StringKeyedObject) => void;
