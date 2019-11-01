@@ -8,6 +8,7 @@ import Octicon, {
   FileZip,
   Gear,
   Grabber,
+  Icon as OcticonIcon,
   Markdown,
   Octoface,
   Reply,
@@ -17,37 +18,78 @@ import Octicon, {
 import * as React from 'react'
 import cx from 'utils/cx'
 
-function getSVGIconComponent(type: string) {
+function getSVGIconComponent(
+  type: string,
+): {
+  IconComponent: OcticonIcon
+  name: string
+} {
   switch (type) {
     case 'submodule':
-      return Submodule
+      return {
+        IconComponent: Submodule,
+        name: 'Submodule',
+      }
     case 'grabber':
-      return Grabber
+      return {
+        IconComponent: Grabber,
+        name: 'Grabber',
+      }
     case 'octoface':
-      return Octoface
+      return {
+        IconComponent: Octoface,
+        name: 'Octoface',
+      }
     case 'chevron-down':
-      return ChevronDown
+      return {
+        IconComponent: ChevronDown,
+        name: 'ChevronDown',
+      }
     case 'x':
-      return X
+      return {
+        IconComponent: X,
+        name: 'X',
+      }
     case 'gear':
-      return Gear
+      return {
+        IconComponent: Gear,
+        name: 'Gear',
+      }
     case 'folder':
-      return TriangleRight
+      return {
+        IconComponent: TriangleRight,
+        name: 'TriangleRight',
+      }
     case 'go-to':
-      return Reply
+      return {
+        IconComponent: Reply,
+        name: 'Reply',
+      }
     case '.pdf':
-      return FilePdf
+      return {
+        IconComponent: FilePdf,
+        name: 'FilePdf',
+      }
     case '.zip':
     case '.rar':
     case '.7z':
-      return FileZip
+      return {
+        IconComponent: FileZip,
+        name: 'FileZip',
+      }
     case '.md':
-      return Markdown
+      return {
+        IconComponent: Markdown,
+        name: 'Markdown',
+      }
     case '.png':
     case '.jpg':
     case '.gif':
     case '.bmp':
-      return FileMedia
+      return {
+        IconComponent: FileMedia,
+        name: 'FileMedia',
+      }
     case '.js':
     case '.jsx':
     case '.ts':
@@ -58,14 +100,20 @@ function getSVGIconComponent(type: string) {
     case '.less':
     case '.scss':
     case '.sass':
-      return FileCode
+      return {
+        IconComponent: FileCode,
+        name: 'FileCode',
+      }
     // TODO: adapt to more file types
     // case '': return FileBinary
     // case '': return FileSubmodule
     // case '': return FileSymlinkDirectory
     // case '': return FileSymlinkFile
     default:
-      return File
+      return {
+        IconComponent: File,
+        name: 'File',
+      }
   }
 }
 
@@ -76,12 +124,13 @@ type Props = {
 }
 
 const Icon: React.SFC<Props> = function Icon({ type, className = undefined, ...otherProps }) {
-  const icon = getSVGIconComponent(type)
+  const { name, IconComponent } = getSVGIconComponent(type)
+  const mergedClassName = cx('octicon', name)
   return (
     <div className={cx('octicon-wrapper', className)} {...otherProps}>
       {React.createElement(Octicon, {
-        icon,
-        className: cx('octicon', icon.name),
+        icon: IconComponent,
+        className: mergedClassName,
       })}
     </div>
   )
