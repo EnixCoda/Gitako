@@ -1,0 +1,9 @@
+.DS_Store
+node_modules/
+.nyc_output/
+.idea/
+dist/
+coverage/
+tests/scripts/index.html
+pjax.js
+pjax.min.js

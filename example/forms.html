@@ -1,0 +1,138 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Forms</title>
+    <script src="../pjax.js"></script>
+    <script src="example.js"></script>
+  </head>
+  <body>
+    <div class="body">
+      <h1>Forms</h1>
+      Hello. Try out the examples below and inspect the results in your browser's developer tools, or go to the <a href="index.html" class="js-Pjax">Index</a>.
+
+      <h3>GET form</h3>
+
+      <form action="" method="get" class="js-Pjax" id="get-form">
+        <label for="get-form-text">Text input:</label>
+        <input type="text" name="textInput" id="get-form-text" value="Foobar" />
+
+        <br />
+        <br />
+
+        <label for="get-form-number">Number input:</label>
+        <input type="number" name="numberInput" id="get-form-number" value="1" />
+
+        <br />
+        <br />
+
+        <label for="get-form-email">Email input:</label>
+        <input type="email" name="emailInput" id="get-form-email" value="example@example.com" />
+
+        <br />
+        <br />
+
+        <label for="get-form-textarea">Textarea:</label>
+        <textarea name="textarea" id="get-form-textarea">This is some text</textarea>
+
+        <br />
+        <br />
+
+        <fieldset>
+          <label for="get-form-radio-1">Radio input:</label>
+          <input type="radio" name="radioInput" value="radio-1" checked id="get-form-radio-1" />
+
+          <label for="get-form-radio-2">Radio input alt:</label>
+          <input type="radio" name="radioInput" value="radio-2" id="get-form-radio-2" />
+        </fieldset>
+
+        <br />
+        <br />
+
+        <label for="get-form-checkbox">Checkbox input:</label>
+        <input type="checkbox" name="checkboxInput" checked id="get-form-checkbox" />
+
+        <br />
+        <br />
+
+        <label for="get-form-select">Select list:</label>
+        <select multiple name="select" id="get-form-select">
+          <option>
+            Option 1
+          </option>
+          <option>
+            Option 2
+          </option>
+        </select>
+
+        <br />
+        <br />
+
+        <input type="submit" value="Submit" />
+      </form>
+
+      <br />
+      <br />
+
+      <h3>POST form</h3>
+
+      <form action="" method="post" class="js-Pjax" id="post-form">
+        <label for="post-form-text">Text input:</label>
+        <input type="text" name="textInput" id="post-form-text" value="Foobar" />
+
+        <br />
+        <br />
+
+        <label for="post-form-number">Number input:</label>
+        <input type="number" name="numberInput" id="post-form-number" value="1" />
+
+        <br />
+        <br />
+
+        <label for="post-form-email">Email input:</label>
+        <input type="email" name="emailInput" id="post-form-email" value="example@example.com" />
+
+        <br />
+        <br />
+
+        <label for="post-form-textarea">Textarea:</label>
+        <textarea name="textarea" id="post-form-textarea">This is some text</textarea>
+
+        <br />
+        <br />
+
+        <fieldset>
+          <label for="post-form-radio-1">Radio input:</label>
+          <input type="radio" name="radioInput" value="radio-1" checked id="post-form-radio-1" />
+
+          <label for="post-form-radio-2">Radio input alt:</label>
+          <input type="radio" name="radioInput" value="radio-2" id="post-form-radio-2" />
+        </fieldset>
+
+        <br />
+        <br />
+
+        <label for="post-form-checkbox">Checkbox input:</label>
+        <input type="checkbox" name="checkboxInput" checked id="post-form-checkbox" />
+
+        <br />
+        <br />
+
+        <label for="post-form-select">Select list:</label>
+        <select multiple name="select" id="post-form-select">
+          <option>
+            Option 1
+          </option>
+          <option>
+            Option 2
+          </option>
+        </select>
+
+        <br />
+        <br />
+
+        <input type="submit" value="Submit" />
+      </form>
+    </div>
+  </body>
+</html>

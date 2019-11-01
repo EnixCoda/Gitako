@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Hello</title>
+    <script src="../pjax.js"></script>
+    <script src="example.js"></script>
+  </head>
+  <body>
+    <div class="body">
+      <h1>Index</h1>
+      Hello.
+      Go to <a href="page2.html" class="js-Pjax">Page 2</a> or <a href="page3.html" class="js-Pjax">Page 3</a> and view your console to see Pjax events.
+      Clicking on <a href="index.html">this page</a> will do nothing.
+
+      <h2>Manual URL loading</h2>
+
+      You can use Pjax's <i>loadUrl</i> method to manually load a URL. Click the buttons below to try it out!<br /><br />
+
+      <button data-manual-trigger>loadUrl with current options</button><br /><br />
+      <button data-manual-trigger data-manual-trigger-override="true">loadUrl with overridden options (no cache busting)</button>
+
+      <h2>Forms</h2>
+
+      You can submit GET or POST forms with Pjax! Go to the <a href="forms.html">form examples</a> to try it out.
+
+    </div>
+  </body>
+</html>
