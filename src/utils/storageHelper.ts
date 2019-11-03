@@ -1,11 +1,11 @@
-const localStorage = chrome.storage.local
+const localStorage = browser.storage.local
 
 function get(mapping: string[] | null): Promise<any> {
-  return new Promise(resolve => localStorage.get(mapping, resolve))
+  return localStorage.get(mapping || undefined)
 }
 
 function set(value: any): Promise<void> {
-  return new Promise(resolve => localStorage.set(value, resolve))
+  return localStorage.set(value)
 }
 
 export default {
