@@ -1,16 +1,22 @@
 import * as Sentry from '@sentry/browser'
 import { Middleware } from 'driver/connect.js'
-import { IN_PRODUCTION_MODE } from 'env'
+import { IN_PRODUCTION_MODE, PLATFORM } from 'env'
 import { version } from '../package.json'
 
 const PUBLIC_KEY = 'd22ec5c9cc874539a51c78388c12e3b0'
 const PROJECT_ID = '1406497'
 
-Sentry.init({
+const sentryOptions: Sentry.BrowserOptions = {
   dsn: `https://${PUBLIC_KEY}@sentry.io/${PROJECT_ID}`,
   release: `v${version}`,
   environment: IN_PRODUCTION_MODE ? 'production' : 'development',
-})
+}
+if (PLATFORM !== 'chrome') {
+  // Not safe to activate all integrations in non-Chrome environments where Gitako may not run in top context
+  // https://docs.sentry.io/platforms/javascript/#sdk-integrations
+  sentryOptions.integrations = ints => ints.filter(({ name }) => name !== 'TryCatch')
+}
+Sentry.init(sentryOptions)
 
 export function raiseError(error: Error, extra?: any) {
   return reportError(error, extra)

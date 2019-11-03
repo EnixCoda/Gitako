@@ -22,6 +22,10 @@ const plugins = [
       from: 'node_modules/webextension-polyfill/dist/browser-polyfill.js',
       to: 'browser-polyfill.js',
     },
+    {
+      from: './src/firefox-shim.js',
+      to: 'firefox-shim.js',
+    },
   ]),
   new ForkTsCheckerWebpackPlugin(),
   new Dotenv(),

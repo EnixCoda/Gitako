@@ -12,7 +12,7 @@
   "content_scripts": [
     {
       "matches": ["https://github.com/*"],
-      "js": ["browser-polyfill.js", "content.js"]
+      "js": ["firefox-shim.js", "browser-polyfill.js", "content.js"]
     }
   ]
 }
