@@ -1,4 +1,5 @@
 import Icon from 'components/Icon'
+import { oauth } from 'env'
 import * as React from 'react'
 import configHelper, { Config, configKeys } from 'utils/configHelper'
 import { friendlyFormatShortcut, JSONRequest, parseURLSearch } from 'utils/general'
@@ -12,11 +13,6 @@ const wikiLinks = {
   copyFileButton: `${WIKI_HOME_LINK}/Copy-file-and-snippet`,
   copySnippet: `${WIKI_HOME_LINK}/Copy-file-and-snippet`,
   createAccessToken: `${WIKI_HOME_LINK}/How-to-create-access-token-for-Gitako%3F`,
-}
-
-const oauth = {
-  clientId: process.env.GITHUB_OAUTH_CLIENT_ID,
-  clientSecret: process.env.GITHUB_OAUTH_CLIENT_SECRET,
 }
 
 const ACCESS_TOKEN_REGEXP = /^[0-9a-f]{40}$/
