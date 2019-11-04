@@ -19,7 +19,7 @@ export default function SizeObserver({ type = 'div', children, ...rest }: Props)
     height: undefined,
   })
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     if (features.resize) {
       const observer = new window.ResizeObserver(entries => {
         const entry = entries[0]
