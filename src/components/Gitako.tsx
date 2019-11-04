@@ -1,6 +1,6 @@
-import * as React from 'react'
-import SideBar from 'components/SideBar'
 import { raiseError } from 'analytics'
+import SideBar from 'components/SideBar'
+import * as React from 'react'
 
 export default class Gitako extends React.PureComponent {
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
