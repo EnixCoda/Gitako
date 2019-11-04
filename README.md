@@ -1,6 +1,6 @@
 # Gitako
 
-Yet another Chrome extension for GitHub. Inspired by [Octotree](https://github.com/buunguyen/octotree) & [GayHub](https://github.com/jawil/GayHub), thanks to them! Gitako is aimed at providing the best performance, better UX, more consistent UI and more essential features.
+Yet another extension for GitHub, available on both Chrome and Firefox. Inspired by [Octotree](https://github.com/buunguyen/octotree) & [GayHub](https://github.com/jawil/GayHub), thanks to them! Gitako is aimed at providing the best performance, better UX, more consistent UI and more essential features.
 
 ### Features
 
@@ -20,11 +20,11 @@ Yet another Chrome extension for GitHub. Inspired by [Octotree](https://github.c
 
 ### Install
 
-<div style="max-width: 300px">
+[![Install for Chrome](./ChromeWebStoreBadge.svg)](https://chrome.google.com/webstore/detail/gitako-github-file-tree/giljefjcheohhamkjphiebfjnlphnokk)
 
-[![Please install from Chrome Web Store](./ChromeWebStoreBadge.svg)](https://chrome.google.com/webstore/detail/gitako-github-file-tree/giljefjcheohhamkjphiebfjnlphnokk)
+[Or install for Firefox](https://addons.mozilla.org/en-US/firefox/addon/gitako-github-file-tree/)
 
-</div>
+> Gitako for Firefox is still in beta
 
 ### Issues
 
