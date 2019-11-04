@@ -1,18 +1,28 @@
 {
   "manifest_version": 2,
   "name": "Gitako - Github file tree",
-  "version": "0.5.15",
+  "version": "0.6.0",
   "description": "The missing part of GitHub.",
   "author": "EnixCoda",
   "icons": {
     "128": "icons/Gitako-128x128.png"
   },
   "homepage_url": "https://github.com/EnixCoda/Gitako",
-  "permissions": ["storage", "*://*.github.com/*", "*://*.sentry.io/*"],
+  "permissions": [
+    "storage",
+    "*://*.github.com/*",
+    "*://*.sentry.io/*"
+  ],
   "content_scripts": [
     {
-      "matches": ["https://github.com/*"],
-      "js": ["firefox-shim.js", "browser-polyfill.js", "content.js"]
+      "matches": [
+        "https://github.com/*"
+      ],
+      "js": [
+        "firefox-shim.js",
+        "browser-polyfill.js",
+        "content.js"
+      ]
     }
   ]
 }
