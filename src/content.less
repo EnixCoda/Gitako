@@ -92,8 +92,6 @@
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  width: 30px;
-  height: 30px;
   padding: 4px;
   will-change: transform;
   border: 1px solid transparent;
@@ -141,8 +139,8 @@
 
   .action-icon {
     color: #666666;
-    width: 100%;
-    height: 100%;
+    width: 20px;
+    height: 20px;
     text-align: center;
     transition: all @animation-duration ease;
     .octicon {
@@ -151,21 +149,22 @@
     }
   }
 
-  &:hover {
-    .error-message {
-      display: inline;
-    }
-  }
-
   &.error {
     .action-icon {
-      color: #cb2431;
+      color: #d73a49;
     }
   }
 
   .error-message {
     display: none;
-    margin: 0 4px;
+    margin-left: 4px;
+    font-size: 12px;
+  }
+
+  &:hover {
+    .error-message {
+      display: inline;
+    }
   }
 }
 
