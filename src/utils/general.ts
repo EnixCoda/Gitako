@@ -113,9 +113,8 @@ export function parseURLSearch(search: string = window.location.search) {
   return parsed
 }
 
-export async function JSONRequest(url: string, data: any, method = 'post') {
+export async function JSONRequest(url: string, data: any, extra: RequestInit = { method: 'post' }) {
   return (await fetch(url, {
-    method,
     mode: 'cors',
     cache: 'no-cache',
     credentials: 'same-origin',
@@ -124,8 +123,10 @@ export async function JSONRequest(url: string, data: any, method = 'post') {
       Accept: 'application/json',
     },
     redirect: 'follow',
-    referrer: 'no-referrer',
+    referrerPolicy: 'no-referrer',
+    method: extra.method || 'post',
     body: JSON.stringify(data),
+    ...extra,
   })).json()
 }
 

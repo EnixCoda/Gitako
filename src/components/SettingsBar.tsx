@@ -1,3 +1,4 @@
+import { raiseError } from 'analytics'
 import Icon from 'components/Icon'
 import { oauth } from 'env'
 import * as React from 'react'
@@ -110,19 +111,23 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
   }
 
   private async trySetUpAccessTokenWithCode() {
-    const search = parseURLSearch()
-    if ('code' in search) {
-      const res = await JSONRequest('https://github.com/login/oauth/access_token', {
-        code: search.code,
-        client_id: oauth.clientId,
-        client_secret: oauth.clientSecret,
-      })
-      const { access_token: accessToken, scope } = res
-      if (scope !== 'repo' || !accessToken) {
-        throw new Error(`Cannot resolve token response: '${JSON.stringify(res)}'`)
+    try {
+      const search = parseURLSearch()
+      if ('code' in search) {
+        const res = await JSONRequest('https://github.com/login/oauth/access_token', {
+          code: search.code,
+          client_id: oauth.clientId,
+          client_secret: oauth.clientSecret,
+        })
+        const { access_token: accessToken, scope } = res
+        if (scope !== 'repo' || !accessToken) {
+          throw new Error(`Cannot resolve token response: '${JSON.stringify(res)}'`)
+        }
+        window.history.pushState({}, 'removed code', window.location.pathname.replace(/#.*$/, ''))
+        this.setState({ accessToken }, () => this.saveToken(''))
       }
-      window.history.pushState({}, 'removed code', window.location.pathname.replace(/#.*$/, ''))
-      this.setState({ accessToken }, () => this.saveToken(''))
+    } catch (err) {
+      raiseError(err)
     }
   }
 
