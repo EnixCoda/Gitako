@@ -1,4 +1,3 @@
-import { raiseError } from 'analytics'
 import { Props } from 'components/FileExplorer'
 import { GetCreatedMethod, MethodCreator } from 'driver/connect'
 import * as ini from 'ini'
@@ -118,7 +117,9 @@ function handleParsed(root: TreeNode, parsed: Parsed) {
           node.accessDenied = true
         }
       } else {
-        raiseError(new Error(`Sub-module node not found`), { path })
+        // It turns out that we did not miss any submodule after a lot of tests.
+        // Turning this off.
+        // raiseError(new Error(`Submodule node not found`), { path })
       }
     } else {
       handleParsed(root, value as Parsed)
