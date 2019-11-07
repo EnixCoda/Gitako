@@ -7,7 +7,7 @@ VERSION=v$(node scripts/get-version.js)
 echo "Got version $VERSION"
 
 # sentry
-git push # make sure sentry can retrieve current commit on remote
+git push --tags # make sure sentry can retrieve current commit on remote
 yarn sentry-cli releases new "$VERSION"
 yarn sentry-cli releases set-commits "$VERSION" --auto
 yarn sentry-cli releases files "$VERSION" upload-sourcemaps dist --no-rewrite
