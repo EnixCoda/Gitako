@@ -7,10 +7,10 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "webpack --watch",
+    "start": "VERSION=dev-v$(node scripts/get-version.js) webpack --watch",
     "debug-firefox": "web-ext run -s dist",
     "analyse-bundle": "ANALYSE= NODE_ENV=production webpack",
-    "build": "NODE_ENV=production webpack",
+    "build": "VERSION=v$(node scripts/get-version.js) NODE_ENV=production webpack",
     "postversion": "node scripts/version.js",
     "roll": "make release"
   },

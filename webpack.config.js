@@ -38,15 +38,12 @@ if (analyse) {
 }
 
 const IN_PRODUCTION_MODE = process.env.NODE_ENV === 'production'
-if (IN_PRODUCTION_MODE) {
-  plugins.push(
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: JSON.stringify('production'),
-      },
-    }),
-  )
-}
+plugins.push(
+  new webpack.DefinePlugin({
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+    'process.env.VERSION': JSON.stringify(process.env.VERSION),
+  }),
+)
 
 module.exports = {
   entry: {
