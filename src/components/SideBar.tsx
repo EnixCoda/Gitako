@@ -1,18 +1,18 @@
-import FileExplorer from 'components/FileExplorer'
-import MetaBar from 'components/MetaBar'
-import Portal from 'components/Portal'
-import Resizable from 'components/Resizable'
-import SettingsBar from 'components/SettingsBar'
-import ToggleShowButton from 'components/ToggleShowButton'
-import connect from 'driver/connect'
-import { SideBar as SideBarCore } from 'driver/core'
+import { FileExplorer } from 'components/FileExplorer'
+import { MetaBar } from 'components/MetaBar'
+import { Portal } from 'components/Portal'
+import { Resizable } from 'components/Resizable'
+import { SettingsBar } from 'components/SettingsBar'
+import { ToggleShowButton } from 'components/ToggleShowButton'
+import { connect } from 'driver/connect'
+import { SideBarCore } from 'driver/core'
 import { ConnectorState } from 'driver/core/SideBar'
 import * as React from 'react'
-import cx from 'utils/cx'
+import { cx } from 'utils/cx'
 
 export type Props = {}
 
-class Gitako extends React.PureComponent<Props & ConnectorState> {
+class RawGitako extends React.PureComponent<Props & ConnectorState> {
   static defaultProps: Partial<Props & ConnectorState> = {
     baseSize: 260,
     shouldShow: false,
@@ -147,4 +147,4 @@ class Gitako extends React.PureComponent<Props & ConnectorState> {
   }
 }
 
-export default connect<Props, ConnectorState>(SideBarCore)(Gitako)
+export const SideBar = connect<Props, ConnectorState>(SideBarCore)(RawGitako)

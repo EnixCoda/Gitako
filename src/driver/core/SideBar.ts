@@ -1,18 +1,12 @@
 import { Props } from 'components/SideBar'
 import { GetCreatedMethod, MethodCreator } from 'driver/connect'
-import configHelper, { Config, configKeys } from 'utils/configHelper'
+import * as configHelper from 'utils/configHelper'
+import { Config } from 'utils/configHelper'
 import * as DOMHelper from 'utils/DOMHelper'
-import GitHubHelper, {
-  API_RATE_LIMIT,
-  BAD_CREDENTIALS,
-  BLOCKED_PROJECT,
-  EMPTY_PROJECT,
-  MetaData,
-  NOT_FOUND,
-  TreeData,
-} from 'utils/GitHubHelper'
-import keyHelper from 'utils/keyHelper'
-import URLHelper from 'utils/URLHelper'
+import * as GitHubHelper from 'utils/GitHubHelper'
+import { MetaData, TreeData } from 'utils/GitHubHelper'
+import * as keyHelper from 'utils/keyHelper'
+import * as URLHelper from 'utils/URLHelper'
 
 export type ConnectorState = {
   // error message
@@ -54,7 +48,7 @@ export type ConnectorState = {
 
 type BoundMethodCreator<Args extends any[] = []> = MethodCreator<Props, ConnectorState, Args>
 
-const init: BoundMethodCreator = dispatch => async () => {
+export const init: BoundMethodCreator = dispatch => async () => {
   const { initializingPromise } = dispatch.get()
   if (initializingPromise) await initializingPromise
 
@@ -159,15 +153,15 @@ const init: BoundMethodCreator = dispatch => async () => {
   }
 }
 
-const handleError: BoundMethodCreator<[Error]> = dispatch => async err => {
-  if (err.message === EMPTY_PROJECT) {
+export const handleError: BoundMethodCreator<[Error]> = dispatch => async err => {
+  if (err.message === GitHubHelper.EMPTY_PROJECT) {
     dispatch.call(setError, 'This project seems to be empty.')
-  } else if (err.message === BLOCKED_PROJECT) {
+  } else if (err.message === GitHubHelper.BLOCKED_PROJECT) {
     dispatch.call(setError, 'This project is blocked.')
   } else if (
-    err.message === NOT_FOUND ||
-    err.message === BAD_CREDENTIALS ||
-    err.message === API_RATE_LIMIT
+    err.message === GitHubHelper.NOT_FOUND ||
+    err.message === GitHubHelper.BAD_CREDENTIALS ||
+    err.message === GitHubHelper.API_RATE_LIMIT
   ) {
     dispatch.set({ errorDueToAuth: true })
     dispatch.call(setShowSettings, true)
@@ -179,7 +173,7 @@ const handleError: BoundMethodCreator<[Error]> = dispatch => async err => {
   }
 }
 
-const onPJAXEnd: BoundMethodCreator = dispatch => () => {
+export const onPJAXEnd: BoundMethodCreator = dispatch => () => {
   const { metaData, copyFileButton, copySnippetButton, intelligentToggle } = dispatch.get()
   DOMHelper.unmountTopProgressBar()
   DOMHelper.decorateGitHubPageContent({ copyFileButton, copySnippetButton })
@@ -191,7 +185,7 @@ const onPJAXEnd: BoundMethodCreator = dispatch => () => {
   }
 }
 
-const onKeyDown: BoundMethodCreator<[KeyboardEvent]> = dispatch => e => {
+export const onKeyDown: BoundMethodCreator<[KeyboardEvent]> = dispatch => e => {
   const { toggleShowSideBarShortcut } = dispatch.get()
   if (toggleShowSideBarShortcut) {
     const keys = keyHelper.parseEvent(e)
@@ -201,7 +195,7 @@ const onKeyDown: BoundMethodCreator<[KeyboardEvent]> = dispatch => e => {
   }
 }
 
-const toggleShowSideBar: BoundMethodCreator = dispatch => () => {
+export const toggleShowSideBar: BoundMethodCreator = dispatch => () => {
   const { intelligentToggle } = dispatch.get()
   const shouldShow = !dispatch.get().shouldShow
   dispatch.call(setShouldShow, shouldShow)
@@ -211,28 +205,28 @@ const toggleShowSideBar: BoundMethodCreator = dispatch => () => {
   }
 }
 
-const setShouldShow: BoundMethodCreator<
+export const setShouldShow: BoundMethodCreator<
   [ConnectorState['shouldShow']]
 > = dispatch => shouldShow => {
   dispatch.set({ shouldShow }, shouldShow ? DOMHelper.focusFileExplorer : undefined)
   DOMHelper.setBodyIndent(shouldShow)
 }
 
-const setError: BoundMethodCreator<[ConnectorState['error']]> = dispatch => error => {
+export const setError: BoundMethodCreator<[ConnectorState['error']]> = dispatch => error => {
   dispatch.set({ error })
   dispatch.call(setShouldShow, false)
 }
 
-const toggleShowSettings: BoundMethodCreator = dispatch => () =>
+export const toggleShowSettings: BoundMethodCreator = dispatch => () =>
   dispatch.set(({ showSettings }) => ({
     showSettings: !showSettings,
   }))
 
-const setShowSettings: BoundMethodCreator<
+export const setShowSettings: BoundMethodCreator<
   [ConnectorState['showSettings']]
 > = dispatch => showSettings => dispatch.set({ showSettings })
 
-const onAccessTokenChange: BoundMethodCreator<
+export const onAccessTokenChange: BoundMethodCreator<
   [ConnectorState['accessToken']]
 > = dispatch => accessToken => {
   dispatch.set({ accessToken })
@@ -242,33 +236,33 @@ const onAccessTokenChange: BoundMethodCreator<
   }
 }
 
-const onShortcutChange: BoundMethodCreator<
+export const onShortcutChange: BoundMethodCreator<
   [ConnectorState['toggleShowSideBarShortcut']]
 > = dispatch => shortcut => dispatch.set({ toggleShowSideBarShortcut: shortcut })
 
-const setMetaData: BoundMethodCreator<[ConnectorState['metaData']]> = dispatch => metaData =>
+export const setMetaData: BoundMethodCreator<[ConnectorState['metaData']]> = dispatch => metaData =>
   dispatch.set({ metaData })
 
-const setCompressSingleton: BoundMethodCreator<
+export const setCompressSingleton: BoundMethodCreator<
   [ConnectorState['compressSingletonFolder']]
 > = dispatch => compressSingletonFolder => dispatch.set({ compressSingletonFolder })
 
-const setCopyFile: BoundMethodCreator<
+export const setCopyFile: BoundMethodCreator<
   [ConnectorState['copyFileButton']]
 > = dispatch => copyFileButton => dispatch.set({ copyFileButton })
 
-const setCopySnippet: BoundMethodCreator<
+export const setCopySnippet: BoundMethodCreator<
   [ConnectorState['copySnippetButton']]
 > = dispatch => copySnippetButton => dispatch.set({ copySnippetButton })
 
-const setIntelligentToggle: BoundMethodCreator<
+export const setIntelligentToggle: BoundMethodCreator<
   [ConnectorState['intelligentToggle']]
 > = dispatch => intelligentToggle => {
-  configHelper.setOne(configKeys.intelligentToggle, intelligentToggle)
+  configHelper.setOne(configHelper.configKeys.intelligentToggle, intelligentToggle)
   dispatch.set({ intelligentToggle })
 }
 
-const useListeners: BoundMethodCreator<[boolean]> = dispatch => {
+export const useListeners: BoundMethodCreator<[boolean]> = dispatch => {
   const $onPJAXEnd = () => dispatch.call(onPJAXEnd)
   const $onKeyDown = (e: KeyboardEvent) => dispatch.call(onKeyDown, e)
   return on => {
@@ -281,24 +275,4 @@ const useListeners: BoundMethodCreator<[boolean]> = dispatch => {
       window.removeEventListener('keydown', $onKeyDown)
     }
   }
-}
-
-export default {
-  init,
-  onPJAXEnd,
-  onKeyDown,
-  setShouldShow,
-  setShowSettings,
-  toggleShowSideBar,
-  toggleShowSettings,
-  onAccessTokenChange,
-  onShortcutChange,
-  setMetaData,
-  setCompressSingleton,
-  setCopyFile,
-  setCopySnippet,
-  setIntelligentToggle,
-  setError,
-  handleError,
-  useListeners,
 }

@@ -1,10 +1,10 @@
-import Icon from 'components/Icon'
+import { Icon } from 'components/Icon'
 import * as React from 'react'
 
 type Props = {
   text: React.ReactNode
 }
-export default function LoadingIndicator({ text }: Props) {
+export function LoadingIndicator({ text }: Props) {
   return (
     <div className={'loading-indicator-container'}>
       <div className={'loading-indicator'}>

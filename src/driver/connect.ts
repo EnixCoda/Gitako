@@ -93,7 +93,7 @@ function link<P, S>(instance: React.Component<P, S>, sources: Sources<P, S>): Wr
   return wrappedMethods
 }
 
-export default function connect<BaseP, ExtraP>(mapping: Sources<BaseP, ExtraP>) {
+export function connect<BaseP, ExtraP>(mapping: Sources<BaseP, ExtraP>) {
   return function linkComponent<S>(
     ComponentClass: React.ComponentClass<BaseP & ExtraP, S>,
   ): React.ComponentClass<BaseP, ExtraP> {

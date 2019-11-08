@@ -1,7 +1,7 @@
 /**
  * cx('class1', { class2: true, class3: false }) --> 'class1 class2'
  */
-export default function cx(...classNames: any[]): string {
+export function cx(...classNames: any[]): string {
   return classNames
     .filter(Boolean)
     .map(className => {

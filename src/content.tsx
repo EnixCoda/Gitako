@@ -1,5 +1,5 @@
 import { withErrorLog } from 'analytics'
-import Gitako from 'components/Gitako'
+import { Gitako } from 'components/Gitako'
 import { addMiddleware } from 'driver/connect'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'

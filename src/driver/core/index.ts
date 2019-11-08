@@ -1,2 +1,5 @@
-export { default as SideBar } from './SideBar'
-export { default as FileExplorer } from './FileExplorer'
+import * as FileExplorer from './FileExplorer'
+import * as SideBar from './SideBar'
+
+export const SideBarCore = SideBar
+export const FileExplorerCore = FileExplorer

@@ -1,4 +1,4 @@
-import storageHelper from 'utils/storageHelper'
+import * as storageHelper from 'utils/storageHelper'
 
 export type Config = {
   sideBarWidth: number
@@ -43,27 +43,20 @@ function applyDefaultConfigs(configs: Config) {
   )
 }
 
-async function getAll(): Promise<Config> {
+export async function getAll(): Promise<Config> {
   return applyDefaultConfigs(await storageHelper.get(configKeyArray))
 }
 
-async function getOne(key: configKeys) {
+export async function getOne(key: configKeys) {
   return (await getAll())[key]
 }
 
-async function setAll(partialConfig: Partial<Config>) {
+export async function setAll(partialConfig: Partial<Config>) {
   return await storageHelper.set(partialConfig)
 }
 
-async function setOne(key: configKeys, value: any) {
+export async function setOne(key: configKeys, value: any) {
   return await setAll({
     [key]: value,
   })
-}
-
-export default {
-  getAll,
-  getOne,
-  setAll,
-  setOne,
 }

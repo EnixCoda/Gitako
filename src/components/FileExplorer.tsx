@@ -1,17 +1,17 @@
-import LoadingIndicator from 'components/LoadingIndicator'
-import Node from 'components/Node'
-import SearchBar from 'components/SearchBar'
-import connect from 'driver/connect'
-import { FileExplorer as FileExplorerCore } from 'driver/core'
+import { LoadingIndicator } from 'components/LoadingIndicator'
+import { Node } from 'components/Node'
+import { SearchBar } from 'components/SearchBar'
+import { connect } from 'driver/connect'
+import { FileExplorerCore } from 'driver/core'
 import { ConnectorState } from 'driver/core/FileExplorer'
 import * as React from 'react'
 import { FixedSizeList as List, ListChildComponentProps } from 'react-window'
-import cx from 'utils/cx'
+import { cx } from 'utils/cx'
 import { MetaData, TreeData } from 'utils/GitHubHelper'
 import { usePrevious } from 'utils/hooks'
 import { TreeNode, VisibleNodes } from 'utils/VisibleNodesGenerator'
-import Icon from './Icon'
-import SizeObserver from './SizeObserver'
+import { Icon } from './Icon'
+import { SizeObserver } from './SizeObserver'
 
 export type Props = {
   treeData?: TreeData
@@ -22,7 +22,7 @@ export type Props = {
   toggleShowSettings: React.MouseEventHandler
 }
 
-class FileExplorer extends React.Component<Props & ConnectorState> {
+class RawFileExplorer extends React.Component<Props & ConnectorState> {
   static defaultProps: Partial<Props & ConnectorState> = {
     freeze: false,
     searchKey: '',
@@ -183,4 +183,4 @@ class FileExplorer extends React.Component<Props & ConnectorState> {
   }
 }
 
-export default connect<Props, ConnectorState>(FileExplorerCore)(FileExplorer)
+export const FileExplorer = connect<Props, ConnectorState>(FileExplorerCore)(RawFileExplorer)

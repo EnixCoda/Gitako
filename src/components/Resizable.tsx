@@ -1,10 +1,10 @@
+import { HorizontalResizeHandler } from 'components/ResizeHandler'
 import * as React from 'react'
-import HorizontalResizeHandler from 'components/ResizeHandler'
-import cx from 'utils/cx'
-import { useWindowSize, useMediaStyleSheet } from 'utils/hooks'
+import { configKeys, setOne } from 'utils/configHelper'
+import { cx } from 'utils/cx'
 import { bodySpacingClassName } from 'utils/DOMHelper'
-import configHelper, { configKeys } from 'utils/configHelper'
 import * as features from 'utils/features'
+import { useMediaStyleSheet, useWindowSize } from 'utils/hooks'
 
 export type Size = number
 type Props = {
@@ -15,11 +15,7 @@ type Props = {
 const MINIMAL_CONTENT_VIEWPORT_WIDTH = 100
 const GITHUB_WIDTH = 1020
 
-export default function Resizable({
-  baseSize,
-  className,
-  children,
-}: React.PropsWithChildren<Props>) {
+export function Resizable({ baseSize, className, children }: React.PropsWithChildren<Props>) {
   const [size, setSize] = React.useState(baseSize)
 
   React.useEffect(() => {
@@ -36,7 +32,7 @@ export default function Resizable({
 
   React.useEffect(() => {
     document.documentElement.style.setProperty('--gitako-width', size + 'px')
-    configHelper.setOne(configKeys.sideBarWidth, size)
+    setOne(configKeys.sideBarWidth, size)
   }, [size])
 
   useMediaStyleSheet(

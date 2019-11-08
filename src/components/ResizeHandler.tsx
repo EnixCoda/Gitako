@@ -1,4 +1,4 @@
-import Icon from 'components/Icon'
+import { Icon } from 'components/Icon'
 import * as React from 'react'
 import { Size } from './Resizable'
 
@@ -8,7 +8,7 @@ type Props = {
   style?: React.CSSProperties
 }
 
-export default class HorizontalResizeHandler extends React.PureComponent<Props> {
+export class HorizontalResizeHandler extends React.PureComponent<Props> {
   pointerDown = false
   startX = 0
   baseSize = this.props.size

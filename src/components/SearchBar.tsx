@@ -1,5 +1,5 @@
 import * as React from 'react'
-import cx from 'utils/cx'
+import { cx } from 'utils/cx'
 
 type Props = {
   onSearch: (searchKey: string) => void
@@ -7,7 +7,7 @@ type Props = {
   searchKey: string
 }
 
-export default function SearchBar({ onSearch, onFocus, searchKey }: Props) {
+export function SearchBar({ onSearch, onFocus, searchKey }: Props) {
   return (
     <div className={'search-input-wrapper'}>
       <input

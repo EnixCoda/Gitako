@@ -1,10 +1,10 @@
 import { raiseError } from 'analytics'
-import Icon from 'components/Icon'
+import { Icon } from 'components/Icon'
 import { oauth } from 'env'
 import * as React from 'react'
-import configHelper, { Config, configKeys } from 'utils/configHelper'
+import { Config, configKeys, setOne } from 'utils/configHelper'
 import { friendlyFormatShortcut, JSONRequest, parseURLSearch } from 'utils/general'
-import keyHelper from 'utils/keyHelper'
+import * as keyHelper from 'utils/keyHelper'
 import { version } from '../../package.json'
 
 const WIKI_HOME_LINK = 'https://github.com/EnixCoda/Gitako/wiki'
@@ -50,7 +50,7 @@ type State = {
   }[]
 }
 
-export default class SettingsBar extends React.PureComponent<Props, State> {
+export class SettingsBar extends React.PureComponent<Props, State> {
   state = {
     accessToken: '',
     accessTokenHint: '',
@@ -91,7 +91,7 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
         onChange: async (e: React.FormEvent<HTMLInputElement>) => {
           const { checked } = e.currentTarget
           const intelligentToggle = checked ? null : true
-          await configHelper.setOne(configKeys.intelligentToggle, intelligentToggle)
+          await setOne(configKeys.intelligentToggle, intelligentToggle)
           this.props.setIntelligentToggle(intelligentToggle)
         },
         getValue: () => this.props.intelligentToggle === null,
@@ -159,7 +159,7 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
     const { onAccessTokenChange } = this.props
     const { accessToken } = this.state
     if (accessToken) {
-      await configHelper.setOne(configKeys.accessToken, accessToken)
+      await setOne(configKeys.accessToken, accessToken)
       onAccessTokenChange(accessToken)
       this.setState({
         accessToken: '',
@@ -170,7 +170,7 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
 
   clearToken = async () => {
     const { onAccessTokenChange } = this.props
-    await configHelper.setOne(configKeys.accessToken, '')
+    await setOne(configKeys.accessToken, '')
     onAccessTokenChange('')
     this.setState({ accessToken: '' })
   }
@@ -178,7 +178,7 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
   saveShortcut = async () => {
     const { onShortcutChange } = this.props
     const { toggleShowSideBarShortcut } = this.state
-    await configHelper.setOne(configKeys.shortcut, toggleShowSideBarShortcut)
+    await setOne(configKeys.shortcut, toggleShowSideBarShortcut)
     if (typeof toggleShowSideBarShortcut === 'string') {
       onShortcutChange(toggleShowSideBarShortcut)
       this.setState({
@@ -214,7 +214,7 @@ export default class SettingsBar extends React.PureComponent<Props, State> {
   ): (e: React.FormEvent<HTMLInputElement>) => Promise<void> {
     return async e => {
       const enabled = e.currentTarget.checked
-      await configHelper.setOne(configKey, enabled)
+      await setOne(configKey, enabled)
       set(enabled)
       this.showReloadHint()
     }

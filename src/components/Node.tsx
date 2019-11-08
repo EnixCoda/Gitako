@@ -1,6 +1,6 @@
-import Icon from 'components/Icon'
+import { Icon } from 'components/Icon'
 import * as React from 'react'
-import cx from 'utils/cx'
+import { cx } from 'utils/cx'
 import { OperatingSystems, os } from 'utils/general'
 import { TreeNode } from 'utils/VisibleNodesGenerator'
 
@@ -24,7 +24,7 @@ type Props = {
   renderActions?(node: TreeNode): React.ReactNode
   style?: React.CSSProperties
 }
-export default class Node extends React.PureComponent<Props> {
+export class Node extends React.PureComponent<Props> {
   onClick: React.MouseEventHandler = event => {
     if (
       (os === OperatingSystems.macOS && event.metaKey) ||

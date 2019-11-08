@@ -202,7 +202,7 @@ type Options = {
   compress?: boolean
 }
 
-export default class VisibleNodesGenerator {
+export class VisibleNodesGenerator {
   l1: L1
   l2: L2
   l3: L3

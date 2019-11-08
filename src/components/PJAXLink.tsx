@@ -6,7 +6,7 @@ type Props<P> = {
   children: React.ReactElement<P>
 }
 
-export default function PJAXLink<P>({ to, children }: Props<P>) {
+export function PJAXLink<P>({ to, children }: Props<P>) {
   return React.cloneElement(children, {
     ...children.props,
     onClick: () => DOMHelper.loadWithPJAX(to),
