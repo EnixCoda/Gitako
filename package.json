@@ -15,7 +15,7 @@
     "roll": "./scripts/release.sh"
   },
   "dependencies": {
-    "@primer/octicons": "^9.1.1",
+    "@primer/octicons": "^9.2.0",
     "@primer/octicons-react": "^9.2.0",
     "@sentry/browser": "^5.5.0",
     "@types/firefox-webext-browser": "^70.0.1",
