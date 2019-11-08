@@ -9,10 +9,10 @@
   "scripts": {
     "start": "webpack --watch",
     "debug-firefox": "web-ext run -s dist",
-    "postversion": "node scripts/version.js && npm run roll",
-    "build": "NODE_ENV=production webpack",
     "analyse-bundle": "ANALYSE= NODE_ENV=production webpack",
-    "roll": "./scripts/roll.sh"
+    "build": "NODE_ENV=production webpack",
+    "postversion": "node scripts/version.js",
+    "roll": "./scripts/release.sh"
   },
   "dependencies": {
     "@primer/octicons": "^9.1.1",
