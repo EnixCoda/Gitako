@@ -154,7 +154,7 @@ const PAGE_TYPES = {
  * TODO: distinguish type 'preview'
  */
 function getCurrentPageType() {
-  const blobWrapperSelector = '.repository-content .file .blob-wrapper table'
+  const blobWrapperSelector = '.repository-content .blob-wrapper table'
   const readmeSelector = '.repository-content .readme'
   return (
     $(blobWrapperSelector, () => PAGE_TYPES.RAW_TEXT) ||
@@ -188,7 +188,7 @@ function attachCopyFileBtn() {
    */
   function getCodeElement() {
     if (getCurrentPageType() === PAGE_TYPES.RAW_TEXT) {
-      const codeContentSelector = '.repository-content .file .data table'
+    const codeContentSelector = '.repository-content .data table'
       const codeContentElement = $(codeContentSelector)
       if (!codeContentElement) {
         raiseError(new Error('cannot find code content element'))
@@ -209,10 +209,8 @@ function attachCopyFileBtn() {
 
   if (getCurrentPageType() === PAGE_TYPES.RAW_TEXT) {
     const btnGroupSelector = [
-      // the button group next to navigation bar
-      '.repository-content .file-navigation.js-zeroclipboard-container .BtnGroup',
       // the button group in file content header
-      '.repository-content .file .file-header .file-actions .BtnGroup',
+      '.repository-content > .Box > .Box-header .BtnGroup',
     ].join(', ')
     const btnGroups = document.querySelectorAll(btnGroupSelector)
 
