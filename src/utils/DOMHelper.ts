@@ -1,10 +1,12 @@
 /**
  * this helper helps manipulating DOM
  */
-
 import { raiseError } from 'analytics'
+import { CopyFileButton } from 'components/CopyFileButton'
 import * as NProgress from 'nprogress'
 import * as PJAX from 'pjax'
+import * as React from 'react'
+import * as ReactDOM from 'react-dom'
 
 NProgress.configure({ showSpinner: false })
 
@@ -92,7 +94,6 @@ function getCurrentBranch() {
 
 /**
  * add the logo element into DOM
- *
  */
 function insertLogoMountPoint() {
   const logoSelector = '.gitako .gitako-logo'
@@ -179,56 +180,41 @@ function getRepoPageType() {
 }
 
 /**
+ * get text content of raw text content
+ */
+function getCodeElement() {
+  if (getCurrentPageType() === PAGE_TYPES.RAW_TEXT) {
+    const codeContentSelector = '.repository-content .data table'
+    const codeContentElement = $(codeContentSelector)
+    if (!codeContentElement) {
+      raiseError(new Error('cannot find code content element'))
+    }
+    return codeContentElement
+  }
+}
+
+/**
  * add copy file content buttons to button groups
  * click these buttons will copy file content to clipboard
  */
 function attachCopyFileBtn() {
-  /**
-   * get text content of raw text content
-   */
-  function getCodeElement() {
-    if (getCurrentPageType() === PAGE_TYPES.RAW_TEXT) {
-    const codeContentSelector = '.repository-content .data table'
-      const codeContentElement = $(codeContentSelector)
-      if (!codeContentElement) {
-        raiseError(new Error('cannot find code content element'))
-      }
-      return codeContentElement
-    }
-  }
-
-  /**
-   * change inner text of copy file button to give feedback
-   * @param {element} copyFileBtn
-   * @param {string} text
-   */
-  function setTempCopyFileBtnText(copyFileBtn: HTMLButtonElement, text: string) {
-    copyFileBtn.innerText = text
-    window.setTimeout(() => (copyFileBtn.innerText = 'Copy file'), 1000)
-  }
-
   if (getCurrentPageType() === PAGE_TYPES.RAW_TEXT) {
-    const btnGroupSelector = [
       // the button group in file content header
-      '.repository-content > .Box > .Box-header .BtnGroup',
-    ].join(', ')
-    const btnGroups = document.querySelectorAll(btnGroupSelector)
+    const buttonGroupSelector = '.repository-content > .Box > .Box-header .BtnGroup'
+    const buttonGroups = document.querySelectorAll(buttonGroupSelector)
 
-    btnGroups.forEach(btnGroup => {
-      const copyFileBtn = document.createElement('button')
-      copyFileBtn.classList.add('btn', 'btn-sm', 'BtnGroup-item', 'copy-file-btn')
-      copyFileBtn.innerText = 'Copy file'
-      copyFileBtn.addEventListener('click', () => {
-        const codeElement = getCodeElement()
-        if (codeElement) {
-          if (copyElementContent(codeElement)) {
-            setTempCopyFileBtnText(copyFileBtn, 'Success!')
-          } else {
-            setTempCopyFileBtnText(copyFileBtn, 'Copy failed!')
-          }
-        }
-      })
-      btnGroup.insertBefore(copyFileBtn, btnGroup.lastChild)
+    if (buttonGroups.length === 0) {
+      raiseError(new Error(`No button groups found`))
+    }
+
+    buttonGroups.forEach(buttonGroup => {
+      if (!buttonGroup.lastElementChild) return
+      const portal = ReactDOM.createPortal(React.createElement(CopyFileButton), buttonGroup)
+      // creating a element for mounting button into button group, somehow hack
+      const seedElementForButton = document.createElement('a')
+      buttonGroup.appendChild(seedElementForButton)
+      ReactDOM.render(portal, seedElementForButton)
+      buttonGroup.removeChild(seedElementForButton)
     })
   }
 }
@@ -384,9 +370,11 @@ export default {
   loadWithPJAX,
   attachCopyFileBtn,
   attachCopySnippet,
+  copyElementContent,
   decorateGitHubPageContent,
   focusSearchInput,
   focusFileExplorer,
+  getCodeElement,
   getCurrentPageType,
   getRepoPageType,
   insertLogoMountPoint,
