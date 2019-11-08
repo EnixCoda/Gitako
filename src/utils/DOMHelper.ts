@@ -13,7 +13,7 @@ NProgress.configure({ showSpinner: false })
 /**
  * when gitako is ready, make page's header narrower
  */
-function markGitakoReadyState() {
+export function markGitakoReadyState() {
   const readyClassName = 'gitako-ready'
   document.body.classList.add(readyClassName)
 }
@@ -23,7 +23,7 @@ function markGitakoReadyState() {
  * otherwise, hide the space
  */
 export const bodySpacingClassName = 'with-gitako-spacing'
-function setBodyIndent(shouldShowGitako: boolean) {
+export function setBodyIndent(shouldShowGitako: boolean) {
   if (shouldShowGitako) {
     document.body.classList.add(bodySpacingClassName)
   } else {
@@ -49,18 +49,18 @@ function $<EE extends Element, E extends (element: EE) => any, O extends () => a
   return otherwise ? otherwise() : null
 }
 
-function isInCodePage() {
+export function isInCodePage() {
   const branchListSelector = '#branch-select-menu.branch-select-menu'
   return Boolean($(branchListSelector))
 }
 
-function getBranches() {
+export function getBranches() {
   const branchSelector = '.branch-select-menu .select-menu-list > div .select-menu-item-text'
   const branchElements = Array.from(document.querySelectorAll(branchSelector))
   return branchElements.map(element => element.innerHTML.trim())
 }
 
-function getCurrentBranch() {
+export function getCurrentBranch() {
   const selectedBranchButtonSelector = '.repository-content .branch-select-menu summary'
   const branchButtonElement: HTMLElement = $(selectedBranchButtonSelector)
   if (branchButtonElement) {
@@ -95,7 +95,7 @@ function getCurrentBranch() {
 /**
  * add the logo element into DOM
  */
-function insertLogoMountPoint() {
+export function insertLogoMountPoint() {
   const logoSelector = '.gitako .gitako-logo'
   return $(logoSelector) || createLogoMountPoint()
 }
@@ -111,7 +111,7 @@ function createLogoMountPoint() {
  * content above the file navigation bar is same for all pages of the repo
  * use this function to scroll down a bit to hide them
  */
-function scrollToRepoContent() {
+export function scrollToRepoContent() {
   const repositoryContentSelector = '.repository-content'
   // do NOT use behavior: smooth here as it will scroll horizontally
   $(repositoryContentSelector, repositoryContentElement =>
@@ -128,7 +128,7 @@ const pjax = new PJAX({
   forceCache: true, // TODO: merge namespace, add forceCache
 })
 
-function loadWithPJAX(URL: string) {
+export function loadWithPJAX(URL: string) {
   NProgress.start()
   pjax.loadUrl(URL, { scrollTo: 0 })
 }
@@ -154,7 +154,7 @@ const PAGE_TYPES = {
  *
  * TODO: distinguish type 'preview'
  */
-function getCurrentPageType() {
+export function getCurrentPageType() {
   const blobWrapperSelector = '.repository-content .blob-wrapper table'
   const readmeSelector = '.repository-content .readme'
   return (
@@ -166,7 +166,7 @@ function getCurrentPageType() {
 
 export const REPO_TYPE_PRIVATE = 'private'
 export const REPO_TYPE_PUBLIC = 'public'
-function getRepoPageType() {
+export function getRepoPageType() {
   const headerSelector = `#js-repo-pjax-container .pagehead.repohead h1`
   return $(headerSelector, header => {
     const repoPageTypes = [REPO_TYPE_PRIVATE, REPO_TYPE_PUBLIC]
@@ -182,7 +182,7 @@ function getRepoPageType() {
 /**
  * get text content of raw text content
  */
-function getCodeElement() {
+export function getCodeElement() {
   if (getCurrentPageType() === PAGE_TYPES.RAW_TEXT) {
     const codeContentSelector = '.repository-content .data table'
     const codeContentElement = $(codeContentSelector)
@@ -197,9 +197,9 @@ function getCodeElement() {
  * add copy file content buttons to button groups
  * click these buttons will copy file content to clipboard
  */
-function attachCopyFileBtn() {
+export function attachCopyFileBtn() {
   if (getCurrentPageType() === PAGE_TYPES.RAW_TEXT) {
-      // the button group in file content header
+    // the button group in file content header
     const buttonGroupSelector = '.repository-content > .Box > .Box-header .BtnGroup'
     const buttonGroups = document.querySelectorAll(buttonGroupSelector)
 
@@ -224,7 +224,7 @@ function attachCopyFileBtn() {
  * @param {element} element
  * @returns {boolean} whether copy is successful
  */
-function copyElementContent(element: Element) {
+export function copyElementContent(element: Element) {
   let selection = window.getSelection()
   if (selection) selection.removeAllRanges()
   const range = document.createRange()
@@ -285,7 +285,7 @@ function createClippy() {
 const clippy = createClippy()
 
 let currentCodeSnippetElement: Element
-function attachCopySnippet() {
+export function attachCopySnippet() {
   const readmeSelector = '.repository-content div#readme'
   return $(readmeSelector, () => {
     const readmeArticleSelector = '.repository-content div#readme article'
@@ -325,14 +325,14 @@ function attachCopySnippet() {
 /**
  * focus to side bar, user will be able to manipulate it with keyboard
  */
-function focusFileExplorer() {
+export function focusFileExplorer() {
   const sideBarContentSelector = '.gitako-side-bar .file-explorer'
   $(sideBarContentSelector, sideBarElement => {
     if (sideBarElement instanceof HTMLElement) sideBarElement.focus()
   })
 }
 
-function focusSearchInput() {
+export function focusSearchInput() {
   const searchInputSelector = '.search-input'
   $(searchInputSelector, searchInputElement => {
     if (
@@ -347,7 +347,7 @@ function focusSearchInput() {
 /**
  * a combination of few above functions
  */
-function decorateGitHubPageContent({
+export function decorateGitHubPageContent({
   copyFileButton,
   copySnippetButton,
 }: {
@@ -358,32 +358,10 @@ function decorateGitHubPageContent({
   if (copySnippetButton) attachCopySnippet()
 }
 
-function mountTopProgressBar() {
+export function mountTopProgressBar() {
   NProgress.start()
 }
 
-function unmountTopProgressBar() {
+export function unmountTopProgressBar() {
   NProgress.done()
-}
-
-export default {
-  loadWithPJAX,
-  attachCopyFileBtn,
-  attachCopySnippet,
-  copyElementContent,
-  decorateGitHubPageContent,
-  focusSearchInput,
-  focusFileExplorer,
-  getCodeElement,
-  getCurrentPageType,
-  getRepoPageType,
-  insertLogoMountPoint,
-  markGitakoReadyState,
-  setBodyIndent,
-  scrollToRepoContent,
-  mountTopProgressBar,
-  unmountTopProgressBar,
-  isInCodePage,
-  getBranches,
-  getCurrentBranch,
 }

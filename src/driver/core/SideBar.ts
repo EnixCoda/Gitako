@@ -1,7 +1,7 @@
 import { Props } from 'components/SideBar'
 import { GetCreatedMethod, MethodCreator } from 'driver/connect'
 import configHelper, { Config, configKeys } from 'utils/configHelper'
-import DOMHelper from 'utils/DOMHelper'
+import * as DOMHelper from 'utils/DOMHelper'
 import GitHubHelper, {
   API_RATE_LIMIT,
   BAD_CREDENTIALS,

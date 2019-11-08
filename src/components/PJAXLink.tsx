@@ -1,5 +1,5 @@
 import * as React from 'react'
-import DOMHelper from 'utils/DOMHelper'
+import * as DOMHelper from 'utils/DOMHelper'
 
 type Props<P> = {
   to: string
