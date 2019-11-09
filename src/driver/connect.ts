@@ -94,19 +94,20 @@ function link<P, S>(instance: React.Component<P, S>, sources: Sources<P, S>): Wr
 }
 
 export function connect<BaseP, ExtraP>(mapping: Sources<BaseP, ExtraP>) {
-  return function linkComponent<S>(
-    ComponentClass: React.ComponentClass<BaseP & ExtraP, S>,
-  ): React.ComponentClass<BaseP, ExtraP> {
-    return class AwesomeApp extends React.PureComponent<BaseP, ExtraP> {
-      static displayName = `Connected(${ComponentClass.displayName || ComponentClass.name})`
-      static defaultProps = ComponentClass.defaultProps
+  return function linkComponent<
+    State,
+    ComponentClass extends React.ComponentClass<BaseP & ExtraP, State>
+  >(Component: ComponentClass) {
+    return class ConnectedComponent extends React.PureComponent<BaseP, ExtraP, State> {
+      static displayName = `Connected(${Component.displayName || Component.name})`
+      static defaultProps = Component.defaultProps
 
-      state = {} as ExtraP
-      connectedMethods = link<BaseP, ExtraP>(this, mapping) as WrappedMethods
+      state: ExtraP = {} as ExtraP
+      connectedMethods: WrappedMethods = link<BaseP, ExtraP>(this, mapping)
 
       render() {
         const props = Object.assign({}, this.props, this.connectedMethods, this.state)
-        return React.createElement(ComponentClass, props)
+        return React.createElement(Component, props)
       }
     }
   }
