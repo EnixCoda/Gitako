@@ -1,4 +1,3 @@
-import { Props } from 'components/SideBar'
 import { GetCreatedMethod, MethodCreator } from 'driver/connect'
 import * as configHelper from 'utils/configHelper'
 import { Config } from 'utils/configHelper'
@@ -7,6 +6,8 @@ import * as GitHubHelper from 'utils/GitHubHelper'
 import { MetaData, TreeData } from 'utils/GitHubHelper'
 import * as keyHelper from 'utils/keyHelper'
 import * as URLHelper from 'utils/URLHelper'
+
+export type Props = {}
 
 export type ConnectorState = {
   // error message

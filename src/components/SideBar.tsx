@@ -6,11 +6,9 @@ import { SettingsBar } from 'components/SettingsBar'
 import { ToggleShowButton } from 'components/ToggleShowButton'
 import { connect } from 'driver/connect'
 import { SideBarCore } from 'driver/core'
-import { ConnectorState } from 'driver/core/SideBar'
+import { ConnectorState, Props } from 'driver/core/SideBar'
 import * as React from 'react'
 import { cx } from 'utils/cx'
-
-export type Props = {}
 
 class RawGitako extends React.PureComponent<Props & ConnectorState> {
   static defaultProps: Partial<Props & ConnectorState> = {
@@ -147,4 +145,4 @@ class RawGitako extends React.PureComponent<Props & ConnectorState> {
   }
 }
 
-export const SideBar = connect<Props, ConnectorState>(SideBarCore)(RawGitako)
+export const SideBar = connect(SideBarCore)(RawGitako)

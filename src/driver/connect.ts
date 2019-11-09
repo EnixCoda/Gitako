@@ -47,7 +47,7 @@ export type MethodCreator<Props, State, Args extends any[] = []> = (
   dispatch: Dispatch<Props, State>,
 ) => Method<Args>
 
-type Sources<P, S> = {
+export type Sources<P, S> = {
   [key: string]: MethodCreator<P, S, any>
 }
 type WrappedMethods = {

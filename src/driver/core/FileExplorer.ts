@@ -1,4 +1,3 @@
-import { Props } from 'components/FileExplorer'
 import { GetCreatedMethod, MethodCreator } from 'driver/connect'
 import * as ini from 'ini'
 import { Base64 } from 'js-base64'
@@ -9,6 +8,15 @@ import { BlobData } from 'utils/GitHubHelper'
 import * as treeParser from 'utils/treeParser'
 import * as URLHelper from 'utils/URLHelper'
 import { TreeNode, VisibleNodes, VisibleNodesGenerator } from 'utils/VisibleNodesGenerator'
+
+export type Props = {
+  treeData?: GitHubHelper.TreeData
+  metaData: GitHubHelper.MetaData
+  freeze: boolean
+  compressSingletonFolder: boolean
+  accessToken: string | undefined
+  toggleShowSettings: React.MouseEventHandler
+}
 
 export type ConnectorState = {
   stateText: string

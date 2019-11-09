@@ -3,24 +3,14 @@ import { Node } from 'components/Node'
 import { SearchBar } from 'components/SearchBar'
 import { connect } from 'driver/connect'
 import { FileExplorerCore } from 'driver/core'
-import { ConnectorState } from 'driver/core/FileExplorer'
+import { ConnectorState, Props } from 'driver/core/FileExplorer'
 import * as React from 'react'
 import { FixedSizeList as List, ListChildComponentProps } from 'react-window'
 import { cx } from 'utils/cx'
-import { MetaData, TreeData } from 'utils/GitHubHelper'
 import { usePrevious } from 'utils/hooks'
 import { TreeNode, VisibleNodes } from 'utils/VisibleNodesGenerator'
 import { Icon } from './Icon'
 import { SizeObserver } from './SizeObserver'
-
-export type Props = {
-  treeData?: TreeData
-  metaData: MetaData
-  freeze: boolean
-  compressSingletonFolder: boolean
-  accessToken: string | undefined
-  toggleShowSettings: React.MouseEventHandler
-}
 
 class RawFileExplorer extends React.Component<Props & ConnectorState> {
   static defaultProps: Partial<Props & ConnectorState> = {
@@ -183,4 +173,4 @@ class RawFileExplorer extends React.Component<Props & ConnectorState> {
   }
 }
 
-export const FileExplorer = connect<Props, ConnectorState>(FileExplorerCore)(RawFileExplorer)
+export const FileExplorer = connect(FileExplorerCore)(RawFileExplorer)
