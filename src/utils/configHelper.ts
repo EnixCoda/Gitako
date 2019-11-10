@@ -43,20 +43,10 @@ function applyDefaultConfigs(configs: Config) {
   )
 }
 
-export async function getAll(): Promise<Config> {
+export async function get(): Promise<Config> {
   return applyDefaultConfigs(await storageHelper.get(configKeyArray))
 }
 
-export async function getOne(key: configKeys) {
-  return (await getAll())[key]
-}
-
-export async function setAll(partialConfig: Partial<Config>) {
+export async function set(partialConfig: Partial<Config>) {
   return await storageHelper.set(partialConfig)
-}
-
-export async function setOne(key: configKeys, value: any) {
-  return await setAll({
-    [key]: value,
-  })
 }

@@ -1,20 +1,22 @@
 import * as React from 'react'
-import { Config, getAll, setAll } from 'utils/configHelper'
+import * as configsHelper from 'utils/configHelper'
+import { Config } from 'utils/configHelper'
 
 type Props = {}
 
 type ContextShape = PartialValSet<Config>
+export type ConfigsContextShape = ContextShape
 
-const ConfigsContext = React.createContext<ContextShape | null>(null)
+export const ConfigsContext = React.createContext<ContextShape | null>(null)
 
 export function ConfigsContextWrapper(props: React.PropsWithChildren<Props>) {
   const [configs, setConfigs] = React.useState<Config | null>(null)
   React.useEffect(() => {
-    getAll().then(setConfigs)
+    configsHelper.get().then(setConfigs)
   }, [])
   const set = React.useCallback(
     () => (configs: Config) => {
-      setAll(configs)
+      configsHelper.set(configs)
       setConfigs(configs)
     },
     [setConfigs],

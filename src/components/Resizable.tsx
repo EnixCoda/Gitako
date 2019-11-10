@@ -1,7 +1,6 @@
 import { HorizontalResizeHandler } from 'components/ResizeHandler'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
-import { configKeys } from 'utils/configHelper'
 import { cx } from 'utils/cx'
 import { bodySpacingClassName } from 'utils/DOMHelper'
 import * as features from 'utils/features'
@@ -34,7 +33,7 @@ export function Resizable({ baseSize, className, children }: React.PropsWithChil
 
   React.useEffect(() => {
     document.documentElement.style.setProperty('--gitako-width', size + 'px')
-    configContext.set({ [configKeys.sideBarWidth]: size })
+    configContext.set({ sideBarWidth: size })
   }, [size])
 
   useMediaStyleSheet(

@@ -1,6 +1,6 @@
 import { raiseError } from 'analytics'
 import { SideBar } from 'components/SideBar'
-import { ConfigsContextWrapper } from 'containers/ConfigsContext'
+import { ConfigsContext, ConfigsContextWrapper } from 'containers/ConfigsContext'
 import * as React from 'react'
 
 export class Gitako extends React.PureComponent {
@@ -11,7 +11,9 @@ export class Gitako extends React.PureComponent {
   render() {
     return (
       <ConfigsContextWrapper>
-        <SideBar />
+        <ConfigsContext.Consumer>
+          {configContext => configContext && <SideBar configContext={configContext} />}
+        </ConfigsContext.Consumer>
       </ConfigsContextWrapper>
     )
   }

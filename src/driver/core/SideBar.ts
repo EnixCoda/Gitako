@@ -1,5 +1,5 @@
+import { ConfigsContextShape } from 'containers/ConfigsContext'
 import { GetCreatedMethod, MethodCreator } from 'driver/connect'
-import * as configHelper from 'utils/configHelper'
 import { Config } from 'utils/configHelper'
 import * as DOMHelper from 'utils/DOMHelper'
 import * as GitHubHelper from 'utils/GitHubHelper'
@@ -7,7 +7,9 @@ import { MetaData, TreeData } from 'utils/GitHubHelper'
 import * as keyHelper from 'utils/keyHelper'
 import * as URLHelper from 'utils/URLHelper'
 
-export type Props = {}
+export type Props = {
+  configContext: ConfigsContextShape
+}
 
 export type ConnectorState = {
   // error message
@@ -77,6 +79,7 @@ export const init: BoundMethodCreator = dispatch => async () => {
     }
     metaData.branchName = detectedBranchName || 'master'
     dispatch.call(setMetaData, metaData)
+    const [, { configContext }] = dispatch.get()
     const {
       sideBarWidth,
       access_token: accessToken,
@@ -85,7 +88,7 @@ export const init: BoundMethodCreator = dispatch => async () => {
       copyFileButton,
       copySnippetButton,
       intelligentToggle,
-    } = await configHelper.getAll()
+    } = configContext.val
     DOMHelper.decorateGitHubPageContent({ copyFileButton, copySnippetButton })
     dispatch.set({
       baseSize: sideBarWidth,
@@ -258,7 +261,8 @@ export const setCopySnippet: BoundMethodCreator<
 export const setIntelligentToggle: BoundMethodCreator<
   [ConnectorState['intelligentToggle']]
 > = dispatch => intelligentToggle => {
-  configHelper.setOne(configHelper.configKeys.intelligentToggle, intelligentToggle)
+  const [, { configContext }] = dispatch.get()
+  configContext.set({ intelligentToggle })
   dispatch.set({ intelligentToggle })
 }
 
