@@ -20,7 +20,7 @@ export enum configKeys {
   intelligentToggle = 'intelligentToggle',
 }
 
-const defaultConfigs: Config = {
+export const defaultConfigs: Config = {
   sideBarWidth: 260,
   shortcut: undefined,
   access_token: undefined,
