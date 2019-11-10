@@ -1,11 +1,10 @@
 import { raiseError } from 'analytics'
 import { Icon } from 'components/Icon'
-import { oauth } from 'env'
+import { oauth, VERSION } from 'env'
 import * as React from 'react'
 import { Config, configKeys, setOne } from 'utils/configHelper'
 import { friendlyFormatShortcut, JSONRequest, parseURLSearch } from 'utils/general'
 import * as keyHelper from 'utils/keyHelper'
-import { version } from '../../package.json'
 
 const WIKI_HOME_LINK = 'https://github.com/EnixCoda/Gitako/wiki'
 const wikiLinks = {
@@ -348,7 +347,7 @@ export class SettingsBar extends React.PureComponent<Props, State> {
             target={'_blank'}
             title={'Check out new features!'}
           >
-            v{version}
+            {VERSION}
           </a>
           {activated ? (
             <Icon
