@@ -182,7 +182,7 @@ export const setStateText: BoundMethodCreator<[ConnectorState['stateText']]> = d
   })
 
 export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch => event => {
-  const { searched, visibleNodes } = dispatch.get()
+  const [{ searched, visibleNodes }] = dispatch.get()
   if (!visibleNodes) return
   const { nodes, focusedNode, expandedNodes, depths } = visibleNodes
   function handleVerticalMove(index: number) {
@@ -327,9 +327,8 @@ export const toggleNodeExpansion: BoundMethodCreator<[TreeNode, boolean]> = disp
 
 export const focusNode: BoundMethodCreator<[TreeNode | null, boolean]> = dispatch => (
   node: TreeNode | null,
-  skipScroll = false,
 ) => {
-  const { visibleNodes } = dispatch.get()
+  const [{ visibleNodes }] = dispatch.get()
   if (!visibleNodes) return
   visibleNodesGenerator.focusNode(node)
   dispatch.call(updateVisibleNodes)

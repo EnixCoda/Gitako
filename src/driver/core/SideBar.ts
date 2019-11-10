@@ -50,7 +50,7 @@ export type ConnectorState = {
 type BoundMethodCreator<Args extends any[] = []> = MethodCreator<Props, ConnectorState, Args>
 
 export const init: BoundMethodCreator = dispatch => async () => {
-  const { initializingPromise } = dispatch.get()
+  const [{ initializingPromise }] = dispatch.get()
   if (initializingPromise) await initializingPromise
 
   let done: any = null // cannot use type `(() => void) | null` here
@@ -175,7 +175,7 @@ export const handleError: BoundMethodCreator<[Error]> = dispatch => async err =>
 }
 
 export const onPJAXEnd: BoundMethodCreator = dispatch => () => {
-  const { metaData, copyFileButton, copySnippetButton, intelligentToggle } = dispatch.get()
+  const [{ metaData, copyFileButton, copySnippetButton, intelligentToggle }] = dispatch.get()
   DOMHelper.unmountTopProgressBar()
   DOMHelper.decorateGitHubPageContent({ copyFileButton, copySnippetButton })
   const mergedMetaData = { ...metaData, ...URLHelper.parse() }
@@ -187,7 +187,7 @@ export const onPJAXEnd: BoundMethodCreator = dispatch => () => {
 }
 
 export const onKeyDown: BoundMethodCreator<[KeyboardEvent]> = dispatch => e => {
-  const { toggleShowSideBarShortcut } = dispatch.get()
+  const [{ toggleShowSideBarShortcut }] = dispatch.get()
   if (toggleShowSideBarShortcut) {
     const keys = keyHelper.parseEvent(e)
     if (keys === toggleShowSideBarShortcut) {
@@ -197,9 +197,8 @@ export const onKeyDown: BoundMethodCreator<[KeyboardEvent]> = dispatch => e => {
 }
 
 export const toggleShowSideBar: BoundMethodCreator = dispatch => () => {
-  const { intelligentToggle } = dispatch.get()
-  const shouldShow = !dispatch.get().shouldShow
-  dispatch.call(setShouldShow, shouldShow)
+  const [{ intelligentToggle, shouldShow }] = dispatch.get()
+  dispatch.call(setShouldShow, !shouldShow)
 
   if (intelligentToggle !== null) {
     dispatch.call(setIntelligentToggle, shouldShow)
@@ -267,7 +266,7 @@ export const useListeners: BoundMethodCreator<[boolean]> = dispatch => {
   const $onPJAXEnd = () => dispatch.call(onPJAXEnd)
   const $onKeyDown = (e: KeyboardEvent) => dispatch.call(onKeyDown, e)
   return on => {
-    const { disabled } = dispatch.get()
+    const [{ disabled }] = dispatch.get()
     if (on && !disabled) {
       window.addEventListener('pjax:complete', $onPJAXEnd)
       window.addEventListener('keydown', $onKeyDown)

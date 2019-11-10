@@ -31,7 +31,7 @@ function run<M extends Method>([method, args]: [M, Parameters<M>]) {
 }
 
 export type DispatchState<Props, State> = React.Component<Props, State>['setState']
-export type GetState<State> = () => State
+export type GetState<Props, State> = () => [State, Props]
 export type TriggerOtherMethod<Props, State> = <Args extends any[]>(
   methodCreator: MethodCreator<Props, State, Args>,
   ...args: Parameters<ReturnType<MethodCreator<Props, State, Args>>>
@@ -39,7 +39,7 @@ export type TriggerOtherMethod<Props, State> = <Args extends any[]>(
 
 export type Dispatch<Props, State> = {
   set: DispatchState<Props, State>
-  get: GetState<State>
+  get: GetState<Props, State>
   call: TriggerOtherMethod<Props, State>
 }
 
@@ -75,7 +75,7 @@ function link<P, S>(instance: React.Component<P, S>, sources: Sources<P, S>): Wr
   const dispatchState: DispatchState<P, S> = (updater, callback) => {
     instance.setState(updater, callback)
   }
-  const prepareState: GetState<S> = () => instance.state
+  const prepareState: GetState<P, S> = () => [instance.state, instance.props]
   const dispatch: Dispatch<P, S> = {
     call: dispatchCall,
     get: prepareState,
