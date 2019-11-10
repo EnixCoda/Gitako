@@ -5,10 +5,8 @@ type Props = {
   into: Element | null
 }
 
-export class Portal extends React.PureComponent<Props> {
-  render() {
-    const { into, children } = this.props
-    if (!(into instanceof Element)) return null
-    return ReactDOM.createPortal(children, into)
-  }
+export function Portal(props: React.PropsWithChildren<Props>) {
+  const { into, children } = props
+  if (!(into instanceof Element)) return null
+  return ReactDOM.createPortal(children, into)
 }

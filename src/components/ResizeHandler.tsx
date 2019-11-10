@@ -8,51 +8,46 @@ type Props = {
   style?: React.CSSProperties
 }
 
-export class HorizontalResizeHandler extends React.PureComponent<Props> {
-  pointerDown = false
-  startX = 0
-  baseSize = this.props.size
+export function HorizontalResizeHandler({ onResize, size, style }: Props) {
+  const pointerDown = React.useRef(false)
+  const startX = React.useRef(0)
+  const baseSize = React.useRef(size)
+  const latestPropSize = React.useRef(size)
 
-  componentWillReceiveProps(nextProps: Props) {
-    if (!this.pointerDown) {
-      // update baseSize when not resizing
-      this.baseSize = nextProps.size
+  React.useEffect(() => {
+    latestPropSize.current = size
+  }, [size])
+
+  const onPointerDown = React.useCallback(({ clientX }: React.MouseEvent) => {
+    startX.current = clientX
+    pointerDown.current = true
+    baseSize.current = latestPropSize.current
+  }, [])
+
+  React.useEffect(() => {
+    const onPointerMove = ({ clientX }: MouseEvent) => {
+      if (!pointerDown.current) return
+      const shift = clientX - startX.current
+      onResize(baseSize.current + shift)
     }
-  }
+    window.addEventListener('mousemove', onPointerMove)
+    return () => window.removeEventListener('mousemove', onPointerMove)
+  }, [onResize])
 
-  subscribeEvents = () => {
-    window.addEventListener('mousemove', this.onPointerMove)
-    window.addEventListener('mouseup', this.onPointerUp)
-  }
+  React.useEffect(() => {
+    const onPointerUp = () => {
+      if (pointerDown.current) {
+        pointerDown.current = false
+        baseSize.current = latestPropSize.current
+      }
+    }
+    window.addEventListener('mouseup', onPointerUp)
+    return () => window.removeEventListener('mouseup', onPointerUp)
+  }, [])
 
-  unsubscribeEvents = () => {
-    window.removeEventListener('mousemove', this.onPointerMove)
-    window.removeEventListener('mouseup', this.onPointerUp)
-  }
-
-  onPointerDown = ({ clientX }: React.MouseEvent) => {
-    this.startX = clientX
-    this.pointerDown = true
-    this.subscribeEvents()
-  }
-
-  onPointerMove = ({ clientX }: MouseEvent) => {
-    if (!this.pointerDown) return
-    this.props.onResize(clientX - this.startX + this.baseSize)
-  }
-
-  onPointerUp = () => {
-    this.pointerDown = false
-    this.baseSize = this.props.size
-    this.unsubscribeEvents()
-  }
-
-  render() {
-    const { style } = this.props
-    return (
-      <div className={'gitako-resize-handler'} onMouseDown={this.onPointerDown} style={style}>
-        <Icon type={'grabber'} className={'grabber-icon'} />
-      </div>
-    )
-  }
+  return (
+    <div className={'gitako-resize-handler'} onMouseDown={onPointerDown} style={style}>
+      <Icon type={'grabber'} className={'grabber-icon'} />
+    </div>
+  )
 }

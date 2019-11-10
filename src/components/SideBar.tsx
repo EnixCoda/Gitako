@@ -24,13 +24,9 @@ class RawGitako extends React.PureComponent<Props & ConnectorState> {
     disabled: false,
   }
 
-  componentWillMount() {
-    const { init } = this.props
-    init()
-  }
-
   componentDidMount() {
-    const { useListeners } = this.props
+    const { init, useListeners } = this.props
+    init()
     useListeners(true)
   }
 

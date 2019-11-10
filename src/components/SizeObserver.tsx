@@ -19,6 +19,16 @@ export function SizeObserver({ type = 'div', children, ...rest }: Props) {
     height: undefined,
   })
 
+  const safeSetSize = React.useCallback(function safeSetSize(rect: DOMRectReadOnly) {
+    // requestAnimationFrame fixes "ResizeObserver loop limit exceeded" error
+    requestAnimationFrame(() =>
+      setSize({
+        width: rect.width,
+        height: rect.height,
+      }),
+    )
+  }, [])
+
   React.useLayoutEffect(() => {
     if (features.resize) {
       const observer = new window.ResizeObserver(entries => {
@@ -43,14 +53,4 @@ export function SizeObserver({ type = 'div', children, ...rest }: Props) {
   const props: any = { ...rest, ref } // :)
 
   return React.createElement(type, props, children(size))
-
-  function safeSetSize(rect: DOMRectReadOnly) {
-    // requestAnimationFrame fixes "ResizeObserver loop limit exceeded" error
-    requestAnimationFrame(() =>
-      setSize({
-        width: rect.width,
-        height: rect.height,
-      }),
-    )
-  }
 }

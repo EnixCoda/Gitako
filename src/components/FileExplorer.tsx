@@ -19,25 +19,19 @@ class RawFileExplorer extends React.Component<Props & ConnectorState> {
     visibleNodes: null,
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const { init, setUpTree, treeData, metaData, compressSingletonFolder, accessToken } = this.props
     init()
     setUpTree({ treeData, metaData, compressSingletonFolder, accessToken })
-  }
-
-  componentDidMount() {
     const { execAfterRender } = this.props
     execAfterRender()
   }
 
-  componentWillReceiveProps(nextProps: Props & ConnectorState) {
-    if (nextProps.treeData !== this.props.treeData) {
-      const { setUpTree, treeData, metaData, compressSingletonFolder, accessToken } = nextProps
+  componentDidUpdate(prevProps: Props & ConnectorState) {
+    if (this.props.treeData !== prevProps.treeData) {
+      const { setUpTree, treeData, metaData, compressSingletonFolder, accessToken } = this.props
       setUpTree({ treeData, metaData, compressSingletonFolder, accessToken })
     }
-  }
-
-  componentDidUpdate() {
     const { execAfterRender } = this.props
     execAfterRender()
   }
@@ -114,7 +108,7 @@ class RawFileExplorer extends React.Component<Props & ConnectorState> {
     )
   })
 
-  private renderActions: Node['props']['renderActions'] = node => {
+  private renderActions: React.ComponentProps<typeof Node>['renderActions'] = node => {
     const { searchKey, goTo } = this.props
     return (
       searchKey && (

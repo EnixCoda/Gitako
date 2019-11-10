@@ -104,9 +104,9 @@ export class SettingsBar extends React.PureComponent<Props, State> {
     if (!this.props.accessToken) this.trySetUpAccessTokenWithCode()
   }
 
-  componentWillReceiveProps({ toggleShowSideBarShortcut }: Props) {
+  componentDidUpdate({ toggleShowSideBarShortcut }: Props) {
     if (toggleShowSideBarShortcut !== this.props.toggleShowSideBarShortcut) {
-      this.setState({ toggleShowSideBarShortcut })
+      this.setState({ toggleShowSideBarShortcut: this.props.toggleShowSideBarShortcut })
     }
   }
 

@@ -102,7 +102,7 @@ export function insertLogoMountPoint() {
 
 function createLogoMountPoint() {
   const logoMountElement = document.createElement('div')
-  logoMountElement.setAttribute('class', 'gitako-logo-mount-point')
+  logoMountElement.classList.add('gitako-logo-mount-point')
   document.body.appendChild(logoMountElement)
   return logoMountElement
 }
