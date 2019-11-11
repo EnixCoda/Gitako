@@ -15,11 +15,12 @@ export function ConfigsContextWrapper(props: React.PropsWithChildren<Props>) {
     configsHelper.get().then(setConfigs)
   }, [])
   const set = React.useCallback(
-    () => (configs: Config) => {
-      configsHelper.set(configs)
-      setConfigs(configs)
+    (updatedConfigs: Partial<Config>) => {
+      const mergedConfigs = { ...configs, ...updatedConfigs } as Config
+      configsHelper.set(mergedConfigs)
+      setConfigs(mergedConfigs)
     },
-    [setConfigs],
+    [configs, setConfigs],
   )
   if (configs === null) return null
   return (

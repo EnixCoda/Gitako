@@ -1,6 +1,7 @@
 import { GetCreatedMethod, MethodCreator } from 'driver/connect'
 import * as ini from 'ini'
 import { Base64 } from 'js-base64'
+import { Config } from 'utils/configHelper'
 import * as DOMHelper from 'utils/DOMHelper'
 import { findNode, searchKeyToRegexps } from 'utils/general'
 import * as GitHubHelper from 'utils/GitHubHelper'
@@ -13,7 +14,6 @@ export type Props = {
   treeData?: GitHubHelper.TreeData
   metaData: GitHubHelper.MetaData
   freeze: boolean
-  compressSingletonFolder: boolean
   accessToken: string | undefined
   toggleShowSettings: React.MouseEventHandler
 }
@@ -137,7 +137,7 @@ function handleParsed(root: TreeNode, parsed: Parsed) {
 }
 
 export const setUpTree: BoundMethodCreator<
-  [Pick<Props, 'treeData' | 'metaData' | 'compressSingletonFolder' | 'accessToken'>]
+  [Pick<Props, 'treeData' | 'metaData' | 'accessToken'> & Pick<Config, 'compressSingletonFolder'>]
 > = dispatch => async ({ treeData, metaData, compressSingletonFolder, accessToken }) => {
   if (!treeData) return
   dispatch.call(setStateText, 'Rendering File List...')

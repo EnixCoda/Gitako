@@ -10,135 +10,92 @@ import { ConnectorState, Props } from 'driver/core/SideBar'
 import * as React from 'react'
 import { cx } from 'utils/cx'
 
-class RawGitako extends React.PureComponent<Props & ConnectorState> {
-  static defaultProps: Partial<Props & ConnectorState> = {
-    baseSize: 260,
-    shouldShow: false,
-    showSettings: false,
-    errorDueToAuth: false,
-    accessToken: '',
-    toggleShowSideBarShortcut: '',
-    compressSingletonFolder: true,
-    copyFileButton: true,
-    copySnippetButton: true,
-    disabled: false,
-  }
-
-  componentDidMount() {
-    const { init, useListeners } = this.props
+const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
+  React.useEffect(() => {
+    const { init, useListeners } = props
     init()
     useListeners(true)
-  }
+    return () => useListeners(false)
+  }, [])
 
-  componentWillUnmount() {
-    const { useListeners } = this.props
-    useListeners(false)
-  }
+  const accessToken = props.configContext.val.access_token
+  React.useEffect(() => {
+    if (accessToken) {
+      // reload when setting new accessToken
+      if (accessToken) props.init()
+    }
+  }, [accessToken, props.init])
 
-  renderAccessDeniedError() {
-    return (
-      <div className={'description'}>
-        <h5>Access Denied</h5>
-        <p>
-          Due to{' '}
-          <a target="_blank" href="https://developer.github.com/v3/#rate-limiting">
-            limitation of GitHub
-          </a>{' '}
-          or{' '}
-          <a target="_blank" href="https://developer.github.com/v3/#authentication">
-            auth needs
-          </a>
-          , Gitako needs access token to continue. Please follow the instructions in the settings
-          panel below.
-        </p>
-      </div>
-    )
-  }
-
-  renderContent() {
-    const {
-      errorDueToAuth,
-      metaData,
-      treeData,
-      showSettings,
-      toggleShowSettings,
-      compressSingletonFolder,
-      accessToken,
-    } = this.props
-    return (
-      <div className={'gitako-side-bar-content'}>
-        {metaData && <MetaBar metaData={metaData} />}
-        {errorDueToAuth
-          ? this.renderAccessDeniedError()
-          : metaData && (
-              <FileExplorer
-                compressSingletonFolder={compressSingletonFolder}
-                toggleShowSettings={toggleShowSettings}
-                metaData={metaData}
-                treeData={treeData}
-                freeze={showSettings}
-                accessToken={accessToken}
-              />
-            )}
-      </div>
-    )
-  }
-
-  render() {
-    const {
-      baseSize,
-      error,
-      shouldShow,
-      showSettings,
-      accessToken,
-      compressSingletonFolder,
-      copyFileButton,
-      copySnippetButton,
-      intelligentToggle,
-      toggleShowSideBarShortcut,
-      logoContainerElement,
-      toggleShowSideBar,
-      toggleShowSettings,
-      onShortcutChange,
-      onAccessTokenChange,
-      setCompressSingleton,
-      setCopyFile,
-      setCopySnippet,
-      setIntelligentToggle,
-    } = this.props
-    return (
-      <div className={'gitako-side-bar'}>
-        <Portal into={logoContainerElement}>
-          <ToggleShowButton
-            error={error}
-            shouldShow={shouldShow}
-            toggleShowSideBar={toggleShowSideBar}
-          />
-        </Portal>
-        <Resizable className={cx({ hidden: error || !shouldShow })} baseSize={baseSize}>
-          <div className={'gitako-side-bar-body'}>
-            {this.renderContent()}
-            <SettingsBar
-              toggleShowSettings={toggleShowSettings}
-              onShortcutChange={onShortcutChange}
-              onAccessTokenChange={onAccessTokenChange}
-              activated={showSettings}
-              accessToken={accessToken}
-              toggleShowSideBarShortcut={toggleShowSideBarShortcut}
-              compressSingletonFolder={compressSingletonFolder}
-              copyFileButton={copyFileButton}
-              copySnippetButton={copySnippetButton}
-              intelligentToggle={intelligentToggle}
-              setCompressSingleton={setCompressSingleton}
-              setCopyFile={setCopyFile}
-              setCopySnippet={setCopySnippet}
-              setIntelligentToggle={setIntelligentToggle}
-            />
+  const {
+    errorDueToAuth,
+    metaData,
+    treeData,
+    baseSize,
+    error,
+    shouldShow,
+    showSettings,
+    logoContainerElement,
+    toggleShowSideBar,
+    toggleShowSettings,
+  } = props
+  return (
+    <div className={'gitako-side-bar'}>
+      <Portal into={logoContainerElement}>
+        <ToggleShowButton
+          error={error}
+          shouldShow={shouldShow}
+          toggleShowSideBar={toggleShowSideBar}
+        />
+      </Portal>
+      <Resizable className={cx({ hidden: error || !shouldShow })} baseSize={baseSize}>
+        <div className={'gitako-side-bar-body'}>
+          <div className={'gitako-side-bar-content'}>
+            {metaData && <MetaBar metaData={metaData} />}
+            {errorDueToAuth
+              ? renderAccessDeniedError()
+              : metaData && (
+                  <FileExplorer
+                    toggleShowSettings={toggleShowSettings}
+                    metaData={metaData}
+                    treeData={treeData}
+                    freeze={showSettings}
+                    accessToken={accessToken}
+                  />
+                )}
           </div>
-        </Resizable>
-      </div>
-    )
-  }
+          <SettingsBar toggleShowSettings={toggleShowSettings} activated={showSettings} />
+        </div>
+      </Resizable>
+    </div>
+  )
+}
+
+RawGitako.defaultProps = {
+  baseSize: 260,
+  shouldShow: false,
+  showSettings: false,
+  errorDueToAuth: false,
+  disabled: false,
 }
 
 export const SideBar = connect(SideBarCore)(RawGitako)
+
+function renderAccessDeniedError() {
+  return (
+    <div className={'description'}>
+      <h5>Access Denied</h5>
+      <p>
+        Due to{' '}
+        <a target="_blank" href="https://developer.github.com/v3/#rate-limiting">
+          limitation of GitHub
+        </a>{' '}
+        or{' '}
+        <a target="_blank" href="https://developer.github.com/v3/#authentication">
+          auth needs
+        </a>
+        , Gitako needs access token to continue. Please follow the instructions in the settings
+        panel below.
+      </p>
+    </div>
+  )
+}

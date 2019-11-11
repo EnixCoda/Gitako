@@ -94,10 +94,9 @@ function link<P, S>(instance: React.Component<P, S>, sources: Sources<P, S>): Wr
 }
 
 export function connect<BaseP, ExtraP>(mapping: Sources<BaseP, ExtraP>) {
-  return function linkComponent<
-    State,
-    ComponentClass extends React.ComponentClass<BaseP & ExtraP, State>
-  >(Component: ComponentClass) {
+  return function linkComponent<State, ComponentType extends React.ComponentType<BaseP & ExtraP>>(
+    Component: ComponentType,
+  ) {
     return class ConnectedComponent extends React.PureComponent<BaseP, ExtraP, State> {
       static displayName = `Connected(${Component.displayName || Component.name})`
       static defaultProps = Component.defaultProps

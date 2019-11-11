@@ -1,129 +1,91 @@
 import { LoadingIndicator } from 'components/LoadingIndicator'
 import { Node } from 'components/Node'
 import { SearchBar } from 'components/SearchBar'
+import { useConfigs } from 'containers/ConfigsContext'
 import { connect } from 'driver/connect'
 import { FileExplorerCore } from 'driver/core'
 import { ConnectorState, Props } from 'driver/core/FileExplorer'
 import * as React from 'react'
-import { FixedSizeList as List, ListChildComponentProps } from 'react-window'
+import { FixedSizeList as List, ListChildComponentProps, ListProps } from 'react-window'
 import { cx } from 'utils/cx'
 import { usePrevious } from 'utils/hooks'
 import { TreeNode, VisibleNodes } from 'utils/VisibleNodesGenerator'
 import { Icon } from './Icon'
 import { SizeObserver } from './SizeObserver'
 
-class RawFileExplorer extends React.Component<Props & ConnectorState> {
-  static defaultProps: Partial<Props & ConnectorState> = {
-    freeze: false,
-    searchKey: '',
-    visibleNodes: null,
-  }
+const VisibleNodesContext = React.createContext<VisibleNodes | null>(null)
 
-  componentDidMount() {
-    const { init, setUpTree, treeData, metaData, compressSingletonFolder, accessToken } = this.props
+const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplorer(props) {
+  const { visibleNodes, freeze, onNodeClick, searchKey } = props
+  const {
+    val: { access_token: accessToken, compressSingletonFolder },
+  } = useConfigs()
+
+  React.useEffect(() => {
+    const { init } = props
     init()
+  }, [])
+
+  React.useEffect(() => {
+    const { setUpTree, treeData, metaData } = props
     setUpTree({ treeData, metaData, compressSingletonFolder, accessToken })
-    const { execAfterRender } = this.props
+  }, [props.setUpTree, props.treeData, props.metaData, compressSingletonFolder, accessToken])
+
+  React.useEffect(() => {
+    const { execAfterRender } = props
     execAfterRender()
-  }
-
-  componentDidUpdate(prevProps: Props & ConnectorState) {
-    if (this.props.treeData !== prevProps.treeData) {
-      const { setUpTree, treeData, metaData, compressSingletonFolder, accessToken } = this.props
-      setUpTree({ treeData, metaData, compressSingletonFolder, accessToken })
-    }
-    const { execAfterRender } = this.props
-    execAfterRender()
-  }
-
-  renderFiles(visibleNodes: VisibleNodes) {
-    const { nodes, focusedNode } = visibleNodes
-    const { searchKey } = this.props
-    const inSearch = searchKey !== ''
-    if (inSearch && nodes.length === 0) {
-      return <label className={'no-results'}>No results found.</label>
-    }
-    return (
-      <SizeObserver className={'files'}>
-        {({ width = 0, height = 0 }) => (
-          <this.ListV focusedNode={focusedNode} nodes={nodes} height={height} width={width} />
-        )}
-      </SizeObserver>
-    )
-  }
-
-  ListV = React.memo<{
-    nodes: TreeNode[]
-    height: number
-    width: number
-    focusedNode: TreeNode | null
-  }>(({ nodes, width, height, focusedNode }) => {
-    const listRef = React.useRef<List>(null)
-    React.useEffect(() => {
-      if (focusedNode && listRef.current) {
-        listRef.current.scrollToItem(nodes.indexOf(focusedNode), 'smart')
-      }
-    }, [listRef.current, focusedNode])
-
-    const lastNodeLength = usePrevious(nodes.length)
-    React.useEffect(() => {
-      if (listRef.current && !focusedNode && lastNodeLength !== nodes.length) {
-        listRef.current.scrollTo(0)
-      }
-    }, [listRef.current, focusedNode, nodes.length])
-    return (
-      <List
-        ref={listRef}
-        itemKey={(index, { nodes }) => {
-          const node = nodes[index]
-          return node && node.path
-        }}
-        itemData={{ nodes }}
-        itemCount={nodes.length}
-        itemSize={35}
-        height={height}
-        width={width}
-      >
-        {this.VirtualNode}
-      </List>
-    )
   })
 
-  VirtualNode = React.memo<ListChildComponentProps>(({ index, style }) => {
-    const { visibleNodes, onNodeClick } = this.props
-    if (!visibleNodes) return null
-    const { nodes, depths, focusedNode, expandedNodes } = visibleNodes
-    const node = nodes[index]
-    return (
-      <Node
-        style={style}
-        key={node.path}
-        node={node}
-        depth={depths.get(node) || 0}
-        focused={focusedNode === node}
-        expanded={expandedNodes.has(node)}
-        onClick={onNodeClick}
-        renderActions={this.renderActions}
-      />
-    )
-  })
-
-  private renderActions: React.ComponentProps<typeof Node>['renderActions'] = node => {
-    const { searchKey, goTo } = this.props
-    return (
-      searchKey && (
+  const renderActions: React.ComponentProps<typeof Node>['renderActions'] = React.useCallback(
+    node =>
+      searchKey ? (
         <button
           title={'Reveal in file tree'}
           className={'go-to-button'}
-          onClick={this.revealNode(goTo, node)}
+          onClick={revealNode(props.goTo, node)}
         >
           <Icon type="go-to" />
         </button>
-      )
-    )
-  }
+      ) : null,
+    [searchKey, props.goTo],
+  )
 
-  revealNode(
+  const renderNode = React.useCallback(
+    ({ index, style }: ListChildComponentProps) => (
+      <VirtualNode
+        index={index}
+        style={style}
+        onNodeClick={onNodeClick}
+        renderActions={renderActions}
+      />
+    ),
+    [renderActions, onNodeClick],
+  )
+
+  const renderFiles = React.useCallback(
+    ({ nodes, focusedNode }: VisibleNodes) => {
+      const inSearch = searchKey !== ''
+      if (inSearch && nodes.length === 0) {
+        return <label className={'no-results'}>No results found.</label>
+      }
+      return (
+        <SizeObserver className={'files'}>
+          {({ width = 0, height = 0 }) => (
+            <ListView
+              renderNode={renderNode}
+              focusedNode={focusedNode}
+              nodes={nodes}
+              height={height}
+              width={width}
+            />
+          )}
+        </SizeObserver>
+      )
+    },
+    [searchKey, ListView, renderNode],
+  )
+
+  const revealNode = React.useCallback(function revealNode(
     goTo: (path: string[]) => void,
     node: TreeNode,
   ): (event: React.MouseEvent<HTMLElement, MouseEvent>) => void {
@@ -132,39 +94,113 @@ class RawFileExplorer extends React.Component<Props & ConnectorState> {
       e.preventDefault()
       goTo(node.path.split('/'))
     }
-  }
+  },
+  [])
 
-  render() {
-    const {
-      stateText,
-      visibleNodes,
-      freeze,
-      handleKeyDown,
-      search,
-      toggleShowSettings,
-      onFocusSearchBar,
-      searchKey,
-    } = this.props
-    return (
+  return (
+    <VisibleNodesContext.Provider value={visibleNodes}>
       <div
         className={cx(`file-explorer`, { freeze })}
         tabIndex={-1}
-        onKeyDown={handleKeyDown}
-        onClick={freeze ? toggleShowSettings : undefined}
+        onKeyDown={props.handleKeyDown}
+        onClick={freeze ? props.toggleShowSettings : undefined}
       >
-        {stateText ? (
-          <LoadingIndicator text={stateText} />
+        {props.stateText ? (
+          <LoadingIndicator text={props.stateText} />
         ) : (
           visibleNodes && (
-            <React.Fragment>
-              <SearchBar searchKey={searchKey} onSearch={search} onFocus={onFocusSearchBar} />
-              {this.renderFiles(visibleNodes)}
-            </React.Fragment>
+            <>
+              <SearchBar
+                searchKey={searchKey}
+                onSearch={props.search}
+                onFocus={props.onFocusSearchBar}
+              />
+              {renderFiles(visibleNodes)}
+            </>
           )
         )}
       </div>
-    )
-  }
+    </VisibleNodesContext.Provider>
+  )
+}
+
+RawFileExplorer.defaultProps = {
+  freeze: false,
+  searchKey: '',
+  visibleNodes: null,
 }
 
 export const FileExplorer = connect(FileExplorerCore)(RawFileExplorer)
+
+function VirtualNode({
+  index,
+  style,
+  onNodeClick,
+  renderActions,
+}: {
+  index: number
+  style: React.CSSProperties
+  onNodeClick: (treeNode: TreeNode) => void
+  renderActions: ((node: TreeNode) => React.ReactNode) | undefined
+}) {
+  const visibleNodes = React.useContext(VisibleNodesContext)
+  if (!visibleNodes) return null
+  const { nodes, depths, focusedNode, expandedNodes } = visibleNodes
+  const node = nodes[index]
+  return (
+    <Node
+      style={style}
+      key={node.path}
+      node={node}
+      depth={depths.get(node) || 0}
+      focused={focusedNode === node}
+      expanded={expandedNodes.has(node)}
+      onClick={onNodeClick}
+      renderActions={renderActions}
+    />
+  )
+}
+
+function ListView({
+  nodes,
+  width,
+  height,
+  focusedNode,
+  renderNode,
+}: {
+  nodes: TreeNode[]
+  height: number
+  width: number
+  focusedNode: TreeNode | null
+  renderNode: ListProps['children']
+}) {
+  const listRef = React.useRef<List>(null)
+  React.useEffect(() => {
+    if (focusedNode && listRef.current) {
+      listRef.current.scrollToItem(nodes.indexOf(focusedNode), 'smart')
+    }
+  }, [listRef.current, focusedNode])
+
+  const lastNodeLength = usePrevious(nodes.length)
+  React.useEffect(() => {
+    if (listRef.current && !focusedNode && lastNodeLength !== nodes.length) {
+      listRef.current.scrollTo(0)
+    }
+  }, [listRef.current, focusedNode, nodes.length])
+  return (
+    <List
+      ref={listRef}
+      itemKey={(index, { nodes }) => {
+        const node = nodes[index]
+        return node && node.path
+      }}
+      itemData={{ nodes }}
+      itemCount={nodes.length}
+      itemSize={35}
+      height={height}
+      width={width}
+    >
+      {renderNode}
+    </List>
+  )
+}
