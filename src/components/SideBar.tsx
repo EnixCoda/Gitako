@@ -41,22 +41,25 @@ class Gitako extends React.PureComponent<Props & ConnectorState> {
     useListeners(false)
   }
 
-  renderAccessDeniedError() {
+  renderAccessDeniedError(hasToken: boolean) {
     return (
       <div className={'description'}>
         <h5>Access Denied</h5>
-        <p>
-          Due to{' '}
-          <a target="_blank" href="https://developer.github.com/v3/#rate-limiting">
-            limitation of GitHub
-          </a>{' '}
-          or{' '}
-          <a target="_blank" href="https://developer.github.com/v3/#authentication">
-            auth needs
-          </a>
-          , Gitako needs access token to continue. Please follow the instructions in the settings
-          panel below.
-        </p>
+        {hasToken ? (
+          <p>Current access token is not granted with permissions to access this project.</p>
+        ) : (
+          <p>
+            Gitako needs access token to read this project due to{' '}
+            <a target="_blank" href="https://developer.github.com/v3/#rate-limiting">
+              GitHub rate limiting
+            </a>{' '}
+            and{' '}
+            <a target="_blank" href="https://developer.github.com/v3/#authentication">
+              auth needs
+            </a>
+            . Please setup access token in the settings panel below.
+          </p>
+        )}
       </div>
     )
   }
@@ -75,7 +78,7 @@ class Gitako extends React.PureComponent<Props & ConnectorState> {
       <div className={'gitako-side-bar-content'}>
         {metaData && <MetaBar metaData={metaData} />}
         {errorDueToAuth
-          ? this.renderAccessDeniedError()
+          ? this.renderAccessDeniedError(Boolean(accessToken))
           : metaData && (
               <FileExplorer
                 compressSingletonFolder={compressSingletonFolder}

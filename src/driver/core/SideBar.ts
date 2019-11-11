@@ -171,7 +171,6 @@ const handleError: BoundMethodCreator<[Error]> = dispatch => async err => {
   ) {
     dispatch.set({ errorDueToAuth: true })
     dispatch.call(setShowSettings, true)
-    dispatch.call(setShouldShow, true)
   } else {
     dispatch.call(useListeners, false)
     dispatch.call(setError, 'Gitako ate a bug, but it should recovery soon!')
