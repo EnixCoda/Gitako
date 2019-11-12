@@ -1,9 +1,8 @@
-import { raiseError } from 'analytics'
 import { Icon } from 'components/Icon'
 import { useConfigs } from 'containers/ConfigsContext'
 import { oauth, VERSION } from 'env'
 import * as React from 'react'
-import { friendlyFormatShortcut, JSONRequest, parseURLSearch } from 'utils/general'
+import { friendlyFormatShortcut } from 'utils/general'
 import { useStates } from 'utils/hooks'
 import * as keyHelper from 'utils/keyHelper'
 import { SimpleField, SimpleFieldInput } from './MoreOption'
@@ -60,18 +59,20 @@ function SettingsBarContent() {
   const useToggleShowSideBarShortcut = useStates(configContext.val.shortcut)
   const useReloadHint = useStates<React.ReactNode>('')
 
-  React.useEffect(() => {
-    if (!configContext.val.access_token) {
-      trySetUpAccessTokenWithCode().then(accessToken => {
-        useAccessToken.set(accessToken)
-        saveToken('')
-      })
-    }
-  }, [])
+  const { val: accessTokenHint } = useAccessTokenHint
+  const { val: toggleShowSideBarShortcut } = useToggleShowSideBarShortcut
+  const { val: shortcutHint } = useShortcutHint
+  const { val: accessToken } = useAccessToken
+  const { val: reloadHint } = useReloadHint
 
   React.useEffect(() => {
     useToggleShowSideBarShortcut.set(configContext.val.shortcut)
   }, [configContext.val.shortcut])
+
+  React.useEffect(() => {
+    // clear input when access token updates
+    useAccessToken.set('')
+  }, [configContext.val.access_token])
 
   const onInputAccessToken = React.useCallback(
     ({ currentTarget: { value } }: React.FormEvent<HTMLInputElement>) => {
@@ -87,28 +88,25 @@ function SettingsBarContent() {
     if (key === 'Enter') saveToken()
   }, [])
 
-  const saveToken = React.useCallback(async (hint?: typeof useAccessTokenHint.val) => {
-    const { val: accessToken } = useAccessToken
-    if (accessToken) {
-      configContext.set({ access_token: accessToken })
-      useAccessToken.set('')
-      useAccessTokenHint.set(
-        hint || (
-          <span>
-            <a href="#" onClick={() => window.location.reload()}>
-              Reload
-            </a>{' '}
-            to activate!
-          </span>
-        ),
-      )
-    }
-  }, [])
-
-  const clearToken = React.useCallback(async () => {
-    configContext.set({ access_token: '' })
-    useAccessToken.set('')
-  }, [])
+  const saveToken = React.useCallback(
+    async (hint?: typeof useAccessTokenHint.val) => {
+      if (accessToken) {
+        configContext.set({ access_token: accessToken })
+        useAccessToken.set('')
+        useAccessTokenHint.set(
+          hint || (
+            <span>
+              <a href="#" onClick={() => window.location.reload()}>
+                Reload
+              </a>{' '}
+              to activate!
+            </span>
+          ),
+        )
+      }
+    },
+    [accessToken],
+  )
 
   const saveShortcut = React.useCallback(async () => {
     const { val: toggleShowSideBarShortcut } = useToggleShowSideBarShortcut
@@ -139,12 +137,6 @@ function SettingsBarContent() {
       ),
     [],
   )
-
-  const { val: accessTokenHint } = useAccessTokenHint
-  const { val: toggleShowSideBarShortcut } = useToggleShowSideBarShortcut
-  const { val: shortcutHint } = useShortcutHint
-  const { val: accessToken } = useAccessToken
-  const { val: reloadHint } = useReloadHint
 
   return (
     <>
@@ -182,7 +174,7 @@ function SettingsBarContent() {
               onKeyPress={onPressAccessToken}
             />
             {hasAccessToken && !accessToken ? (
-              <button className={'btn'} onClick={clearToken}>
+              <button className={'btn'} onClick={() => configContext.set({ access_token: '' })}>
                 Clear
               </button>
             ) : (
@@ -263,25 +255,4 @@ export function SettingsBar(props: Props) {
       </div>
     </div>
   )
-}
-
-async function trySetUpAccessTokenWithCode() {
-  try {
-    const search = parseURLSearch()
-    if ('code' in search) {
-      const res = await JSONRequest('https://github.com/login/oauth/access_token', {
-        code: search.code,
-        client_id: oauth.clientId,
-        client_secret: oauth.clientSecret,
-      })
-      const { access_token: accessToken, scope } = res
-      if (scope !== 'repo' || !accessToken) {
-        throw new Error(`Cannot resolve token response: '${JSON.stringify(res)}'`)
-      }
-      window.history.pushState({}, 'removed code', window.location.pathname.replace(/#.*$/, ''))
-      return accessToken
-    }
-  } catch (err) {
-    raiseError(err)
-  }
 }

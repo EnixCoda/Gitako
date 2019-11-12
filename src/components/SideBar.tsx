@@ -1,30 +1,43 @@
+import { raiseError } from 'analytics'
 import { FileExplorer } from 'components/FileExplorer'
 import { MetaBar } from 'components/MetaBar'
 import { Portal } from 'components/Portal'
 import { Resizable } from 'components/Resizable'
 import { SettingsBar } from 'components/SettingsBar'
 import { ToggleShowButton } from 'components/ToggleShowButton'
+import { useConfigs } from 'containers/ConfigsContext'
 import { connect } from 'driver/connect'
 import { SideBarCore } from 'driver/core'
 import { ConnectorState, Props } from 'driver/core/SideBar'
+import { oauth } from 'env'
 import * as React from 'react'
 import { cx } from 'utils/cx'
+import { JSONRequest, parseURLSearch } from 'utils/general'
 
 const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
+  const configContext = useConfigs()
+  const accessToken = props.configContext.val.access_token
+
   React.useEffect(() => {
-    const { init, useListeners } = props
-    init()
+    const { init } = props
+    ;(async function() {
+      if (!accessToken) {
+        const accessToken = await trySetUpAccessTokenWithCode()
+        configContext.set({ access_token: accessToken })
+      }
+      init()
+    })()
+  }, [])
+
+  React.useEffect(() => {
+    const { useListeners } = props
     useListeners(true)
     return () => useListeners(false)
   }, [])
 
-  const accessToken = props.configContext.val.access_token
-  React.useEffect(() => {
-    if (accessToken) {
-      // reload when setting new accessToken
-      if (accessToken) props.init()
-    }
-  }, [accessToken, props.init])
+  // reload when setting new accessToken
+  // special way to implement didUpdate
+  React.useEffect(() => () => props.init(), [accessToken])
 
   const {
     errorDueToAuth,
@@ -98,4 +111,25 @@ function renderAccessDeniedError() {
       </p>
     </div>
   )
+}
+
+async function trySetUpAccessTokenWithCode() {
+  try {
+    const search = parseURLSearch()
+    if ('code' in search) {
+      const res = await JSONRequest('https://github.com/login/oauth/access_token', {
+        code: search.code,
+        client_id: oauth.clientId,
+        client_secret: oauth.clientSecret,
+      })
+      const { access_token: accessToken, scope } = res
+      if (scope !== 'repo' || !accessToken) {
+        throw new Error(`Cannot resolve token response: '${JSON.stringify(res)}'`)
+      }
+      window.history.pushState({}, 'removed code', window.location.pathname.replace(/#.*$/, ''))
+      return accessToken
+    }
+  } catch (err) {
+    raiseError(err)
+  }
 }

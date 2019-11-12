@@ -194,8 +194,15 @@ export const onKeyDown: BoundMethodCreator<[KeyboardEvent]> = dispatch => e => {
 }
 
 export const toggleShowSideBar: BoundMethodCreator = dispatch => () => {
-  const [{ shouldShow }] = dispatch.get()
+  const [{ shouldShow }, { configContext }] = dispatch.get()
   dispatch.call(setShouldShow, !shouldShow)
+
+  const {
+    val: { intelligentToggle },
+  } = configContext
+  if (intelligentToggle !== null) {
+    configContext.set({ intelligentToggle: !shouldShow })
+  }
 }
 
 export const setShouldShow: BoundMethodCreator<
