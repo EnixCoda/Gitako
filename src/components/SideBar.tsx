@@ -54,7 +54,10 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
   const onPJAXEnd = React.useCallback(() => {
     DOMHelper.unmountTopProgressBar()
     props.setMetaData({ ...props.metaData, ...URLHelper.parse() })
-  }, [props.metaData])
+    // TODO: update state to re-trigger DOM effects
+    // if (configContext.val.copyFileButton) DOMHelper.attachCopyFileBtn()
+    // if (configContext.val.copySnippetButton) DOMHelper.attachCopySnippet()
+  }, [props.metaData, configContext.val])
 
   React.useEffect(() => {
     if (props.disabled) return
@@ -69,14 +72,12 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
   }, [props.metaData, configContext.val.intelligentToggle])
 
   React.useEffect(() => {
-    const { copyFileButton } = configContext.val
-    if (copyFileButton) return DOMHelper.attachCopyFileBtn()
-  }, [props.metaData])
+    if (configContext.val.copyFileButton) return DOMHelper.attachCopyFileBtn()
+  }, [configContext.val.copyFileButton])
 
   React.useEffect(() => {
-    const { copySnippetButton } = configContext.val
-    if (copySnippetButton) DOMHelper.attachCopySnippet()
-  }, [props.metaData])
+    if (configContext.val.copySnippetButton) return DOMHelper.attachCopySnippet()
+  }, [configContext.val.copySnippetButton])
 
   // init again when setting new accessToken
   useDidUpdate(() => props.init(), [accessToken])

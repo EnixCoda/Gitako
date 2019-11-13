@@ -124,20 +124,6 @@ function SettingsBarContent() {
     useToggleShowSideBarShortcut.set(shortcut)
   }, [])
 
-  const showReloadHint = React.useCallback(
-    () =>
-      useReloadHint.set(
-        <span>
-          Saved,{' '}
-          <a href="#" onClick={() => window.location.reload()}>
-            reload
-          </a>{' '}
-          to apply.
-        </span>,
-      ),
-    [],
-  )
-
   return (
     <>
       <h3 className={'gitako-settings-bar-title'}>Settings</h3>
@@ -207,11 +193,7 @@ function SettingsBarContent() {
           <h4>More Options</h4>
           {moreFields.map(field => (
             <React.Fragment key={field.key}>
-              <SimpleFieldInput
-                field={field}
-                overwrite={field.overwrite}
-                onChange={showReloadHint}
-              />
+              <SimpleFieldInput field={field} overwrite={field.overwrite} />
               <br />
             </React.Fragment>
           ))}

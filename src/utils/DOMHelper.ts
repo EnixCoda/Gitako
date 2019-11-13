@@ -7,7 +7,6 @@ import { CopyFileButton } from 'components/CopyFileButton'
 import * as NProgress from 'nprogress'
 import * as PJAX from 'pjax'
 import * as React from 'react'
-import * as ReactDOM from 'react-dom'
 import { renderReact } from './general'
 
 NProgress.configure({ showSpinner: false })
@@ -210,15 +209,13 @@ export function attachCopyFileBtn() {
     }
 
     const buttons: HTMLElement[] = []
-    buttonGroups.forEach(buttonGroup => {
+    buttonGroups.forEach(async buttonGroup => {
       if (!buttonGroup.lastElementChild) return
-      const portal = ReactDOM.createPortal(React.createElement(CopyFileButton), buttonGroup)
-      // creating a element for mounting button into button group, somehow hack
-      const seedElementForButton = document.createElement('a')
-      buttonGroup.appendChild(seedElementForButton)
-      ReactDOM.render(portal, seedElementForButton)
-      buttonGroup.removeChild(seedElementForButton)
-      buttons.push(seedElementForButton)
+      const button = await renderReact(React.createElement(CopyFileButton))
+      if (button instanceof HTMLElement) {
+        buttonGroup.appendChild(button)
+        buttons.push(button)
+      }
     })
     return () =>
       buttons.forEach(button => {
@@ -249,7 +246,8 @@ export function attachCopySnippet() {
     const readmeArticleSelector = '.repository-content div#readme article'
     return $(
       readmeArticleSelector,
-      readmeElement =>
+      readmeElement => {
+        const buttons: HTMLElement[] = []
         readmeElement.addEventListener('mouseover', async ({ target }) => {
           if (target instanceof Element && target.nodeName === 'PRE') {
             if (
@@ -269,11 +267,19 @@ export function attachCopySnippet() {
                 const clippyElement = await renderReact(
                   React.createElement(Clippy, { codeSnippetElement: target }),
                 )
-                target.parentNode.insertBefore(clippyElement, target)
+                if (clippyElement instanceof HTMLElement) {
+                  target.parentNode.insertBefore(clippyElement, target)
+                  buttons.push(clippyElement)
+                }
               }
             }
           }
-        }),
+        })
+        return () =>
+          buttons.forEach(button => {
+            button.parentElement?.removeChild(button)
+          })
+      },
       () => {
         const plainReadmeSelector = '.repository-content div#readme .plain'
         $(plainReadmeSelector, undefined, () =>
