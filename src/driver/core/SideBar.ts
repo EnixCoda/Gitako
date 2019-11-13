@@ -3,7 +3,6 @@ import { GetCreatedMethod, MethodCreator } from 'driver/connect'
 import * as DOMHelper from 'utils/DOMHelper'
 import * as GitHubHelper from 'utils/GitHubHelper'
 import { MetaData, TreeData } from 'utils/GitHubHelper'
-import * as keyHelper from 'utils/keyHelper'
 import * as URLHelper from 'utils/URLHelper'
 
 export type Props = {
@@ -29,10 +28,8 @@ export type ConnectorState = {
 } & {
   init: GetCreatedMethod<typeof init>
   onPJAXEnd: GetCreatedMethod<typeof onPJAXEnd>
-  onKeyDown: GetCreatedMethod<typeof onKeyDown>
   toggleShowSideBar: GetCreatedMethod<typeof toggleShowSideBar>
   toggleShowSettings: GetCreatedMethod<typeof toggleShowSettings>
-  useListeners: GetCreatedMethod<typeof useListeners>
 } & {
   baseSize: number
 }
@@ -68,14 +65,7 @@ export const init: BoundMethodCreator = dispatch => async () => {
     metaData.branchName = detectedBranchName || 'master'
     dispatch.call(setMetaData, metaData)
     const [, { configContext }] = dispatch.get()
-    const {
-      sideBarWidth,
-      access_token: accessToken,
-      copyFileButton,
-      copySnippetButton,
-      intelligentToggle,
-    } = configContext.val
-    DOMHelper.decorateGitHubPageContent({ copyFileButton, copySnippetButton })
+    const { sideBarWidth, access_token: accessToken, intelligentToggle } = configContext.val
     dispatch.set({
       baseSize: sideBarWidth,
     })
@@ -151,7 +141,6 @@ export const handleError: BoundMethodCreator<[Error]> = dispatch => async err =>
     dispatch.call(setShowSettings, true)
     dispatch.call(setShouldShow, true)
   } else {
-    dispatch.call(useListeners, false)
     dispatch.call(setError, 'Gitako ate a bug, but it should recovery soon!')
     throw err
   }
@@ -176,23 +165,6 @@ export const onPJAXEnd: BoundMethodCreator = dispatch => () => {
   }
 }
 
-export const onKeyDown: BoundMethodCreator<[KeyboardEvent]> = dispatch => e => {
-  const [
-    ,
-    {
-      configContext: {
-        val: { shortcut },
-      },
-    },
-  ] = dispatch.get()
-  if (shortcut) {
-    const keys = keyHelper.parseEvent(e)
-    if (keys === shortcut) {
-      dispatch.call(toggleShowSideBar)
-    }
-  }
-}
-
 export const toggleShowSideBar: BoundMethodCreator = dispatch => () => {
   const [{ shouldShow }, { configContext }] = dispatch.get()
   dispatch.call(setShouldShow, !shouldShow)
@@ -205,9 +177,9 @@ export const toggleShowSideBar: BoundMethodCreator = dispatch => () => {
   }
 }
 
-export const setShouldShow: BoundMethodCreator<
-  [ConnectorState['shouldShow']]
-> = dispatch => shouldShow => {
+export const setShouldShow: BoundMethodCreator<[
+  ConnectorState['shouldShow'],
+]> = dispatch => shouldShow => {
   dispatch.set({ shouldShow }, shouldShow ? DOMHelper.focusFileExplorer : undefined)
   DOMHelper.setBodyIndent(shouldShow)
 }
@@ -222,24 +194,9 @@ export const toggleShowSettings: BoundMethodCreator = dispatch => () =>
     showSettings: !showSettings,
   }))
 
-export const setShowSettings: BoundMethodCreator<
-  [ConnectorState['showSettings']]
-> = dispatch => showSettings => dispatch.set({ showSettings })
+export const setShowSettings: BoundMethodCreator<[
+  ConnectorState['showSettings'],
+]> = dispatch => showSettings => dispatch.set({ showSettings })
 
 export const setMetaData: BoundMethodCreator<[ConnectorState['metaData']]> = dispatch => metaData =>
   dispatch.set({ metaData })
-
-export const useListeners: BoundMethodCreator<[boolean]> = dispatch => {
-  const $onPJAXEnd = () => dispatch.call(onPJAXEnd)
-  const $onKeyDown = (e: KeyboardEvent) => dispatch.call(onKeyDown, e)
-  return on => {
-    const [{ disabled }] = dispatch.get()
-    if (on && !disabled) {
-      window.addEventListener('pjax:complete', $onPJAXEnd)
-      window.addEventListener('keydown', $onKeyDown)
-    } else {
-      window.removeEventListener('pjax:complete', $onPJAXEnd)
-      window.removeEventListener('keydown', $onKeyDown)
-    }
-  }
-}

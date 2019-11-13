@@ -12,7 +12,9 @@ import { ConnectorState, Props } from 'driver/core/SideBar'
 import { oauth } from 'env'
 import * as React from 'react'
 import { cx } from 'utils/cx'
+import * as DOMHelper from 'utils/DOMHelper'
 import { JSONRequest, parseURLSearch } from 'utils/general'
+import * as keyHelper from 'utils/keyHelper'
 
 const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
   const configContext = useConfigs()
@@ -29,10 +31,33 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
     })()
   }, [])
 
+  const onKeyDown = React.useCallback(
+    configContext.val.shortcut
+      ? (e: KeyboardEvent) => {
+          const keys = keyHelper.parseEvent(e)
+          if (keys === configContext.val.shortcut) {
+            props.toggleShowSideBar()
+          }
+        }
+      : () => {},
+    [configContext.val.shortcut],
+  )
+
   React.useEffect(() => {
-    const { useListeners } = props
-    useListeners(true)
-    return () => useListeners(false)
+    if (props.disabled) return
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [props.disabled, onKeyDown])
+
+  React.useEffect(() => {
+    if (props.disabled) return
+    window.addEventListener('pjax:complete', props.onPJAXEnd)
+    return () => window.removeEventListener('pjax:complete', props.onPJAXEnd)
+  }, [props.disabled])
+
+  React.useEffect(() => {
+    const { copyFileButton, copySnippetButton } = configContext.val
+    DOMHelper.decorateGitHubPageContent({ copyFileButton, copySnippetButton })
   }, [])
 
   // reload when setting new accessToken
