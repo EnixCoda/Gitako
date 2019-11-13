@@ -209,6 +209,7 @@ export function attachCopyFileBtn() {
       raiseError(new Error(`No button groups found`))
     }
 
+    const buttons: HTMLElement[] = []
     buttonGroups.forEach(buttonGroup => {
       if (!buttonGroup.lastElementChild) return
       const portal = ReactDOM.createPortal(React.createElement(CopyFileButton), buttonGroup)
@@ -217,7 +218,12 @@ export function attachCopyFileBtn() {
       buttonGroup.appendChild(seedElementForButton)
       ReactDOM.render(portal, seedElementForButton)
       buttonGroup.removeChild(seedElementForButton)
+      buttons.push(seedElementForButton)
     })
+    return () =>
+      buttons.forEach(button => {
+        button.parentElement?.removeChild(button)
+      })
   }
 }
 
@@ -241,13 +247,11 @@ export function attachCopySnippet() {
   const readmeSelector = '.repository-content div#readme'
   return $(readmeSelector, () => {
     const readmeArticleSelector = '.repository-content div#readme article'
-    $(
+    return $(
       readmeArticleSelector,
       readmeElement =>
-        readmeElement.addEventListener('mouseover', async e => {
-          // only move clippy when mouse is over a new snippet(<pre>)
-          const target = e.target as Element
-          if (target.nodeName === 'PRE') {
+        readmeElement.addEventListener('mouseover', async ({ target }) => {
+          if (target instanceof Element && target.nodeName === 'PRE') {
             if (
               target.previousSibling === null ||
               !(target.previousSibling instanceof Element) ||
@@ -302,20 +306,6 @@ export function focusSearchInput() {
       searchInputElement.focus()
     }
   })
-}
-
-/**
- * a combination of few above functions
- */
-export function decorateGitHubPageContent({
-  copyFileButton,
-  copySnippetButton,
-}: {
-  copyFileButton: boolean
-  copySnippetButton: boolean
-}) {
-  if (copyFileButton) attachCopyFileBtn()
-  if (copySnippetButton) attachCopySnippet()
 }
 
 export function mountTopProgressBar() {

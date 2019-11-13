@@ -53,13 +53,8 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
 
   const onPJAXEnd = React.useCallback(() => {
     DOMHelper.unmountTopProgressBar()
-    const mergedMetaData = { ...props.metaData, ...URLHelper.parse() }
-    props.setMetaData(mergedMetaData)
-
-    if (configContext.val.intelligentToggle === null) {
-      props.setShouldShow(URLHelper.isInCodePage(mergedMetaData))
-    }
-  }, [props.metaData, configContext.val.intelligentToggle])
+    props.setMetaData({ ...props.metaData, ...URLHelper.parse() })
+  }, [props.metaData])
 
   React.useEffect(() => {
     if (props.disabled) return
@@ -68,8 +63,19 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
   }, [props.disabled, onPJAXEnd])
 
   React.useEffect(() => {
-    const { copyFileButton, copySnippetButton } = configContext.val
-    DOMHelper.decorateGitHubPageContent({ copyFileButton, copySnippetButton })
+    if (configContext.val.intelligentToggle === null) {
+      props.setShouldShow(URLHelper.isInCodePage(props.metaData))
+    }
+  }, [props.metaData, configContext.val.intelligentToggle])
+
+  React.useEffect(() => {
+    const { copyFileButton } = configContext.val
+    if (copyFileButton) return DOMHelper.attachCopyFileBtn()
+  }, [props.metaData])
+
+  React.useEffect(() => {
+    const { copySnippetButton } = configContext.val
+    if (copySnippetButton) DOMHelper.attachCopySnippet()
   }, [props.metaData])
 
   // init again when setting new accessToken
