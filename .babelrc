@@ -5,13 +5,14 @@
       {
         "targets": {
           "chrome": "67"
-        },
+        }
       }
     ],
     "@babel/preset-typescript",
-    "@babel/preset-react",
+    "@babel/preset-react"
   ],
   "plugins": [
+    "@babel/plugin-proposal-optional-chaining",
     "@babel/plugin-proposal-class-properties",
     "@babel/plugin-proposal-object-rest-spread"
   ]
