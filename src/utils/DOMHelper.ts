@@ -2,11 +2,13 @@
  * this helper helps manipulating DOM
  */
 import { raiseError } from 'analytics'
+import { Clippy } from 'components/Clippy'
 import { CopyFileButton } from 'components/CopyFileButton'
 import * as NProgress from 'nprogress'
 import * as PJAX from 'pjax'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
+import { renderReact } from './general'
 
 NProgress.configure({ showSpinner: false })
 
@@ -37,10 +39,10 @@ function $<EE extends Element, E extends (element: EE) => any, O extends () => a
   otherwise?: O,
 ): E extends never
   ? O extends never
-    ? (Element | null)
+    ? Element | null
     : ReturnType<O> | null
   : O extends never
-  ? (ReturnType<E> | null)
+  ? ReturnType<E> | null
   : ReturnType<O> | ReturnType<E> {
   const element = document.querySelector(selector)
   if (element) {
@@ -221,10 +223,8 @@ export function attachCopyFileBtn() {
 
 /**
  * copy content of a DOM element to clipboard
- * @param {element} element
- * @returns {boolean} whether copy is successful
  */
-export function copyElementContent(element: Element) {
+export function copyElementContent(element: Element): boolean {
   let selection = window.getSelection()
   if (selection) selection.removeAllRanges()
   const range = document.createRange()
@@ -237,54 +237,6 @@ export function copyElementContent(element: Element) {
   return isCopySuccessful
 }
 
-/**
- * create a copy file content button `clippy`
- * once mouse enters a code snippet of markdown, move clippy into it
- * user can copy the snippet's content by click it
- *
- * TODO: 'reactify' it
- */
-function createClippy() {
-  function setTempClippyIconFeedback(clippy: Element, type: 'success' | 'fail') {
-    const tempIconClassName = type === 'success' ? 'success' : 'fail'
-    clippy.classList.add(tempIconClassName)
-    window.setTimeout(() => {
-      clippy.classList.remove(tempIconClassName)
-    }, 1000)
-  }
-
-  /**
-   * <div class="clippy-wrapper">
-   *    <button class="clippy">
-   *      <i class="octicon octicon-clippy" />
-   *    </button>
-   *  </div>
-   */
-  const clippyWrapper = document.createElement('div')
-  clippyWrapper.classList.add('clippy-wrapper')
-  const clippy = document.createElement('button')
-  clippy.classList.add('clippy')
-  const clippyIcon = document.createElement('i')
-  clippyIcon.classList.add('icon')
-
-  clippyWrapper.appendChild(clippy)
-  clippy.appendChild(clippyIcon)
-
-  // set clipboard with current code snippet element's content
-  clippy.addEventListener('click', function onClippyClick() {
-    if (copyElementContent(currentCodeSnippetElement)) {
-      setTempClippyIconFeedback(clippy, 'success')
-    } else {
-      setTempClippyIconFeedback(clippy, 'fail')
-    }
-  })
-
-  return clippyWrapper
-}
-
-const clippy = createClippy()
-
-let currentCodeSnippetElement: Element
 export function attachCopySnippet() {
   const readmeSelector = '.repository-content div#readme'
   return $(readmeSelector, () => {
@@ -292,12 +244,15 @@ export function attachCopySnippet() {
     $(
       readmeArticleSelector,
       readmeElement =>
-        readmeElement.addEventListener('mouseover', e => {
+        readmeElement.addEventListener('mouseover', async e => {
           // only move clippy when mouse is over a new snippet(<pre>)
           const target = e.target as Element
           if (target.nodeName === 'PRE') {
-            if (currentCodeSnippetElement !== target) {
-              currentCodeSnippetElement = target
+            if (
+              target.previousSibling === null ||
+              !(target.previousSibling instanceof Element) ||
+              !target.previousSibling.classList.contains('clippy-wrapper')
+            ) {
               /**
                *  <article>
                *    <pre></pre>     <!-- case A -->
@@ -306,7 +261,12 @@ export function attachCopySnippet() {
                *    </div>
                *  </article>
                */
-              if (target.parentNode) target.parentNode.insertBefore(clippy, target)
+              if (target.parentNode) {
+                const clippyElement = await renderReact(
+                  React.createElement(Clippy, { codeSnippetElement: target }),
+                )
+                target.parentNode.insertBefore(clippyElement, target)
+              }
             }
           }
         }),
