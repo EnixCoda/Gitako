@@ -72,15 +72,17 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
   }, [props.metaData, configContext.val.intelligentToggle])
 
   React.useEffect(() => {
-    if (configContext.val.copyFileButton) return DOMHelper.attachCopyFileBtn()
+    if (configContext.val.copyFileButton) return DOMHelper.attachCopyFileBtn() || undefined // undefined is friendlier to React
   }, [configContext.val.copyFileButton])
 
   React.useEffect(() => {
-    if (configContext.val.copySnippetButton) return DOMHelper.attachCopySnippet()
+    if (configContext.val.copySnippetButton) return DOMHelper.attachCopySnippet() || undefined // undefined is friendlier to React
   }, [configContext.val.copySnippetButton])
 
   // init again when setting new accessToken
-  useDidUpdate(() => props.init(), [accessToken])
+  useDidUpdate(() => {
+    props.init()
+  }, [accessToken])
 
   const {
     errorDueToAuth,
