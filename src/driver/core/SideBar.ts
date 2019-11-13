@@ -27,7 +27,8 @@ export type ConnectorState = {
   initializingPromise: Promise<void> | null
 } & {
   init: GetCreatedMethod<typeof init>
-  onPJAXEnd: GetCreatedMethod<typeof onPJAXEnd>
+  setMetaData: GetCreatedMethod<typeof setMetaData>
+  setShouldShow: GetCreatedMethod<typeof setShouldShow>
   toggleShowSideBar: GetCreatedMethod<typeof toggleShowSideBar>
   toggleShowSettings: GetCreatedMethod<typeof toggleShowSettings>
 } & {
@@ -143,25 +144,6 @@ export const handleError: BoundMethodCreator<[Error]> = dispatch => async err =>
   } else {
     dispatch.call(setError, 'Gitako ate a bug, but it should recovery soon!')
     throw err
-  }
-}
-
-export const onPJAXEnd: BoundMethodCreator = dispatch => () => {
-  const [
-    { metaData },
-    {
-      configContext: {
-        val: { intelligentToggle, copyFileButton, copySnippetButton },
-      },
-    },
-  ] = dispatch.get()
-  DOMHelper.unmountTopProgressBar()
-  DOMHelper.decorateGitHubPageContent({ copyFileButton, copySnippetButton })
-  const mergedMetaData = { ...metaData, ...URLHelper.parse() }
-  dispatch.call(setMetaData, mergedMetaData)
-
-  if (intelligentToggle === null) {
-    dispatch.call(setShouldShow, URLHelper.isInCodePage(mergedMetaData))
   }
 }
 

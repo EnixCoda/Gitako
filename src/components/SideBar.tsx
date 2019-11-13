@@ -16,6 +16,7 @@ import * as DOMHelper from 'utils/DOMHelper'
 import { JSONRequest, parseURLSearch } from 'utils/general'
 import { useDidUpdate } from 'utils/hooks'
 import * as keyHelper from 'utils/keyHelper'
+import * as URLHelper from 'utils/URLHelper'
 
 const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
   const configContext = useConfigs()
@@ -50,16 +51,26 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [props.disabled, onKeyDown])
 
+  const onPJAXEnd = React.useCallback(() => {
+    DOMHelper.unmountTopProgressBar()
+    const mergedMetaData = { ...props.metaData, ...URLHelper.parse() }
+    props.setMetaData(mergedMetaData)
+
+    if (configContext.val.intelligentToggle === null) {
+      props.setShouldShow(URLHelper.isInCodePage(mergedMetaData))
+    }
+  }, [props.metaData, configContext.val.intelligentToggle])
+
   React.useEffect(() => {
     if (props.disabled) return
-    window.addEventListener('pjax:complete', props.onPJAXEnd)
-    return () => window.removeEventListener('pjax:complete', props.onPJAXEnd)
-  }, [props.disabled])
+    window.addEventListener('pjax:complete', onPJAXEnd)
+    return () => window.removeEventListener('pjax:complete', onPJAXEnd)
+  }, [props.disabled, onPJAXEnd])
 
   React.useEffect(() => {
     const { copyFileButton, copySnippetButton } = configContext.val
     DOMHelper.decorateGitHubPageContent({ copyFileButton, copySnippetButton })
-  }, [])
+  }, [props.metaData])
 
   // init again when setting new accessToken
   useDidUpdate(() => props.init(), [accessToken])
