@@ -14,6 +14,7 @@ import * as React from 'react'
 import { cx } from 'utils/cx'
 import * as DOMHelper from 'utils/DOMHelper'
 import { JSONRequest, parseURLSearch } from 'utils/general'
+import { useDidUpdate } from 'utils/hooks'
 import * as keyHelper from 'utils/keyHelper'
 
 const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
@@ -60,9 +61,8 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
     DOMHelper.decorateGitHubPageContent({ copyFileButton, copySnippetButton })
   }, [])
 
-  // reload when setting new accessToken
-  // special way to implement didUpdate
-  React.useEffect(() => () => props.init(), [accessToken])
+  // init again when setting new accessToken
+  useDidUpdate(() => props.init(), [accessToken])
 
   const {
     errorDueToAuth,

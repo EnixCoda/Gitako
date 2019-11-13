@@ -68,3 +68,14 @@ export function useAsyncMemo<T, D extends any[] | readonly any[]>(
   }, deps)
   return state.val
 }
+
+export function useDidUpdate(effect: React.EffectCallback, deps?: React.DependencyList) {
+  const firstTime = React.useRef(true)
+  React.useEffect(() => {
+    if (firstTime.current) {
+      firstTime.current = false
+      return
+    }
+    return effect()
+  }, deps)
+}
