@@ -135,8 +135,9 @@ export function searchKeyToRegexps(searchKey: string) {
   if (!searchKey) return []
 
   try {
+    const flags = /[A-Z]/.test(searchKey) ? '' : 'i'
     // case-sensitive when searchKey contains uppercase char
-    return [new RegExp(searchKey, /[A-Z]/i.test(searchKey) ? '' : 'i')]
+    return [new RegExp(searchKey, flags)]
   } catch (err) {
     return [/$^/] // matching nothing if failed transforming regexp
   }
