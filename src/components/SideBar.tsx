@@ -51,19 +51,24 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [props.disabled, onKeyDown])
 
-  const onPJAXEnd = React.useCallback(() => {
+  const updateMeta = React.useCallback(() => {
+    if (props.disabled) return
     DOMHelper.unmountTopProgressBar()
     props.setMetaData({ ...props.metaData, ...URLHelper.parse() })
-    // TODO: update state to re-trigger DOM effects
-    // if (configContext.val.copyFileButton) DOMHelper.attachCopyFileBtn()
-    // if (configContext.val.copySnippetButton) DOMHelper.attachCopySnippet()
-  }, [props.metaData, configContext.val])
+  }, [props.disabled, props.metaData, configContext.val])
+  useOnPJAXComplete(updateMeta)
 
-  React.useEffect(() => {
+  const attachCopyFileButton = React.useCallback(() => {
     if (props.disabled) return
-    window.addEventListener('pjax:complete', onPJAXEnd)
-    return () => window.removeEventListener('pjax:complete', onPJAXEnd)
-  }, [props.disabled, onPJAXEnd])
+    if (configContext.val.copyFileButton) return DOMHelper.attachCopyFileBtn()
+  }, [props.disabled, configContext.val.copyFileButton])
+  useOnPJAXComplete(attachCopyFileButton)
+
+  const attachCopySnippetButton = React.useCallback(() => {
+    if (props.disabled) return
+    if (configContext.val.copySnippetButton) return DOMHelper.attachCopySnippet()
+  }, [props.disabled, configContext.val.copySnippetButton])
+  useOnPJAXComplete(attachCopySnippetButton)
 
   React.useEffect(() => {
     if (configContext.val.intelligentToggle === null) {
@@ -137,6 +142,13 @@ RawGitako.defaultProps = {
 }
 
 export const SideBar = connect(SideBarCore)(RawGitako)
+
+function useOnPJAXComplete(onPJAXComplete: () => void, deps: React.DependencyList = []) {
+  React.useEffect(() => {
+    window.addEventListener('pjax:complete', onPJAXComplete)
+    return () => window.removeEventListener('pjax:complete', onPJAXComplete)
+  }, [onPJAXComplete, ...deps])
+}
 
 function renderAccessDeniedError() {
   return (

@@ -217,6 +217,7 @@ export function attachCopyFileBtn() {
         buttons.push(button)
       }
     })
+    // TODO: query from DOM again when detach
     return () =>
       buttons.forEach(button => {
         button.parentElement?.removeChild(button)
@@ -275,6 +276,7 @@ export function attachCopySnippet() {
             }
           }
         })
+        // TODO: query from DOM again when detach
         return () =>
           buttons.forEach(button => {
             button.parentElement?.removeChild(button)
