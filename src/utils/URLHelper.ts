@@ -1,7 +1,7 @@
 import { raiseError } from 'analytics'
 import { MetaData } from './GitHubHelper'
 
-function parse(): MetaData & { path: string[] } {
+export function parse(): MetaData & { path: string[] } {
   const { pathname } = window.location
   let [
     ,
@@ -19,12 +19,12 @@ function parse(): MetaData & { path: string[] } {
   }
 }
 
-function parseSHA() {
+export function parseSHA() {
   const { type, path } = parse()
   return type === 'blob' || type === 'tree' ? path[0] : undefined
 }
 
-function isInRepoPage() {
+export function isInRepoPage() {
   const repoHeaderSelector = '.repohead'
   return Boolean(document.querySelector(repoHeaderSelector))
 }
@@ -38,7 +38,7 @@ const TYPES = {
   // TODO: record more types
 }
 
-function isInCodePage(metaData: MetaData = {}) {
+export function isInCodePage(metaData: MetaData = {}) {
   const mergedRepo = { ...parse(), ...metaData }
   const { type, branchName } = mergedRepo
   return Boolean(
@@ -57,7 +57,7 @@ function isCompleteCommitSHA(sha?: string) {
   return typeof sha === 'string' && /^[abcdef0-9]{40}$/i.test(sha)
 }
 
-function getCurrentPath(branchName = '') {
+export function getCurrentPath(branchName = '') {
   const { path, type } = parse()
   if (type === 'blob' || type === 'tree') {
     if (isCommitPath(path)) {
@@ -89,12 +89,4 @@ function getCurrentPath(branchName = '') {
     return path.map(decodeURIComponent)
   }
   return []
-}
-
-export default {
-  getCurrentPath,
-  isInRepoPage,
-  isInCodePage,
-  parse,
-  parseSHA,
 }

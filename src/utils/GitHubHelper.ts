@@ -70,7 +70,11 @@ type RepoMetaData = {
   }
 }
 
-async function getRepoMeta({ userName, repoName, accessToken }: MetaData): Promise<RepoMetaData> {
+export async function getRepoMeta({
+  userName,
+  repoName,
+  accessToken,
+}: MetaData): Promise<RepoMetaData> {
   const url = `https://api.github.com/repos/${userName}/${repoName}`
   return await request(url, { accessToken })
 }
@@ -91,7 +95,7 @@ export type TreeData = {
   url: string
 }
 
-async function getTreeData({
+export async function getTreeData({
   userName,
   repoName,
   branchName,
@@ -109,7 +113,7 @@ export type BlobData = {
   url: string
 }
 
-async function getBlobData({
+export async function getBlobData({
   userName,
   repoName,
   accessToken,
@@ -121,17 +125,10 @@ async function getBlobData({
   return await request(url, { accessToken })
 }
 
-function getUrlForRedirect(
+export function getUrlForRedirect(
   { userName, repoName, branchName }: MetaData,
   type = 'blob',
   path?: string,
 ) {
   return `https://github.com/${userName}/${repoName}/${type}/${branchName}/${path}`
-}
-
-export default {
-  getRepoMeta,
-  getTreeData,
-  getBlobData,
-  getUrlForRedirect,
 }

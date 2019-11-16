@@ -1,4 +1,4 @@
-import storageHelper from 'utils/storageHelper'
+import * as storageHelper from 'utils/storageHelper'
 
 export type Config = {
   sideBarWidth: number
@@ -20,7 +20,7 @@ export enum configKeys {
   intelligentToggle = 'intelligentToggle',
 }
 
-const defaultConfigs: Config = {
+export const defaultConfigs: Config = {
   sideBarWidth: 260,
   shortcut: undefined,
   access_token: undefined,
@@ -43,27 +43,10 @@ function applyDefaultConfigs(configs: Config) {
   )
 }
 
-async function getAll(): Promise<Config> {
+export async function get(): Promise<Config> {
   return applyDefaultConfigs(await storageHelper.get(configKeyArray))
 }
 
-async function getOne(key: configKeys) {
-  return (await getAll())[key]
-}
-
-async function setAll(partialConfig: Partial<Config>) {
+export async function set(partialConfig: Partial<Config>) {
   return await storageHelper.set(partialConfig)
-}
-
-async function setOne(key: configKeys, value: any) {
-  return await setAll({
-    [key]: value,
-  })
-}
-
-export default {
-  getAll,
-  getOne,
-  setAll,
-  setOne,
 }

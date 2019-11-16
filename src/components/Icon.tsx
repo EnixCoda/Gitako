@@ -16,7 +16,7 @@ import Octicon, {
   X,
 } from '@primer/octicons-react'
 import * as React from 'react'
-import cx from 'utils/cx'
+import { cx } from 'utils/cx'
 
 function getSVGIconComponent(
   type: string,
@@ -123,7 +123,7 @@ type Props = {
   onClick?: (event: React.MouseEvent<HTMLElement>) => void
 }
 
-const Icon: React.SFC<Props> = function Icon({ type, className = undefined, ...otherProps }) {
+export function Icon({ type, className = undefined, ...otherProps }: Props) {
   const { name, IconComponent } = getSVGIconComponent(type)
   const mergedClassName = cx('octicon', name)
   return (
@@ -135,5 +135,3 @@ const Icon: React.SFC<Props> = function Icon({ type, className = undefined, ...o
     </div>
   )
 }
-
-export default Icon

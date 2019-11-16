@@ -1,13 +1,22 @@
-import { Props } from 'components/FileExplorer'
 import { GetCreatedMethod, MethodCreator } from 'driver/connect'
 import * as ini from 'ini'
 import { Base64 } from 'js-base64'
-import DOMHelper from 'utils/DOMHelper'
+import { Config } from 'utils/configHelper'
+import * as DOMHelper from 'utils/DOMHelper'
 import { findNode, searchKeyToRegexps } from 'utils/general'
-import GitHubHelper, { BlobData } from 'utils/GitHubHelper'
-import treeParser from 'utils/treeParser'
-import URLHelper from 'utils/URLHelper'
-import VisibleNodesGenerator, { TreeNode, VisibleNodes } from 'utils/VisibleNodesGenerator'
+import * as GitHubHelper from 'utils/GitHubHelper'
+import { BlobData } from 'utils/GitHubHelper'
+import * as treeParser from 'utils/treeParser'
+import * as URLHelper from 'utils/URLHelper'
+import { TreeNode, VisibleNodes, VisibleNodesGenerator } from 'utils/VisibleNodesGenerator'
+
+export type Props = {
+  treeData?: GitHubHelper.TreeData
+  metaData: GitHubHelper.MetaData
+  freeze: boolean
+  accessToken: string | undefined
+  toggleShowSettings: React.MouseEventHandler
+}
 
 export type ConnectorState = {
   stateText: string
@@ -49,7 +58,7 @@ let visibleNodesGenerator: VisibleNodesGenerator
 
 type BoundMethodCreator<Args extends any[] = []> = MethodCreator<Props, ConnectorState, Args>
 
-const init: BoundMethodCreator = dispatch => () =>
+export const init: BoundMethodCreator = dispatch => () =>
   dispatch.call(setStateText, 'Fetching File List...')
 
 const githubSubModuleURLRegex = {
@@ -127,8 +136,8 @@ function handleParsed(root: TreeNode, parsed: Parsed) {
   })
 }
 
-const setUpTree: BoundMethodCreator<
-  [Pick<Props, 'treeData' | 'metaData' | 'compressSingletonFolder' | 'accessToken'>]
+export const setUpTree: BoundMethodCreator<
+  [Pick<Props, 'treeData' | 'metaData' | 'accessToken'> & Pick<Config, 'compressSingletonFolder'>]
 > = dispatch => async ({ treeData, metaData, compressSingletonFolder, accessToken }) => {
   if (!treeData) return
   dispatch.call(setStateText, 'Rendering File List...')
@@ -158,22 +167,22 @@ const setUpTree: BoundMethodCreator<
   dispatch.call(goTo, URLHelper.getCurrentPath(metaData.branchName))
 }
 
-const execAfterRender: BoundMethodCreator = dispatch => () => {
+export const execAfterRender: BoundMethodCreator = dispatch => () => {
   for (const task of tasksAfterRender) {
     task()
   }
   tasksAfterRender.length = 0
 }
 
-const setStateText: BoundMethodCreator<[ConnectorState['stateText']]> = dispatch => (
+export const setStateText: BoundMethodCreator<[ConnectorState['stateText']]> = dispatch => (
   text: string,
 ) =>
   dispatch.set({
     stateText: text,
   })
 
-const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch => event => {
-  const { searched, visibleNodes } = dispatch.get()
+export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch => event => {
+  const [{ searched, visibleNodes }] = dispatch.get()
   if (!visibleNodes) return
   const { nodes, focusedNode, expandedNodes, depths } = visibleNodes
   function handleVerticalMove(index: number) {
@@ -277,16 +286,17 @@ const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch => eve
   }
 }
 
-const onFocusSearchBar: BoundMethodCreator = dispatch => () => dispatch.call(focusNode, null, false)
+export const onFocusSearchBar: BoundMethodCreator = dispatch => () =>
+  dispatch.call(focusNode, null, false)
 
-const search: BoundMethodCreator<[string]> = dispatch => searchKey => {
+export const search: BoundMethodCreator<[string]> = dispatch => searchKey => {
   dispatch.set({ searchKey, searched: searchKey !== '' })
   const regexps = searchKeyToRegexps(searchKey)
   visibleNodesGenerator.search(regexps)
   dispatch.call(updateVisibleNodes)
 }
 
-const goTo: BoundMethodCreator<[string[]]> = dispatch => async currentPath => {
+export const goTo: BoundMethodCreator<[string[]]> = dispatch => async currentPath => {
   visibleNodesGenerator.search([])
   tasksAfterRender.push(() => {
     const nodeExpandedTo = visibleNodesGenerator.expandTo(currentPath.join('/'))
@@ -298,12 +308,15 @@ const goTo: BoundMethodCreator<[string[]]> = dispatch => async currentPath => {
   dispatch.set({ searchKey: '', searched: false })
 }
 
-const setExpand: BoundMethodCreator<[TreeNode, boolean]> = dispatch => (node, expand = false) => {
+export const setExpand: BoundMethodCreator<[TreeNode, boolean]> = dispatch => (
+  node,
+  expand = false,
+) => {
   visibleNodesGenerator.setExpand(node, expand)
   dispatch.call(focusNode, node, false)
 }
 
-const toggleNodeExpansion: BoundMethodCreator<[TreeNode, boolean]> = dispatch => (
+export const toggleNodeExpansion: BoundMethodCreator<[TreeNode, boolean]> = dispatch => (
   node,
   skipScrollToNode,
 ) => {
@@ -312,17 +325,16 @@ const toggleNodeExpansion: BoundMethodCreator<[TreeNode, boolean]> = dispatch =>
   tasksAfterRender.push(DOMHelper.focusFileExplorer)
 }
 
-const focusNode: BoundMethodCreator<[TreeNode | null, boolean]> = dispatch => (
+export const focusNode: BoundMethodCreator<[TreeNode | null, boolean]> = dispatch => (
   node: TreeNode | null,
-  skipScroll = false,
 ) => {
-  const { visibleNodes } = dispatch.get()
+  const [{ visibleNodes }] = dispatch.get()
   if (!visibleNodes) return
   visibleNodesGenerator.focusNode(node)
   dispatch.call(updateVisibleNodes)
 }
 
-const onNodeClick: BoundMethodCreator<[TreeNode]> = dispatch => node => {
+export const onNodeClick: BoundMethodCreator<[TreeNode]> = dispatch => node => {
   if (node.type === 'tree') {
     dispatch.call(toggleNodeExpansion, node, true)
   } else if (node.type === 'blob') {
@@ -335,23 +347,7 @@ const onNodeClick: BoundMethodCreator<[TreeNode]> = dispatch => node => {
   }
 }
 
-const updateVisibleNodes: BoundMethodCreator = dispatch => () => {
+export const updateVisibleNodes: BoundMethodCreator = dispatch => () => {
   const { visibleNodes } = visibleNodesGenerator
   dispatch.set({ visibleNodes })
-}
-
-export default {
-  init,
-  setUpTree,
-  execAfterRender,
-  setStateText,
-  handleKeyDown,
-  onFocusSearchBar,
-  search,
-  setExpand,
-  goTo,
-  toggleNodeExpansion,
-  focusNode,
-  onNodeClick,
-  updateVisibleNodes,
 }

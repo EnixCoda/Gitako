@@ -1,150 +1,198 @@
-import FileExplorer from 'components/FileExplorer'
-import MetaBar from 'components/MetaBar'
-import Portal from 'components/Portal'
-import Resizable from 'components/Resizable'
-import SettingsBar from 'components/SettingsBar'
-import ToggleShowButton from 'components/ToggleShowButton'
-import connect from 'driver/connect'
-import { SideBar as SideBarCore } from 'driver/core'
-import { ConnectorState } from 'driver/core/SideBar'
+import { raiseError } from 'analytics'
+import { FileExplorer } from 'components/FileExplorer'
+import { MetaBar } from 'components/MetaBar'
+import { Portal } from 'components/Portal'
+import { Resizable } from 'components/Resizable'
+import { SettingsBar } from 'components/SettingsBar'
+import { ToggleShowButton } from 'components/ToggleShowButton'
+import { useConfigs } from 'containers/ConfigsContext'
+import { connect } from 'driver/connect'
+import { SideBarCore } from 'driver/core'
+import { ConnectorState, Props } from 'driver/core/SideBar'
+import { oauth } from 'env'
 import * as React from 'react'
-import cx from 'utils/cx'
+import { cx } from 'utils/cx'
+import * as DOMHelper from 'utils/DOMHelper'
+import { JSONRequest, parseURLSearch } from 'utils/general'
+import { useDidUpdate } from 'utils/hooks'
+import * as keyHelper from 'utils/keyHelper'
+import * as URLHelper from 'utils/URLHelper'
 
-export type Props = {}
+const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
+  const configContext = useConfigs()
+  const accessToken = props.configContext.val.access_token
 
-class Gitako extends React.PureComponent<Props & ConnectorState> {
-  static defaultProps: Partial<Props & ConnectorState> = {
-    baseSize: 260,
-    shouldShow: false,
-    showSettings: false,
-    errorDueToAuth: false,
-    accessToken: '',
-    toggleShowSideBarShortcut: '',
-    compressSingletonFolder: true,
-    copyFileButton: true,
-    copySnippetButton: true,
-    disabled: false,
-  }
+  React.useEffect(() => {
+    const { init } = props
+    ;(async function() {
+      if (!accessToken) {
+        const accessToken = await trySetUpAccessTokenWithCode()
+        configContext.set({ access_token: accessToken })
+      }
+      init()
+    })()
+  }, [])
 
-  componentWillMount() {
-    const { init } = this.props
-    init()
-  }
+  const onKeyDown = React.useCallback(
+    configContext.val.shortcut
+      ? (e: KeyboardEvent) => {
+          const keys = keyHelper.parseEvent(e)
+          if (keys === configContext.val.shortcut) {
+            props.toggleShowSideBar()
+          }
+        }
+      : () => {},
+    [configContext.val.shortcut],
+  )
 
-  componentDidMount() {
-    const { useListeners } = this.props
-    useListeners(true)
-  }
+  React.useEffect(() => {
+    if (props.disabled) return
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [props.disabled, onKeyDown])
 
-  componentWillUnmount() {
-    const { useListeners } = this.props
-    useListeners(false)
-  }
+  const updateMeta = React.useCallback(() => {
+    if (props.disabled) return
+    DOMHelper.unmountTopProgressBar()
+    props.setMetaData({ ...props.metaData, ...URLHelper.parse() })
+  }, [props.disabled, props.metaData, configContext.val])
+  useOnPJAXComplete(updateMeta)
 
-  renderAccessDeniedError() {
-    return (
-      <div className={'description'}>
-        <h5>Access Denied</h5>
-        <p>
-          Due to{' '}
-          <a target="_blank" href="https://developer.github.com/v3/#rate-limiting">
-            limitation of GitHub
-          </a>{' '}
-          or{' '}
-          <a target="_blank" href="https://developer.github.com/v3/#authentication">
-            auth needs
-          </a>
-          , Gitako needs access token to continue. Please follow the instructions in the settings
-          panel below.
-        </p>
-      </div>
-    )
-  }
+  const attachCopyFileButton = React.useCallback(() => {
+    if (props.disabled) return
+    if (configContext.val.copyFileButton) return DOMHelper.attachCopyFileBtn()
+  }, [props.disabled, configContext.val.copyFileButton])
+  useOnPJAXComplete(attachCopyFileButton)
 
-  renderContent() {
-    const {
-      errorDueToAuth,
-      metaData,
-      treeData,
-      showSettings,
-      toggleShowSettings,
-      compressSingletonFolder,
-      accessToken,
-    } = this.props
-    return (
-      <div className={'gitako-side-bar-content'}>
-        {metaData && <MetaBar metaData={metaData} />}
-        {errorDueToAuth
-          ? this.renderAccessDeniedError()
-          : metaData && (
-              <FileExplorer
-                compressSingletonFolder={compressSingletonFolder}
-                toggleShowSettings={toggleShowSettings}
-                metaData={metaData}
-                treeData={treeData}
-                freeze={showSettings}
-                accessToken={accessToken}
-              />
-            )}
-      </div>
-    )
-  }
+  const attachCopySnippetButton = React.useCallback(() => {
+    if (props.disabled) return
+    if (configContext.val.copySnippetButton) return DOMHelper.attachCopySnippet()
+  }, [props.disabled, configContext.val.copySnippetButton])
+  useOnPJAXComplete(attachCopySnippetButton)
 
-  render() {
-    const {
-      baseSize,
-      error,
-      shouldShow,
-      showSettings,
-      accessToken,
-      compressSingletonFolder,
-      copyFileButton,
-      copySnippetButton,
-      intelligentToggle,
-      toggleShowSideBarShortcut,
-      logoContainerElement,
-      toggleShowSideBar,
-      toggleShowSettings,
-      onShortcutChange,
-      onAccessTokenChange,
-      setCompressSingleton,
-      setCopyFile,
-      setCopySnippet,
-      setIntelligentToggle,
-    } = this.props
-    return (
-      <div className={'gitako-side-bar'}>
-        <Portal into={logoContainerElement}>
-          <ToggleShowButton
-            error={error}
-            shouldShow={shouldShow}
-            toggleShowSideBar={toggleShowSideBar}
-          />
-        </Portal>
-        <Resizable className={cx({ hidden: error || !shouldShow })} baseSize={baseSize}>
-          <div className={'gitako-side-bar-body'}>
-            {this.renderContent()}
-            <SettingsBar
-              toggleShowSettings={toggleShowSettings}
-              onShortcutChange={onShortcutChange}
-              onAccessTokenChange={onAccessTokenChange}
-              activated={showSettings}
-              accessToken={accessToken}
-              toggleShowSideBarShortcut={toggleShowSideBarShortcut}
-              compressSingletonFolder={compressSingletonFolder}
-              copyFileButton={copyFileButton}
-              copySnippetButton={copySnippetButton}
-              intelligentToggle={intelligentToggle}
-              setCompressSingleton={setCompressSingleton}
-              setCopyFile={setCopyFile}
-              setCopySnippet={setCopySnippet}
-              setIntelligentToggle={setIntelligentToggle}
-            />
+  React.useEffect(() => {
+    if (configContext.val.intelligentToggle === null) {
+      props.setShouldShow(URLHelper.isInCodePage(props.metaData))
+    }
+  }, [props.metaData, configContext.val.intelligentToggle])
+
+  React.useEffect(() => {
+    if (configContext.val.copyFileButton) return DOMHelper.attachCopyFileBtn() || undefined // undefined is friendlier to React
+  }, [configContext.val.copyFileButton])
+
+  React.useEffect(() => {
+    if (configContext.val.copySnippetButton) return DOMHelper.attachCopySnippet() || undefined // undefined is friendlier to React
+  }, [configContext.val.copySnippetButton])
+
+  // init again when setting new accessToken
+  useDidUpdate(() => {
+    props.init()
+  }, [accessToken])
+
+  const {
+    errorDueToAuth,
+    metaData,
+    treeData,
+    baseSize,
+    error,
+    shouldShow,
+    showSettings,
+    logoContainerElement,
+    toggleShowSideBar,
+    toggleShowSettings,
+  } = props
+  return (
+    <div className={'gitako-side-bar'}>
+      <Portal into={logoContainerElement}>
+        <ToggleShowButton
+          error={error}
+          shouldShow={shouldShow}
+          toggleShowSideBar={toggleShowSideBar}
+        />
+      </Portal>
+      <Resizable className={cx({ hidden: error || !shouldShow })} baseSize={baseSize}>
+        <div className={'gitako-side-bar-body'}>
+          <div className={'gitako-side-bar-content'}>
+            {metaData && <MetaBar metaData={metaData} />}
+            {errorDueToAuth
+              ? renderAccessDeniedError()
+              : metaData && (
+                  <FileExplorer
+                    toggleShowSettings={toggleShowSettings}
+                    metaData={metaData}
+                    treeData={treeData}
+                    freeze={showSettings}
+                    accessToken={accessToken}
+                  />
+                )}
           </div>
-        </Resizable>
-      </div>
-    )
-  }
+          <SettingsBar toggleShowSettings={toggleShowSettings} activated={showSettings} />
+        </div>
+      </Resizable>
+    </div>
+  )
 }
 
-export default connect<Props, ConnectorState>(SideBarCore)(Gitako)
+RawGitako.defaultProps = {
+  baseSize: 260,
+  shouldShow: false,
+  showSettings: false,
+  errorDueToAuth: false,
+  disabled: false,
+}
+
+export const SideBar = connect(SideBarCore)(RawGitako)
+
+function useEvent<
+  T extends {
+    addEventListener: Function
+  }
+>(target: T, event: string, callback: () => void, deps: React.DependencyList = []) {
+  React.useEffect(() => {
+    window.addEventListener('pjax:complete', callback)
+    return () => window.removeEventListener('pjax:complete', callback)
+  }, [callback, ...deps])
+}
+
+const useOnPJAXComplete = useEvent.bind(null, window, 'pjax:complete')
+
+function renderAccessDeniedError() {
+  return (
+    <div className={'description'}>
+      <h5>Access Denied</h5>
+      <p>
+        Due to{' '}
+        <a target="_blank" href="https://developer.github.com/v3/#rate-limiting">
+          limitation of GitHub
+        </a>{' '}
+        or{' '}
+        <a target="_blank" href="https://developer.github.com/v3/#authentication">
+          auth needs
+        </a>
+        , Gitako needs access token to continue. Please follow the instructions in the settings
+        panel below.
+      </p>
+    </div>
+  )
+}
+
+async function trySetUpAccessTokenWithCode() {
+  try {
+    const search = parseURLSearch()
+    if ('code' in search) {
+      const res = await JSONRequest('https://github.com/login/oauth/access_token', {
+        code: search.code,
+        client_id: oauth.clientId,
+        client_secret: oauth.clientSecret,
+      })
+      const { access_token: accessToken, scope } = res
+      if (scope !== 'repo' || !accessToken) {
+        throw new Error(`Cannot resolve token response: '${JSON.stringify(res)}'`)
+      }
+      window.history.pushState({}, 'removed code', window.location.pathname.replace(/#.*$/, ''))
+      return accessToken
+    }
+  } catch (err) {
+    raiseError(err)
+  }
+}

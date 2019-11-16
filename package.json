@@ -7,12 +7,12 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "webpack --watch",
+    "start": "VERSION=dev-v$(node scripts/get-version.js) webpack --watch",
     "debug-firefox": "web-ext run -s dist",
     "analyse-bundle": "ANALYSE= NODE_ENV=production webpack",
-    "build": "NODE_ENV=production webpack",
+    "build": "VERSION=v$(node scripts/get-version.js) NODE_ENV=production webpack",
     "postversion": "node scripts/version.js",
-    "roll": "./scripts/release.sh"
+    "roll": "make release"
   },
   "dependencies": {
     "@primer/octicons": "^9.2.0",
@@ -40,6 +40,7 @@
     "@babel/core": "^7.3.4",
     "@babel/plugin-proposal-class-properties": "^7.3.4",
     "@babel/plugin-proposal-object-rest-spread": "^7.3.4",
+    "@babel/plugin-proposal-optional-chaining": "^7.6.0",
     "@babel/preset-env": "^7.3.4",
     "@babel/preset-react": "^7.0.0",
     "@babel/preset-typescript": "^7.3.3",

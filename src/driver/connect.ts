@@ -31,7 +31,7 @@ function run<M extends Method>([method, args]: [M, Parameters<M>]) {
 }
 
 export type DispatchState<Props, State> = React.Component<Props, State>['setState']
-export type GetState<State> = () => State
+export type GetState<Props, State> = () => [State, Props]
 export type TriggerOtherMethod<Props, State> = <Args extends any[]>(
   methodCreator: MethodCreator<Props, State, Args>,
   ...args: Parameters<ReturnType<MethodCreator<Props, State, Args>>>
@@ -39,7 +39,7 @@ export type TriggerOtherMethod<Props, State> = <Args extends any[]>(
 
 export type Dispatch<Props, State> = {
   set: DispatchState<Props, State>
-  get: GetState<State>
+  get: GetState<Props, State>
   call: TriggerOtherMethod<Props, State>
 }
 
@@ -47,7 +47,7 @@ export type MethodCreator<Props, State, Args extends any[] = []> = (
   dispatch: Dispatch<Props, State>,
 ) => Method<Args>
 
-type Sources<P, S> = {
+export type Sources<P, S> = {
   [key: string]: MethodCreator<P, S, any>
 }
 type WrappedMethods = {
@@ -75,7 +75,7 @@ function link<P, S>(instance: React.Component<P, S>, sources: Sources<P, S>): Wr
   const dispatchState: DispatchState<P, S> = (updater, callback) => {
     instance.setState(updater, callback)
   }
-  const prepareState: GetState<S> = () => instance.state
+  const prepareState: GetState<P, S> = () => [instance.state, instance.props]
   const dispatch: Dispatch<P, S> = {
     call: dispatchCall,
     get: prepareState,
@@ -93,20 +93,20 @@ function link<P, S>(instance: React.Component<P, S>, sources: Sources<P, S>): Wr
   return wrappedMethods
 }
 
-export default function connect<BaseP, ExtraP>(mapping: Sources<BaseP, ExtraP>) {
-  return function linkComponent<S>(
-    ComponentClass: React.ComponentClass<BaseP & ExtraP, S>,
-  ): React.ComponentClass<BaseP, ExtraP> {
-    return class AwesomeApp extends React.PureComponent<BaseP, ExtraP> {
-      static displayName = `Connected(${ComponentClass.displayName || ComponentClass.name})`
-      static defaultProps = ComponentClass.defaultProps
+export function connect<BaseP, ExtraP>(mapping: Sources<BaseP, ExtraP>) {
+  return function linkComponent<State, ComponentType extends React.ComponentType<BaseP & ExtraP>>(
+    Component: ComponentType,
+  ) {
+    return class ConnectedComponent extends React.PureComponent<BaseP, ExtraP, State> {
+      static displayName = `Connected(${Component.displayName || Component.name})`
+      static defaultProps = Component.defaultProps
 
-      state = {} as ExtraP
-      connectedMethods = link<BaseP, ExtraP>(this, mapping) as WrappedMethods
+      state: ExtraP = {} as ExtraP
+      connectedMethods: WrappedMethods = link<BaseP, ExtraP>(this, mapping)
 
       render() {
         const props = Object.assign({}, this.props, this.connectedMethods, this.state)
-        return React.createElement(ComponentClass, props)
+        return React.createElement(Component, props)
       }
     }
   }
