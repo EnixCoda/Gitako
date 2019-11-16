@@ -143,12 +143,18 @@ RawGitako.defaultProps = {
 
 export const SideBar = connect(SideBarCore)(RawGitako)
 
-function useOnPJAXComplete(onPJAXComplete: () => void, deps: React.DependencyList = []) {
+function useEvent<
+  T extends {
+    addEventListener: Function
+  }
+>(target: T, event: string, callback: () => void, deps: React.DependencyList = []) {
   React.useEffect(() => {
-    window.addEventListener('pjax:complete', onPJAXComplete)
-    return () => window.removeEventListener('pjax:complete', onPJAXComplete)
-  }, [onPJAXComplete, ...deps])
+    window.addEventListener('pjax:complete', callback)
+    return () => window.removeEventListener('pjax:complete', callback)
+  }, [callback, ...deps])
 }
+
+const useOnPJAXComplete = useEvent.bind(null, window, 'pjax:complete')
 
 function renderAccessDeniedError() {
   return (
