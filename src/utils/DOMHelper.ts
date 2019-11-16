@@ -2,8 +2,8 @@
  * this helper helps manipulating DOM
  */
 import { raiseError } from 'analytics'
-import { Clippy } from 'components/Clippy'
-import { CopyFileButton } from 'components/CopyFileButton'
+import { Clippy, ClippyClassName } from 'components/Clippy'
+import { CopyFileButton, copyFileButtonClassName } from 'components/CopyFileButton'
 import * as NProgress from 'nprogress'
 import * as PJAX from 'pjax'
 import * as React from 'react'
@@ -130,7 +130,7 @@ const pjax = new PJAX({
 })
 
 export function loadWithPJAX(URL: string) {
-  NProgress.start()
+  mountTopProgressBar()
   pjax.loadUrl(URL, { scrollTo: 0 })
 }
 
@@ -208,20 +208,19 @@ export function attachCopyFileBtn() {
       raiseError(new Error(`No button groups found`))
     }
 
-    const buttons: HTMLElement[] = []
     buttonGroups.forEach(async buttonGroup => {
       if (!buttonGroup.lastElementChild) return
       const button = await renderReact(React.createElement(CopyFileButton))
       if (button instanceof HTMLElement) {
         buttonGroup.appendChild(button)
-        buttons.push(button)
       }
     })
-    // TODO: query from DOM again when detach
-    return () =>
+    return () => {
+      const buttons = document.querySelectorAll(`.${copyFileButtonClassName}`)
       buttons.forEach(button => {
         button.parentElement?.removeChild(button)
       })
+    }
   }
 }
 
@@ -248,13 +247,12 @@ export function attachCopySnippet() {
     return $(
       readmeArticleSelector,
       readmeElement => {
-        const buttons: HTMLElement[] = []
-        readmeElement.addEventListener('mouseover', async ({ target }) => {
+        const mouseOverCallback = async ({ target }: Event): Promise<void> => {
           if (target instanceof Element && target.nodeName === 'PRE') {
             if (
               target.previousSibling === null ||
               !(target.previousSibling instanceof Element) ||
-              !target.previousSibling.classList.contains('clippy-wrapper')
+              !target.previousSibling.classList.contains(ClippyClassName)
             ) {
               /**
                *  <article>
@@ -270,17 +268,19 @@ export function attachCopySnippet() {
                 )
                 if (clippyElement instanceof HTMLElement) {
                   target.parentNode.insertBefore(clippyElement, target)
-                  buttons.push(clippyElement)
                 }
               }
             }
           }
-        })
-        // TODO: query from DOM again when detach
-        return () =>
+        }
+        readmeElement.addEventListener('mouseover', mouseOverCallback)
+        return () => {
+          readmeElement.removeEventListener('mouseover', mouseOverCallback)
+          const buttons = document.querySelectorAll(`.${ClippyClassName}`)
           buttons.forEach(button => {
             button.parentElement?.removeChild(button)
           })
+        }
       },
       () => {
         const plainReadmeSelector = '.repository-content div#readme .plain'

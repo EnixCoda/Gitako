@@ -6,6 +6,9 @@ type Props = {
   codeSnippetElement: Element
 }
 
+const className = 'clippy-wrapper'
+export const ClippyClassName = className
+
 export function Clippy({ codeSnippetElement }: Props) {
   const [status, setStatus] = React.useState<'normal' | 'success' | 'fail'>('normal')
   React.useEffect(() => {
@@ -24,7 +27,7 @@ export function Clippy({ codeSnippetElement }: Props) {
   }, [])
 
   return (
-    <div className="clippy-wrapper">
+    <div className={className}>
       <button className="clippy" onClick={onClippyClick}>
         <i className={cx('icon', status)} />
       </button>
