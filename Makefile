@@ -1,15 +1,17 @@
+RAW_VERSION?=$(shell node scripts/get-version.js)
+FULL_VERSION=v$(RAW_VERSION)
+
 build:
 	rm -rf dist
 	yarn build
 
 upload-for-analytics:
-	VERSION=v$(node scripts/get-version.js)
 	# make sure sentry can retrieve current commit on remote
 	git push --tags
-	yarn sentry-cli releases new "$(VERSION)"
-	yarn sentry-cli releases set-commits "$(VERSION)" --auto
-	yarn sentry-cli releases files "$(VERSION)" upload-sourcemaps dist --no-rewrite
-	yarn sentry-cli releases finalize "$(VERSION)"
+	yarn sentry-cli releases new "$(FULL_VERSION)"
+	yarn sentry-cli releases set-commits "$(FULL_VERSION)" --auto
+	yarn sentry-cli releases files "$(FULL_VERSION)" upload-sourcemaps dist --no-rewrite
+	yarn sentry-cli releases finalize "$(FULL_VERSION)"
 
 compress:
 	rm -f dist/gitako.zip
