@@ -42,8 +42,7 @@ async function request(url: string, { accessToken }: Options = {}) {
   if (res.ok) {
     return res.json()
   } else {
-    // for private repo, GitHub api also responses with 404 when unauthorized
-    if (res.status === 404) throw new Error(NOT_FOUND)
+    if (res.status === 404 || res.status === 401) throw new Error(NOT_FOUND)
     else if (res.status === 500) throw new Error(SERVER_FAULT)
     else {
       const content = await res.json()
