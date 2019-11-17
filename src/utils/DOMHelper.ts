@@ -143,6 +143,7 @@ export function loadWithPJAX(URL: string) {
 const PAGE_TYPES = {
   RAW_TEXT: 'raw_text',
   RENDERED: 'rendered',
+  SEARCH: 'search',
   // PREVIEW: 'preview',
   OTHERS: 'others',
 }
@@ -158,7 +159,9 @@ const PAGE_TYPES = {
 export function getCurrentPageType() {
   const blobWrapperSelector = '.repository-content .blob-wrapper table'
   const readmeSelector = '.repository-content .readme'
+  const searchResultSelector = '.codesearch-results'
   return (
+    $(searchResultSelector, () => PAGE_TYPES.SEARCH) ||
     $(blobWrapperSelector, () => PAGE_TYPES.RAW_TEXT) ||
     $(readmeSelector, () => PAGE_TYPES.RENDERED) ||
     PAGE_TYPES.OTHERS
