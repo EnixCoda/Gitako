@@ -1,4 +1,5 @@
 import { raiseError } from 'analytics'
+export const SERVER_FAULT = 'Server Fault'
 export const NOT_FOUND = 'Repo Not Found'
 export const BAD_CREDENTIALS = 'Bad credentials'
 export const API_RATE_LIMIT = `API rate limit`
@@ -31,6 +32,10 @@ async function request(url: string, { accessToken }: Options = {}) {
     headers.Authorization = `token ${accessToken}`
   }
   const res = await fetch(url, { headers })
+  const contentType = res.headers.get('Content-Type')
+  if (!contentType || !contentType.includes('application/json')) {
+    throw new Error(`Response content is not JSON`)
+  }
   // About res.ok:
   // True if res.status between 200~299
   // Ref: https://developer.mozilla.org/en-US/docs/Web/API/Response/ok
@@ -39,6 +44,7 @@ async function request(url: string, { accessToken }: Options = {}) {
   } else {
     // for private repo, GitHub api also responses with 404 when unauthorized
     if (res.status === 404) throw new Error(NOT_FOUND)
+    else if (res.status === 500) throw new Error(SERVER_FAULT)
     else {
       const content = await res.json()
       if (apiRateLimitExceeded(content)) throw new Error(API_RATE_LIMIT)
