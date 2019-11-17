@@ -173,11 +173,22 @@ async function trySetUpAccessTokenWithCode() {
         client_id: oauth.clientId,
         client_secret: oauth.clientSecret,
       })
-      const { access_token: accessToken, scope } = res
-      if (scope !== 'repo' || !accessToken) {
+      const { access_token: accessToken, scope, error_description: errorDescription } = res
+      if (errorDescription) {
+        const TOKEN_EXPIRED_DESCRIPTION = `The code passed is incorrect or expired.`
+        if (errorDescription === TOKEN_EXPIRED_DESCRIPTION) {
+          alert(`Gitako: The OAuth token has expired, please try again.`)
+        } else {
+          throw new Error(errorDescription)
+        }
+      } else if (scope !== 'repo' || !accessToken) {
         throw new Error(`Cannot resolve token response: '${JSON.stringify(res)}'`)
       }
-      window.history.pushState({}, 'removed code', window.location.pathname.replace(/#.*$/, ''))
+      window.history.pushState(
+        {},
+        'removed search param',
+        window.location.pathname.replace(window.location.search, ''),
+      )
       return accessToken
     }
   } catch (err) {

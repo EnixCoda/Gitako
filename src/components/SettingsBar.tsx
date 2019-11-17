@@ -138,7 +138,7 @@ function SettingsBarContent() {
           </h4>
           {!hasAccessToken && (
             <a
-              href="#"
+              className={'link-button'}
               onClick={() => {
                 // use js here to make sure redirect_uri is latest url
                 const url = `https://github.com/login/oauth/authorize?client_id=${
