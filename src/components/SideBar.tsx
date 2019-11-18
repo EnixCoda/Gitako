@@ -146,11 +146,12 @@ export const SideBar = connect(SideBarCore)(RawGitako)
 function useEvent<
   T extends {
     addEventListener: Function
+    removeEventListener: Function
   }
 >(target: T, event: string, callback: () => void, deps: React.DependencyList = []) {
   React.useEffect(() => {
-    window.addEventListener('pjax:complete', callback)
-    return () => window.removeEventListener('pjax:complete', callback)
+    target.addEventListener(event, callback)
+    return () => target.removeEventListener(event, callback)
   }, [callback, ...deps])
 }
 
