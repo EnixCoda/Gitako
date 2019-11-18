@@ -18,14 +18,6 @@ const plugins = [
       from: './src/assets/icons/*',
       to: 'icons/[name].[ext]',
     },
-    {
-      from: 'node_modules/webextension-polyfill/dist/browser-polyfill.js',
-      to: 'browser-polyfill.js',
-    },
-    {
-      from: './src/firefox-shim.js',
-      to: 'firefox-shim.js',
-    },
   ]),
   new ForkTsCheckerWebpackPlugin(),
   new Dotenv(),
@@ -48,6 +40,8 @@ plugins.push(
 module.exports = {
   entry: {
     content: './src/content.tsx',
+    'browser-polyfill': './node_modules/webextension-polyfill/dist/browser-polyfill.js',
+    'firefox-shim': './src/firefox-shim.js',
   },
   devtool: IN_PRODUCTION_MODE ? 'source-map' : 'eval-source-map',
   mode: IN_PRODUCTION_MODE ? 'production' : 'development',
