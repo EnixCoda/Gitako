@@ -129,6 +129,9 @@ const pjax = new PJAX({
   forceCache: true, // TODO: merge namespace, add forceCache
 })
 
+window.addEventListener('pjax:send', () => mountTopProgressBar())
+window.addEventListener('pjax:complete', () => unmountTopProgressBar())
+
 export function loadWithPJAX(URL: string) {
   mountTopProgressBar()
   pjax.loadUrl(URL, { scrollTo: 0 })
