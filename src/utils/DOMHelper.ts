@@ -159,12 +159,13 @@ const PAGE_TYPES = {
  * TODO: distinguish type 'preview'
  */
 export function getCurrentPageType() {
+  const blobPathSelector = '#blob-path' // path next to branch switcher
   const blobWrapperSelector = '.repository-content .blob-wrapper table'
   const readmeSelector = '.repository-content .readme'
   const searchResultSelector = '.codesearch-results'
   return (
     $(searchResultSelector, () => PAGE_TYPES.SEARCH) ||
-    $(blobWrapperSelector, () => PAGE_TYPES.RAW_TEXT) ||
+    $(blobWrapperSelector, () => $(blobPathSelector, () => PAGE_TYPES.RAW_TEXT)) ||
     $(readmeSelector, () => PAGE_TYPES.RENDERED) ||
     PAGE_TYPES.OTHERS
   )
