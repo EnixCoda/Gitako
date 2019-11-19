@@ -11,7 +11,7 @@ import { SideBarCore } from 'driver/core'
 import { ConnectorState, Props } from 'driver/core/SideBar'
 import { oauth } from 'env'
 import * as React from 'react'
-import { useEffectOnce, useEvent, useLocation } from 'react-use'
+import { useEvent, useLocation } from 'react-use'
 import { cx } from 'utils/cx'
 import * as DOMHelper from 'utils/DOMHelper'
 import { JSONRequest, parseURLSearch } from 'utils/general'
@@ -66,7 +66,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
     },
     [configContext.val.copyFileButton],
   )
-  useEffectOnce(attachCopyFileButton)
+  React.useEffect(attachCopyFileButton, [configContext.val.copyFileButton])
   useEvent('pjax:complete', attachCopyFileButton, window)
 
   const attachCopySnippetButton = React.useCallback(
@@ -75,7 +75,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
     },
     [configContext.val.copySnippetButton],
   )
-  useEffectOnce(attachCopySnippetButton)
+  React.useEffect(attachCopySnippetButton, [configContext.val.copySnippetButton])
   useEvent('pjax:complete', attachCopySnippetButton, window)
 
   // init again when setting new accessToken
