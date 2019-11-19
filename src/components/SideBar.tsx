@@ -11,7 +11,7 @@ import { SideBarCore } from 'driver/core'
 import { ConnectorState, Props } from 'driver/core/SideBar'
 import { oauth } from 'env'
 import * as React from 'react'
-import { useLocation } from 'react-use'
+import { useEffectOnce, useEvent, useLocation } from 'react-use'
 import { cx } from 'utils/cx'
 import * as DOMHelper from 'utils/DOMHelper'
 import { JSONRequest, parseURLSearch } from 'utils/general'
@@ -34,35 +34,21 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
     })()
   }, [])
 
-  const onKeyDown = React.useCallback(
-    configContext.val.shortcut
-      ? (e: KeyboardEvent) => {
-          const keys = keyHelper.parseEvent(e)
-          if (keys === configContext.val.shortcut) {
-            props.toggleShowSideBar()
-          }
+  React.useEffect(
+    function attachKeyDown() {
+      if (props.disabled || !configContext.val.shortcut) return
+
+      function onKeyDown(e: KeyboardEvent) {
+        const keys = keyHelper.parseEvent(e)
+        if (keys === configContext.val.shortcut) {
+          props.toggleShowSideBar()
         }
-      : () => {},
-    [configContext.val.shortcut],
+      }
+      window.addEventListener('keydown', onKeyDown)
+      return () => window.removeEventListener('keydown', onKeyDown)
+    },
+    [props.disabled, configContext.val.shortcut],
   )
-
-  React.useEffect(() => {
-    if (props.disabled) return
-    window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
-  }, [props.disabled, onKeyDown])
-
-  const attachCopyFileButton = React.useCallback(() => {
-    if (props.disabled) return
-    if (configContext.val.copyFileButton) return DOMHelper.attachCopyFileBtn()
-  }, [props.disabled, configContext.val.copyFileButton])
-  useOnLocationChange(attachCopyFileButton)
-
-  const attachCopySnippetButton = React.useCallback(() => {
-    if (props.disabled) return
-    if (configContext.val.copySnippetButton) return DOMHelper.attachCopySnippet()
-  }, [props.disabled, configContext.val.copySnippetButton])
-  useOnLocationChange(attachCopySnippetButton)
 
   useOnLocationChange(() => {
     if (configContext.val.intelligentToggle === null) {
@@ -74,13 +60,23 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
     }
   }, [props.metaData?.branchName, configContext.val.intelligentToggle])
 
-  React.useEffect(() => {
-    if (configContext.val.copyFileButton) return DOMHelper.attachCopyFileBtn() || undefined // undefined is friendlier to React
-  }, [configContext.val.copyFileButton])
+  const attachCopyFileButton = React.useCallback(
+    function attachCopyFileButton() {
+      if (configContext.val.copyFileButton) return DOMHelper.attachCopyFileBtn() || undefined // for the sake of react effect
+    },
+    [configContext.val.copyFileButton],
+  )
+  useEffectOnce(attachCopyFileButton)
+  useEvent('pjax:complete', attachCopyFileButton, window)
 
-  React.useEffect(() => {
-    if (configContext.val.copySnippetButton) return DOMHelper.attachCopySnippet() || undefined // undefined is friendlier to React
-  }, [configContext.val.copySnippetButton])
+  const attachCopySnippetButton = React.useCallback(
+    function attachCopySnippetButton() {
+      if (configContext.val.copySnippetButton) return DOMHelper.attachCopySnippet() || undefined // for the sake of react effect
+    },
+    [configContext.val.copySnippetButton],
+  )
+  useEffectOnce(attachCopySnippetButton)
+  useEvent('pjax:complete', attachCopySnippetButton, window)
 
   // init again when setting new accessToken
   useDidUpdate(() => {
@@ -193,9 +189,7 @@ async function trySetUpAccessTokenWithCode() {
   }
 }
 
-function useOnLocationChange(callback: () => void, deps: React.DependencyList = []) {
+function useOnLocationChange(callback: React.EffectCallback, extraDeps: React.DependencyList = []) {
   const { href, pathname, search } = useLocation()
-  useDidUpdate(() => {
-    callback()
-  }, [href, pathname, search, ...deps])
+  React.useEffect(callback, [href, pathname, search, ...extraDeps])
 }
