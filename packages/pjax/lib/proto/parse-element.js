@@ -9,6 +9,9 @@ module.exports = function(el) {
       }
       break
 
+    case "form":
+      break
+
     default:
       throw "Pjax can only be applied on <a> or <form> submit"
   }
