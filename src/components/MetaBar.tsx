@@ -15,7 +15,7 @@ export function MetaBar({ metaData }: Props) {
         {metaData.userName}
       </a>
       &nbsp;/&nbsp;
-      <a className={'repo-name pjax-link'} href={repoUrl}>
+      <a className={'repo-name'} href={repoUrl}>
         {metaData.repoName}
       </a>
       &nbsp;/&nbsp;
