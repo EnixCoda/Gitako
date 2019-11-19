@@ -52,13 +52,6 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [props.disabled, onKeyDown])
 
-  const updateMeta = React.useCallback(() => {
-    if (props.disabled) return
-    DOMHelper.unmountTopProgressBar()
-    props.setMetaData({ ...props.metaData, ...URLHelper.parse() })
-  }, [props.disabled, props.metaData, configContext.val])
-  useOnLocationChange(updateMeta)
-
   const attachCopyFileButton = React.useCallback(() => {
     if (props.disabled) return
     if (configContext.val.copyFileButton) return DOMHelper.attachCopyFileBtn()
@@ -71,11 +64,15 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
   }, [props.disabled, configContext.val.copySnippetButton])
   useOnLocationChange(attachCopySnippetButton)
 
-  React.useEffect(() => {
+  useOnLocationChange(() => {
     if (configContext.val.intelligentToggle === null) {
-      props.setShouldShow(URLHelper.isInCodePage(props.metaData))
+      props.setShouldShow(
+        URLHelper.isInCodePage({
+          branchName: props.metaData?.branchName,
+        }),
+      )
     }
-  }, [props.metaData, configContext.val.intelligentToggle])
+  }, [props.metaData?.branchName, configContext.val.intelligentToggle])
 
   React.useEffect(() => {
     if (configContext.val.copyFileButton) return DOMHelper.attachCopyFileBtn() || undefined // undefined is friendlier to React
@@ -196,9 +193,9 @@ async function trySetUpAccessTokenWithCode() {
   }
 }
 
-function useOnLocationChange(callback: () => void) {
+function useOnLocationChange(callback: () => void, deps: React.DependencyList = []) {
   const { href, pathname, search } = useLocation()
   useDidUpdate(() => {
     callback()
-  }, [href, pathname, search])
+  }, [href, pathname, search, ...deps])
 }

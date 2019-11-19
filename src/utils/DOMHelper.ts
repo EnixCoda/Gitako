@@ -122,7 +122,7 @@ export function scrollToRepoContent() {
 
 const pjax = new PJAX({
   elements: '',
-  selectors: ['.repository-content', 'title'],
+  selectors: ['.repository-content', 'title', '[data-pjax="#js-repo-pjax-container"]'],
   scrollTo: false,
   analytics: false,
   cacheBust: false,
@@ -133,7 +133,6 @@ window.addEventListener('pjax:send', () => mountTopProgressBar())
 window.addEventListener('pjax:complete', () => unmountTopProgressBar())
 
 export function loadWithPJAX(URL: string) {
-  mountTopProgressBar()
   pjax.loadUrl(URL, { scrollTo: 0 })
 }
 
