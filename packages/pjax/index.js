@@ -75,8 +75,6 @@ Pjax.prototype = {
 
   attachLink: require("./lib/proto/attach-link.js"),
 
-  attachForm: require("./lib/proto/attach-form.js"),
-
   forEachSelectors: function(cb, context, DOMContext) {
     return forEachSelectors.bind(this)(this.options.selectors, cb, context, DOMContext)
   },
