@@ -11,7 +11,6 @@ import { SideBarCore } from 'driver/core'
 import { ConnectorState, Props } from 'driver/core/SideBar'
 import { oauth } from 'env'
 import * as React from 'react'
-import { useLocation } from 'react-use'
 import { cx } from 'utils/cx'
 import * as DOMHelper from 'utils/DOMHelper'
 import { JSONRequest, parseURLSearch } from 'utils/general'
@@ -57,19 +56,19 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
     DOMHelper.unmountTopProgressBar()
     props.setMetaData({ ...props.metaData, ...URLHelper.parse() })
   }, [props.disabled, props.metaData, configContext.val])
-  useOnLocationChange(updateMeta)
+  useOnPJAXComplete(updateMeta)
 
   const attachCopyFileButton = React.useCallback(() => {
     if (props.disabled) return
     if (configContext.val.copyFileButton) return DOMHelper.attachCopyFileBtn()
   }, [props.disabled, configContext.val.copyFileButton])
-  useOnLocationChange(attachCopyFileButton)
+  useOnPJAXComplete(attachCopyFileButton)
 
   const attachCopySnippetButton = React.useCallback(() => {
     if (props.disabled) return
     if (configContext.val.copySnippetButton) return DOMHelper.attachCopySnippet()
   }, [props.disabled, configContext.val.copySnippetButton])
-  useOnLocationChange(attachCopySnippetButton)
+  useOnPJAXComplete(attachCopySnippetButton)
 
   React.useEffect(() => {
     if (configContext.val.intelligentToggle === null) {
@@ -144,6 +143,20 @@ RawGitako.defaultProps = {
 
 export const SideBar = connect(SideBarCore)(RawGitako)
 
+function useEvent<
+  T extends {
+    addEventListener: Function
+    removeEventListener: Function
+  }
+>(target: T, event: string, callback: () => void, deps: React.DependencyList = []) {
+  React.useEffect(() => {
+    target.addEventListener(event, callback)
+    return () => target.removeEventListener(event, callback)
+  }, [callback, ...deps])
+}
+
+const useOnPJAXComplete = useEvent.bind(null, window, 'pjax:complete')
+
 function renderAccessDeniedError() {
   return (
     <div className={'description'}>
@@ -194,11 +207,4 @@ async function trySetUpAccessTokenWithCode() {
   } catch (err) {
     raiseError(err)
   }
-}
-
-function useOnLocationChange(callback: () => void) {
-  const { href, pathname, search } = useLocation()
-  useDidUpdate(() => {
-    callback()
-  }, [href, pathname, search])
 }
