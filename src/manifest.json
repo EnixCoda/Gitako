@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Gitako - Github file tree",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "description": "The missing part of GitHub.",
   "author": "EnixCoda",
   "icons": {
