@@ -122,7 +122,12 @@ export function scrollToRepoContent() {
 
 const pjax = new PJAX({
   elements: '',
-  selectors: ['.repository-content', 'title', '[data-pjax="#js-repo-pjax-container"]'],
+  selectors: [
+    '.repository-content',
+    'title',
+    '[data-pjax="#js-repo-pjax-container"]',
+    '[data-pjax-container]',
+  ],
   scrollTo: false,
   analytics: false,
   cacheBust: false,
