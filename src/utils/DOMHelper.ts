@@ -121,7 +121,7 @@ export function scrollToRepoContent() {
 }
 
 const pjax = new PJAX({
-  elements: '',
+  elements: 'match-nothing-selector',
   selectors: [
     '.repository-content',
     'title',
@@ -134,10 +134,12 @@ const pjax = new PJAX({
   forceCache: true, // TODO: merge namespace, add forceCache
 })
 
-window.addEventListener('pjax:send', () => mountTopProgressBar())
+// Note: shall not enable below pjax:send listener as there would be dual bar when GitHub PJAX links are triggered
+// window.addEventListener('pjax:send', () => mountTopProgressBar())
 window.addEventListener('pjax:complete', () => unmountTopProgressBar())
 
 export function loadWithPJAX(URL: string) {
+  mountTopProgressBar()
   pjax.loadUrl(URL, { scrollTo: 0 })
 }
 
