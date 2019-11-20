@@ -109,7 +109,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
           <div className={'gitako-side-bar-content'}>
             {metaData && <MetaBar metaData={metaData} />}
             {errorDueToAuth
-              ? renderAccessDeniedError()
+              ? renderAccessDeniedError(Boolean(accessToken))
               : metaData && (
                   <FileExplorer
                     toggleShowSettings={toggleShowSettings}
@@ -137,22 +137,37 @@ RawGitako.defaultProps = {
 
 export const SideBar = connect(SideBarCore)(RawGitako)
 
-function renderAccessDeniedError() {
+function renderAccessDeniedError(hasToken: boolean) {
   return (
     <div className={'description'}>
       <h5>Access Denied</h5>
-      <p>
-        Due to{' '}
-        <a target="_blank" href="https://developer.github.com/v3/#rate-limiting">
-          limitation of GitHub
-        </a>{' '}
-        or{' '}
-        <a target="_blank" href="https://developer.github.com/v3/#authentication">
-          auth needs
-        </a>
-        , Gitako needs access token to continue. Please follow the instructions in the settings
-        panel below.
-      </p>
+      {hasToken ? (
+        <>
+          <p>
+            Current access token is either invalid or not granted with permissions to access this
+            project.
+          </p>
+          <p>
+            You can grant or request access{' '}
+            <a href={`https://github.com/settings/connections/applications/${oauth.clientId}`}>
+              here
+            </a>{' '}
+            if you setup Gitako with OAuth.
+          </p>
+        </>
+      ) : (
+        <p>
+          Gitako needs access token to read this project due to{' '}
+          <a target="_blank" href="https://developer.github.com/v3/#rate-limiting">
+            GitHub rate limiting
+          </a>{' '}
+          and{' '}
+          <a target="_blank" href="https://developer.github.com/v3/#authentication">
+            auth needs
+          </a>
+          . Please setup access token in the settings panel below.
+        </p>
+      )}
     </div>
   )
 }
