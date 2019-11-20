@@ -126,7 +126,7 @@ const pjax = new PJAX({
     '.repository-content',
     'title',
     '[data-pjax="#js-repo-pjax-container"]',
-    '[data-pjax-container]',
+    '.page-content',
   ],
   scrollTo: false,
   analytics: false,
