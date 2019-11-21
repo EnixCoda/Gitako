@@ -50,15 +50,19 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
     [props.disabled, configContext.val.shortcut],
   )
 
-  useOnLocationChange(() => {
-    if (configContext.val.intelligentToggle === null) {
-      props.setShouldShow(
-        URLHelper.isInCodePage({
-          branchName: props.metaData?.branchName,
-        }),
-      )
-    }
-  }, [props.metaData?.branchName, configContext.val.intelligentToggle])
+  const updateSideBarVisibility = React.useCallback(
+    function updateSideBarVisibility() {
+      if (configContext.val.intelligentToggle === null) {
+        props.setShouldShow(
+          URLHelper.isInCodePage({
+            branchName: props.metaData?.branchName,
+          }),
+        )
+      }
+    },
+    [props.metaData?.branchName, configContext.val.intelligentToggle],
+  )
+  useEvent('pjax:complete', updateSideBarVisibility, window)
 
   const attachCopyFileButton = React.useCallback(
     function attachCopyFileButton() {
