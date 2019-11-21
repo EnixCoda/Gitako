@@ -13,10 +13,13 @@ NProgress.configure({ showSpinner: false })
 
 /**
  * when gitako is ready, make page's header narrower
+ * or cancel it
  */
-export function markGitakoReadyState() {
+export function markGitakoReadyState(ready: boolean) {
   const readyClassName = 'gitako-ready'
-  document.body.classList.add(readyClassName)
+  const classList = document.body.classList
+  if (ready) classList.add(readyClassName)
+  else classList.remove(readyClassName)
 }
 
 /**

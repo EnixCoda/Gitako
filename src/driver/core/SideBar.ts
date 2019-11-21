@@ -53,6 +53,7 @@ export const init: BoundMethodCreator = dispatch => async () => {
       dispatch.set({ disabled: true })
       return
     }
+    DOMHelper.markGitakoReadyState(true)
     dispatch.set({
       errorDueToAuth: false,
       showSettings: false,
@@ -120,7 +121,6 @@ export const init: BoundMethodCreator = dispatch => async () => {
     const shouldShow =
       intelligentToggle === null ? URLHelper.isInCodePage(metaData) : intelligentToggle
     dispatch.call(setShouldShow, shouldShow)
-    DOMHelper.markGitakoReadyState()
   } catch (err) {
     dispatch.call(handleError, err)
   } finally {
@@ -141,6 +141,7 @@ export const handleError: BoundMethodCreator<[Error]> = dispatch => async err =>
     dispatch.set({ errorDueToAuth: true })
     dispatch.call(setShowSettings, true)
   } else {
+    DOMHelper.markGitakoReadyState(false)
     dispatch.call(setError, 'Gitako ate a bug, but it should recovery soon!')
     throw err
   }
