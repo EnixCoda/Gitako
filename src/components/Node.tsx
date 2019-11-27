@@ -1,8 +1,9 @@
-import { Icon } from 'components/Icon'
 import * as React from 'react'
 import { cx } from 'utils/cx'
 import { OperatingSystems, os } from 'utils/general'
 import { TreeNode } from 'utils/VisibleNodesGenerator'
+import { getFileIconSrc, getFolderIconSrc } from '../utils/parseIconMapCSV'
+import { Icon } from './Icon'
 
 function getIconType(node: TreeNode) {
   switch (node.type) {
@@ -54,7 +55,7 @@ export function Node({ node, depth, expanded, focused, renderActions, style, onC
           style={{ paddingLeft: `${10 + 20 * depth}px` }}
         >
           <div className={'node-item-label'}>
-            <Icon type={getIconType(node)} />
+            <NodeItemIcon node={node} open={expanded} />
             <span className={'node-item-name'}>{name}</span>
           </div>
           {renderActions && <div>{renderActions(node)}</div>}
@@ -63,3 +64,22 @@ export function Node({ node, depth, expanded, focused, renderActions, style, onC
     </div>
   )
 }
+
+const NodeItemIcon = React.memo(function NodeItemIcon({
+  node,
+  open = false,
+}: {
+  node: TreeNode
+  open?: boolean
+}) {
+  const src = React.useMemo(
+    () => (node.type === 'tree' ? getFolderIconSrc(node, open) : getFileIconSrc(node)),
+    [open],
+  )
+  return (
+    <>
+      {node.type !== 'blob' && <Icon type={getIconType(node)} />}
+      <img alt={node.name} className={'node-item-icon'} src={src} />
+    </>
+  )
+})

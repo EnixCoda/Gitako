@@ -1,5 +1,6 @@
 import Octicon, {
   ChevronDown,
+  ChevronRight,
   File,
   FileCode,
   FileMedia,
@@ -12,7 +13,6 @@ import Octicon, {
   Markdown,
   Octoface,
   Reply,
-  TriangleRight,
   X,
 } from '@primer/octicons-react'
 import * as React from 'react'
@@ -57,8 +57,8 @@ function getSVGIconComponent(
       }
     case 'folder':
       return {
-        IconComponent: TriangleRight,
-        name: 'TriangleRight',
+        IconComponent: ChevronRight,
+        name: 'ChevronRight',
       }
     case 'go-to':
       return {
