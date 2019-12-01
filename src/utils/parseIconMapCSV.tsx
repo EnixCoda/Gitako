@@ -52,10 +52,17 @@ export function getFolderIconSrc(node: TreeNode, open: boolean) {
 const { filenameIndex, fileExtensionIndex } = parseFileIconMapCSV()
 
 export function getFileIconSrc(node: TreeNode) {
-  const name =
-    filenameIndex.get(node.name.toLowerCase()) ||
-    fileExtensionIndex.get((node.name.split('.').pop() as string).toLowerCase())
-  return getIconSrc('file', name)
+  const fileName = node.name.toLowerCase()
+  let iconName = filenameIndex.get(fileName)
+  if (!iconName) {
+    const tail = fileName.split('.')
+    tail.shift()
+    while (!iconName && tail.length > 0) {
+      iconName = fileExtensionIndex.get(tail.join('.'))
+      tail.shift()
+    }
+  }
+  return getIconSrc('file', iconName)
 }
 
 export function getIconSrc(type: 'folder' | 'file', name: string = 'default', open?: boolean) {
