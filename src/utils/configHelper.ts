@@ -8,6 +8,7 @@ export type Config = {
   copyFileButton: boolean
   copySnippetButton: boolean
   intelligentToggle: boolean | null // `null` stands for intelligent, boolean for sidebar open status
+  icons: 'rich' | 'dim' | 'native'
 }
 
 export enum configKeys {
@@ -18,6 +19,7 @@ export enum configKeys {
   copyFileButton = 'copyFileButton',
   copySnippetButton = 'copySnippetButton',
   intelligentToggle = 'intelligentToggle',
+  icons = 'icons',
 }
 
 export const defaultConfigs: Config = {
@@ -28,19 +30,17 @@ export const defaultConfigs: Config = {
   copyFileButton: true,
   copySnippetButton: true,
   intelligentToggle: null,
+  icons: 'rich',
 }
 
 const configKeyArray = Object.values(configKeys)
 
 function applyDefaultConfigs(configs: Config) {
-  return configKeyArray.reduce(
-    (applied, configKey) => {
-      const key = configKey as keyof Config
-      Object.assign(applied, { [key]: key in configs ? configs[key] : defaultConfigs[key] })
-      return applied
-    },
-    {} as Config,
-  )
+  return configKeyArray.reduce((applied, configKey) => {
+    const key = configKey as keyof Config
+    Object.assign(applied, { [key]: key in configs ? configs[key] : defaultConfigs[key] })
+    return applied
+  }, {} as Config)
 }
 
 export async function get(): Promise<Config> {

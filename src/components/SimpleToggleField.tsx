@@ -1,25 +1,14 @@
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
-import { Config } from 'utils/configHelper'
-
-export type SimpleField = {
-  key: keyof Config
-  label: string
-  wikiLink?: string
-  description?: string
-  overwrite?: Props['overwrite']
-}
+import { SimpleField } from './SettingsBar'
 
 type Props = {
   field: SimpleField
   onChange?(): void
-  overwrite?: {
-    value: <T>(value: T) => boolean
-    onChange: (checked: boolean) => any
-  }
 }
 
-export function SimpleFieldInput({ field, overwrite, onChange }: Props) {
+export function SimpleToggleField({ field, onChange }: Props) {
+  const { overwrite } = field
   const configContext = useConfigs()
   const value = configContext.val[field.key]
   return (

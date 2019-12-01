@@ -19,6 +19,10 @@ const plugins = [
       to: 'icons/[name].[ext]',
     },
     {
+      from: './vscode-icons/icons/*',
+      to: 'icons/vscode/[name].[ext]',
+    },
+    {
       from: 'node_modules/webextension-polyfill/dist/browser-polyfill.js',
       to: 'browser-polyfill.js',
     },
@@ -78,6 +82,10 @@ module.exports = {
         test: /\.svg$/,
         resourceQuery: /inline/,
         loader: ['url-loader'],
+      },
+      {
+        test: /\.csv$/,
+        loader: ['raw-loader'],
       },
       {
         test: /\.json$/,

@@ -358,8 +358,21 @@
             transition: all 0.5s ease;
             white-space: nowrap;
 
+            &-icon {
+              width: 16px;
+              height: 16px;
+              object-fit: contain;
+              vertical-align: middle;
+              padding-left: 4px;
+              box-sizing: content-box;
+
+              &.dim {
+                filter: sepia(1) hue-rotate(180deg);
+              }
+            }
+
             // folder icon rotate when expand
-            &.expanded .octicon.TriangleRight {
+            &.expanded .octicon.ChevronRight {
               transform: rotate(90deg);
             }
 
