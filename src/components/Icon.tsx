@@ -120,10 +120,12 @@ function getSVGIconComponent(
 type Props = {
   type: string
   className?: string
+  placeholder?: boolean
   onClick?: (event: React.MouseEvent<HTMLElement>) => void
 }
 
-export function Icon({ type, className = undefined, ...otherProps }: Props) {
+export function Icon({ type, className = undefined, placeholder, ...otherProps }: Props) {
+  if (placeholder) return <div className={cx('octicon-wrapper')} />
   const { name, IconComponent } = getSVGIconComponent(type)
   const mergedClassName = cx('octicon', name)
   return (
@@ -131,6 +133,7 @@ export function Icon({ type, className = undefined, ...otherProps }: Props) {
       {React.createElement(Octicon, {
         icon: IconComponent,
         className: mergedClassName,
+        verticalAlign: 'middle',
       })}
     </div>
   )

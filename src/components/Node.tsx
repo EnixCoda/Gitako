@@ -78,8 +78,8 @@ const NodeItemIcon = React.memo(function NodeItemIcon({
   )
   return (
     <>
-      {node.type !== 'blob' && <Icon type={getIconType(node)} />}
-      <img alt={node.name} className={'node-item-icon'} src={src} />
+      <Icon placeholder={node.type === 'blob'} type={getIconType(node)} />
+      {node.type !== 'commit' && <img alt={node.name} className={'node-item-icon'} src={src} />}
     </>
   )
 })
