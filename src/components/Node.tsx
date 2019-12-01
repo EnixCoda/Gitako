@@ -1,3 +1,4 @@
+import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { cx } from 'utils/cx'
 import { OperatingSystems, os } from 'utils/general'
@@ -72,14 +73,23 @@ const NodeItemIcon = React.memo(function NodeItemIcon({
   node: TreeNode
   open?: boolean
 }) {
+  const {
+    val: { icons },
+  } = useConfigs()
+
+  if (icons === 'native') return <Icon type={getIconType(node)} />
   const src = React.useMemo(
     () => (node.type === 'tree' ? getFolderIconSrc(node, open) : getFileIconSrc(node)),
     [open],
   )
   return (
     <>
-      <Icon placeholder={node.type === 'blob'} type={getIconType(node)} />
-      {node.type !== 'commit' && <img alt={node.name} className={'node-item-icon'} src={src} />}
+      <Icon placeholder={node.type !== 'tree'} type={getIconType(node)} />
+      {node.type === 'commit' ? (
+        <Icon type={getIconType(node)} />
+      ) : (
+        <img alt={node.name} className={cx('node-item-icon', { dim: icons === 'dim' })} src={src} />
+      )}
     </>
   )
 })

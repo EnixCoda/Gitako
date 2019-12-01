@@ -4,6 +4,7 @@ import * as React from 'react'
 import { Config } from 'utils/configHelper'
 import { useStates } from 'utils/hooks'
 import { AccessTokenSettings } from './settings/AccessTokenSettings'
+import { FileTreeIconSettings } from './settings/FileTreeIconSettings'
 import { ShortcutSettings } from './settings/ShortcutSettings'
 import { SimpleToggleField } from './SimpleToggleField'
 
@@ -70,6 +71,7 @@ function SettingsBarContent() {
         <div className={'shadow-shelter'} />
         <AccessTokenSettings />
         <ShortcutSettings />
+        <FileTreeIconSettings />
         <div className={'gitako-settings-bar-content-section others'}>
           <h4>More</h4>
           {moreFields.map(field => (
