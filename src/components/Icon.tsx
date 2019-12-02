@@ -133,7 +133,7 @@ export function Icon({ type, className = undefined, placeholder, ...otherProps }
       {React.createElement(Octicon, {
         icon: IconComponent,
         className: mergedClassName,
-        verticalAlign: 'middle',
+        verticalAlign: 'text-bottom',
       })}
     </div>
   )
