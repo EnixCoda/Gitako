@@ -86,7 +86,7 @@ function SettingsBarContent() {
         <div className={'gitako-settings-bar-content-section issue'}>
           <h4>Contact</h4>
           <a href="https://github.com/EnixCoda/Gitako/issues" target="_blank">
-            Bug report / feature request.
+            Report bug / Request feature.
           </a>
         </div>
       </div>
