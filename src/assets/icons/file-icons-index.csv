@@ -171,8 +171,8 @@ delphi,,pas:pas
 django,,djt:html:html
 dlang,,d:d:d:d
 diff,,diff
-docker,docker-compose.yml:docker-compose.ci-build.yml:docker-compose.override.yml:docker-compose.vs.debug.yml:docker-compose.vs.release.yml:docker-cloud.yml,dockerignore
-docker2,docker-compose.yml:docker-compose.ci-build.yml:docker-compose.override.yml:docker-compose.vs.debug.yml:docker-compose.vs.release.yml:docker-cloud.yml,dockerignore
+docker,docker-compose.yml:docker-compose.ci-build.yml:docker-compose.override.yml:docker-compose.vs.debug.yml:docker-compose.vs.release.yml:docker-cloud.yml,dockerfile:dockerignore
+docker2,docker-compose.yml:docker-compose.ci-build.yml:docker-compose.override.yml:docker-compose.vs.debug.yml:docker-compose.vs.release.yml:docker-cloud.yml,dockerfile:dockerignore
 dockertest,docker-compose.test.yml,
 dockertest2,docker-compose.test.yml,
 docpad,,eco
@@ -399,7 +399,7 @@ nodemon,nodemon.json,
 npm,.npmignore:.npmrc:package.json:package-lock.json:npm-shrinkwrap.json,
 nsi,,nsi:nsi:nsi:nsi
 nsri,.nsrirc:.nsriignore:.nsrirc.js:.nsrirc.json:.nsrirc.yaml:.nsrirc.yml:.nsrirc.config.js,
-nsri-integrity,.integrity.json,,nsri-integrity
+nsri-integrity,.integrity.json,
 nuget,,nupkg:nuspec:psmdcp
 nunjucks,,nunj:njs:nunjucks
 nuxt,nuxt.config.js:nuxt.config.ts,
@@ -612,7 +612,7 @@ volt,,volt
 vscode,.vscodeignore:launch.json:tasks.json:vscodeignore.json,
 vscode2,.vscodeignore:launch.json:tasks.json:vscodeignore.json,
 vscode3,.vscodeignore:launch.json:tasks.json:vscodeignore.json,
-vscode-insiders,.vscodeignore:launch.json:tasks.json:vscodeignore.json,,vscode-insiders
+vscode-insiders,.vscodeignore:launch.json:tasks.json:vscodeignore.json,
 vsix,,vsix
 vsixmanifest,,vsixmanifest
 vue,,vue
