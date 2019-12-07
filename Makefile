@@ -15,9 +15,13 @@ upload-for-analytics:
 
 compress:
 	rm -f dist/gitako.zip
-	cd dist && zip -r gitako.zip * -x *.map
+	cd dist && zip -r gitako-$(FULL_VERSION).zip * -x *.map -x *.DS_Store
 
 release:
 	$(MAKE) build
 	$(MAKE) upload-for-analytics
 	$(MAKE) compress
+	$(MAKE) compress-source
+
+compress-source:
+	git archive -o dist/source-$(FULL_VERSION).zip HEAD
