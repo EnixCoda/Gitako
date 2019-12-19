@@ -32,6 +32,7 @@ export type ConnectorState = {
   onFocusSearchBar: GetCreatedMethod<typeof onFocusSearchBar>
   setUpTree: GetCreatedMethod<typeof setUpTree>
   goTo: GetCreatedMethod<typeof goTo>
+  expandTo: GetCreatedMethod<typeof expandTo>
 }
 
 type DepthMap = Map<TreeNode, number>
@@ -53,7 +54,7 @@ function getVisibleParentNode(nodes: TreeNode[], focusedNode: TreeNode, depths: 
 }
 
 type Task = () => void
-const tasksAfterRender: (Task)[] = []
+const tasksAfterRender: Task[] = []
 let visibleNodesGenerator: VisibleNodesGenerator
 
 type BoundMethodCreator<Args extends any[] = []> = MethodCreator<Props, ConnectorState, Args>
@@ -136,9 +137,9 @@ function handleParsed(root: TreeNode, parsed: Parsed) {
   })
 }
 
-export const setUpTree: BoundMethodCreator<
-  [Pick<Props, 'treeData' | 'metaData' | 'accessToken'> & Pick<Config, 'compressSingletonFolder'>]
-> = dispatch => async ({ treeData, metaData, compressSingletonFolder, accessToken }) => {
+export const setUpTree: BoundMethodCreator<[
+  Pick<Props, 'treeData' | 'metaData' | 'accessToken'> & Pick<Config, 'compressSingletonFolder'>,
+]> = dispatch => async ({ treeData, metaData, compressSingletonFolder, accessToken }) => {
   if (!treeData) return
   dispatch.call(setStateText, 'Rendering File List...')
   const { root, gitModules } = treeParser.parse(treeData, metaData)
@@ -299,11 +300,7 @@ export const search: BoundMethodCreator<[string]> = dispatch => searchKey => {
 export const goTo: BoundMethodCreator<[string[]]> = dispatch => async currentPath => {
   visibleNodesGenerator.search([])
   tasksAfterRender.push(() => {
-    const nodeExpandedTo = visibleNodesGenerator.expandTo(currentPath.join('/'))
-    if (nodeExpandedTo) {
-      visibleNodesGenerator.focusNode(nodeExpandedTo)
-    }
-    dispatch.call(updateVisibleNodes)
+    dispatch.call(expandTo, currentPath)
   })
   dispatch.set({ searchKey: '', searched: false })
 }
@@ -345,6 +342,14 @@ export const onNodeClick: BoundMethodCreator<[TreeNode]> = dispatch => node => {
       window.open(node.url, '_blank')
     }
   }
+}
+
+export const expandTo: BoundMethodCreator<[string[]]> = dispatch => currentPath => {
+  const nodeExpandedTo = visibleNodesGenerator.expandTo(currentPath.join('/'))
+  if (nodeExpandedTo) {
+    visibleNodesGenerator.focusNode(nodeExpandedTo)
+  }
+  dispatch.call(updateVisibleNodes)
 }
 
 export const updateVisibleNodes: BoundMethodCreator = dispatch => () => {

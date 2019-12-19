@@ -6,9 +6,11 @@ import { connect } from 'driver/connect'
 import { FileExplorerCore } from 'driver/core'
 import { ConnectorState, Props } from 'driver/core/FileExplorer'
 import * as React from 'react'
+import { useEvent } from 'react-use'
 import { FixedSizeList as List, ListChildComponentProps, ListProps } from 'react-window'
 import { cx } from 'utils/cx'
-import { usePrevious } from 'utils/hooks'
+import { useOnLocationChange, usePrevious } from 'utils/hooks'
+import { getCurrentPath } from 'utils/URLHelper'
 import { TreeNode, VisibleNodes } from 'utils/VisibleNodesGenerator'
 import { Icon } from './Icon'
 import { SizeObserver } from './SizeObserver'
@@ -77,6 +79,8 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
               nodes={nodes}
               height={height}
               width={width}
+              expandTo={props.expandTo}
+              metaData={props.metaData}
             />
           )}
         </SizeObserver>
@@ -167,13 +171,16 @@ function ListView({
   height,
   focusedNode,
   renderNode,
+  metaData,
+  expandTo,
 }: {
   nodes: TreeNode[]
   height: number
   width: number
   focusedNode: TreeNode | null
   renderNode: ListProps['children']
-}) {
+} & Pick<Props, 'metaData'> &
+  Pick<ConnectorState, 'expandTo'>) {
   const listRef = React.useRef<List>(null)
   React.useEffect(() => {
     if (focusedNode && listRef.current) {
@@ -187,6 +194,12 @@ function ListView({
       listRef.current.scrollTo(0)
     }
   }, [listRef.current, focusedNode, nodes.length])
+
+  const goToCurrentItem = React.useCallback(() => {
+    expandTo(getCurrentPath(metaData.branchName))
+  }, [metaData.branchName])
+  useOnLocationChange(goToCurrentItem)
+  useEvent('pjax:complete', goToCurrentItem, window)
   return (
     <List
       ref={listRef}
