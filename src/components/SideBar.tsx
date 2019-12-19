@@ -11,7 +11,7 @@ import { SideBarCore } from 'driver/core'
 import { ConnectorState, Props } from 'driver/core/SideBar'
 import { oauth } from 'env'
 import * as React from 'react'
-import { useEvent, useLocation } from 'react-use'
+import { useEvent } from 'react-use'
 import { cx } from 'utils/cx'
 import * as DOMHelper from 'utils/DOMHelper'
 import { JSONRequest, parseURLSearch } from 'utils/general'
@@ -206,9 +206,4 @@ async function trySetUpAccessTokenWithCode() {
   } catch (err) {
     raiseError(err)
   }
-}
-
-function useOnLocationChange(callback: React.EffectCallback, extraDeps: React.DependencyList = []) {
-  const { href, pathname, search } = useLocation()
-  React.useEffect(callback, [href, pathname, search, ...extraDeps])
 }
