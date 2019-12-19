@@ -8,15 +8,12 @@ Yet another extension for GitHub, available on both Chrome and Firefox. Inspired
 - 🔎 instant file search
 - 🏎 extremely fast even in gigantic projects
 - ⌨️ intuitive keyboard accessibility
-  - navigate file using arrow keys
-  - shortcut for toggling sidebar
-- 🚀 boosts loading speed
+- 🚀 boosts page performance
 - ↔️ customizable layout
-- 📋 shortcuts for copy snippets and file
+- 📋 copy snippets and file
 - 🕶️ support private repositories
 - 🗂 support git submodule
-- 🎨 GitHub-friendly UI
-- 🎈 light weight in size and memory usage
+- 🎨 friendly UI and rich icons
 
 ### Install
 
@@ -34,7 +31,7 @@ Any bug report or feature request discussions are welcomed, feel free to draft a
 
 #### Why named 'Gitako'?
 
-GitHub's totem is a cute octopus. And octopus in Japanese is `たこ`(tako).
+GitHub's totem is a cute octopus. And octopus in Japanese is `タコ`(tako).
 Then link them together:
 
     git + tako -> gitako

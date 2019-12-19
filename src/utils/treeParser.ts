@@ -1,4 +1,4 @@
-import GitHubHelper, { MetaData, TreeData } from 'utils/GitHubHelper'
+import { getUrlForRedirect, MetaData, TreeData } from 'utils/GitHubHelper'
 import { TreeNode } from './VisibleNodesGenerator'
 
 interface RawItem {
@@ -36,7 +36,7 @@ function findGitModules(root: TreeNode) {
   return null
 }
 
-function parse(treeData: TreeData, metaData: MetaData) {
+export function parse(treeData: TreeData, metaData: MetaData) {
   const { tree } = treeData
 
   // nodes are created from items and put onto tree
@@ -70,7 +70,7 @@ function parse(treeData: TreeData, metaData: MetaData) {
         name: item.path && item.path.replace(/^.*\//, ''),
         url:
           item.url && item.type && item.path
-            ? GitHubHelper.getUrlForRedirect(metaData, item.type, item.path)
+            ? getUrlForRedirect(metaData, item.type, item.path)
             : null,
         contents: item.type === 'tree' ? [] : null,
       } as TreeNode
@@ -87,8 +87,4 @@ function parse(treeData: TreeData, metaData: MetaData) {
     gitModules: findGitModules(root),
     root: sortFoldersToFront(root),
   }
-}
-
-export default {
-  parse,
 }

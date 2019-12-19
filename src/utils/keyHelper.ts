@@ -36,7 +36,7 @@ function parseKeyCode(code: string) {
   return code.toLowerCase().replace(/^control$/, 'ctrl')
 }
 
-function parseEvent(e: KeyboardEvent | React.KeyboardEvent) {
+export function parseEvent(e: KeyboardEvent | React.KeyboardEvent) {
   const { altKey: alt, shiftKey: shift, metaKey: meta, ctrlKey: ctrl } = e
   try {
     const code = parseKeyCode(e.key)
@@ -56,8 +56,4 @@ function parseEvent(e: KeyboardEvent | React.KeyboardEvent) {
     })
     throw new Error(`Error parse keyboard event: ${serializedKeyData}`)
   }
-}
-
-export default {
-  parseEvent,
 }

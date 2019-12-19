@@ -1,5 +1,6 @@
 import Octicon, {
   ChevronDown,
+  ChevronRight,
   File,
   FileCode,
   FileMedia,
@@ -12,11 +13,10 @@ import Octicon, {
   Markdown,
   Octoface,
   Reply,
-  TriangleRight,
   X,
 } from '@primer/octicons-react'
 import * as React from 'react'
-import cx from 'utils/cx'
+import { cx } from 'utils/cx'
 
 function getSVGIconComponent(
   type: string,
@@ -57,8 +57,8 @@ function getSVGIconComponent(
       }
     case 'folder':
       return {
-        IconComponent: TriangleRight,
-        name: 'TriangleRight',
+        IconComponent: ChevronRight,
+        name: 'ChevronRight',
       }
     case 'go-to':
       return {
@@ -120,10 +120,12 @@ function getSVGIconComponent(
 type Props = {
   type: string
   className?: string
+  placeholder?: boolean
   onClick?: (event: React.MouseEvent<HTMLElement>) => void
 }
 
-const Icon: React.SFC<Props> = function Icon({ type, className = undefined, ...otherProps }) {
+export function Icon({ type, className = undefined, placeholder, ...otherProps }: Props) {
+  if (placeholder) return <div className={cx('octicon-wrapper')} />
   const { name, IconComponent } = getSVGIconComponent(type)
   const mergedClassName = cx('octicon', name)
   return (
@@ -131,9 +133,8 @@ const Icon: React.SFC<Props> = function Icon({ type, className = undefined, ...o
       {React.createElement(Octicon, {
         icon: IconComponent,
         className: mergedClassName,
+        verticalAlign: 'text-bottom',
       })}
     </div>
   )
 }
-
-export default Icon

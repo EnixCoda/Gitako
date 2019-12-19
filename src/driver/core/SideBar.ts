@@ -1,18 +1,13 @@
-import { Props } from 'components/SideBar'
+import { ConfigsContextShape } from 'containers/ConfigsContext'
 import { GetCreatedMethod, MethodCreator } from 'driver/connect'
-import configHelper, { Config, configKeys } from 'utils/configHelper'
-import DOMHelper from 'utils/DOMHelper'
-import GitHubHelper, {
-  API_RATE_LIMIT,
-  BAD_CREDENTIALS,
-  BLOCKED_PROJECT,
-  EMPTY_PROJECT,
-  MetaData,
-  NOT_FOUND,
-  TreeData,
-} from 'utils/GitHubHelper'
-import keyHelper from 'utils/keyHelper'
-import URLHelper from 'utils/URLHelper'
+import * as DOMHelper from 'utils/DOMHelper'
+import * as GitHubHelper from 'utils/GitHubHelper'
+import { MetaData, TreeData } from 'utils/GitHubHelper'
+import * as URLHelper from 'utils/URLHelper'
+
+export type Props = {
+  configContext: ConfigsContextShape
+}
 
 export type ConnectorState = {
   // error message
@@ -32,30 +27,18 @@ export type ConnectorState = {
   initializingPromise: Promise<void> | null
 } & {
   init: GetCreatedMethod<typeof init>
-  onPJAXEnd: GetCreatedMethod<typeof onPJAXEnd>
-  onKeyDown: GetCreatedMethod<typeof onKeyDown>
+  setMetaData: GetCreatedMethod<typeof setMetaData>
+  setShouldShow: GetCreatedMethod<typeof setShouldShow>
   toggleShowSideBar: GetCreatedMethod<typeof toggleShowSideBar>
   toggleShowSettings: GetCreatedMethod<typeof toggleShowSettings>
-  useListeners: GetCreatedMethod<typeof useListeners>
-  onAccessTokenChange: GetCreatedMethod<typeof onAccessTokenChange>
-  onShortcutChange: GetCreatedMethod<typeof onShortcutChange>
-  setCopyFile: GetCreatedMethod<typeof setCopyFile>
-  setCopySnippet: GetCreatedMethod<typeof setCopySnippet>
-  setCompressSingleton: GetCreatedMethod<typeof setCompressSingleton>
-  setIntelligentToggle: GetCreatedMethod<typeof setIntelligentToggle>
 } & {
   baseSize: number
-  toggleShowSideBarShortcut?: string
-  accessToken?: string
-} & Pick<
-    Config,
-    'compressSingletonFolder' | 'copyFileButton' | 'copySnippetButton' | 'intelligentToggle'
-  >
+}
 
 type BoundMethodCreator<Args extends any[] = []> = MethodCreator<Props, ConnectorState, Args>
 
-const init: BoundMethodCreator = dispatch => async () => {
-  const { initializingPromise } = dispatch.get()
+export const init: BoundMethodCreator = dispatch => async () => {
+  const [{ initializingPromise }] = dispatch.get()
   if (initializingPromise) await initializingPromise
 
   let done: any = null // cannot use type `(() => void) | null` here
@@ -70,6 +53,7 @@ const init: BoundMethodCreator = dispatch => async () => {
       dispatch.set({ disabled: true })
       return
     }
+    DOMHelper.markGitakoReadyState(true)
     dispatch.set({
       errorDueToAuth: false,
       showSettings: false,
@@ -82,24 +66,10 @@ const init: BoundMethodCreator = dispatch => async () => {
     }
     metaData.branchName = detectedBranchName || 'master'
     dispatch.call(setMetaData, metaData)
-    const {
-      sideBarWidth,
-      access_token: accessToken,
-      shortcut,
-      compressSingletonFolder,
-      copyFileButton,
-      copySnippetButton,
-      intelligentToggle,
-    } = await configHelper.getAll()
-    DOMHelper.decorateGitHubPageContent({ copyFileButton, copySnippetButton })
+    const [, { configContext }] = dispatch.get()
+    const { sideBarWidth, access_token: accessToken, intelligentToggle } = configContext.val
     dispatch.set({
       baseSize: sideBarWidth,
-      accessToken,
-      toggleShowSideBarShortcut: shortcut,
-      compressSingletonFolder,
-      copyFileButton,
-      copySnippetButton,
-      intelligentToggle,
     })
 
     if (!metaData.branchName || !metaData.userName) return
@@ -151,7 +121,6 @@ const init: BoundMethodCreator = dispatch => async () => {
     const shouldShow =
       intelligentToggle === null ? URLHelper.isInCodePage(metaData) : intelligentToggle
     dispatch.call(setShouldShow, shouldShow)
-    DOMHelper.markGitakoReadyState()
   } catch (err) {
     dispatch.call(handleError, err)
   } finally {
@@ -159,146 +128,57 @@ const init: BoundMethodCreator = dispatch => async () => {
   }
 }
 
-const handleError: BoundMethodCreator<[Error]> = dispatch => async err => {
-  if (err.message === EMPTY_PROJECT) {
+export const handleError: BoundMethodCreator<[Error]> = dispatch => async err => {
+  if (err.message === GitHubHelper.EMPTY_PROJECT) {
     dispatch.call(setError, 'This project seems to be empty.')
-  } else if (err.message === BLOCKED_PROJECT) {
+  } else if (err.message === GitHubHelper.BLOCKED_PROJECT) {
     dispatch.call(setError, 'This project is blocked.')
   } else if (
-    err.message === NOT_FOUND ||
-    err.message === BAD_CREDENTIALS ||
-    err.message === API_RATE_LIMIT
+    err.message === GitHubHelper.NOT_FOUND ||
+    err.message === GitHubHelper.BAD_CREDENTIALS ||
+    err.message === GitHubHelper.API_RATE_LIMIT
   ) {
     dispatch.set({ errorDueToAuth: true })
     dispatch.call(setShowSettings, true)
-    dispatch.call(setShouldShow, true)
   } else {
-    dispatch.call(useListeners, false)
+    DOMHelper.markGitakoReadyState(false)
     dispatch.call(setError, 'Gitako ate a bug, but it should recovery soon!')
     throw err
   }
 }
 
-const onPJAXEnd: BoundMethodCreator = dispatch => () => {
-  const { metaData, copyFileButton, copySnippetButton, intelligentToggle } = dispatch.get()
-  DOMHelper.unmountTopProgressBar()
-  DOMHelper.decorateGitHubPageContent({ copyFileButton, copySnippetButton })
-  const mergedMetaData = { ...metaData, ...URLHelper.parse() }
-  dispatch.call(setMetaData, mergedMetaData)
+export const toggleShowSideBar: BoundMethodCreator = dispatch => () => {
+  const [{ shouldShow }, { configContext }] = dispatch.get()
+  dispatch.call(setShouldShow, !shouldShow)
 
-  if (intelligentToggle === null) {
-    dispatch.call(setShouldShow, URLHelper.isInCodePage(mergedMetaData))
-  }
-}
-
-const onKeyDown: BoundMethodCreator<[KeyboardEvent]> = dispatch => e => {
-  const { toggleShowSideBarShortcut } = dispatch.get()
-  if (toggleShowSideBarShortcut) {
-    const keys = keyHelper.parseEvent(e)
-    if (keys === toggleShowSideBarShortcut) {
-      dispatch.call(toggleShowSideBar)
-    }
-  }
-}
-
-const toggleShowSideBar: BoundMethodCreator = dispatch => () => {
-  const { intelligentToggle } = dispatch.get()
-  const shouldShow = !dispatch.get().shouldShow
-  dispatch.call(setShouldShow, shouldShow)
-
+  const {
+    val: { intelligentToggle },
+  } = configContext
   if (intelligentToggle !== null) {
-    dispatch.call(setIntelligentToggle, shouldShow)
+    configContext.set({ intelligentToggle: !shouldShow })
   }
 }
 
-const setShouldShow: BoundMethodCreator<
-  [ConnectorState['shouldShow']]
-> = dispatch => shouldShow => {
+export const setShouldShow: BoundMethodCreator<[
+  ConnectorState['shouldShow'],
+]> = dispatch => shouldShow => {
   dispatch.set({ shouldShow }, shouldShow ? DOMHelper.focusFileExplorer : undefined)
   DOMHelper.setBodyIndent(shouldShow)
 }
 
-const setError: BoundMethodCreator<[ConnectorState['error']]> = dispatch => error => {
+export const setError: BoundMethodCreator<[ConnectorState['error']]> = dispatch => error => {
   dispatch.set({ error })
   dispatch.call(setShouldShow, false)
 }
 
-const toggleShowSettings: BoundMethodCreator = dispatch => () =>
+export const toggleShowSettings: BoundMethodCreator = dispatch => () =>
   dispatch.set(({ showSettings }) => ({
     showSettings: !showSettings,
   }))
 
-const setShowSettings: BoundMethodCreator<
-  [ConnectorState['showSettings']]
-> = dispatch => showSettings => dispatch.set({ showSettings })
+export const setShowSettings: BoundMethodCreator<[
+  ConnectorState['showSettings'],
+]> = dispatch => showSettings => dispatch.set({ showSettings })
 
-const onAccessTokenChange: BoundMethodCreator<
-  [ConnectorState['accessToken']]
-> = dispatch => accessToken => {
-  dispatch.set({ accessToken })
-  // reload when setting new accessToken
-  if (accessToken) {
-    dispatch.call(init)
-  }
-}
-
-const onShortcutChange: BoundMethodCreator<
-  [ConnectorState['toggleShowSideBarShortcut']]
-> = dispatch => shortcut => dispatch.set({ toggleShowSideBarShortcut: shortcut })
-
-const setMetaData: BoundMethodCreator<[ConnectorState['metaData']]> = dispatch => metaData =>
+export const setMetaData: BoundMethodCreator<[ConnectorState['metaData']]> = dispatch => metaData =>
   dispatch.set({ metaData })
-
-const setCompressSingleton: BoundMethodCreator<
-  [ConnectorState['compressSingletonFolder']]
-> = dispatch => compressSingletonFolder => dispatch.set({ compressSingletonFolder })
-
-const setCopyFile: BoundMethodCreator<
-  [ConnectorState['copyFileButton']]
-> = dispatch => copyFileButton => dispatch.set({ copyFileButton })
-
-const setCopySnippet: BoundMethodCreator<
-  [ConnectorState['copySnippetButton']]
-> = dispatch => copySnippetButton => dispatch.set({ copySnippetButton })
-
-const setIntelligentToggle: BoundMethodCreator<
-  [ConnectorState['intelligentToggle']]
-> = dispatch => intelligentToggle => {
-  configHelper.setOne(configKeys.intelligentToggle, intelligentToggle)
-  dispatch.set({ intelligentToggle })
-}
-
-const useListeners: BoundMethodCreator<[boolean]> = dispatch => {
-  const $onPJAXEnd = () => dispatch.call(onPJAXEnd)
-  const $onKeyDown = (e: KeyboardEvent) => dispatch.call(onKeyDown, e)
-  return on => {
-    const { disabled } = dispatch.get()
-    if (on && !disabled) {
-      window.addEventListener('pjax:complete', $onPJAXEnd)
-      window.addEventListener('keydown', $onKeyDown)
-    } else {
-      window.removeEventListener('pjax:complete', $onPJAXEnd)
-      window.removeEventListener('keydown', $onKeyDown)
-    }
-  }
-}
-
-export default {
-  init,
-  onPJAXEnd,
-  onKeyDown,
-  setShouldShow,
-  setShowSettings,
-  toggleShowSideBar,
-  toggleShowSettings,
-  onAccessTokenChange,
-  onShortcutChange,
-  setMetaData,
-  setCompressSingleton,
-  setCopyFile,
-  setCopySnippet,
-  setIntelligentToggle,
-  setError,
-  handleError,
-  useListeners,
-}

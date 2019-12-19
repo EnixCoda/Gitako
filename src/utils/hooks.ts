@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { useLocation } from 'react-use'
 import { createStyleSheet, setStyleSheetMedia } from './general'
 
 export function useWindowSize(
@@ -46,4 +47,44 @@ export function usePrevious<T>(newValue: T) {
     previousRef.current = newValue
   })
   return previousRef.current
+}
+
+export function useStates<S>(
+  initialState: S | (() => S),
+): { val: S; set: React.Dispatch<React.SetStateAction<S>> } {
+  const [val, set] = React.useState(initialState)
+  return { val, set }
+}
+
+export function useAsyncMemo<T, D extends any[] | readonly any[]>(
+  factory: (dependencies: D) => T | Promise<T>,
+  deps: D,
+  initialValue: T,
+): T {
+  const firstTime = React.useRef(true)
+  const state = useStates<T>(() => initialValue)
+  React.useEffect(() => {
+    if (firstTime.current) firstTime.current = false
+    Promise.resolve(factory(deps)).then(consumed => state.set(() => consumed))
+  }, deps)
+  return state.val
+}
+
+export function useDidUpdate(effect: React.EffectCallback, deps?: React.DependencyList) {
+  const firstTime = React.useRef(true)
+  React.useEffect(() => {
+    if (firstTime.current) {
+      firstTime.current = false
+      return
+    }
+    return effect()
+  }, deps)
+}
+
+export function useOnLocationChange(
+  callback: React.EffectCallback,
+  extraDeps: React.DependencyList = [],
+) {
+  const { href, pathname, search } = useLocation()
+  React.useEffect(callback, [href, pathname, search, ...extraDeps])
 }

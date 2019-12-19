@@ -1,19 +1,25 @@
 /**
  * this helper helps manipulating DOM
  */
-
 import { raiseError } from 'analytics'
+import { Clippy, ClippyClassName } from 'components/Clippy'
+import { CopyFileButton, copyFileButtonClassName } from 'components/CopyFileButton'
 import * as NProgress from 'nprogress'
 import * as PJAX from 'pjax'
+import * as React from 'react'
+import { renderReact } from './general'
 
 NProgress.configure({ showSpinner: false })
 
 /**
  * when gitako is ready, make page's header narrower
+ * or cancel it
  */
-function markGitakoReadyState() {
+export function markGitakoReadyState(ready: boolean) {
   const readyClassName = 'gitako-ready'
-  document.body.classList.add(readyClassName)
+  const classList = document.body.classList
+  if (ready) classList.add(readyClassName)
+  else classList.remove(readyClassName)
 }
 
 /**
@@ -21,7 +27,7 @@ function markGitakoReadyState() {
  * otherwise, hide the space
  */
 export const bodySpacingClassName = 'with-gitako-spacing'
-function setBodyIndent(shouldShowGitako: boolean) {
+export function setBodyIndent(shouldShowGitako: boolean) {
   if (shouldShowGitako) {
     document.body.classList.add(bodySpacingClassName)
   } else {
@@ -35,10 +41,10 @@ function $<EE extends Element, E extends (element: EE) => any, O extends () => a
   otherwise?: O,
 ): E extends never
   ? O extends never
-    ? (Element | null)
+    ? Element | null
     : ReturnType<O> | null
   : O extends never
-  ? (ReturnType<E> | null)
+  ? ReturnType<E> | null
   : ReturnType<O> | ReturnType<E> {
   const element = document.querySelector(selector)
   if (element) {
@@ -47,18 +53,18 @@ function $<EE extends Element, E extends (element: EE) => any, O extends () => a
   return otherwise ? otherwise() : null
 }
 
-function isInCodePage() {
+export function isInCodePage() {
   const branchListSelector = '#branch-select-menu.branch-select-menu'
   return Boolean($(branchListSelector))
 }
 
-function getBranches() {
+export function getBranches() {
   const branchSelector = '.branch-select-menu .select-menu-list > div .select-menu-item-text'
   const branchElements = Array.from(document.querySelectorAll(branchSelector))
   return branchElements.map(element => element.innerHTML.trim())
 }
 
-function getCurrentBranch() {
+export function getCurrentBranch() {
   const selectedBranchButtonSelector = '.repository-content .branch-select-menu summary'
   const branchButtonElement: HTMLElement = $(selectedBranchButtonSelector)
   if (branchButtonElement) {
@@ -92,16 +98,15 @@ function getCurrentBranch() {
 
 /**
  * add the logo element into DOM
- *
  */
-function insertLogoMountPoint() {
+export function insertLogoMountPoint() {
   const logoSelector = '.gitako .gitako-logo'
   return $(logoSelector) || createLogoMountPoint()
 }
 
 function createLogoMountPoint() {
   const logoMountElement = document.createElement('div')
-  logoMountElement.setAttribute('class', 'gitako-logo-mount-point')
+  logoMountElement.classList.add('gitako-logo-mount-point')
   document.body.appendChild(logoMountElement)
   return logoMountElement
 }
@@ -110,7 +115,7 @@ function createLogoMountPoint() {
  * content above the file navigation bar is same for all pages of the repo
  * use this function to scroll down a bit to hide them
  */
-function scrollToRepoContent() {
+export function scrollToRepoContent() {
   const repositoryContentSelector = '.repository-content'
   // do NOT use behavior: smooth here as it will scroll horizontally
   $(repositoryContentSelector, repositoryContentElement =>
@@ -119,16 +124,25 @@ function scrollToRepoContent() {
 }
 
 const pjax = new PJAX({
-  elements: '.pjax-link',
-  selectors: ['.repository-content', 'title'],
+  elements: 'match-nothing-selector',
+  selectors: [
+    '.repository-content',
+    'title',
+    '[data-pjax="#js-repo-pjax-container"]',
+    '.page-content',
+  ],
   scrollTo: false,
   analytics: false,
   cacheBust: false,
   forceCache: true, // TODO: merge namespace, add forceCache
 })
 
-function loadWithPJAX(URL: string) {
-  NProgress.start()
+// Note: shall not enable below pjax:send listener as there would be dual bar when GitHub PJAX links are triggered
+// window.addEventListener('pjax:send', () => mountTopProgressBar())
+window.addEventListener('pjax:complete', () => unmountTopProgressBar())
+
+export function loadWithPJAX(URL: string) {
+  mountTopProgressBar()
   pjax.loadUrl(URL, { scrollTo: 0 })
 }
 
@@ -141,6 +155,7 @@ function loadWithPJAX(URL: string) {
 const PAGE_TYPES = {
   RAW_TEXT: 'raw_text',
   RENDERED: 'rendered',
+  SEARCH: 'search',
   // PREVIEW: 'preview',
   OTHERS: 'others',
 }
@@ -153,11 +168,14 @@ const PAGE_TYPES = {
  *
  * TODO: distinguish type 'preview'
  */
-function getCurrentPageType() {
-  const blobWrapperSelector = '.repository-content .file .blob-wrapper table'
+export function getCurrentPageType() {
+  const blobPathSelector = '#blob-path' // path next to branch switcher
+  const blobWrapperSelector = '.repository-content .blob-wrapper table'
   const readmeSelector = '.repository-content .readme'
+  const searchResultSelector = '.codesearch-results'
   return (
-    $(blobWrapperSelector, () => PAGE_TYPES.RAW_TEXT) ||
+    $(searchResultSelector, () => PAGE_TYPES.SEARCH) ||
+    $(blobWrapperSelector, () => $(blobPathSelector, () => PAGE_TYPES.RAW_TEXT)) ||
     $(readmeSelector, () => PAGE_TYPES.RENDERED) ||
     PAGE_TYPES.OTHERS
   )
@@ -165,7 +183,7 @@ function getCurrentPageType() {
 
 export const REPO_TYPE_PRIVATE = 'private'
 export const REPO_TYPE_PUBLIC = 'public'
-function getRepoPageType() {
+export function getRepoPageType() {
   const headerSelector = `#js-repo-pjax-container .pagehead.repohead h1`
   return $(headerSelector, header => {
     const repoPageTypes = [REPO_TYPE_PRIVATE, REPO_TYPE_PUBLIC]
@@ -179,68 +197,53 @@ function getRepoPageType() {
 }
 
 /**
+ * get text content of raw text content
+ */
+export function getCodeElement() {
+  if (getCurrentPageType() === PAGE_TYPES.RAW_TEXT) {
+    const codeContentSelector = '.repository-content .data table'
+    const codeContentElement = $(codeContentSelector)
+    if (!codeContentElement) {
+      raiseError(new Error('cannot find code content element'))
+    }
+    return codeContentElement
+  }
+}
+
+/**
  * add copy file content buttons to button groups
  * click these buttons will copy file content to clipboard
  */
-function attachCopyFileBtn() {
-  /**
-   * get text content of raw text content
-   */
-  function getCodeElement() {
-    if (getCurrentPageType() === PAGE_TYPES.RAW_TEXT) {
-      const codeContentSelector = '.repository-content .file .data table'
-      const codeContentElement = $(codeContentSelector)
-      if (!codeContentElement) {
-        raiseError(new Error('cannot find code content element'))
-      }
-      return codeContentElement
-    }
-  }
-
-  /**
-   * change inner text of copy file button to give feedback
-   * @param {element} copyFileBtn
-   * @param {string} text
-   */
-  function setTempCopyFileBtnText(copyFileBtn: HTMLButtonElement, text: string) {
-    copyFileBtn.innerText = text
-    window.setTimeout(() => (copyFileBtn.innerText = 'Copy file'), 1000)
-  }
-
+export function attachCopyFileBtn() {
   if (getCurrentPageType() === PAGE_TYPES.RAW_TEXT) {
-    const btnGroupSelector = [
-      // the button group next to navigation bar
-      '.repository-content .file-navigation.js-zeroclipboard-container .BtnGroup',
-      // the button group in file content header
-      '.repository-content .file .file-header .file-actions .BtnGroup',
-    ].join(', ')
-    const btnGroups = document.querySelectorAll(btnGroupSelector)
+    // the button group in file content header
+    const buttonGroupSelector = '.repository-content > .Box > .Box-header .BtnGroup'
+    const buttonGroups = document.querySelectorAll(buttonGroupSelector)
 
-    btnGroups.forEach(btnGroup => {
-      const copyFileBtn = document.createElement('button')
-      copyFileBtn.classList.add('btn', 'btn-sm', 'BtnGroup-item', 'copy-file-btn')
-      copyFileBtn.innerText = 'Copy file'
-      copyFileBtn.addEventListener('click', () => {
-        const codeElement = getCodeElement()
-        if (codeElement) {
-          if (copyElementContent(codeElement)) {
-            setTempCopyFileBtnText(copyFileBtn, 'Success!')
-          } else {
-            setTempCopyFileBtnText(copyFileBtn, 'Copy failed!')
-          }
-        }
-      })
-      btnGroup.insertBefore(copyFileBtn, btnGroup.lastChild)
+    if (buttonGroups.length === 0) {
+      raiseError(new Error(`No button groups found`))
+    }
+
+    buttonGroups.forEach(async buttonGroup => {
+      if (!buttonGroup.lastElementChild) return
+      const button = await renderReact(React.createElement(CopyFileButton))
+      if (button instanceof HTMLElement) {
+        buttonGroup.appendChild(button)
+      }
     })
+    return () => {
+      const buttons = document.querySelectorAll(`.${copyFileButtonClassName}`)
+      buttons.forEach(button => {
+        button.parentElement?.removeChild(button)
+      })
+    }
   }
 }
 
 /**
  * copy content of a DOM element to clipboard
- * @param {element} element
- * @returns {boolean} whether copy is successful
  */
-function copyElementContent(element: Element) {
+export function copyElementContent(element: Element): boolean {
   let selection = window.getSelection()
   if (selection) selection.removeAllRanges()
   const range = document.createRange()
@@ -253,67 +256,20 @@ function copyElementContent(element: Element) {
   return isCopySuccessful
 }
 
-/**
- * create a copy file content button `clippy`
- * once mouse enters a code snippet of markdown, move clippy into it
- * user can copy the snippet's content by click it
- *
- * TODO: 'reactify' it
- */
-function createClippy() {
-  function setTempClippyIconFeedback(clippy: Element, type: 'success' | 'fail') {
-    const tempIconClassName = type === 'success' ? 'success' : 'fail'
-    clippy.classList.add(tempIconClassName)
-    window.setTimeout(() => {
-      clippy.classList.remove(tempIconClassName)
-    }, 1000)
-  }
-
-  /**
-   * <div class="clippy-wrapper">
-   *    <button class="clippy">
-   *      <i class="octicon octicon-clippy" />
-   *    </button>
-   *  </div>
-   */
-  const clippyWrapper = document.createElement('div')
-  clippyWrapper.classList.add('clippy-wrapper')
-  const clippy = document.createElement('button')
-  clippy.classList.add('clippy')
-  const clippyIcon = document.createElement('i')
-  clippyIcon.classList.add('icon')
-
-  clippyWrapper.appendChild(clippy)
-  clippy.appendChild(clippyIcon)
-
-  // set clipboard with current code snippet element's content
-  clippy.addEventListener('click', function onClippyClick() {
-    if (copyElementContent(currentCodeSnippetElement)) {
-      setTempClippyIconFeedback(clippy, 'success')
-    } else {
-      setTempClippyIconFeedback(clippy, 'fail')
-    }
-  })
-
-  return clippyWrapper
-}
-
-const clippy = createClippy()
-
-let currentCodeSnippetElement: Element
-function attachCopySnippet() {
+export function attachCopySnippet() {
   const readmeSelector = '.repository-content div#readme'
   return $(readmeSelector, () => {
     const readmeArticleSelector = '.repository-content div#readme article'
-    $(
+    return $(
       readmeArticleSelector,
-      readmeElement =>
-        readmeElement.addEventListener('mouseover', e => {
-          // only move clippy when mouse is over a new snippet(<pre>)
-          const target = e.target as Element
-          if (target.nodeName === 'PRE') {
-            if (currentCodeSnippetElement !== target) {
-              currentCodeSnippetElement = target
+      readmeElement => {
+        const mouseOverCallback = async ({ target }: Event): Promise<void> => {
+          if (target instanceof Element && target.nodeName === 'PRE') {
+            if (
+              target.previousSibling === null ||
+              !(target.previousSibling instanceof Element) ||
+              !target.previousSibling.classList.contains(ClippyClassName)
+            ) {
               /**
                *  <article>
                *    <pre></pre>     <!-- case A -->
@@ -322,10 +278,26 @@ function attachCopySnippet() {
                *    </div>
                *  </article>
                */
-              if (target.parentNode) target.parentNode.insertBefore(clippy, target)
+              if (target.parentNode) {
+                const clippyElement = await renderReact(
+                  React.createElement(Clippy, { codeSnippetElement: target }),
+                )
+                if (clippyElement instanceof HTMLElement) {
+                  target.parentNode.insertBefore(clippyElement, target)
+                }
+              }
             }
           }
-        }),
+        }
+        readmeElement.addEventListener('mouseover', mouseOverCallback)
+        return () => {
+          readmeElement.removeEventListener('mouseover', mouseOverCallback)
+          const buttons = document.querySelectorAll(`.${ClippyClassName}`)
+          buttons.forEach(button => {
+            button.parentElement?.removeChild(button)
+          })
+        }
+      },
       () => {
         const plainReadmeSelector = '.repository-content div#readme .plain'
         $(plainReadmeSelector, undefined, () =>
@@ -341,14 +313,14 @@ function attachCopySnippet() {
 /**
  * focus to side bar, user will be able to manipulate it with keyboard
  */
-function focusFileExplorer() {
+export function focusFileExplorer() {
   const sideBarContentSelector = '.gitako-side-bar .file-explorer'
   $(sideBarContentSelector, sideBarElement => {
     if (sideBarElement instanceof HTMLElement) sideBarElement.focus()
   })
 }
 
-function focusSearchInput() {
+export function focusSearchInput() {
   const searchInputSelector = '.search-input'
   $(searchInputSelector, searchInputElement => {
     if (
@@ -360,44 +332,10 @@ function focusSearchInput() {
   })
 }
 
-/**
- * a combination of few above functions
- */
-function decorateGitHubPageContent({
-  copyFileButton,
-  copySnippetButton,
-}: {
-  copyFileButton: boolean
-  copySnippetButton: boolean
-}) {
-  if (copyFileButton) attachCopyFileBtn()
-  if (copySnippetButton) attachCopySnippet()
-}
-
-function mountTopProgressBar() {
+export function mountTopProgressBar() {
   NProgress.start()
 }
 
-function unmountTopProgressBar() {
+export function unmountTopProgressBar() {
   NProgress.done()
-}
-
-export default {
-  loadWithPJAX,
-  attachCopyFileBtn,
-  attachCopySnippet,
-  decorateGitHubPageContent,
-  focusSearchInput,
-  focusFileExplorer,
-  getCurrentPageType,
-  getRepoPageType,
-  insertLogoMountPoint,
-  markGitakoReadyState,
-  setBodyIndent,
-  scrollToRepoContent,
-  mountTopProgressBar,
-  unmountTopProgressBar,
-  isInCodePage,
-  getBranches,
-  getCurrentBranch,
 }

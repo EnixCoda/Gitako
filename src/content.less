@@ -56,18 +56,14 @@
         width: 100%;
         height: 100%;
         display: block;
-        background-image: url('./assets/icons/octicons/clippy.svg?inline');
+        background-image: url('~@primer/octicons/build/svg/clippy.svg?inline');
         background-position: center;
         background-repeat: no-repeat;
-      }
-      &.success {
-        .icon {
-          background-image: url('./assets/icons/octicons/check.svg?inline');
+        &.success {
+          background-image: url('~@primer/octicons/build/svg/check.svg?inline');
         }
-      }
-      &.fail {
-        .icon {
-          background-image: url('./assets/icons/octicons/x.svg?inline');
+        &.fail {
+          background-image: url('~@primer/octicons/build/svg/x.svg?inline');
         }
       }
     }
@@ -92,8 +88,6 @@
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  width: 30px;
-  height: 30px;
   padding: 4px;
   will-change: transform;
   border: 1px solid transparent;
@@ -141,8 +135,8 @@
 
   .action-icon {
     color: #666666;
-    width: 100%;
-    height: 100%;
+    width: 20px;
+    height: 20px;
     text-align: center;
     transition: all @animation-duration ease;
     .octicon {
@@ -151,21 +145,22 @@
     }
   }
 
-  &:hover {
-    .error-message {
-      display: inline;
-    }
-  }
-
   &.error {
     .action-icon {
-      color: #cb2431;
+      color: #d73a49;
     }
   }
 
   .error-message {
     display: none;
-    margin: 0 4px;
+    margin-left: 4px;
+    font-size: 12px;
+  }
+
+  &:hover {
+    .error-message {
+      display: inline;
+    }
   }
 }
 
@@ -363,8 +358,21 @@
             transition: all 0.5s ease;
             white-space: nowrap;
 
+            &-icon {
+              width: 16px;
+              height: 16px;
+              object-fit: contain;
+              vertical-align: text-bottom;
+              padding-left: 4px;
+              box-sizing: content-box;
+
+              &.dim {
+                filter: sepia(1) hue-rotate(180deg);
+              }
+            }
+
             // folder icon rotate when expand
-            &.expanded .octicon.TriangleRight {
+            &.expanded .octicon.ChevronRight {
               transform: rotate(90deg);
             }
 
@@ -438,8 +446,14 @@
           min-width: 100px;
         }
       }
+      select {
+        -moz-appearance: none;
+      }
       .access-token {
         border-bottom: none; // prevent overwrite by github style
+        .link-button {
+          cursor: pointer;
+        }
         .hint {
           color: #6a737d;
         }
@@ -474,7 +488,7 @@
           color: #6a737d;
         }
       }
-      .placeholder-row {
+      .header-row {
         flex-shrink: 0;
         display: flex;
         justify-content: space-between;

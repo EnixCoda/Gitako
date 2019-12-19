@@ -1,16 +1,15 @@
+import { ReactElement } from 'react'
+import * as ReactDOM from 'react-dom'
 import { TreeNode } from './VisibleNodesGenerator'
 
 export function pick<T>(source: T, keys: string[]): Partial<T> {
   if (keys && typeof keys === 'object') {
-    return (Array.isArray(keys) ? keys : Object.keys(keys)).reduce(
-      (copy, key) => {
-        if (key in source) {
-          copy[key as keyof T] = source[key as keyof T]
-        }
-        return copy
-      },
-      {} as Partial<T>,
-    )
+    return (Array.isArray(keys) ? keys : Object.keys(keys)).reduce((copy, key) => {
+      if (key in source) {
+        copy[key as keyof T] = source[key as keyof T]
+      }
+      return copy
+    }, {} as Partial<T>)
   }
   return {} as Partial<T>
 }
@@ -113,29 +112,42 @@ export function parseURLSearch(search: string = window.location.search) {
   return parsed
 }
 
-export async function JSONRequest(url: string, data: any, method = 'post') {
-  return (await fetch(url, {
-    method,
-    mode: 'cors',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-    },
-    redirect: 'follow',
-    referrer: 'no-referrer',
-    body: JSON.stringify(data),
-  })).json()
+export async function JSONRequest(url: string, data: any, extra: RequestInit = { method: 'post' }) {
+  return (
+    await fetch(url, {
+      mode: 'cors',
+      cache: 'no-cache',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      redirect: 'follow',
+      referrerPolicy: 'no-referrer',
+      method: extra.method || 'post',
+      body: JSON.stringify(data),
+      ...extra,
+    })
+  ).json()
 }
 
 export function searchKeyToRegexps(searchKey: string) {
   if (!searchKey) return []
 
   try {
+    const flags = /[A-Z]/.test(searchKey) ? '' : 'i'
     // case-sensitive when searchKey contains uppercase char
-    return [new RegExp(searchKey, /[A-Z]/i.test(searchKey) ? '' : 'i')]
+    return [new RegExp(searchKey, flags)]
   } catch (err) {
     return [/$^/] // matching nothing if failed transforming regexp
   }
+}
+
+export async function renderReact(element: ReactElement) {
+  return new Promise<Node>(resolve => {
+    const mount = document.createElement('div')
+    ReactDOM.render(element, mount, () => {
+      resolve(mount.childNodes[0])
+    })
+  })
 }

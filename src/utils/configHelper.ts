@@ -1,4 +1,4 @@
-import storageHelper from 'utils/storageHelper'
+import * as storageHelper from 'utils/storageHelper'
 
 export type Config = {
   sideBarWidth: number
@@ -8,6 +8,7 @@ export type Config = {
   copyFileButton: boolean
   copySnippetButton: boolean
   intelligentToggle: boolean | null // `null` stands for intelligent, boolean for sidebar open status
+  icons: 'rich' | 'dim' | 'native'
 }
 
 export enum configKeys {
@@ -18,9 +19,10 @@ export enum configKeys {
   copyFileButton = 'copyFileButton',
   copySnippetButton = 'copySnippetButton',
   intelligentToggle = 'intelligentToggle',
+  icons = 'icons',
 }
 
-const defaultConfigs: Config = {
+export const defaultConfigs: Config = {
   sideBarWidth: 260,
   shortcut: undefined,
   access_token: undefined,
@@ -28,42 +30,23 @@ const defaultConfigs: Config = {
   copyFileButton: true,
   copySnippetButton: true,
   intelligentToggle: null,
+  icons: 'rich',
 }
 
 const configKeyArray = Object.values(configKeys)
 
 function applyDefaultConfigs(configs: Config) {
-  return configKeyArray.reduce(
-    (applied, configKey) => {
-      const key = configKey as keyof Config
-      Object.assign(applied, { [key]: key in configs ? configs[key] : defaultConfigs[key] })
-      return applied
-    },
-    {} as Config,
-  )
+  return configKeyArray.reduce((applied, configKey) => {
+    const key = configKey as keyof Config
+    Object.assign(applied, { [key]: key in configs ? configs[key] : defaultConfigs[key] })
+    return applied
+  }, {} as Config)
 }
 
-async function getAll(): Promise<Config> {
+export async function get(): Promise<Config> {
   return applyDefaultConfigs(await storageHelper.get(configKeyArray))
 }
 
-async function getOne(key: configKeys) {
-  return (await getAll())[key]
-}
-
-async function setAll(partialConfig: Partial<Config>) {
+export async function set(partialConfig: Partial<Config>) {
   return await storageHelper.set(partialConfig)
-}
-
-async function setOne(key: configKeys, value: any) {
-  return await setAll({
-    [key]: value,
-  })
-}
-
-export default {
-  getAll,
-  getOne,
-  setAll,
-  setOne,
 }

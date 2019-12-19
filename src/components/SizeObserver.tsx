@@ -11,13 +11,23 @@ type Props = {
   children(size: Partial<Size>): React.ReactNode
 } & React.HTMLAttributes<HTMLElement>
 
-export default function SizeObserver({ type = 'div', children, ...rest }: Props) {
+export function SizeObserver({ type = 'div', children, ...rest }: Props) {
   const ref = React.useRef<any>()
 
   const [size, setSize] = React.useState<Partial<Size>>({
     width: undefined,
     height: undefined,
   })
+
+  const safeSetSize = React.useCallback(function safeSetSize(rect: DOMRectReadOnly) {
+    // requestAnimationFrame fixes "ResizeObserver loop limit exceeded" error
+    requestAnimationFrame(() =>
+      setSize({
+        width: rect.width,
+        height: rect.height,
+      }),
+    )
+  }, [])
 
   React.useLayoutEffect(() => {
     if (features.resize) {
@@ -43,14 +53,4 @@ export default function SizeObserver({ type = 'div', children, ...rest }: Props)
   const props: any = { ...rest, ref } // :)
 
   return React.createElement(type, props, children(size))
-
-  function safeSetSize(rect: DOMRectReadOnly) {
-    // requestAnimationFrame fixes "ResizeObserver loop limit exceeded" error
-    requestAnimationFrame(() =>
-      setSize({
-        width: rect.width,
-        height: rect.height,
-      }),
-    )
-  }
 }

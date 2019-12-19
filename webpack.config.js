@@ -19,6 +19,10 @@ const plugins = [
       to: 'icons/[name].[ext]',
     },
     {
+      from: './vscode-icons/icons/*',
+      to: 'icons/vscode/[name].[ext]',
+    },
+    {
       from: 'node_modules/webextension-polyfill/dist/browser-polyfill.js',
       to: 'browser-polyfill.js',
     },
@@ -38,15 +42,12 @@ if (analyse) {
 }
 
 const IN_PRODUCTION_MODE = process.env.NODE_ENV === 'production'
-if (IN_PRODUCTION_MODE) {
-  plugins.push(
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: JSON.stringify('production'),
-      },
-    }),
-  )
-}
+plugins.push(
+  new webpack.DefinePlugin({
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+    'process.env.VERSION': JSON.stringify(process.env.VERSION),
+  }),
+)
 
 module.exports = {
   entry: {
@@ -81,7 +82,10 @@ module.exports = {
         test: /\.svg$/,
         resourceQuery: /inline/,
         loader: ['url-loader'],
-        include: [srcPath],
+      },
+      {
+        test: /\.csv$/,
+        loader: ['raw-loader'],
       },
       {
         test: /\.json$/,
