@@ -10,7 +10,7 @@ export function parse(): MetaData & { path: string[] } {
     repoName,
     type,
     ...path // should be [...branchName.split('/'), ...filePath.split('/')]
-  ] = pathname.split('/')
+  ] = unescape(decodeURIComponent(pathname)).split('/')
   return {
     userName,
     repoName,
