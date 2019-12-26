@@ -85,7 +85,11 @@ const NodeItemIcon = React.memo(function NodeItemIcon({
   if (icons === 'native') return <Icon type={getIconType(node)} />
   return (
     <>
-      <Icon placeholder={node.type !== 'tree'} type={getIconType(node)} />
+      <Icon
+        className={'node-item-type-icon'}
+        placeholder={node.type !== 'tree'}
+        type={getIconType(node)}
+      />
       {node.type === 'commit' ? (
         <Icon type={getIconType(node)} />
       ) : (
