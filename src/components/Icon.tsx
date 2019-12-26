@@ -125,16 +125,19 @@ type Props = {
 }
 
 export function Icon({ type, className = undefined, placeholder, ...otherProps }: Props) {
-  if (placeholder) return <div className={cx('octicon-wrapper')} />
-  const { name, IconComponent } = getSVGIconComponent(type)
-  const mergedClassName = cx('octicon', name)
+  let children: React.ReactNode = null
+  if (!placeholder) {
+    const { name, IconComponent } = getSVGIconComponent(type)
+    const mergedClassName = cx('octicon', name)
+    children = React.createElement(Octicon, {
+      icon: IconComponent,
+      className: mergedClassName,
+      verticalAlign: 'text-bottom',
+    })
+  }
   return (
     <div className={cx('octicon-wrapper', className)} {...otherProps}>
-      {React.createElement(Octicon, {
-        icon: IconComponent,
-        className: mergedClassName,
-        verticalAlign: 'text-bottom',
-      })}
+      {children}
     </div>
   )
 }
