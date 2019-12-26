@@ -85,7 +85,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
   // init again when setting new accessToken
   useDidUpdate(() => {
     props.init()
-  }, [accessToken])
+  }, [accessToken || '']) // fallback for preventing duplicated requests
 
   const {
     errorDueToAuth,
