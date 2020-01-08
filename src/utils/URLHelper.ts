@@ -80,7 +80,10 @@ export function getCurrentPath(branchName = '') {
             splitBranchName.shift()
             path.shift()
           } else {
-            raiseError(new Error(`branch name and path prefix not match`))
+            raiseError(new Error(`branch name and path prefix not match`), {
+              branchName,
+              path: parse().path,
+            })
             return []
           }
         }
