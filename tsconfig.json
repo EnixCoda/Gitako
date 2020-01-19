@@ -14,5 +14,6 @@
       "*": ["src/*", "packages/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/safari-shim.js"]
 }

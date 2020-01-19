@@ -38,7 +38,9 @@ const configKeyArray = Object.values(configKeys)
 function applyDefaultConfigs(configs: Config) {
   return configKeyArray.reduce((applied, configKey) => {
     const key = configKey as keyof Config
-    Object.assign(applied, { [key]: key in configs ? configs[key] : defaultConfigs[key] })
+    Object.assign(applied, {
+      [key]: configs?.[key] !== undefined ? configs[key] : defaultConfigs[key],
+    })
     return applied
   }, {} as Config)
 }
