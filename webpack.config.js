@@ -75,7 +75,31 @@ module.exports = {
       },
       {
         test: /\.less$/,
-        loader: ['style-loader', 'css-loader', 'less-loader'],
+        loader: [
+          {
+            loader: 'style-loader',
+            options: {
+              insert: function insertWhenDOMContentLoaded(element) {
+                document.addEventListener('DOMContentLoaded', () => {
+                  const parent = document.querySelector('head')
+                  const lastInsertedElement = window._lastElementInsertedByStyleLoader
+
+                  if (!lastInsertedElement) {
+                    parent.insertBefore(element, parent.firstChild)
+                  } else if (lastInsertedElement.nextSibling) {
+                    parent.insertBefore(element, lastInsertedElement.nextSibling)
+                  } else {
+                    parent.appendChild(element)
+                  }
+
+                  window._lastElementInsertedByStyleLoader = element
+                })
+              },
+            },
+          },
+          'css-loader',
+          'less-loader',
+        ],
         include: [srcPath],
       },
       {
