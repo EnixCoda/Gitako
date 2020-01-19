@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useLocation } from 'react-use'
+import useLocation from 'react-use/esm/useLocation'
 import { createStyleSheet, setStyleSheetMedia } from './general'
 
 export function useWindowSize(
