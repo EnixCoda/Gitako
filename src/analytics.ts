@@ -21,6 +21,7 @@ const sentryOptions: Sentry.BrowserOptions = {
   environment: IN_PRODUCTION_MODE ? 'production' : 'development',
   // Not safe to activate all integrations in non-Chrome environments where Gitako may not run in top context
   // https://docs.sentry.io/platforms/javascript/#sdk-integrations
+  defaultIntegrations: IN_PRODUCTION_MODE ? undefined : false,
   integrations: integrations => integrations.filter(({ name }) => name !== 'TryCatch'),
   beforeSend(event) {
     const message = event.exception?.values?.[0].value || event.message
