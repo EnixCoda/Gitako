@@ -3,6 +3,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const path = require('path')
 const Dotenv = require('dotenv-webpack')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
 const srcPath = path.resolve(__dirname, 'src')
@@ -33,6 +34,7 @@ const plugins = [
   ]),
   new ForkTsCheckerWebpackPlugin(),
   new Dotenv(),
+  new MiniCssExtractPlugin(),
 ]
 
 const analyse = process.env.ANALYSE !== undefined
@@ -75,7 +77,7 @@ module.exports = {
       },
       {
         test: /\.less$/,
-        loader: ['style-loader', 'css-loader', 'less-loader'],
+        loader: [MiniCssExtractPlugin.loader, 'css-loader', 'less-loader'],
         include: [srcPath],
       },
       {

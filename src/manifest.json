@@ -8,24 +8,13 @@
     "128": "icons/Gitako-128x128.png"
   },
   "homepage_url": "https://github.com/EnixCoda/Gitako",
-  "permissions": [
-    "storage",
-    "*://*.github.com/*",
-    "*://*.sentry.io/*"
-  ],
-  "web_accessible_resources": [
-    "icons/vscode/*"
-  ],
+  "permissions": ["storage", "*://*.github.com/*", "*://*.sentry.io/*"],
+  "web_accessible_resources": ["icons/vscode/*"],
   "content_scripts": [
     {
-      "matches": [
-        "https://github.com/*"
-      ],
-      "js": [
-        "firefox-shim.js",
-        "browser-polyfill.js",
-        "content.js"
-      ]
+      "matches": ["https://github.com/*"],
+      "css": ["content.css"],
+      "js": ["firefox-shim.js", "browser-polyfill.js", "content.js"]
     }
   ]
 }
