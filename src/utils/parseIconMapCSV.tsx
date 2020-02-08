@@ -65,10 +65,14 @@ export function getFileIconSrc(node: TreeNode) {
   return getIconSrc('file', iconName)
 }
 
+// memorize for
+// 1. swap time with space
+// 2. prevent app crash on when extension context invalidates
+const extensionURL = browser.runtime.getURL('').replace(/\/$/, '')
 export function getIconSrc(type: 'folder' | 'file', name: string = 'default', open?: boolean) {
   const filename =
     (name === 'default' ? 'default_' + type : type + '_type_' + name) +
     (open ? '_opened' : '') +
     '.svg'
-  return browser.runtime.getURL(`icons/vscode/${filename}`)
+  return extensionURL + `/icons/vscode/${filename}`
 }

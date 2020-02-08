@@ -358,12 +358,29 @@
             transition: all 0.5s ease;
             white-space: nowrap;
 
-            &-icon {
+            .icon-size() {
               width: 16px;
               height: 16px;
+            }
+
+            .octicon-wrapper:first-child {
+              margin-right: 6px;
+            }
+
+            &-type-icon {
+              margin-right: 4px;
+              .icon-size();
+
+              & + .octicon-wrapper,
+              & + .node-item-icon {
+                margin-right: 6px;
+              }
+            }
+
+            &-icon {
+              .icon-size();
               object-fit: contain;
               vertical-align: text-bottom;
-              padding-left: 4px;
               box-sizing: content-box;
 
               &.dim {
@@ -379,12 +396,9 @@
             .node-item-label {
               overflow: hidden;
               text-overflow: ellipsis;
-
-              .node-item-name {
-                padding-left: 6px;
-              }
             }
-            .node-item:hover .node-item-name {
+
+            &:hover .node-item-name {
               text-decoration: underline;
             }
 

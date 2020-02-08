@@ -10,7 +10,7 @@ export function parse(): MetaData & { path: string[] } {
     repoName,
     type,
     ...path // should be [...branchName.split('/'), ...filePath.split('/')]
-  ] = pathname.split('/')
+  ] = unescape(decodeURIComponent(pathname)).split('/')
   return {
     userName,
     repoName,
@@ -80,7 +80,10 @@ export function getCurrentPath(branchName = '') {
             splitBranchName.shift()
             path.shift()
           } else {
-            raiseError(new Error(`branch name and path prefix not match`))
+            raiseError(new Error(`branch name and path prefix not match`), {
+              branchName,
+              path: parse().path,
+            })
             return []
           }
         }
