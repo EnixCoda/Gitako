@@ -19,9 +19,9 @@ Yet another extension for GitHub, available on both Chrome and Firefox. Inspired
 
 [![Install for Chrome](./ChromeWebStoreBadge.svg)](https://chrome.google.com/webstore/detail/gitako-github-file-tree/giljefjcheohhamkjphiebfjnlphnokk)
 
-[Or install for Firefox](https://addons.mozilla.org/en-US/firefox/addon/gitako-github-file-tree/)
+[for Edge](https://microsoftedge.microsoft.com/addons/detail/alpoloddcggjhakjemghahlkofjekbca)
 
-> Gitako for Firefox is still in beta
+[for Firefox(beta)](https://addons.mozilla.org/en-US/firefox/addon/gitako-github-file-tree/)
 
 ### Issues
 
