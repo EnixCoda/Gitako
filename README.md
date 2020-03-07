@@ -1,5 +1,9 @@
 # Gitako
 
+<p align="center">
+  <img width="256" src="src/assets/icons/Gitako.png" />
+</p>
+
 Yet another extension for GitHub, available on both Chrome and Firefox. Inspired by [Octotree](https://github.com/buunguyen/octotree) & [GayHub](https://github.com/jawil/GayHub), thanks to them! Gitako is aimed at providing the best performance, better UX, more consistent UI and more essential features.
 
 ### Features
@@ -29,9 +33,11 @@ Any bug report or feature request discussions are welcomed, feel free to draft a
 
 ### About
 
-#### Why named 'Gitako'?
+#### Name and logo meaning?
 
 GitHub's totem is a cute octopus. And octopus in Japanese is `タコ`(tako).
 Then link them together:
 
     git + tako -> gitako
+
+The logo of Gitako is a tentacle of octopus, meaning Gitako works like a part of GitHub.
