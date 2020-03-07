@@ -32,9 +32,11 @@ async function request(url: string, { accessToken }: Options = {}) {
     headers.Authorization = `token ${accessToken}`
   }
   const res = await fetch(url, { headers })
-  const contentType = res.headers.get('Content-Type')
-  if (!contentType || !contentType.includes('application/json')) {
-    throw new Error(`Response content is not JSON`)
+  const contentType = res.headers.get('Content-Type') || res.headers.get('content-type')
+  if (!contentType) {
+    throw new Error(`Response has no content type`)
+  } else if (!contentType.includes('application/json')) {
+    throw new Error(`Response content type is ${contentType}`)
   }
   // About res.ok:
   // True if res.status between 200~299

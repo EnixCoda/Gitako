@@ -1,14 +1,14 @@
 import { getUrlForRedirect, MetaData, TreeData } from 'utils/GitHubHelper'
 import { TreeNode } from './VisibleNodesGenerator'
 
-interface RawItem {
-  name?: string | null
-  path?: string | null
-  mode?: string | null
-  type?: string | null
-  url?: string | null
-  sha?: string | null
-}
+type RawItem = Partial<{
+  mode: string
+  path: string
+  sha: string
+  size: number
+  type: 'tree' | 'blob' | 'commit'
+  url: string
+}>
 
 const revert = <T extends (...args: any[]) => any>(f: T) => (...args: Parameters<T>) => !f(...args)
 
@@ -65,15 +65,16 @@ export function parse(treeData: TreeData, metaData: MetaData) {
     while (itemsToCreateTreeNode.length) {
       const item = itemsToCreateTreeNode.pop()
       if (!item) continue
-      const node = {
-        ...item,
-        name: item.path && item.path.replace(/^.*\//, ''),
+      const node: TreeNode = {
+        path: item.path || '',
+        type: item.type || 'blob',
+        name: item.path?.replace(/^.*\//, '') || '',
         url:
           item.url && item.type && item.path
             ? getUrlForRedirect(metaData, item.type, item.path)
-            : null,
-        contents: item.type === 'tree' ? [] : null,
-      } as TreeNode
+            : undefined,
+        contents: item.type === 'tree' ? [] : undefined,
+      }
       const parentNode = pathToNode.get(path)
       if (parentNode && parentNode.contents) {
         parentNode.contents.push(node)

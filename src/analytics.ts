@@ -15,6 +15,12 @@ const errorSet = new Set<string>([
   'Failed to fetch', // network fail in Chrome
 ])
 
+const disabledIntegrations: string[] = [
+  'TryCatch',
+  'Breadcrumbs',
+  'GlobalHandlers',
+  'CaptureConsole',
+]
 const sentryOptions: Sentry.BrowserOptions = {
   dsn: `https://${PUBLIC_KEY}@sentry.io/${PROJECT_ID}`,
   release: VERSION,
@@ -22,7 +28,8 @@ const sentryOptions: Sentry.BrowserOptions = {
   // Not safe to activate all integrations in non-Chrome environments where Gitako may not run in top context
   // https://docs.sentry.io/platforms/javascript/#sdk-integrations
   defaultIntegrations: IN_PRODUCTION_MODE ? undefined : false,
-  integrations: integrations => integrations.filter(({ name }) => name !== 'TryCatch'),
+  integrations: integrations =>
+    integrations.filter(({ name }) => !disabledIntegrations.includes(name)),
   beforeSend(event) {
     const message = event.exception?.values?.[0].value || event.message
     if (message) {

@@ -18,3 +18,13 @@ if (document.readyState === 'loading') {
 } else {
   init()
 }
+
+// injects a copy of stylesheets so that other extensions(e.g. dark reader) could read
+function injectStyles(url: string) {
+  var linkElement = document.createElement('link')
+  linkElement.rel = 'stylesheet'
+  linkElement.setAttribute('href', url)
+  document.head.appendChild(linkElement)
+}
+
+injectStyles(browser.extension.getURL('content.css'))

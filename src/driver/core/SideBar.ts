@@ -142,7 +142,7 @@ export const handleError: BoundMethodCreator<[Error]> = dispatch => async err =>
     dispatch.call(setShowSettings, true)
   } else {
     DOMHelper.markGitakoReadyState(false)
-    dispatch.call(setError, 'Gitako ate a bug, but it should recovery soon!')
+    dispatch.call(setError, 'Some thing went wrong.')
     throw err
   }
 }
