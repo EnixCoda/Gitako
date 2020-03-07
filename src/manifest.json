@@ -5,30 +5,17 @@
   "description": "The missing part of GitHub.",
   "author": "EnixCoda",
   "icons": {
+    "64": "icons/Gitako-64.png",
     "128": "icons/Gitako-128.png",
-    "256": "icons/Gitako-256.png",
-    "512": "icons/Gitako-512.png"
+    "256": "icons/Gitako-256.png"
   },
   "homepage_url": "https://github.com/EnixCoda/Gitako",
-  "permissions": [
-    "storage",
-    "*://*.github.com/*",
-    "*://*.sentry.io/*"
-  ],
-  "web_accessible_resources": [
-    "icons/vscode/*",
-    "content.css"
-  ],
+  "permissions": ["storage", "*://*.github.com/*", "*://*.sentry.io/*"],
+  "web_accessible_resources": ["icons/vscode/*", "content.css"],
   "content_scripts": [
     {
-      "matches": [
-        "https://github.com/*"
-      ],
-      "js": [
-        "firefox-shim.js",
-        "browser-polyfill.js",
-        "content.js"
-      ]
+      "matches": ["https://github.com/*"],
+      "js": ["firefox-shim.js", "browser-polyfill.js", "content.js"]
     }
   ]
 }
