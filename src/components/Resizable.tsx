@@ -4,7 +4,8 @@ import * as React from 'react'
 import { cx } from 'utils/cx'
 import { bodySpacingClassName } from 'utils/DOMHelper'
 import * as features from 'utils/features'
-import { useMediaStyleSheet, useWindowSize } from 'utils/hooks'
+import { useMediaStyleSheet } from 'utils/hooks/useMediaStyleSheet'
+import { useWindowSize } from 'utils/hooks/useWindowSize'
 
 export type Size = number
 type Props = {

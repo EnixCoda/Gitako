@@ -1,7 +1,7 @@
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { friendlyFormatShortcut } from 'utils/general'
-import { useStates } from 'utils/hooks'
+import { useStates } from 'utils/hooks/useStates'
 import * as keyHelper from 'utils/keyHelper'
 
 type Props = {}

@@ -2,7 +2,7 @@ import { wikiLinks } from 'components/SettingsBar'
 import { useConfigs } from 'containers/ConfigsContext'
 import { oauth } from 'env'
 import * as React from 'react'
-import { useStates } from 'utils/hooks'
+import { useStates } from 'utils/hooks/useStates'
 
 const ACCESS_TOKEN_REGEXP = /^[0-9a-f]{40}$/
 

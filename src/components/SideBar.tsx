@@ -15,7 +15,7 @@ import useEvent from 'react-use/esm/useEvent'
 import { cx } from 'utils/cx'
 import * as DOMHelper from 'utils/DOMHelper'
 import { JSONRequest, parseURLSearch } from 'utils/general'
-import { useDidUpdate } from 'utils/hooks'
+import { useDidUpdate } from 'utils/hooks/useDidUpdate'
 import * as keyHelper from 'utils/keyHelper'
 import * as URLHelper from 'utils/URLHelper'
 
