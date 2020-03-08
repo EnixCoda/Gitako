@@ -310,8 +310,7 @@
 
         /* search input */
         .search-input-wrapper {
-          input[type='text'].form-control {
-            box-shadow: none;
+          input.form-control {
             width: 100%;
 
             &.error {
@@ -448,7 +447,9 @@
           z-index: 1;
         }
         &-section {
-          padding-bottom: 16px;
+          &:not(:last-of-type) {
+            padding-bottom: 16px;
+          }
 
           .description:hover {
             cursor: help;
@@ -459,9 +460,17 @@
         input.form-control {
           min-width: 100px;
         }
+
+        .form-checkbox {
+          margin: 0;
+        }
       }
       select {
         -moz-appearance: none;
+      }
+      .form-label {
+        margin-bottom: 2px;
+        display: inline-block;
       }
       .access-token {
         border-bottom: none; // prevent overwrite by github style
@@ -477,7 +486,6 @@
         margin-top: 8px;
         .access-token-input {
           flex: 1;
-          box-shadow: none;
 
           &:disabled {
             cursor: not-allowed;
@@ -491,10 +499,8 @@
       }
       .toggle-shortcut-input-control {
         display: flex;
-        margin-top: 8px;
         .toggle-shortcut-input {
           flex: 1;
-          box-shadow: none;
         }
       }
       .singleton {
@@ -523,6 +529,10 @@
           height: 20px;
           cursor: pointer;
         }
+      }
+
+      input.form-control:not(:last-child) {
+        margin-right: 5px;
       }
     }
   }

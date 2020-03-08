@@ -13,12 +13,11 @@ export function SearchBar({ onSearch, onFocus, searchKey }: Props) {
       <input
         onFocus={onFocus}
         tabIndex={0}
-        className={cx('form-control search-input', {
+        className={cx('form-control', 'search-input', {
           error: !isValidRegexpSource(searchKey),
         })}
         aria-label="search files"
         placeholder="Search files (use RegExp)"
-        type="text"
         onChange={({ target: { value } }) => onSearch(value)}
         value={searchKey}
       />

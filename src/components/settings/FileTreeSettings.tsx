@@ -1,3 +1,5 @@
+import { wikiLinks } from 'components/SettingsBar'
+import { SimpleToggleField } from 'components/SimpleToggleField'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { Config } from 'utils/configHelper'
@@ -26,21 +28,23 @@ const options: {
 
 type Props = {}
 
-export function FileTreeIconSettings(props: React.PropsWithChildren<Props>) {
+export function FileTreeSettings(props: React.PropsWithChildren<Props>) {
   const configContext = useConfigs()
   return (
-    <div className={'gitako-settings-bar-content-section toggle-shortcut'}>
-      <h4>File Tree Icons</h4>
-      <span>Icons can make a difference.</span>
-      <br />
-      <div className={'toggle-shortcut-input-control'}>
+    <div className={'gitako-settings-bar-content-section'}>
+      <h4>File Tree</h4>
+      <label className="form-label" htmlFor="file-tree-icons">
+        Icons
+      </label>
+      <div>
         <select
+          id="file-tree-icons"
           onChange={e => {
             configContext.set({
               icons: e.target.value as Config['icons'],
             })
           }}
-          className={'toggle-shortcut-input form-control'}
+          className={'file-tree-input form-control'}
           placeholder={'focus here and press the shortcut keys'}
           value={configContext.val.icons}
         >
@@ -51,6 +55,13 @@ export function FileTreeIconSettings(props: React.PropsWithChildren<Props>) {
           ))}
         </select>
       </div>
+      <SimpleToggleField
+        field={{
+          key: 'compressSingletonFolder',
+          label: 'Compress singleton folder',
+          wikiLink: wikiLinks.compressSingletonFolder,
+        }}
+      />
     </div>
   )
 }

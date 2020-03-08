@@ -12,8 +12,9 @@ export function SimpleToggleField({ field, onChange }: Props) {
   const configContext = useConfigs()
   const value = configContext.val[field.key]
   return (
-    <label htmlFor={field.key}>
+    <div className={'form-checkbox'}>
       <input
+        className={'form-control'}
         id={field.key}
         name={field.key}
         type={'checkbox'}
@@ -24,18 +25,16 @@ export function SimpleToggleField({ field, onChange }: Props) {
         }}
         checked={overwrite ? overwrite.value(value) : Boolean(value)}
       />
-      &nbsp;{field.label}&nbsp;
-      {field.wikiLink ? (
-        <a href={field.wikiLink} target={'_blank'}>
-          (?)
-        </a>
-      ) : (
-        field.description && (
-          <span className={'description'} title={field.description}>
+      <label htmlFor={field.key}>
+        {field.label}{' '}
+        {field.wikiLink ? (
+          <a href={field.wikiLink} target={'_blank'}>
             (?)
-          </span>
-        )
-      )}
-    </label>
+          </a>
+        ) : (
+          field.description && <p className={'note'}>{field.description}</p>
+        )}
+      </label>
+    </div>
   )
 }

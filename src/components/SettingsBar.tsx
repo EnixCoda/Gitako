@@ -4,8 +4,8 @@ import * as React from 'react'
 import { Config } from 'utils/configHelper'
 import { useStates } from 'utils/hooks/useStates'
 import { AccessTokenSettings } from './settings/AccessTokenSettings'
-import { FileTreeIconSettings } from './settings/FileTreeIconSettings'
-import { ShortcutSettings } from './settings/ShortcutSettings'
+import { FileTreeSettings } from './settings/FileTreeSettings'
+import { SidebarSettings } from './settings/SidebarSettings'
 import { SimpleToggleField } from './SimpleToggleField'
 
 const WIKI_HOME_LINK = 'https://github.com/EnixCoda/Gitako/wiki'
@@ -35,28 +35,14 @@ export type SimpleField = {
 
 const moreFields: SimpleField[] = [
   {
-    key: 'compressSingletonFolder',
-    label: 'Compress singleton folder',
-    wikiLink: wikiLinks.compressSingletonFolder,
-  },
-  {
     key: 'copyFileButton',
-    label: 'Copy File Shortcut',
+    label: 'Copy file shortcut',
     wikiLink: wikiLinks.copyFileButton,
   },
   {
     key: 'copySnippetButton',
-    label: 'Copy Snippet Shortcut',
+    label: 'Copy snippet shortcut',
     wikiLink: wikiLinks.copySnippet,
-  },
-  {
-    key: 'intelligentToggle',
-    label: 'Intelligent Toggle',
-    description: `Gitako will open/close automatically according to page content when this is enabled.`,
-    overwrite: {
-      value: enabled => enabled === null,
-      onChange: checked => (checked ? null : true),
-    },
   },
 ]
 
@@ -70,14 +56,13 @@ function SettingsBarContent() {
       <div className={'gitako-settings-bar-content'}>
         <div className={'shadow-shelter'} />
         <AccessTokenSettings />
-        <ShortcutSettings />
-        <FileTreeIconSettings />
+        <SidebarSettings />
+        <FileTreeSettings />
         <div className={'gitako-settings-bar-content-section others'}>
           <h4>More</h4>
           {moreFields.map(field => (
             <React.Fragment key={field.key}>
               <SimpleToggleField field={field} />
-              <br />
             </React.Fragment>
           ))}
 
