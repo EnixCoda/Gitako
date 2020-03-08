@@ -14,6 +14,13 @@ const plugins = [
     {
       from: './src/manifest.json',
       to: 'manifest.json',
+      transform(content) {
+        const { version, description, author, homepage: homepage_url } = require('./package.json')
+        const manifest = JSON.parse(content)
+        return JSON.stringify(
+          Object.assign(manifest, { version, description, author, homepage_url }),
+        )
+      },
     },
     {
       from: './src/assets/icons/*',

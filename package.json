@@ -1,17 +1,17 @@
 {
   "name": "gitako",
   "version": "1.0.1",
-  "description": "The missing part of GitHub.",
+  "description": "Awesome GitHub file tree.",
   "repository": "https://github.com/EnixCoda/Gitako",
   "author": "EnixCoda",
   "license": "MIT",
   "private": true,
+  "homepage": "https://github.com/EnixCoda/Gitako",
   "scripts": {
     "start": "VERSION=dev-v$(node scripts/get-version.js) webpack --watch",
     "debug-firefox": "web-ext run -s dist",
     "analyse-bundle": "ANALYSE= NODE_ENV=production webpack",
     "build": "VERSION=v$(node scripts/get-version.js) NODE_ENV=production webpack",
-    "postversion": "node scripts/version.js",
     "roll": "make release"
   },
   "dependencies": {
