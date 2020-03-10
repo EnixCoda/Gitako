@@ -6955,11 +6955,6 @@ safe-regex@^1.1.0:
   dependencies:
     ret "~0.1.10"
 
-safe-touch@^0.2.2:
-  version "0.2.5"
-  resolved "https://registry.yarnpkg.com/safe-touch/-/safe-touch-0.2.5.tgz#3b6c5f724622daf2a71f918aaa303e13e729ced9"
-  integrity sha512-IIMmIaHoaTLqSuDKk3HBJRXo1CkZfCa7sCPiuzF85o3X/5QAT+LaTSM23n3BfLtl8ry9caAaTZWPpWZ2gDjriQ==
-
 "safer-buffer@>= 2.1.2 < 3", safer-buffer@^2.0.2, safer-buffer@^2.1.0, safer-buffer@~2.1.0:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
