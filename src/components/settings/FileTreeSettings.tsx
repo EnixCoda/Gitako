@@ -3,6 +3,7 @@ import { SimpleToggleField } from 'components/SimpleToggleField'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { Config } from 'utils/configHelper'
+import { SettingsSection } from './SettingsSection'
 
 const options: {
   key: Config['icons']
@@ -31,29 +32,27 @@ type Props = {}
 export function FileTreeSettings(props: React.PropsWithChildren<Props>) {
   const configContext = useConfigs()
   return (
-    <div className={'gitako-settings-bar-content-section'}>
-      <h4>File Tree</h4>
-      <label className="form-label" htmlFor="file-tree-icons">
-        Icons
-      </label>
-      <div>
-        <select
-          id="file-tree-icons"
-          onChange={e => {
-            configContext.set({
-              icons: e.target.value as Config['icons'],
-            })
-          }}
-          className={'file-tree-input form-control'}
-          placeholder={'focus here and press the shortcut keys'}
-          value={configContext.val.icons}
-        >
-          {options.map(option => (
-            <option key={option.key} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+    <SettingsSection title={'File Tree'}>
+      <div className={'field'}>
+        <label htmlFor="file-tree-icons">Icons</label>
+        <div>
+          <select
+            id="file-tree-icons"
+            onChange={e => {
+              configContext.set({
+                icons: e.target.value as Config['icons'],
+              })
+            }}
+            className={'file-tree-input form-control'}
+            value={configContext.val.icons}
+          >
+            {options.map(option => (
+              <option key={option.key} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
       <SimpleToggleField
         field={{
@@ -62,6 +61,6 @@ export function FileTreeSettings(props: React.PropsWithChildren<Props>) {
           wikiLink: wikiLinks.compressSingletonFolder,
         }}
       />
-    </div>
+    </SettingsSection>
   )
 }

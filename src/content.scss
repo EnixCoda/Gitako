@@ -1,5 +1,14 @@
 @import '~nprogress/nprogress.css';
 
+@import '~@primer/css/base/index.scss';
+
+@import '~@primer/css/support/variables/colors.scss';
+@import '~@primer/css/support/variables/color-system.scss';
+@import '~@primer/css/support/variables/typography.scss';
+@import '~@primer/css/support/variables/misc.scss';
+@import '~@primer/css/support/variables/layout.scss';
+@import '~@primer/css/marketing/support/variables.scss';
+
 $name: gitako;
 
 $min-screen-width: 1280px;
@@ -17,7 +26,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
 .#{$name}-ready {
   .js-header-wrapper {
-    background: #24292e;
+    background: $gray-dark;
   }
   .Header {
     max-width: 1012px;
@@ -43,14 +52,14 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     .clippy {
       width: 32px;
       height: 32px;
-      border: 1px solid #ddd;
+      border: 1px solid $border-gray-dark;
       border-radius: 4px;
-      background: #f9f9f9;
+      background: $bg-gray-light;
       &:hover {
-        background: #fff;
+        background: $bg-white;
       }
       &:active {
-        background: #f0f0f0;
+        background: $bg-gray-light;
       }
       .icon {
         width: 100%;
@@ -107,15 +116,15 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
   animation: toggle-show-button-wrapper-expand $animation-duration;
 
   &.collapsed {
-    border-color: #999999;
+    border-color: $border-gray;
     border-radius: 3px;
-    background: #f5f5f5;
+    background: $bg-gray;
 
     @include transform-collapsed();
     animation: toggle-show-button-wrapper-collapse $animation-duration;
 
     .action-icon {
-      color: #0366d6d0;
+      color: $blue;
     }
   }
 
@@ -138,7 +147,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
   }
 
   .action-icon {
-    color: #666666;
+    color: $gray;
     width: 20px;
     height: 20px;
     text-align: center;
@@ -151,7 +160,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
   &.error {
     .action-icon {
-      color: #d73a49;
+      color: $red;
     }
   }
 
@@ -191,13 +200,13 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     cursor: ew-resize;
     user-select: none;
     width: 0;
-    background: #e1e4e8;
-    border-left: 1px solid #e1e4e8;
+    background: $bg-gray;
+    border-right: 1px solid $border-gray;
     overflow: hidden;
-    &:hover {
+    &:hover,
+    &:active {
       width: 16px;
-      background: #fafbfc;
-      border-right: 1px solid #e1e4e8;
+      background: $bg-gray-light;
     }
 
     .octicon {
@@ -212,9 +221,9 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     height: 100%;
     display: flex;
     flex-direction: column;
-    background: #fafbfc;
-    border-right: 1px solid #e1e4e8;
-    border-left: 1px solid #e1e4e8;
+    background: $bg-gray-light;
+    border-right: 1px solid $border-gray-light;
+    border-left: 1px solid $border-gray;
     overflow: hidden;
 
     &.hidden {
@@ -223,9 +232,13 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
     .octicon {
       transition: transform 0.3s ease;
-      color: rgba(3, 47, 98, 0.55);
+      color: rgba($blue-800, 0.55);
       width: 100%;
       height: 100%;
+    }
+
+    .octicon-color {
+      color: rgba($blue-800, 0.55);
     }
 
     .octicon-wrapper {
@@ -233,10 +246,6 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
       width: 16px;
       height: 16px;
       text-align: center;
-    }
-
-    .octicon-color {
-      color: rgba(3, 47, 98, 0.55);
     }
 
     .#{$name}-side-bar-content {
@@ -247,20 +256,11 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
       min-height: 0; // make content shrinkable
 
       .meta-bar {
-        position: relative;
+        position: relative; // prevent overlap by outline of other elements
         padding: 10px;
-        padding-right: 30px;
-        font-size: 13px;
-        line-height: 20px;
-        color: #586069;
-        background-color: #f1f8ff;
-        border-bottom: 1px solid #c8e1ff;
-
-        a {
-          // fix a weird bug:
-          // when gitako failed loading repo, cursor hovering <a> in meta bar will be 'text'
-          cursor: pointer;
-        }
+        padding-right: 30px; // space for toggle button
+        background: $bg-blue-light;
+        border-bottom: 1px solid $border-gray;
 
         .repo-name {
           font-weight: bolder;
@@ -314,18 +314,13 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
         /* search input */
         .search-input-wrapper {
-          input.form-control {
+          .search-input {
             width: 100%;
 
             &.error {
-              border-color: #d73a49;
+              border-color: $red;
             }
           }
-        }
-
-        .no-results {
-          padding: 0px 10px;
-          color: #666;
         }
 
         .files {
@@ -333,89 +328,82 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           overflow: auto;
         }
 
-        .node-item-row {
-          background: #fff;
+        .node-item {
+          background: $bg-white;
           &:hover {
-            background: #f6f8fa;
+            background: $bg-gray-light;
           }
-          &.focused {
-            background: #f0f0f6;
+          &.focused,
+          &:active {
+            background: $bg-gray;
           }
 
           &.disabled {
             .node-item {
               pointer-events: none;
-              color: #999999;
+              color: $gray-light;
+            }
+          }
+          display: flex;
+          justify-content: space-between;
+          margin: 0;
+          color: $blue;
+          line-height: 20px;
+          padding: 6px 10px;
+          cursor: pointer;
+          border-top: 1px solid $border-gray-light;
+          white-space: nowrap;
+
+          @mixin icon-size() {
+            width: 16px;
+            height: 16px;
+          }
+
+          .octicon-wrapper:first-child {
+            margin-right: 6px;
+          }
+
+          &-type-icon {
+            margin-right: 4px;
+            @include icon-size();
+
+            & + .octicon-wrapper,
+            & + .node-item-icon {
+              margin-right: 6px;
             }
           }
 
-          .node-item {
-            display: flex;
-            justify-content: space-between;
-            margin: 0;
-            color: #0366d6;
-            line-height: 20px;
-            padding: 6px 10px;
-            cursor: pointer;
-            border-top: 1px solid #eaecef;
-            transition: all 0.5s ease;
+          &-icon {
+            @include icon-size();
+            object-fit: contain;
+            vertical-align: text-bottom;
+            box-sizing: content-box;
+
+            &.dim {
+              filter: sepia(1) hue-rotate(180deg);
+            }
+          }
+
+          // folder icon rotate when expand
+          &.expanded .octicon.ChevronRight {
+            transform: rotate(90deg);
+          }
+
+          .node-item-label {
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
+          .go-to-button {
+            display: none;
             white-space: nowrap;
-
-            @mixin icon-size() {
-              width: 16px;
-              height: 16px;
-            }
-
-            .octicon-wrapper:first-child {
-              margin-right: 6px;
-            }
-
-            &-type-icon {
-              margin-right: 4px;
-              @include icon-size();
-
-              & + .octicon-wrapper,
-              & + .node-item-icon {
-                margin-right: 6px;
-              }
-            }
-
-            &-icon {
-              @include icon-size();
-              object-fit: contain;
-              vertical-align: text-bottom;
-              box-sizing: content-box;
-
-              &.dim {
-                filter: sepia(1) hue-rotate(180deg);
-              }
-            }
-
-            // folder icon rotate when expand
-            &.expanded .octicon.ChevronRight {
-              transform: rotate(90deg);
-            }
-
-            .node-item-label {
-              overflow: hidden;
-              text-overflow: ellipsis;
-            }
-
-            &:hover .node-item-name {
-              text-decoration: underline;
-            }
-
+            background: transparent;
+            border: none;
+            padding: 0;
+          }
+          &:hover {
             .go-to-button {
-              display: none;
-              white-space: nowrap;
-              background: transparent;
-              border: none;
-              padding: 0;
-            }
-            &:hover {
-              .go-to-button {
-                display: inline-block;
-              }
+              display: inline-block;
             }
           }
         }
@@ -424,12 +412,12 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
     .#{$name}-settings-bar {
       z-index: 2;
-      background: #fafbfc;
+      background: $bg-gray-light;
       display: flex;
       flex-direction: column;
       max-height: 100%;
       &-title {
-        border-top: 1px solid #eaecef;
+        border-top: 1px solid $border-gray-light;
         padding: 6px 10px;
         box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.2), 0 3px 4px 0 rgba(0, 0, 0, 0.14),
           0 3px 3px -2px rgba(0, 0, 0, 0.12);
@@ -447,58 +435,60 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           height: 10px;
           top: 0;
           left: 0;
-          background: #fafbfc;
+          background: $bg-gray-light;
           z-index: 1;
         }
-        &-section {
+        .settings-section {
           &:not(:last-of-type) {
-            padding-bottom: 16px;
+            margin-bottom: 16px;
           }
 
-          .description:hover {
-            cursor: help;
+          .field {
+            margin-bottom: 4px;
+
+            label {
+              display: inline-block;
+              margin-bottom: 2px;
+              font-weight: 500;
+            }
+            &.field-checkbox {
+              padding-left: 20px;
+              vertical-align: middle;
+              label {
+                margin-bottom: 0;
+              }
+
+              input {
+                &:disabled {
+                  cursor: not-allowed;
+                }
+              }
+              input[type='checkbox'],
+              input[type='radio'] {
+                float: left;
+                margin: 5px 0 0 -20px;
+                vertical-align: middle;
+              }
+              select {
+                -moz-appearance: none;
+                background: $bg-white;
+              }
+            }
           }
         }
-
-        /* inputs for access token & shortcut were too wide */
-        input.form-control {
-          min-width: 100px;
-        }
-
-        .form-checkbox {
-          margin: 0;
-        }
       }
-      select {
-        -moz-appearance: none;
-      }
-      .form-label {
-        margin-bottom: 2px;
+      .link-button {
+        cursor: pointer;
         display: inline-block;
+        margin-bottom: 4px;
       }
-      .access-token {
-        border-bottom: none; // prevent overwrite by github style
-        .link-button {
-          cursor: pointer;
-        }
-        .hint {
-          color: #6a737d;
-        }
+      .hint {
+        color: $gray;
       }
       .access-token-input-control {
         display: flex;
-        margin-top: 8px;
         .access-token-input {
           flex: 1;
-
-          &:disabled {
-            cursor: not-allowed;
-          }
-        }
-      }
-      .toggle-shortcut {
-        .hint {
-          color: #6a737d;
         }
       }
       .toggle-shortcut-input-control {
@@ -507,22 +497,14 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           flex: 1;
         }
       }
-      .singleton {
-        .hint {
-          color: #6a737d;
-        }
-      }
       .header-row {
         flex-shrink: 0;
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 6px 10px;
-        border-top: 1px solid #eaecef;
+        border-top: 1px solid $border-gray-light;
 
-        .version {
-          color: #999999;
-        }
         .show-settings-icon {
           width: 20px;
           height: 20px;
@@ -533,10 +515,6 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           height: 20px;
           cursor: pointer;
         }
-      }
-
-      input.form-control:not(:last-child) {
-        margin-right: 5px;
       }
     }
   }

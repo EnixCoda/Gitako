@@ -1,3 +1,4 @@
+import { Text } from '@primer/components'
 import { LoadingIndicator } from 'components/LoadingIndicator'
 import { Node } from 'components/Node'
 import { SearchBar } from 'components/SearchBar'
@@ -69,7 +70,11 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
     ({ nodes, focusedNode }: VisibleNodes) => {
       const inSearch = searchKey !== ''
       if (inSearch && nodes.length === 0) {
-        return <label className={'no-results'}>No results found.</label>
+        return (
+          <Text marginTop={6} textAlign="center" color="text.gray">
+            No results found.
+          </Text>
+        )
       }
       return (
         <SizeObserver className={'files'}>
@@ -210,7 +215,7 @@ function ListView({
       }}
       itemData={{ nodes }}
       itemCount={nodes.length}
-      itemSize={35}
+      itemSize={36}
       height={height}
       width={width}
     >

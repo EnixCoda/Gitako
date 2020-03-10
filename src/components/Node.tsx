@@ -1,3 +1,4 @@
+import { Text } from '@primer/components'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { cx } from 'utils/cx'
@@ -45,24 +46,19 @@ export function Node({ node, depth, expanded, focused, renderActions, style, onC
 
   const { name, path } = node
   return (
-    <div
-      className={cx(`node-item-row`, { focused, disabled: node.accessDenied })}
-      style={style}
+    <a
+      href={node.url}
+      onClick={onClickNode}
+      className={cx(`node-item`, { focused, disabled: node.accessDenied, expanded })}
+      style={{ ...style, paddingLeft: `${10 + 20 * depth}px` }}
       title={path}
     >
-      <a href={node.url} onClick={onClickNode}>
-        <div
-          className={cx('node-item', { expanded })}
-          style={{ paddingLeft: `${10 + 20 * depth}px` }}
-        >
-          <div className={'node-item-label'}>
-            <NodeItemIcon node={node} open={expanded} />
-            <span className={'node-item-name'}>{name}</span>
-          </div>
-          {renderActions && <div>{renderActions(node)}</div>}
-        </div>
-      </a>
-    </div>
+      <div className={'node-item-label'}>
+        <NodeItemIcon node={node} open={expanded} />
+        <Text fontSize={14}>{name}</Text>
+      </div>
+      {renderActions && <div>{renderActions(node)}</div>}
+    </a>
   )
 }
 

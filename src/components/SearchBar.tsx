@@ -1,3 +1,5 @@
+import { TextInput } from '@primer/components'
+import { Search } from '@primer/octicons-react'
 import * as React from 'react'
 import { cx } from 'utils/cx'
 
@@ -10,10 +12,12 @@ type Props = {
 export function SearchBar({ onSearch, onFocus, searchKey }: Props) {
   return (
     <div className={'search-input-wrapper'}>
-      <input
+      <TextInput
+        backgroundColor="white"
+        icon={Search as any}
         onFocus={onFocus}
         tabIndex={0}
-        className={cx('form-control', 'search-input', {
+        className={cx('search-input', {
           error: !isValidRegexpSource(searchKey),
         })}
         aria-label="search files"

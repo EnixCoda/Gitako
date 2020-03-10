@@ -162,11 +162,11 @@ function renderAccessDeniedError(hasToken: boolean) {
       ) : (
         <p>
           Gitako needs access token to read this project due to{' '}
-          <a target="_blank" href="https://developer.github.com/v3/#rate-limiting">
+          <a href="https://developer.github.com/v3/#rate-limiting" target="_blank">
             GitHub rate limiting
           </a>{' '}
           and{' '}
-          <a target="_blank" href="https://developer.github.com/v3/#authentication">
+          <a href="https://developer.github.com/v3/#authentication" target="_blank">
             auth needs
           </a>
           . Please setup access token in the settings panel below.

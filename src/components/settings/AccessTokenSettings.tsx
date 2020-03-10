@@ -1,8 +1,10 @@
+import { Button, TextInput } from '@primer/components'
 import { wikiLinks } from 'components/SettingsBar'
 import { useConfigs } from 'containers/ConfigsContext'
 import { oauth } from 'env'
 import * as React from 'react'
 import { useStates } from 'utils/hooks/useStates'
+import { SettingsSection } from './SettingsSection'
 
 const ACCESS_TOKEN_REGEXP = /^[0-9a-f]{40}$/
 
@@ -13,6 +15,7 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
   const hasAccessToken = Boolean(configContext.val.access_token)
   const useAccessToken = useStates('')
   const useAccessTokenHint = useStates<React.ReactNode>('')
+  const focusInput = useStates(false)
 
   const { val: accessTokenHint } = useAccessTokenHint
   const { val: accessToken } = useAccessToken
@@ -26,7 +29,7 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
     ({ currentTarget: { value } }: React.FormEvent<HTMLInputElement>) => {
       useAccessToken.set(value)
       useAccessTokenHint.set(
-        ACCESS_TOKEN_REGEXP.test(value) ? '' : 'This token is in unknown format.',
+        ACCESS_TOKEN_REGEXP.test(value) ? '' : 'Gitako does not recognize the token.',
       )
     },
     [],
@@ -57,13 +60,17 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
   )
 
   return (
-    <div className={'gitako-settings-bar-content-section access-token'}>
-      <h4>
-        Access Token{' '}
-        <a href={wikiLinks.createAccessToken} target="_blank">
-          (?)
-        </a>
-      </h4>
+    <SettingsSection
+      title={
+        <span>
+          Access Token
+          <a href={wikiLinks.createAccessToken} target="_blank">
+            {' '}
+            (?)
+          </a>
+        </span>
+      }
+    >
       {!hasAccessToken && (
         <a
           className={'link-button'}
@@ -79,25 +86,27 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
         </a>
       )}
       <div className={'access-token-input-control'}>
-        <input
-          className={'access-token-input form-control'}
+        <TextInput
+          backgroundColor="#fff"
+          marginRight={1}
+          className={'access-token-input'}
           disabled={hasAccessToken}
           placeholder={hasAccessToken ? 'Your token is saved' : 'Or input here manually'}
           value={accessToken}
+          onFocus={() => focusInput.set(true)}
+          onBlur={() => focusInput.set(false)}
           onChange={onInputAccessToken}
           onKeyPress={onPressAccessToken}
         />
         {hasAccessToken && !accessToken ? (
-          <button className={'btn'} onClick={() => configContext.set({ access_token: '' })}>
-            Clear
-          </button>
+          <Button onClick={() => configContext.set({ access_token: '' })}>Clear</Button>
         ) : (
-          <button className={'btn'} onClick={() => saveToken()} disabled={!accessToken}>
+          <Button onClick={() => saveToken()} disabled={!accessToken}>
             Save
-          </button>
+          </Button>
         )}
       </div>
-      {accessTokenHint && <span className={'hint'}>{accessTokenHint}</span>}
-    </div>
+      {accessTokenHint && !focusInput.val && <span className={'hint'}>{accessTokenHint}</span>}
+    </SettingsSection>
   )
 }

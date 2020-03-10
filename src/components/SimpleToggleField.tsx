@@ -1,5 +1,6 @@
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
+import { cx } from 'utils/cx'
 import { SimpleField } from './SettingsBar'
 
 type Props = {
@@ -12,9 +13,8 @@ export function SimpleToggleField({ field, onChange }: Props) {
   const configContext = useConfigs()
   const value = configContext.val[field.key]
   return (
-    <div className={'form-checkbox'}>
+    <div className={cx('field', 'field-checkbox')}>
       <input
-        className={'form-control'}
         id={field.key}
         name={field.key}
         type={'checkbox'}
