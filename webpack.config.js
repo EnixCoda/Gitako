@@ -83,8 +83,8 @@ module.exports = {
         include: [srcPath, packagesPath],
       },
       {
-        test: /\.less$/,
-        loader: [MiniCssExtractPlugin.loader, 'css-loader', 'less-loader'],
+        test: /\.scss$/,
+        loader: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
         include: [srcPath],
       },
       {

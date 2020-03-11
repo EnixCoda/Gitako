@@ -1,21 +1,21 @@
 @import '~nprogress/nprogress.css';
 
-@name: gitako;
+$name: gitako;
 
-@min-screen-width: 1280px;
-@github-content-width: 1020px;
-@side-bar-base-width: (@min-screen-width - @github-content-width);
-@min-width-with-gitako: (@min-screen-width + @side-bar-base-width);
+$min-screen-width: 1280px;
+$github-content-width: 1020px;
+$side-bar-base-width: ($min-screen-width - $github-content-width);
+$min-width-with-gitako: ($min-screen-width + $side-bar-base-width);
 
-@github-header-z-index: 32;
-@github-pull-request-float-header-z-index: 110;
-@minimal-z-index: max(@github-header-z-index, @github-pull-request-float-header-z-index) + 1;
+$github-header-z-index: 32;
+$github-pull-request-float-header-z-index: 110;
+$minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-z-index) + 1;
 
 :root {
-  --gitako-width: @side-bar-base-width;
+  --gitako-width: $side-bar-base-width;
 }
 
-.@{name}-ready {
+.#{$name}-ready {
   .js-header-wrapper {
     background: #24292e;
   }
@@ -25,9 +25,9 @@
   }
 }
 
-@media (min-width: @github-content-width) {
+@media (min-width: $github-content-width) {
   body {
-    min-width: @github-content-width;
+    min-width: $github-content-width;
   }
 }
 
@@ -37,7 +37,7 @@
     width: 0;
     height: 0;
     top: 8px;
-    left: ~'calc(100% - 40px)';
+    left: calc(100% - 40px);
     z-index: 1;
 
     .clippy {
@@ -74,7 +74,7 @@
   left: 0; /* reposition progress bar of GitHub */
 }
 
-.hidden {
+%hidden {
   display: none;
 }
 
@@ -82,12 +82,12 @@
   visibility: hidden;
 }
 
-.@{name}-toggle-show-button-wrapper {
-  @animation-duration: 0.5s;
+.#{$name}-toggle-show-button-wrapper {
+  $animation-duration: 0.5s;
   position: fixed;
   top: 5px;
   left: 0;
-  z-index: @minimal-z-index;
+  z-index: $minimal-z-index;
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -96,23 +96,23 @@
   will-change: transform;
   border: 1px solid transparent;
 
-  .transform-expanded {
+  @mixin transform-expanded() {
     transform: translate(calc(var(--gitako-width) - 30px));
   }
-  .transform-collapsed {
+  @mixin transform-collapsed() {
     transform: translate(5px);
   }
 
-  .transform-expanded;
-  animation: toggle-show-button-wrapper-expand @animation-duration;
+  @include transform-expanded();
+  animation: toggle-show-button-wrapper-expand $animation-duration;
 
   &.collapsed {
     border-color: #999999;
     border-radius: 3px;
     background: #f5f5f5;
 
-    .transform-collapsed;
-    animation: toggle-show-button-wrapper-collapse @animation-duration;
+    @include transform-collapsed();
+    animation: toggle-show-button-wrapper-collapse $animation-duration;
 
     .action-icon {
       color: #0366d6d0;
@@ -121,19 +121,19 @@
 
   @keyframes toggle-show-button-wrapper-expand {
     from {
-      .transform-collapsed;
+      @include transform-collapsed();
     }
     to {
-      .transform-expanded;
+      @include transform-expanded();
     }
   }
 
   @keyframes toggle-show-button-wrapper-collapse {
     from {
-      .transform-expanded;
+      @include transform-expanded();
     }
     to {
-      .transform-collapsed;
+      @include transform-collapsed();
     }
   }
 
@@ -142,7 +142,7 @@
     width: 20px;
     height: 20px;
     text-align: center;
-    transition: all @animation-duration ease;
+    transition: all $animation-duration ease;
     .octicon {
       width: 100%;
       height: 100%;
@@ -168,24 +168,24 @@
   }
 }
 
-.@{name}-side-bar {
-  .@{name}-position-wrapper {
+.#{$name}-side-bar {
+  .#{$name}-position-wrapper {
     position: fixed;
     top: 0;
     left: 0;
     height: 100vh;
-    z-index: @minimal-z-index;
+    z-index: $minimal-z-index;
     display: flex;
 
     &.hidden {
-      .hidden;
+      @extend %hidden;
     }
 
     .gitako-position-content {
       width: var(--gitako-width);
     }
   }
-  .@{name}-resize-handler {
+  .#{$name}-resize-handler {
     display: flex;
     align-items: center;
     cursor: ew-resize;
@@ -207,7 +207,7 @@
       font-size: 0;
     }
   }
-  .@{name}-side-bar-body {
+  .#{$name}-side-bar-body {
     width: 100%;
     height: 100%;
     display: flex;
@@ -218,7 +218,7 @@
     overflow: hidden;
 
     &.hidden {
-      .hidden;
+      @extend %hidden;
     }
 
     .octicon {
@@ -239,7 +239,7 @@
       color: rgba(3, 47, 98, 0.55);
     }
 
-    .@{name}-side-bar-content {
+    .#{$name}-side-bar-content {
       display: flex;
       flex: 1;
       flex-direction: column;
@@ -361,7 +361,7 @@
             transition: all 0.5s ease;
             white-space: nowrap;
 
-            .icon-size() {
+            @mixin icon-size() {
               width: 16px;
               height: 16px;
             }
@@ -372,7 +372,7 @@
 
             &-type-icon {
               margin-right: 4px;
-              .icon-size();
+              @include icon-size();
 
               & + .octicon-wrapper,
               & + .node-item-icon {
@@ -381,7 +381,7 @@
             }
 
             &-icon {
-              .icon-size();
+              @include icon-size();
               object-fit: contain;
               vertical-align: text-bottom;
               box-sizing: content-box;
@@ -422,7 +422,7 @@
       }
     }
 
-    .@{name}-settings-bar {
+    .#{$name}-settings-bar {
       z-index: 2;
       background: #fafbfc;
       display: flex;

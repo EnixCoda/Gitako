@@ -3,7 +3,7 @@ import { Gitako } from 'components/Gitako'
 import { addMiddleware } from 'driver/connect'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
-import './content.less'
+import './content.scss'
 
 addMiddleware(withErrorLog)
 
