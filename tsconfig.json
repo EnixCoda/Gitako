@@ -1,15 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es2016",
-    "outDir": "dist",
+    "moduleResolution": "Node",
+    "module": "ESNext",
+    "target": "ESNext",
     "jsx": "react",
-    "allowJs": true,
-    "module": "commonjs",
     "strict": true,
-    "resolveJsonModule": true,
     "lib": ["dom", "es2017.object", "es2016"],
     "baseUrl": ".",
-    "experimentalDecorators": true,
+    "outDir": "dist",
     "paths": {
       "*": ["src/*", "packages/*"]
     }

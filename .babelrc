@@ -3,8 +3,9 @@
     [
       "@babel/preset-env",
       {
+        "modules": false,
         "targets": {
-          "chrome": "67"
+          "esmodules": true
         }
       }
     ],

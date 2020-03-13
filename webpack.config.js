@@ -81,6 +81,8 @@ module.exports = {
           cacheDirectory: true,
         },
         include: [srcPath, packagesPath],
+        exclude: /node_modules/,
+        sideEffects: false,
       },
       {
         test: /\.scss$/,
