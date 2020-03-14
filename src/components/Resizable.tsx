@@ -49,17 +49,13 @@ export function Resizable({ baseSize, className, children }: React.PropsWithChil
     size,
   )
 
+  const onResize = React.useCallback((size: number) => {
+    if (size < window.innerWidth - MINIMAL_CONTENT_VIEWPORT_WIDTH) setSize(size)
+  }, [])
   return (
     <div className={cx('gitako-position-wrapper', className)}>
       <div className={'gitako-position-content'}>{children}</div>
-      {features.resize && (
-        <HorizontalResizeHandler
-          onResize={size => {
-            if (size < window.innerWidth - MINIMAL_CONTENT_VIEWPORT_WIDTH) setSize(size)
-          }}
-          size={size}
-        />
-      )}
+      {features.resize && <HorizontalResizeHandler onResize={onResize} size={size} />}
     </div>
   )
 }
