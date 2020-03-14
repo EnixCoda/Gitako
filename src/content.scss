@@ -13,15 +13,15 @@ $name: gitako;
 
 $min-screen-width: 1280px;
 $github-content-width: 1020px;
-$side-bar-base-width: ($min-screen-width - $github-content-width);
-$min-width-with-gitako: ($min-screen-width + $side-bar-base-width);
+$side-bar-base-width: $min-screen-width - $github-content-width;
+$min-width-with-gitako: $min-screen-width + $side-bar-base-width;
 
 $github-header-z-index: 32;
 $github-pull-request-float-header-z-index: 110;
 $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-z-index) + 1;
 
 :root {
-  --gitako-width: $side-bar-base-width;
+  --gitako-width: #{$side-bar-base-width};
 }
 
 .#{$name}-ready {
