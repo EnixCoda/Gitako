@@ -11,11 +11,10 @@ import { SideBarCore } from 'driver/core'
 import { ConnectorState, Props } from 'driver/core/SideBar'
 import { oauth } from 'env'
 import * as React from 'react'
-import { useEvent } from 'react-use'
+import { useEvent, useUpdateEffect } from 'react-use'
 import { cx } from 'utils/cx'
 import * as DOMHelper from 'utils/DOMHelper'
 import { JSONRequest, parseURLSearch } from 'utils/general'
-import { useDidUpdate } from 'utils/hooks/useDidUpdate'
 import * as keyHelper from 'utils/keyHelper'
 import * as URLHelper from 'utils/URLHelper'
 
@@ -83,7 +82,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
   useEvent('pjax:complete', attachCopySnippetButton, window)
 
   // init again when setting new accessToken
-  useDidUpdate(() => {
+  useUpdateEffect(() => {
     props.init()
   }, [accessToken || '']) // fallback for preventing duplicated requests
 
