@@ -54,7 +54,7 @@ function SettingsBarContent() {
 
   return (
     <>
-      <h3 className={'gitako-settings-bar-title'}>Settings</h3>
+      <h2 className={'gitako-settings-bar-title'}>Settings</h2>
       <div className={'gitako-settings-bar-content'}>
         <div className={'shadow-shelter'} />
         <AccessTokenSettings />

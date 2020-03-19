@@ -62,50 +62,48 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
   return (
     <SettingsSection
       title={
-        <span>
-          Access Token
+        <>
+          Access Token{' '}
           <a href={wikiLinks.createAccessToken} target="_blank">
-            {' '}
             (?)
           </a>
-        </span>
+        </>
       }
     >
-      {!hasAccessToken && (
-        <a
-          className={'link-button'}
-          onClick={() => {
-            // use js here to make sure redirect_uri is latest url
-            const url = `https://github.com/login/oauth/authorize?client_id=${
-              oauth.clientId
-            }&scope=repo&redirect_uri=${encodeURIComponent(window.location.href)}`
-            window.location.href = url
-          }}
-        >
-          Create with OAuth (recommended)
-        </a>
+      {hasAccessToken ? (
+        <Button onClick={() => configContext.set({ access_token: '' })}>Clear</Button>
+      ) : (
+        <div>
+          <a
+            className={'link-button'}
+            onClick={() => {
+              // use js here to make sure redirect_uri is latest url
+              const url = `https://github.com/login/oauth/authorize?client_id=${
+                oauth.clientId
+              }&scope=repo&redirect_uri=${encodeURIComponent(window.location.href)}`
+              window.location.href = url
+            }}
+          >
+            Create with OAuth (recommended)
+          </a>
+          <div className={'access-token-input-control'}>
+            <TextInput
+              backgroundColor="#fff"
+              marginRight={1}
+              className={'access-token-input'}
+              value={accessToken}
+              placeholder="Or input here manually"
+              onFocus={() => focusInput.set(true)}
+              onBlur={() => focusInput.set(false)}
+              onChange={onInputAccessToken}
+              onKeyPress={onPressAccessToken}
+            />
+            <Button onClick={() => saveToken()} disabled={!accessToken}>
+              Save
+            </Button>
+          </div>
+        </div>
       )}
-      <div className={'access-token-input-control'}>
-        <TextInput
-          backgroundColor="#fff"
-          marginRight={1}
-          className={'access-token-input'}
-          disabled={hasAccessToken}
-          placeholder={hasAccessToken ? 'Your token is saved' : 'Or input here manually'}
-          value={accessToken}
-          onFocus={() => focusInput.set(true)}
-          onBlur={() => focusInput.set(false)}
-          onChange={onInputAccessToken}
-          onKeyPress={onPressAccessToken}
-        />
-        {hasAccessToken && !accessToken ? (
-          <Button onClick={() => configContext.set({ access_token: '' })}>Clear</Button>
-        ) : (
-          <Button onClick={() => saveToken()} disabled={!accessToken}>
-            Save
-          </Button>
-        )}
-      </div>
       {accessTokenHint && !focusInput.val && <span className={'hint'}>{accessTokenHint}</span>}
     </SettingsSection>
   )

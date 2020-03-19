@@ -1,12 +1,12 @@
 import * as React from 'react'
 type Props = {
-  title: React.ReactNode
+  title?: React.ReactNode
 }
 
 export function SettingsSection({ title, children }: React.PropsWithChildren<Props>) {
   return (
     <div className={'settings-section'}>
-      <h4>{title}</h4>
+      {title && <h3>{title}</h3>}
       {children}
     </div>
   )

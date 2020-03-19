@@ -5,6 +5,7 @@ import * as React from 'react'
 import { friendlyFormatShortcut } from 'utils/general'
 import { useStates } from 'utils/hooks/useStates'
 import * as keyHelper from 'utils/keyHelper'
+import { Field } from './Field'
 import { SettingsSection } from './SettingsSection'
 
 type Props = {}
@@ -21,8 +22,7 @@ export function SidebarSettings(props: React.PropsWithChildren<Props>) {
 
   return (
     <SettingsSection title={'Toggle Sidebar'}>
-      <div className={'field'}>
-        <label htmlFor="toggle-sidebar-shortcut">Keyboard Shortcut</label>
+      <Field id="toggle-sidebar-shortcut" title="Keyboard Shortcut">
         <div className={'toggle-shortcut-input-control'}>
           <TextInput
             id="toggle-sidebar-shortcut"
@@ -42,18 +42,28 @@ export function SidebarSettings(props: React.PropsWithChildren<Props>) {
             }, [])}
             readOnly
           />
-          <Button
-            disabled={toggleShowSideBarShortcut === configContext.val.shortcut}
-            onClick={() => {
-              const { val: toggleShowSideBarShortcut } = useToggleShowSideBarShortcut
-              if (typeof toggleShowSideBarShortcut !== 'string') return
-              configContext.set({ shortcut: toggleShowSideBarShortcut })
-            }}
-          >
-            Save
-          </Button>
+          {configContext.val.shortcut === toggleShowSideBarShortcut ? (
+            <Button
+              disabled={!configContext.val.shortcut}
+              onClick={() => {
+                configContext.set({ shortcut: '' })
+              }}
+            >
+              Clear
+            </Button>
+          ) : (
+            <Button
+              onClick={() => {
+                const { val: toggleShowSideBarShortcut } = useToggleShowSideBarShortcut
+                if (typeof toggleShowSideBarShortcut !== 'string') return
+                configContext.set({ shortcut: toggleShowSideBarShortcut })
+              }}
+            >
+              Save
+            </Button>
+          )}
         </div>
-      </div>
+      </Field>
       <SimpleToggleField
         field={{
           key: 'intelligentToggle',
