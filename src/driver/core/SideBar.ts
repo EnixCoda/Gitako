@@ -1,9 +1,7 @@
 import { ConfigsContextShape } from 'containers/ConfigsContext'
 import { GetCreatedMethod, MethodCreator } from 'driver/connect'
+import { errors, platform } from 'platforms'
 import * as DOMHelper from 'utils/DOMHelper'
-import * as GitHubHelper from 'utils/GitHubHelper'
-import { MetaData, TreeData } from 'utils/GitHubHelper'
-import * as URLHelper from 'utils/URLHelper'
 
 export type Props = {
   configContext: ConfigsContextShape
@@ -21,7 +19,7 @@ export type ConnectorState = {
   // meta data for the repository
   metaData?: MetaData
   // file tree data
-  treeData?: TreeData
+  treeData?: TreeNode
   logoContainerElement: Element | null
   disabled: boolean
   initializingPromise: Promise<void> | null
@@ -49,37 +47,36 @@ export const init: BoundMethodCreator = dispatch => async () => {
   })
 
   try {
-    if (!URLHelper.isInRepoPage()) {
+    const metaData = platform.resolveMeta()
+    if (!metaData) {
       dispatch.set({ disabled: true })
       return
     }
+    const detectedBranchName = metaData.branchName
     DOMHelper.markGitakoReadyState(true)
     dispatch.set({
       errorDueToAuth: false,
       showSettings: false,
       logoContainerElement: DOMHelper.insertLogoMountPoint(),
     })
-    let detectedBranchName
-    const metaData = URLHelper.parse()
-    if (DOMHelper.isInCodePage()) {
-      detectedBranchName = DOMHelper.getCurrentBranch() || URLHelper.parseSHA() // not working well with non-branch blob // cannot handle '/' split branch name, should not use when possibly on branch page
-    }
-    metaData.branchName = detectedBranchName || 'master'
     dispatch.call(setMetaData, metaData)
+
     const [, { configContext }] = dispatch.get()
     const { sideBarWidth, access_token: accessToken, intelligentToggle } = configContext.val
     dispatch.set({
       baseSize: sideBarWidth,
     })
 
-    if (!metaData.branchName || !metaData.userName) return
-    const getTreeDataAggressively = GitHubHelper.getTreeData({
-      branchName: metaData.branchName,
-      userName: metaData.userName,
-      repoName: metaData.repoName,
+    if (!metaData.branchName || !metaData.userName || !metaData.repoName) return
+    const getTreeDataAggressively = platform.getTreeData(
+      {
+        branchName: metaData.branchName,
+        userName: metaData.userName,
+        repoName: metaData.repoName,
+      },
       accessToken,
-    })
-    const caughtAggressiveError = getTreeDataAggressively.catch(error => {
+    )
+    const caughtAggressiveError = getTreeDataAggressively?.catch(error => {
       // 1. the repo has no master branch
       // 2. detect branch name from DOM failed
       // 3. not very possible...
@@ -87,19 +84,32 @@ export const init: BoundMethodCreator = dispatch => async () => {
       return error
     })
     let getTreeData = getTreeDataAggressively
-    const metaDataFromAPI = await GitHubHelper.getRepoMeta({ ...metaData, accessToken })
-    const projectDefaultBranchName = metaDataFromAPI['default_branch']
-    if (!detectedBranchName && projectDefaultBranchName !== metaData.branchName) {
+    const metaDataFromAPI = await platform.getMetaData(
+      {
+        branchName: metaData.branchName,
+        userName: metaData.userName,
+        repoName: metaData.repoName,
+      },
+      accessToken,
+    )
+    const projectDefaultBranchName = metaDataFromAPI?.defaultBranchName
+    if (
+      !detectedBranchName &&
+      projectDefaultBranchName &&
+      projectDefaultBranchName !== metaData.branchName
+    ) {
       // Accessing repository's non-homepage(no branch name in URL, nor in DOM)
       // We predicted its default branch to be 'master' and sent aggressive request
       // Throw that request due to the repo do not use {defaultBranchName} as default branch
       metaData.branchName = projectDefaultBranchName
-      getTreeData = GitHubHelper.getTreeData({
-        branchName: metaData.branchName,
-        userName: metaData.userName,
-        repoName: metaData.repoName,
+      getTreeData = platform.getTreeData(
+        {
+          branchName: metaData.branchName,
+          userName: metaData.userName,
+          repoName: metaData.repoName,
+        },
         accessToken,
-      })
+      )
     } else {
       caughtAggressiveError.then(error => {
         // aggressive requested correct branch but ends in failure (e.g. project is empty)
@@ -109,18 +119,14 @@ export const init: BoundMethodCreator = dispatch => async () => {
       })
     }
     getTreeData
-      .then(treeData => {
+      .then(async treeData => {
         if (treeData) {
-          // in an unknown rare case this NOT happen
           dispatch.set({ treeData })
         }
       })
       .catch(err => dispatch.call(handleError, err))
-    Object.assign(metaData, { api: metaDataFromAPI })
+    Object.assign(metaData, metaDataFromAPI)
     dispatch.call(setMetaData, metaData)
-    const shouldShow =
-      intelligentToggle === null ? URLHelper.isInCodePage(metaData) : intelligentToggle
-    dispatch.call(setShouldShow, shouldShow)
   } catch (err) {
     dispatch.call(handleError, err)
   } finally {
@@ -129,17 +135,16 @@ export const init: BoundMethodCreator = dispatch => async () => {
 }
 
 export const handleError: BoundMethodCreator<[Error]> = dispatch => async err => {
-  if (err.message === GitHubHelper.EMPTY_PROJECT) {
+  if (err.message === errors.EMPTY_PROJECT) {
     dispatch.call(setError, 'This project seems to be empty.')
-  } else if (err.message === GitHubHelper.BLOCKED_PROJECT) {
+  } else if (err.message === errors.BLOCKED_PROJECT) {
     dispatch.call(setError, 'This project is blocked.')
   } else if (
-    err.message === GitHubHelper.NOT_FOUND ||
-    err.message === GitHubHelper.BAD_CREDENTIALS ||
-    err.message === GitHubHelper.API_RATE_LIMIT
+    err.message === errors.NOT_FOUND ||
+    err.message === errors.BAD_CREDENTIALS ||
+    err.message === errors.API_RATE_LIMIT
   ) {
     dispatch.set({ errorDueToAuth: true })
-    dispatch.call(setShowSettings, true)
   } else {
     DOMHelper.markGitakoReadyState(false)
     dispatch.call(setError, 'Some thing went wrong.')
@@ -175,10 +180,6 @@ export const toggleShowSettings: BoundMethodCreator = dispatch => () =>
   dispatch.set(({ showSettings }) => ({
     showSettings: !showSettings,
   }))
-
-export const setShowSettings: BoundMethodCreator<[
-  ConnectorState['showSettings'],
-]> = dispatch => showSettings => dispatch.set({ showSettings })
 
 export const setMetaData: BoundMethodCreator<[ConnectorState['metaData']]> = dispatch => metaData =>
   dispatch.set({ metaData })

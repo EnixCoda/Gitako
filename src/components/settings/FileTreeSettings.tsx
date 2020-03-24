@@ -24,7 +24,7 @@ const options: {
   {
     key: 'native',
     value: 'native',
-    label: `Native GitHub icons`,
+    label: `GitHub icons`,
   },
 ]
 

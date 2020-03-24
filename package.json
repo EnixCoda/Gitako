@@ -1,7 +1,7 @@
 {
   "name": "gitako",
   "version": "1.0.1",
-  "description": "Awesome GitHub file tree.",
+  "description": "File tree for GitHub and other platforms.",
   "repository": "https://github.com/EnixCoda/Gitako",
   "author": "EnixCoda",
   "license": "MIT",

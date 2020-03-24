@@ -2,13 +2,12 @@ import { Link } from '@primer/components'
 import { Icon } from 'components/Icon'
 import { VERSION } from 'env'
 import * as React from 'react'
-import { Config } from 'utils/configHelper'
 import { useStates } from 'utils/hooks/useStates'
 import { AccessTokenSettings } from './settings/AccessTokenSettings'
 import { FileTreeSettings } from './settings/FileTreeSettings'
 import { SettingsSection } from './settings/SettingsSection'
 import { SidebarSettings } from './settings/SidebarSettings'
-import { SimpleToggleField } from './SimpleToggleField'
+import { SimpleField, SimpleToggleField } from './SimpleToggleField'
 
 const WIKI_HOME_LINK = 'https://github.com/EnixCoda/Gitako/wiki'
 export const wikiLinks = {
@@ -22,17 +21,6 @@ export const wikiLinks = {
 type Props = {
   activated: boolean
   toggleShowSettings: () => void
-}
-
-export type SimpleField = {
-  key: keyof Config
-  label: string
-  wikiLink?: string
-  description?: string
-  overwrite?: {
-    value: <T>(value: T) => boolean
-    onChange: (checked: boolean) => any
-  }
 }
 
 const moreFields: SimpleField[] = [

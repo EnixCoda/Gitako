@@ -4,6 +4,11 @@ import { Config } from 'utils/configHelper'
 
 type Props = {}
 
+type PartialValSet<T> = {
+  val: T
+  set: (val: Partial<T>) => void
+}
+
 type ContextShape = PartialValSet<Config>
 export type ConfigsContextShape = ContextShape
 

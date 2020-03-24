@@ -1,6 +1,5 @@
 import rawFileIconIndex from 'assets/icons/file-icons-index.csv'
 import rawFolderIconIndex from 'assets/icons/folder-icons-index.csv'
-import { TreeNode } from 'utils/VisibleNodesGenerator'
 
 function parseFileIconMapCSV() {
   const filenameIndex = new Map<string, string>()

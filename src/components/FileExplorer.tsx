@@ -6,13 +6,13 @@ import { useConfigs } from 'containers/ConfigsContext'
 import { connect } from 'driver/connect'
 import { FileExplorerCore } from 'driver/core'
 import { ConnectorState, Props } from 'driver/core/FileExplorer'
+import { platform } from 'platforms'
 import * as React from 'react'
 import { useEvent, usePrevious } from 'react-use'
 import { FixedSizeList as List, ListChildComponentProps, ListProps } from 'react-window'
 import { cx } from 'utils/cx'
 import { useOnLocationChange } from 'utils/hooks/useOnLocationChange'
-import { getCurrentPath } from 'utils/URLHelper'
-import { TreeNode, VisibleNodes } from 'utils/VisibleNodesGenerator'
+import { VisibleNodes } from 'utils/VisibleNodesGenerator'
 import { Icon } from './Icon'
 import { SizeObserver } from './SizeObserver'
 
@@ -30,9 +30,9 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
   }, [])
 
   React.useEffect(() => {
-    const { setUpTree, treeData, metaData } = props
-    setUpTree({ treeData, metaData, compressSingletonFolder, accessToken })
-  }, [props.setUpTree, props.treeData, compressSingletonFolder, accessToken])
+    const { setUpTree, treeRoot, metaData } = props
+    setUpTree({ treeRoot, metaData, compressSingletonFolder, accessToken })
+  }, [props.setUpTree, props.treeRoot, compressSingletonFolder, accessToken])
 
   React.useEffect(() => {
     const { execAfterRender } = props
@@ -201,7 +201,8 @@ function ListView({
   }, [listRef.current, focusedNode, nodes.length])
 
   const goToCurrentItem = React.useCallback(() => {
-    expandTo(getCurrentPath(metaData.branchName))
+    const targetPath = platform.getCurrentPath(metaData.branchName)
+    if (targetPath) expandTo(targetPath)
   }, [metaData.branchName])
   useOnLocationChange(goToCurrentItem)
   useEvent('pjax:complete', goToCurrentItem, window)

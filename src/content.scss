@@ -1,7 +1,5 @@
 @import '~nprogress/nprogress.css';
 
-@import '~@primer/css/base/index.scss';
-
 @import '~@primer/css/support/variables/colors.scss';
 @import '~@primer/css/support/variables/color-system.scss';
 @import '~@primer/css/support/variables/typography.scss';
@@ -177,6 +175,8 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 }
 
 .#{$name}-side-bar {
+  @import '~@primer/css/base/index.scss';
+
   .#{$name}-position-wrapper {
     position: fixed;
     top: 0;

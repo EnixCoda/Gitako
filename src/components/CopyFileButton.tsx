@@ -1,6 +1,7 @@
+import { getCodeElement } from 'platforms/GitHub/DOMHelper'
 import * as React from 'react'
 import { cx } from 'utils/cx'
-import { copyElementContent, getCodeElement } from 'utils/DOMHelper'
+import { copyElementContent } from 'utils/DOMHelper'
 
 type Props = {}
 

@@ -1,21 +1,17 @@
 import { GetCreatedMethod, MethodCreator } from 'driver/connect'
-import * as ini from 'ini'
-import { Base64 } from 'js-base64'
+import { platform } from 'platforms'
 import { Config } from 'utils/configHelper'
 import * as DOMHelper from 'utils/DOMHelper'
-import { findNode, searchKeyToRegexps } from 'utils/general'
-import * as GitHubHelper from 'utils/GitHubHelper'
-import { BlobData } from 'utils/GitHubHelper'
-import * as treeParser from 'utils/treeParser'
-import * as URLHelper from 'utils/URLHelper'
-import { TreeNode, VisibleNodes, VisibleNodesGenerator } from 'utils/VisibleNodesGenerator'
+import { searchKeyToRegexps } from 'utils/general'
+import { VisibleNodes, VisibleNodesGenerator } from 'utils/VisibleNodesGenerator'
 
 export type Props = {
-  treeData?: GitHubHelper.TreeData
-  metaData: GitHubHelper.MetaData
+  treeRoot?: TreeNode
+  metaData: MetaData
   freeze: boolean
   accessToken: string | undefined
   toggleShowSettings: React.MouseEventHandler
+  loadWithPJAX(url: string): void
 }
 
 export type ConnectorState = {
@@ -35,9 +31,11 @@ export type ConnectorState = {
   expandTo: GetCreatedMethod<typeof expandTo>
 }
 
-type DepthMap = Map<TreeNode, number>
-
-function getVisibleParentNode(nodes: TreeNode[], focusedNode: TreeNode, depths: DepthMap) {
+function getVisibleParentNode(
+  nodes: TreeNode[],
+  focusedNode: TreeNode,
+  depths: Map<TreeNode, number>,
+) {
   const focusedNodeIndex = nodes.indexOf(focusedNode)
   const focusedNodeDepth = depths.get(focusedNode)
   let indexOfParentNode = focusedNodeIndex - 1
@@ -62,102 +60,13 @@ type BoundMethodCreator<Args extends any[] = []> = MethodCreator<Props, Connecto
 export const init: BoundMethodCreator = dispatch => () =>
   dispatch.call(setStateText, 'Fetching File List...')
 
-const githubSubModuleURLRegex = {
-  HTTP: /^https?:\/\/.*?$/,
-  HTTPGit: /^https:\/\/github.com\/.*?\/.*?\.git$/,
-  git: /^git@github.com:(.*?)\/(.*?)\.git$/,
-}
-
-function transformModuleGitURL(node: TreeNode, URL: string) {
-  const matched = URL.match(githubSubModuleURLRegex.git)
-  if (!matched) return
-  const [_, userName, repoName] = matched
-  return appendCommitPath(`https://github.com/${userName}/${repoName}`, node)
-}
-
-function cutDotGit(URL: string) {
-  return URL.replace(/\.git$/, '')
-}
-
-function appendCommitPath(URL: string, node: TreeNode) {
-  return URL.replace(/\/?$/, `/tree/${node.sha}`)
-}
-
-function transformModuleHTTPDotGitURL(node: TreeNode, URL: string) {
-  return appendCommitPath(cutDotGit(URL), node)
-}
-
-function transformModuleHTTPURL(node: TreeNode, URL: string) {
-  return appendCommitPath(URL, node)
-}
-
-type Parsed = {
-  [key: string]: ParsedModule | Parsed
-}
-
-type ParsedModule = {
-  path?: string
-  url?: string
-}
-
-function resolveGitModules(root: TreeNode, blobData: BlobData) {
-  if (blobData) {
-    if (blobData.encoding === 'base64' && blobData.content && Array.isArray(root.contents)) {
-      const content = Base64.decode(blobData.content)
-      const parsed: Parsed = ini.parse(content)
-      handleParsed(root, parsed)
-    }
-  }
-}
-
-function handleParsed(root: TreeNode, parsed: Parsed) {
-  Object.values(parsed).forEach(value => {
-    if (typeof value === 'string') return
-    const { url, path } = value
-    if (typeof url === 'string' && typeof path === 'string') {
-      const node = findNode(root, path.split('/'))
-      if (node) {
-        if (githubSubModuleURLRegex.HTTPGit.test(url)) {
-          node.url = transformModuleHTTPDotGitURL(node, url)
-        } else if (githubSubModuleURLRegex.git.test(url)) {
-          node.url = transformModuleGitURL(node, url)
-        } else if (githubSubModuleURLRegex.HTTP.test(url)) {
-          node.url = transformModuleHTTPURL(node, url)
-        } else {
-          node.accessDenied = true
-        }
-      } else {
-        // It turns out that we did not miss any submodule after a lot of tests.
-        // Turning this off.
-        // raiseError(new Error(`Submodule node not found`), { path })
-      }
-    } else {
-      handleParsed(root, value as Parsed)
-    }
-  })
-}
-
 export const setUpTree: BoundMethodCreator<[
-  Pick<Props, 'treeData' | 'metaData' | 'accessToken'> & Pick<Config, 'compressSingletonFolder'>,
-]> = dispatch => async ({ treeData, metaData, compressSingletonFolder, accessToken }) => {
-  if (!treeData) return
+  Pick<Props, 'treeRoot' | 'metaData' | 'accessToken'> & Pick<Config, 'compressSingletonFolder'>,
+]> = dispatch => async ({ treeRoot, metaData, compressSingletonFolder, accessToken }) => {
+  if (!treeRoot) return
   dispatch.call(setStateText, 'Rendering File List...')
-  const { root, gitModules } = treeParser.parse(treeData, metaData)
 
-  if (gitModules) {
-    if (metaData.userName && metaData.repoName && gitModules.sha) {
-      const blobData = await GitHubHelper.getBlobData({
-        userName: metaData.userName,
-        repoName: metaData.repoName,
-        sha: gitModules.sha,
-        accessToken,
-      })
-
-      resolveGitModules(root as TreeNode, blobData)
-    }
-  }
-
-  visibleNodesGenerator = new VisibleNodesGenerator(root as TreeNode, {
+  visibleNodesGenerator = new VisibleNodesGenerator(treeRoot as TreeNode, {
     compress: compressSingletonFolder,
   })
 
@@ -165,7 +74,8 @@ export const setUpTree: BoundMethodCreator<[
 
   tasksAfterRender.push(DOMHelper.focusSearchInput)
   dispatch.call(setStateText, '')
-  dispatch.call(goTo, URLHelper.getCurrentPath(metaData.branchName))
+  const targetPath = platform.getCurrentPath(metaData.branchName)
+  if (targetPath) dispatch.call(goTo, targetPath)
 }
 
 export const execAfterRender: BoundMethodCreator = dispatch => () => {
@@ -183,7 +93,7 @@ export const setStateText: BoundMethodCreator<[ConnectorState['stateText']]> = d
   })
 
 export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch => event => {
-  const [{ searched, visibleNodes }] = dispatch.get()
+  const [{ searched, visibleNodes }, { loadWithPJAX }] = dispatch.get()
   if (!visibleNodes) return
   const { nodes, focusedNode, expandedNodes, depths } = visibleNodes
   function handleVerticalMove(index: number) {
@@ -239,7 +149,7 @@ export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch
             dispatch.call(setExpand, focusedNode, true)
           }
         } else if (focusedNode.type === 'blob') {
-          if (focusedNode.url) DOMHelper.loadWithPJAX(focusedNode.url)
+          if (focusedNode.url) loadWithPJAX(focusedNode.url)
         } else if (focusedNode.type === 'commit') {
           window.open(focusedNode.url)
         }
@@ -254,7 +164,7 @@ export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch
           }
         } else if (focusedNode.type === 'blob') {
           if (searched) dispatch.call(goTo, focusedNode.path.split('/'))
-          else if (focusedNode.url) DOMHelper.loadWithPJAX(focusedNode.url)
+          else if (focusedNode.url) loadWithPJAX(focusedNode.url)
         } else if (focusedNode.type === 'commit') {
           window.open(focusedNode.url)
         }
@@ -335,8 +245,9 @@ export const onNodeClick: BoundMethodCreator<[TreeNode]> = dispatch => node => {
   if (node.type === 'tree') {
     dispatch.call(toggleNodeExpansion, node, true)
   } else if (node.type === 'blob') {
+    const [, { loadWithPJAX }] = dispatch.get()
     dispatch.call(focusNode, node, true)
-    if (node.url) DOMHelper.loadWithPJAX(node.url)
+    if (node.url) loadWithPJAX(node.url)
   } else if (node.type === 'commit') {
     if (node.url) {
       window.open(node.url, '_blank')

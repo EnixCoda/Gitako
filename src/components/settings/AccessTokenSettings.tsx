@@ -1,7 +1,7 @@
 import { Button, TextInput } from '@primer/components'
 import { wikiLinks } from 'components/SettingsBar'
 import { useConfigs } from 'containers/ConfigsContext'
-import { oauth } from 'env'
+import { GITHUB_OAUTH } from 'env'
 import * as React from 'react'
 import { useStates } from 'utils/hooks/useStates'
 import { SettingsSection } from './SettingsSection'
@@ -79,7 +79,7 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
             onClick={() => {
               // use js here to make sure redirect_uri is latest url
               const url = `https://github.com/login/oauth/authorize?client_id=${
-                oauth.clientId
+                GITHUB_OAUTH.clientId
               }&scope=repo&redirect_uri=${encodeURIComponent(window.location.href)}`
               window.location.href = url
             }}

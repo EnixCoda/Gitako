@@ -1,10 +1,22 @@
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
+import { Config } from 'utils/configHelper'
 import { Field } from './settings/Field'
-import { SimpleField } from './SettingsBar'
+
+export type SimpleField = {
+  key: keyof Config
+  label: string
+  wikiLink?: string
+  description?: string
+  overwrite?: {
+    value: <T>(value: T) => boolean
+    onChange: (checked: boolean) => any
+  }
+}
 
 type Props = {
   field: SimpleField
+
   onChange?(): void
 }
 
