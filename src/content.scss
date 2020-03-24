@@ -1,23 +1,31 @@
 @import '~nprogress/nprogress.css';
 
-@name: gitako;
+@import '~@primer/css/base/index.scss';
 
-@min-screen-width: 1280px;
-@github-content-width: 1020px;
-@side-bar-base-width: (@min-screen-width - @github-content-width);
-@min-width-with-gitako: (@min-screen-width + @side-bar-base-width);
+@import '~@primer/css/support/variables/colors.scss';
+@import '~@primer/css/support/variables/color-system.scss';
+@import '~@primer/css/support/variables/typography.scss';
+@import '~@primer/css/support/variables/misc.scss';
+@import '~@primer/css/support/variables/layout.scss';
 
-@github-header-z-index: 32;
-@github-pull-request-float-header-z-index: 110;
-@minimal-z-index: max(@github-header-z-index, @github-pull-request-float-header-z-index) + 1;
+$name: gitako;
+
+$min-screen-width: 1280px;
+$github-content-width: 1020px;
+$side-bar-base-width: $min-screen-width - $github-content-width;
+$min-width-with-gitako: $min-screen-width + $side-bar-base-width;
+
+$github-header-z-index: 32;
+$github-pull-request-float-header-z-index: 110;
+$minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-z-index) + 1;
 
 :root {
-  --gitako-width: @side-bar-base-width;
+  --gitako-width: #{$side-bar-base-width};
 }
 
-.@{name}-ready {
+.#{$name}-ready {
   .js-header-wrapper {
-    background: #24292e;
+    background: $gray-dark;
   }
   .Header {
     max-width: 1012px;
@@ -25,9 +33,9 @@
   }
 }
 
-@media (min-width: @github-content-width) {
+@media (min-width: $github-content-width) {
   body {
-    min-width: @github-content-width;
+    min-width: $github-content-width;
   }
 }
 
@@ -37,20 +45,20 @@
     width: 0;
     height: 0;
     top: 8px;
-    left: ~'calc(100% - 40px)';
+    left: calc(100% - 40px);
     z-index: 1;
 
     .clippy {
       width: 32px;
       height: 32px;
-      border: 1px solid #ddd;
+      border: 1px solid $border-gray-dark;
       border-radius: 4px;
-      background: #f9f9f9;
+      background: $bg-gray-light;
       &:hover {
-        background: #fff;
+        background: $bg-white;
       }
       &:active {
-        background: #f0f0f0;
+        background: $bg-gray-light;
       }
       .icon {
         width: 100%;
@@ -74,7 +82,7 @@
   left: 0; /* reposition progress bar of GitHub */
 }
 
-.hidden {
+%hidden {
   display: none;
 }
 
@@ -82,12 +90,12 @@
   visibility: hidden;
 }
 
-.@{name}-toggle-show-button-wrapper {
-  @animation-duration: 0.5s;
+.#{$name}-toggle-show-button-wrapper {
+  $animation-duration: 0.5s;
   position: fixed;
   top: 5px;
   left: 0;
-  z-index: @minimal-z-index;
+  z-index: $minimal-z-index;
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -96,53 +104,53 @@
   will-change: transform;
   border: 1px solid transparent;
 
-  .transform-expanded {
+  @mixin transform-expanded() {
     transform: translate(calc(var(--gitako-width) - 30px));
   }
-  .transform-collapsed {
+  @mixin transform-collapsed() {
     transform: translate(5px);
   }
 
-  .transform-expanded;
-  animation: toggle-show-button-wrapper-expand @animation-duration;
+  @include transform-expanded();
+  animation: toggle-show-button-wrapper-expand $animation-duration;
 
   &.collapsed {
-    border-color: #999999;
+    border-color: $border-gray;
     border-radius: 3px;
-    background: #f5f5f5;
+    background: $bg-gray;
 
-    .transform-collapsed;
-    animation: toggle-show-button-wrapper-collapse @animation-duration;
+    @include transform-collapsed();
+    animation: toggle-show-button-wrapper-collapse $animation-duration;
 
     .action-icon {
-      color: #0366d6d0;
+      color: $blue;
     }
   }
 
   @keyframes toggle-show-button-wrapper-expand {
     from {
-      .transform-collapsed;
+      @include transform-collapsed();
     }
     to {
-      .transform-expanded;
+      @include transform-expanded();
     }
   }
 
   @keyframes toggle-show-button-wrapper-collapse {
     from {
-      .transform-expanded;
+      @include transform-expanded();
     }
     to {
-      .transform-collapsed;
+      @include transform-collapsed();
     }
   }
 
   .action-icon {
-    color: #666666;
+    color: $gray;
     width: 20px;
     height: 20px;
     text-align: center;
-    transition: all @animation-duration ease;
+    transition: all $animation-duration ease;
     .octicon {
       width: 100%;
       height: 100%;
@@ -151,7 +159,7 @@
 
   &.error {
     .action-icon {
-      color: #d73a49;
+      color: $red;
     }
   }
 
@@ -168,36 +176,36 @@
   }
 }
 
-.@{name}-side-bar {
-  .@{name}-position-wrapper {
+.#{$name}-side-bar {
+  .#{$name}-position-wrapper {
     position: fixed;
     top: 0;
     left: 0;
     height: 100vh;
-    z-index: @minimal-z-index;
+    z-index: $minimal-z-index;
     display: flex;
 
     &.hidden {
-      .hidden;
+      @extend %hidden;
     }
 
     .gitako-position-content {
       width: var(--gitako-width);
     }
   }
-  .@{name}-resize-handler {
+  .#{$name}-resize-handler {
     display: flex;
     align-items: center;
     cursor: ew-resize;
     user-select: none;
     width: 0;
-    background: #e1e4e8;
-    border-left: 1px solid #e1e4e8;
+    background: $bg-gray;
+    border-right: 1px solid $border-gray;
     overflow: hidden;
-    &:hover {
+    &:hover,
+    &:active {
       width: 16px;
-      background: #fafbfc;
-      border-right: 1px solid #e1e4e8;
+      background: $bg-gray-light;
     }
 
     .octicon {
@@ -207,25 +215,29 @@
       font-size: 0;
     }
   }
-  .@{name}-side-bar-body {
+  .#{$name}-side-bar-body {
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
-    background: #fafbfc;
-    border-right: 1px solid #e1e4e8;
-    border-left: 1px solid #e1e4e8;
+    background: $bg-gray-light;
+    border-right: 1px solid $border-gray-light;
+    border-left: 1px solid $border-gray;
     overflow: hidden;
 
     &.hidden {
-      .hidden;
+      @extend %hidden;
     }
 
     .octicon {
       transition: transform 0.3s ease;
-      color: rgba(3, 47, 98, 0.55);
+      color: rgba($blue-800, 0.55);
       width: 100%;
       height: 100%;
+    }
+
+    .octicon-color {
+      color: rgba($blue-800, 0.55);
     }
 
     .octicon-wrapper {
@@ -235,11 +247,7 @@
       text-align: center;
     }
 
-    .octicon-color {
-      color: rgba(3, 47, 98, 0.55);
-    }
-
-    .@{name}-side-bar-content {
+    .#{$name}-side-bar-content {
       display: flex;
       flex: 1;
       flex-direction: column;
@@ -247,20 +255,11 @@
       min-height: 0; // make content shrinkable
 
       .meta-bar {
-        position: relative;
+        position: relative; // prevent overlap by outline of other elements
         padding: 10px;
-        padding-right: 30px;
-        font-size: 13px;
-        line-height: 20px;
-        color: #586069;
-        background-color: #f1f8ff;
-        border-bottom: 1px solid #c8e1ff;
-
-        a {
-          // fix a weird bug:
-          // when gitako failed loading repo, cursor hovering <a> in meta bar will be 'text'
-          cursor: pointer;
-        }
+        padding-right: 30px; // space for toggle button
+        background: $bg-blue-light;
+        border-bottom: 1px solid $border-gray;
 
         .repo-name {
           font-weight: bolder;
@@ -314,18 +313,13 @@
 
         /* search input */
         .search-input-wrapper {
-          input.form-control {
+          .search-input {
             width: 100%;
 
             &.error {
-              border-color: #d73a49;
+              border-color: $red;
             }
           }
-        }
-
-        .no-results {
-          padding: 0px 10px;
-          color: #666;
         }
 
         .files {
@@ -333,104 +327,97 @@
           overflow: auto;
         }
 
-        .node-item-row {
-          background: #fff;
+        .node-item {
+          background: $bg-white;
           &:hover {
-            background: #f6f8fa;
+            background: $bg-gray-light;
           }
-          &.focused {
-            background: #f0f0f6;
+          &.focused,
+          &:active {
+            background: $bg-gray;
           }
 
           &.disabled {
             .node-item {
               pointer-events: none;
-              color: #999999;
+              color: $gray-light;
+            }
+          }
+          display: flex;
+          justify-content: space-between;
+          margin: 0;
+          color: $blue;
+          line-height: 20px;
+          padding: 6px 10px;
+          cursor: pointer;
+          border-top: 1px solid $border-gray-light;
+          white-space: nowrap;
+
+          @mixin icon-size() {
+            width: 16px;
+            height: 16px;
+          }
+
+          .octicon-wrapper:first-child {
+            margin-right: 6px;
+          }
+
+          &-type-icon {
+            margin-right: 4px;
+            @include icon-size();
+
+            & + .octicon-wrapper,
+            & + .node-item-icon {
+              margin-right: 6px;
             }
           }
 
-          .node-item {
-            display: flex;
-            justify-content: space-between;
-            margin: 0;
-            color: #0366d6;
-            line-height: 20px;
-            padding: 6px 10px;
-            cursor: pointer;
-            border-top: 1px solid #eaecef;
-            transition: all 0.5s ease;
+          &-icon {
+            @include icon-size();
+            object-fit: contain;
+            vertical-align: text-bottom;
+            box-sizing: content-box;
+
+            &.dim {
+              filter: sepia(1) hue-rotate(180deg);
+            }
+          }
+
+          // folder icon rotate when expand
+          &.expanded .octicon.ChevronRight {
+            transform: rotate(90deg);
+          }
+
+          .node-item-label {
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
+          .go-to-button {
+            display: none;
             white-space: nowrap;
-
-            .icon-size() {
-              width: 16px;
-              height: 16px;
-            }
-
-            .octicon-wrapper:first-child {
-              margin-right: 6px;
-            }
-
-            &-type-icon {
-              margin-right: 4px;
-              .icon-size();
-
-              & + .octicon-wrapper,
-              & + .node-item-icon {
-                margin-right: 6px;
-              }
-            }
-
-            &-icon {
-              .icon-size();
-              object-fit: contain;
-              vertical-align: text-bottom;
-              box-sizing: content-box;
-
-              &.dim {
-                filter: sepia(1) hue-rotate(180deg);
-              }
-            }
-
-            // folder icon rotate when expand
-            &.expanded .octicon.ChevronRight {
-              transform: rotate(90deg);
-            }
-
-            .node-item-label {
-              overflow: hidden;
-              text-overflow: ellipsis;
-            }
-
-            &:hover .node-item-name {
-              text-decoration: underline;
-            }
-
+            background: transparent;
+            border: none;
+            padding: 0;
+          }
+          &:hover {
             .go-to-button {
-              display: none;
-              white-space: nowrap;
-              background: transparent;
-              border: none;
-              padding: 0;
-            }
-            &:hover {
-              .go-to-button {
-                display: inline-block;
-              }
+              display: inline-block;
             }
           }
         }
       }
     }
 
-    .@{name}-settings-bar {
+    .#{$name}-settings-bar {
       z-index: 2;
-      background: #fafbfc;
+      background: $bg-gray-light;
       display: flex;
       flex-direction: column;
       max-height: 100%;
       &-title {
-        border-top: 1px solid #eaecef;
-        padding: 6px 10px;
+        border-top: 1px solid $border-gray-light;
+        padding: 10px;
         box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.2), 0 3px 4px 0 rgba(0, 0, 0, 0.14),
           0 3px 3px -2px rgba(0, 0, 0, 0.12);
         z-index: 1;
@@ -447,58 +434,60 @@
           height: 10px;
           top: 0;
           left: 0;
-          background: #fafbfc;
+          background: $bg-gray-light;
           z-index: 1;
         }
-        &-section {
+        .settings-section {
           &:not(:last-of-type) {
-            padding-bottom: 16px;
+            margin-bottom: 30px;
           }
 
-          .description:hover {
-            cursor: help;
+          .field {
+            margin-bottom: 4px;
+
+            label {
+              display: inline-block;
+              margin-bottom: 2px;
+              font-weight: 600;
+            }
+            input {
+              &:disabled {
+                cursor: not-allowed;
+              }
+            }
+            select {
+              width: 100%;
+              background: $bg-white;
+            }
+            &.field-checkbox {
+              padding-left: 20px;
+              vertical-align: middle;
+              label {
+                margin-bottom: 0;
+              }
+
+              input[type='checkbox'],
+              input[type='radio'] {
+                float: left;
+                margin: 5px 0 0 -20px;
+                vertical-align: middle;
+              }
+            }
           }
         }
-
-        /* inputs for access token & shortcut were too wide */
-        input.form-control {
-          min-width: 100px;
-        }
-
-        .form-checkbox {
-          margin: 0;
-        }
       }
-      select {
-        -moz-appearance: none;
-      }
-      .form-label {
-        margin-bottom: 2px;
+      .link-button {
+        cursor: pointer;
         display: inline-block;
+        margin-bottom: 4px;
       }
-      .access-token {
-        border-bottom: none; // prevent overwrite by github style
-        .link-button {
-          cursor: pointer;
-        }
-        .hint {
-          color: #6a737d;
-        }
+      .hint {
+        color: $gray;
       }
       .access-token-input-control {
         display: flex;
-        margin-top: 8px;
         .access-token-input {
           flex: 1;
-
-          &:disabled {
-            cursor: not-allowed;
-          }
-        }
-      }
-      .toggle-shortcut {
-        .hint {
-          color: #6a737d;
         }
       }
       .toggle-shortcut-input-control {
@@ -507,22 +496,14 @@
           flex: 1;
         }
       }
-      .singleton {
-        .hint {
-          color: #6a737d;
-        }
-      }
       .header-row {
         flex-shrink: 0;
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 6px 10px;
-        border-top: 1px solid #eaecef;
+        border-top: 1px solid $border-gray-light;
 
-        .version {
-          color: #999999;
-        }
         .show-settings-icon {
           width: 20px;
           height: 20px;
@@ -533,10 +514,6 @@
           height: 20px;
           cursor: pointer;
         }
-      }
-
-      input.form-control:not(:last-child) {
-        margin-right: 5px;
       }
     }
   }

@@ -81,10 +81,12 @@ module.exports = {
           cacheDirectory: true,
         },
         include: [srcPath, packagesPath],
+        exclude: /node_modules/,
+        sideEffects: false,
       },
       {
-        test: /\.less$/,
-        loader: [MiniCssExtractPlugin.loader, 'css-loader', 'less-loader'],
+        test: /\.scss$/,
+        loader: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
         include: [srcPath],
       },
       {

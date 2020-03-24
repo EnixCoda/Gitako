@@ -1,5 +1,5 @@
 import * as React from 'react'
-import useLocation from 'react-use/esm/useLocation'
+import { useLocation } from 'react-use'
 
 export function useOnLocationChange(
   callback: React.EffectCallback,

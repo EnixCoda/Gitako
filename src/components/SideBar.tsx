@@ -11,11 +11,10 @@ import { SideBarCore } from 'driver/core'
 import { ConnectorState, Props } from 'driver/core/SideBar'
 import { oauth } from 'env'
 import * as React from 'react'
-import useEvent from 'react-use/esm/useEvent'
+import { useEvent, useUpdateEffect } from 'react-use'
 import { cx } from 'utils/cx'
 import * as DOMHelper from 'utils/DOMHelper'
 import { JSONRequest, parseURLSearch } from 'utils/general'
-import { useDidUpdate } from 'utils/hooks/useDidUpdate'
 import * as keyHelper from 'utils/keyHelper'
 import * as URLHelper from 'utils/URLHelper'
 
@@ -83,7 +82,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
   useEvent('pjax:complete', attachCopySnippetButton, window)
 
   // init again when setting new accessToken
-  useDidUpdate(() => {
+  useUpdateEffect(() => {
     props.init()
   }, [accessToken || '']) // fallback for preventing duplicated requests
 
@@ -162,11 +161,11 @@ function renderAccessDeniedError(hasToken: boolean) {
       ) : (
         <p>
           Gitako needs access token to read this project due to{' '}
-          <a target="_blank" href="https://developer.github.com/v3/#rate-limiting">
+          <a href="https://developer.github.com/v3/#rate-limiting" target="_blank">
             GitHub rate limiting
           </a>{' '}
           and{' '}
-          <a target="_blank" href="https://developer.github.com/v3/#authentication">
+          <a href="https://developer.github.com/v3/#authentication" target="_blank">
             auth needs
           </a>
           . Please setup access token in the settings panel below.

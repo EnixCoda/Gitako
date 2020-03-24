@@ -1,3 +1,4 @@
+import { Text } from '@primer/components'
 import { LoadingIndicator } from 'components/LoadingIndicator'
 import { Node } from 'components/Node'
 import { SearchBar } from 'components/SearchBar'
@@ -6,11 +7,10 @@ import { connect } from 'driver/connect'
 import { FileExplorerCore } from 'driver/core'
 import { ConnectorState, Props } from 'driver/core/FileExplorer'
 import * as React from 'react'
-import useEvent from 'react-use/esm/useEvent'
+import { useEvent, usePrevious } from 'react-use'
 import { FixedSizeList as List, ListChildComponentProps, ListProps } from 'react-window'
 import { cx } from 'utils/cx'
 import { useOnLocationChange } from 'utils/hooks/useOnLocationChange'
-import { usePrevious } from 'utils/hooks/usePrevious'
 import { getCurrentPath } from 'utils/URLHelper'
 import { TreeNode, VisibleNodes } from 'utils/VisibleNodesGenerator'
 import { Icon } from './Icon'
@@ -69,7 +69,11 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
     ({ nodes, focusedNode }: VisibleNodes) => {
       const inSearch = searchKey !== ''
       if (inSearch && nodes.length === 0) {
-        return <label className={'no-results'}>No results found.</label>
+        return (
+          <Text marginTop={6} textAlign="center" color="text.gray">
+            No results found.
+          </Text>
+        )
       }
       return (
         <SizeObserver className={'files'}>
@@ -210,7 +214,7 @@ function ListView({
       }}
       itemData={{ nodes }}
       itemCount={nodes.length}
-      itemSize={35}
+      itemSize={36}
       height={height}
       width={width}
     >

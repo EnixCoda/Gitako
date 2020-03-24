@@ -1,5 +1,6 @@
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
+import { Field } from './settings/Field'
 import { SimpleField } from './SettingsBar'
 
 type Props = {
@@ -12,9 +13,24 @@ export function SimpleToggleField({ field, onChange }: Props) {
   const configContext = useConfigs()
   const value = configContext.val[field.key]
   return (
-    <div className={'form-checkbox'}>
+    <Field
+      id={field.key}
+      title={
+        <>
+          {field.label}{' '}
+          {field.wikiLink ? (
+            <a href={field.wikiLink} target={'_blank'}>
+              (?)
+            </a>
+          ) : (
+            field.description && <p className={'note'}>{field.description}</p>
+          )}
+        </>
+      }
+      className={'field-checkbox'}
+      checkbox
+    >
       <input
-        className={'form-control'}
         id={field.key}
         name={field.key}
         type={'checkbox'}
@@ -25,16 +41,6 @@ export function SimpleToggleField({ field, onChange }: Props) {
         }}
         checked={overwrite ? overwrite.value(value) : Boolean(value)}
       />
-      <label htmlFor={field.key}>
-        {field.label}{' '}
-        {field.wikiLink ? (
-          <a href={field.wikiLink} target={'_blank'}>
-            (?)
-          </a>
-        ) : (
-          field.description && <p className={'note'}>{field.description}</p>
-        )}
-      </label>
-    </div>
+    </Field>
   )
 }

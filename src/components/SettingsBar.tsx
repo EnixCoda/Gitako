@@ -1,3 +1,4 @@
+import { Link } from '@primer/components'
 import { Icon } from 'components/Icon'
 import { VERSION } from 'env'
 import * as React from 'react'
@@ -5,6 +6,7 @@ import { Config } from 'utils/configHelper'
 import { useStates } from 'utils/hooks/useStates'
 import { AccessTokenSettings } from './settings/AccessTokenSettings'
 import { FileTreeSettings } from './settings/FileTreeSettings'
+import { SettingsSection } from './settings/SettingsSection'
 import { SidebarSettings } from './settings/SidebarSettings'
 import { SimpleToggleField } from './SimpleToggleField'
 
@@ -52,14 +54,13 @@ function SettingsBarContent() {
 
   return (
     <>
-      <h3 className={'gitako-settings-bar-title'}>Settings</h3>
+      <h2 className={'gitako-settings-bar-title'}>Settings</h2>
       <div className={'gitako-settings-bar-content'}>
         <div className={'shadow-shelter'} />
         <AccessTokenSettings />
         <SidebarSettings />
         <FileTreeSettings />
-        <div className={'gitako-settings-bar-content-section others'}>
-          <h4>More</h4>
+        <SettingsSection title={'More'}>
           {moreFields.map(field => (
             <React.Fragment key={field.key}>
               <SimpleToggleField field={field} />
@@ -67,13 +68,12 @@ function SettingsBarContent() {
           ))}
 
           {reloadHint && <div className={'hint'}>{reloadHint}</div>}
-        </div>
-        <div className={'gitako-settings-bar-content-section issue'}>
-          <h4>Contact</h4>
+        </SettingsSection>
+        <SettingsSection title={'Contact'}>
           <a href="https://github.com/EnixCoda/Gitako/issues" target="_blank">
             Report bug / Request feature.
           </a>
-        </div>
+        </SettingsSection>
       </div>
     </>
   )
@@ -85,14 +85,15 @@ export function SettingsBar(props: Props) {
     <div className={'gitako-settings-bar'}>
       {activated && <SettingsBarContent />}
       <div className={'header-row'}>
-        <a
-          className={'version'}
+        <Link
+          color="gray.4"
+          fontSize={14}
           href={wikiLinks.changeLog}
           target={'_blank'}
           title={'Check out new features!'}
         >
           {VERSION}
-        </a>
+        </Link>
         {activated ? (
           <Icon
             type={'chevron-down'}

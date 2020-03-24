@@ -1,11 +1,11 @@
 import { HorizontalResizeHandler } from 'components/ResizeHandler'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
+import { useWindowSize } from 'react-use'
 import { cx } from 'utils/cx'
 import { bodySpacingClassName } from 'utils/DOMHelper'
 import * as features from 'utils/features'
 import { useMediaStyleSheet } from 'utils/hooks/useMediaStyleSheet'
-import { useWindowSize } from 'utils/hooks/useWindowSize'
 
 export type Size = number
 type Props = {
@@ -24,13 +24,11 @@ export function Resizable({ baseSize, className, children }: React.PropsWithChil
     setSize(baseSize)
   }, [baseSize])
 
-  useWindowSize(
-    width => {
-      if (size > width - MINIMAL_CONTENT_VIEWPORT_WIDTH)
-        setSize(width - MINIMAL_CONTENT_VIEWPORT_WIDTH)
-    },
-    [size],
-  )
+  const { width } = useWindowSize()
+  React.useEffect(() => {
+    if (size > width - MINIMAL_CONTENT_VIEWPORT_WIDTH)
+      setSize(width - MINIMAL_CONTENT_VIEWPORT_WIDTH)
+  }, [width, size])
 
   React.useEffect(() => {
     document.documentElement.style.setProperty('--gitako-width', size + 'px')
@@ -49,17 +47,13 @@ export function Resizable({ baseSize, className, children }: React.PropsWithChil
     size,
   )
 
+  const onResize = React.useCallback((size: number) => {
+    if (size < window.innerWidth - MINIMAL_CONTENT_VIEWPORT_WIDTH) setSize(size)
+  }, [])
   return (
     <div className={cx('gitako-position-wrapper', className)}>
       <div className={'gitako-position-content'}>{children}</div>
-      {features.resize && (
-        <HorizontalResizeHandler
-          onResize={size => {
-            if (size < window.innerWidth - MINIMAL_CONTENT_VIEWPORT_WIDTH) setSize(size)
-          }}
-          size={size}
-        />
-      )}
+      {features.resize && <HorizontalResizeHandler onResize={onResize} size={size} />}
     </div>
   )
 }
