@@ -21,6 +21,8 @@ Yet another extension for GitHub, available on both Chrome and Firefox. Inspired
 
 ### Install
 
+> Install for Chrome might be temporarily unavailable due to COVID-19 delayed webstore reviewing process, sorry!
+
 [![Install for Chrome](./ChromeWebStoreBadge.svg)](https://chrome.google.com/webstore/detail/gitako-github-file-tree/giljefjcheohhamkjphiebfjnlphnokk)
 
 [for Edge](https://microsoftedge.microsoft.com/addons/detail/alpoloddcggjhakjemghahlkofjekbca)
