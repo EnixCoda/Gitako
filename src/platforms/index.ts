@@ -1,29 +1,49 @@
+import * as storageHelper from 'utils/storageHelper'
 import { dummyPlatformForTypeSafety } from './dummyPlatformForTypeSafety'
 import { GitHub } from './GitHub'
 
-const hosts: Record<'GitHub' | 'GitLab' | 'Gitee', string[]> = {
-  GitHub: ['github.com'],
-  GitLab: ['gitlab.com'],
-  Gitee: ['gitee.com'],
+const platformsMap: Record<
+  'GitHub' | 'GitLab' | 'Gitee',
+  { platform: Platform; hosts: string[] }
+> = {
+  GitHub: { platform: GitHub, hosts: ['github.com'] },
+  GitLab: { platform: GitHub, hosts: ['gitlab.com'] },
+  Gitee: { platform: GitHub, hosts: ['gitee.com'] },
 }
 
-function isGitHub() {
-  return hosts.GitHub.includes(window.location.host)
+const CustomDomainsStorageKey = 'CUSTOM_DOMAINS'
+async function loadCustomDomains() {
+  const c = await storageHelper.get([CustomDomainsStorageKey])
+  if (c) {
+    const { [CustomDomainsStorageKey]: customDomains } = c
+    if (customDomains) {
+      Object.keys(customDomains).forEach(domain => {
+        if (domain in platformsMap) {
+          platformsMap[domain as keyof typeof platformsMap].hosts.push(...customDomains[domain])
+        }
+      })
+    }
+  }
 }
+loadCustomDomains()
 
 async function resolvePlatform(): Promise<Platform> {
-  if (isGitHub()) return GitHub
+  for (const { hosts, platform } of Object.values(platformsMap)) {
+    if (hosts.some(host => host === window.location.host)) {
+      return platform
+    }
+  }
   return dummyPlatformForTypeSafety
 }
 
-let p: Platform = dummyPlatformForTypeSafety
+let $platform: Platform = dummyPlatformForTypeSafety
 
 export const resolvePlatformP = resolvePlatform()
-resolvePlatformP.then(platform => (p = platform))
+resolvePlatformP.then(platform => ($platform = platform))
 
 export const platform: Platform = new Proxy<Platform>(dummyPlatformForTypeSafety, {
   get(target, key: keyof Platform) {
-    return p[key]
+    return $platform[key]
   },
 })
 

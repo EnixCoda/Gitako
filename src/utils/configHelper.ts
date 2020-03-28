@@ -35,7 +35,7 @@ export const defaultConfigs: Config = {
 
 const configKeyArray = Object.values(configKeys)
 
-function applyDefaultConfigs(configs: Config) {
+function applyDefaultConfigs(configs: Partial<Config>) {
   return configKeyArray.reduce((applied, configKey) => {
     const key = configKey as keyof Config
     Object.assign(applied, { [key]: key in configs ? configs[key] : defaultConfigs[key] })
@@ -44,7 +44,8 @@ function applyDefaultConfigs(configs: Config) {
 }
 
 export async function get(): Promise<Config> {
-  return applyDefaultConfigs(await storageHelper.get(configKeyArray))
+  const config = await storageHelper.get<Config>(configKeyArray)
+  return applyDefaultConfigs(config || {})
 }
 
 export async function set(partialConfig: Partial<Config>) {
