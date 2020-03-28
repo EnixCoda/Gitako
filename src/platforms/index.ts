@@ -6,16 +6,26 @@ const hosts: Record<'GitHub' | 'GitLab' | 'Gitee', string[]> = {
   GitLab: ['gitlab.com'],
   Gitee: ['gitee.com'],
 }
+
 function isGitHub() {
   return hosts.GitHub.includes(window.location.host)
 }
 
-function resolvePlatform(): Platform {
+async function resolvePlatform(): Promise<Platform> {
   if (isGitHub()) return GitHub
   return dummyPlatformForTypeSafety
 }
 
-export const platform: Platform = resolvePlatform()
+let p: Platform = dummyPlatformForTypeSafety
+
+export const resolvePlatformP = resolvePlatform()
+resolvePlatformP.then(platform => (p = platform))
+
+export const platform: Platform = new Proxy<Platform>(dummyPlatformForTypeSafety, {
+  get(target, key: keyof Platform) {
+    return p[key]
+  },
+})
 
 export const errors = {
   SERVER_FAULT: 'Server Fault',
