@@ -5,4 +5,5 @@ type Platform = {
   shouldShow(metaData?: Partial<MetaData>): boolean
   getCurrentPath(branchName: string): string[] | null
   setOAuth(code: string): Promise<string | null>
+  useResizeStylesheets(size: number): void
 }

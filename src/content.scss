@@ -35,6 +35,8 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
   &.git-project {
     #git-header-nav {
       position: static;
+      padding-left: 0;
+      padding-right: 0;
     }
 
     padding-top: 0;
@@ -44,19 +46,16 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 .with-gitako-spacing {
   // gitee
   &.git-project {
-    // width: auto; // shrink width
-    .ui.container {
-      // width: auto;
-    }
+    width: auto; // shrink width
     .site-content {
-      // min-width: auto;
-      // max-width: 1020px;
+      min-width: 1040px;
     }
   }
 }
 
 @media (min-width: $github-content-width) {
-  body {
+  // github
+  body.env-production {
     min-width: $github-content-width;
   }
 }
@@ -541,19 +540,19 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
       }
     }
   }
+}
 
-  // gitee
-  body.git-project {
-    // reset styles
+// gitee
+.git-project {
+  // reset styles
+  .#{$name}-side-bar {
     input[type='text'],
     input[type='password'],
     .ui-autocomplete-input,
     textarea,
     .uneditable-input {
       padding: initial;
-      // line-height: 18px;
       border: none;
-      // border-radius: 3px;
     }
   }
 }

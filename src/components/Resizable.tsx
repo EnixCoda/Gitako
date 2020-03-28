@@ -1,11 +1,10 @@
 import { HorizontalResizeHandler } from 'components/ResizeHandler'
 import { useConfigs } from 'containers/ConfigsContext'
+import { platform } from 'platforms'
 import * as React from 'react'
 import { useWindowSize } from 'react-use'
 import { cx } from 'utils/cx'
-import { bodySpacingClassName } from 'utils/DOMHelper'
 import * as features from 'utils/features'
-import { useMediaStyleSheet } from 'utils/hooks/useMediaStyleSheet'
 
 export type Size = number
 type Props = {
@@ -14,7 +13,6 @@ type Props = {
 }
 
 const MINIMAL_CONTENT_VIEWPORT_WIDTH = 100
-const GITHUB_WIDTH = 1020
 
 export function Resizable({ baseSize, className, children }: React.PropsWithChildren<Props>) {
   const [size, setSize] = React.useState(baseSize)
@@ -35,17 +33,7 @@ export function Resizable({ baseSize, className, children }: React.PropsWithChil
     configContext.set({ sideBarWidth: size })
   }, [size])
 
-  useMediaStyleSheet(
-    `.${bodySpacingClassName} { margin-left: calc(var(--gitako-width) * 2 + 1020px - 100vw); }`,
-    size => [`min-width: ${size + GITHUB_WIDTH}px`, `max-width: ${size * 2 + GITHUB_WIDTH}px`],
-    size,
-  )
-
-  useMediaStyleSheet(
-    `.${bodySpacingClassName} { margin-left: var(--gitako-width); }`,
-    size => [`max-width: ${size + GITHUB_WIDTH}px`],
-    size,
-  )
+  platform.useResizeStylesheets(size)
 
   const onResize = React.useCallback((size: number) => {
     if (size < window.innerWidth - MINIMAL_CONTENT_VIEWPORT_WIDTH) setSize(size)

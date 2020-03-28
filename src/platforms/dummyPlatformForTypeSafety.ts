@@ -9,6 +9,7 @@ export const dummyPlatformForTypeSafety: Platform = {
   },
   getCurrentPath: callingDummyPlatformMethods,
   setOAuth: callingDummyPlatformMethods,
+  useResizeStylesheets: callingDummyPlatformMethods,
 }
 
 function callingDummyPlatformMethods(): any {

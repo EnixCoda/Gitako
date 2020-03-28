@@ -1,7 +1,9 @@
 import { platform } from 'platforms'
 import * as React from 'react'
 import { useEvent } from 'react-use'
+import { bodySpacingClassName } from 'utils/DOMHelper'
 import { resolveGitModules } from 'utils/gitSubmodule'
+import { useMediaStyleSheet } from 'utils/hooks/useMediaStyleSheet'
 import { sortFoldersToFront } from 'utils/treeParser'
 import * as API from './API'
 import * as DOMHelper from './DOMHelper'
@@ -152,6 +154,7 @@ export const GitHub: Platform = {
     }
     return accessToken
   },
+  useResizeStylesheets,
 }
 
 export function useGitHubAttachCopySnippetButton(copySnippetButton: boolean) {
@@ -176,4 +179,18 @@ export function useGitHubAttachCopyFileButton(copyFileButton: boolean) {
   )
   React.useEffect(attachCopyFileButton, [copyFileButton])
   useEvent('pjax:complete', attachCopyFileButton, window)
+}
+
+function useResizeStylesheets(size: number) {
+  const CONTENT_WIDTH = 1020
+  useMediaStyleSheet(
+    `.${bodySpacingClassName} { margin-left: calc(var(--gitako-width) * 2 + 1020px - 100vw); }`,
+    size => [`min-width: ${size + CONTENT_WIDTH}px`, `max-width: ${size * 2 + CONTENT_WIDTH}px`],
+    size,
+  )
+  useMediaStyleSheet(
+    `.${bodySpacingClassName} { margin-left: var(--gitako-width); }`,
+    size => [`max-width: ${size + CONTENT_WIDTH}px`],
+    size,
+  )
 }
