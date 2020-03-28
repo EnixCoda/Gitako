@@ -14,6 +14,7 @@ export function usePJAX() {
           'title',
           '[data-pjax="#js-repo-pjax-container"]',
           '.page-content',
+          '#git-project-content',
         ],
         scrollTo: false,
         analytics: false,

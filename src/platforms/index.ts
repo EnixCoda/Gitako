@@ -1,5 +1,6 @@
 import * as storageHelper from 'utils/storageHelper'
 import { dummyPlatformForTypeSafety } from './dummyPlatformForTypeSafety'
+import { Gitee } from './Gitee'
 import { GitHub } from './GitHub'
 
 const platformsMap: Record<
@@ -8,7 +9,7 @@ const platformsMap: Record<
 > = {
   GitHub: { platform: GitHub, hosts: ['github.com'] },
   GitLab: { platform: GitHub, hosts: ['gitlab.com'] },
-  Gitee: { platform: GitHub, hosts: ['gitee.com'] },
+  Gitee: { platform: Gitee, hosts: ['gitee.com'] },
 }
 
 const CustomDomainsStorageKey = 'CUSTOM_DOMAINS'
