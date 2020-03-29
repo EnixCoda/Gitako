@@ -54,7 +54,17 @@ type Storage = {
 }
 
 async function migrateConfig() {
-  const config = await storageHelper.get<Config | Storage>(configKeyArray)
+  // not referencing to enum above to prevent migrate future configs
+  const config = await storageHelper.get<Config | Storage>([
+    'sideBarWidth',
+    'shortcut',
+    'access_token',
+    'compressSingletonFolder',
+    'copyFileButton',
+    'copySnippetButton',
+    'intelligentToggle',
+    'icons',
+  ])
   if (!config || !('configVersion' in config) || config.configVersion < '1.0.1') {
     await storageHelper.set({ platform_GitHub: config, configVersion: '1.0.1' })
   }
@@ -73,6 +83,6 @@ export async function get(): Promise<Config> {
   return applyDefaultConfigs((config && config[platformName]) || {})
 }
 
-export async function set(partialConfig: Partial<Config>) {
-  return await storageHelper.set({ [platformName]: partialConfig })
+export async function set(config: Config) {
+  return await storageHelper.set({ [platformName]: config })
 }
