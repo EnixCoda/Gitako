@@ -1,33 +1,43 @@
 import { raiseError } from 'analytics'
+import { AccessDeniedDescription } from 'components/AccessDeniedDescription'
 import { FileExplorer } from 'components/FileExplorer'
 import { MetaBar } from 'components/MetaBar'
 import { Portal } from 'components/Portal'
 import { Resizable } from 'components/Resizable'
-import { SettingsBar } from 'components/SettingsBar'
+import { SettingsBar } from 'components/settings/SettingsBar'
 import { ToggleShowButton } from 'components/ToggleShowButton'
 import { useConfigs } from 'containers/ConfigsContext'
+import { usePlatform } from 'containers/PlatformContext'
 import { connect } from 'driver/connect'
 import { SideBarCore } from 'driver/core'
 import { ConnectorState, Props } from 'driver/core/SideBar'
-import { oauth } from 'env'
+import { platform } from 'platforms'
+import { useGitHubAttachCopyFileButton, useGitHubAttachCopySnippetButton } from 'platforms/GitHub'
 import * as React from 'react'
 import { useEvent, useUpdateEffect } from 'react-use'
 import { cx } from 'utils/cx'
-import * as DOMHelper from 'utils/DOMHelper'
-import { JSONRequest, parseURLSearch } from 'utils/general'
+import { parseURLSearch } from 'utils/general'
+import { usePJAX } from 'utils/hooks/usePJAX'
 import * as keyHelper from 'utils/keyHelper'
-import * as URLHelper from 'utils/URLHelper'
 
 const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
   const configContext = useConfigs()
   const accessToken = props.configContext.val.access_token
+  const platform = usePlatform()
+
+  const intelligentToggle = configContext.val.intelligentToggle
+  React.useEffect(() => {
+    const shouldShow =
+      intelligentToggle === null ? platform.shouldShow(props.metaData) : intelligentToggle
+    props.setShouldShow(shouldShow)
+  }, [intelligentToggle, props.metaData])
 
   React.useEffect(() => {
     const { init } = props
     ;(async function() {
       if (!accessToken) {
         const accessToken = await trySetUpAccessTokenWithCode()
-        configContext.set({ access_token: accessToken })
+        configContext.set({ access_token: accessToken || undefined })
       }
       init()
     })()
@@ -53,7 +63,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
     function updateSideBarVisibility() {
       if (configContext.val.intelligentToggle === null) {
         props.setShouldShow(
-          URLHelper.isInCodePage({
+          platform.shouldShow({
             branchName: props.metaData?.branchName,
           }),
         )
@@ -63,33 +73,23 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
   )
   useEvent('pjax:complete', updateSideBarVisibility, window)
 
-  const attachCopyFileButton = React.useCallback(
-    function attachCopyFileButton() {
-      if (configContext.val.copyFileButton) return DOMHelper.attachCopyFileBtn() || undefined // for the sake of react effect
-    },
-    [configContext.val.copyFileButton],
-  )
-  React.useEffect(attachCopyFileButton, [configContext.val.copyFileButton])
-  useEvent('pjax:complete', attachCopyFileButton, window)
+  const copyFileButton = configContext.val.copyFileButton
+  useGitHubAttachCopyFileButton(copyFileButton)
 
-  const attachCopySnippetButton = React.useCallback(
-    function attachCopySnippetButton() {
-      if (configContext.val.copySnippetButton) return DOMHelper.attachCopySnippet() || undefined // for the sake of react effect
-    },
-    [configContext.val.copySnippetButton],
-  )
-  React.useEffect(attachCopySnippetButton, [configContext.val.copySnippetButton])
-  useEvent('pjax:complete', attachCopySnippetButton, window)
+  const copySnippetButton = configContext.val.copySnippetButton
+  useGitHubAttachCopySnippetButton(copySnippetButton)
 
   // init again when setting new accessToken
   useUpdateEffect(() => {
     props.init()
-  }, [accessToken || '']) // fallback for preventing duplicated requests
+  }, [accessToken || '']) // '' prevents duplicated requests
+
+  const loadWithPJAX = usePJAX()
 
   const {
     errorDueToAuth,
     metaData,
-    treeData,
+    treeData: treeRoot,
     baseSize,
     error,
     shouldShow,
@@ -111,17 +111,20 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
         <div className={'gitako-side-bar-body'}>
           <div className={'gitako-side-bar-content'}>
             {metaData && <MetaBar metaData={metaData} />}
-            {errorDueToAuth
-              ? renderAccessDeniedError(Boolean(accessToken))
-              : metaData && (
-                  <FileExplorer
-                    toggleShowSettings={toggleShowSettings}
-                    metaData={metaData}
-                    treeData={treeData}
-                    freeze={showSettings}
-                    accessToken={accessToken}
-                  />
-                )}
+            {errorDueToAuth ? (
+              <AccessDeniedError hasToken={Boolean(accessToken)} />
+            ) : (
+              metaData && (
+                <FileExplorer
+                  toggleShowSettings={toggleShowSettings}
+                  metaData={metaData}
+                  treeRoot={treeRoot}
+                  freeze={showSettings}
+                  accessToken={accessToken}
+                  loadWithPJAX={loadWithPJAX}
+                />
+              )
+            )}
           </div>
           <SettingsBar toggleShowSettings={toggleShowSettings} activated={showSettings} />
         </div>
@@ -140,61 +143,15 @@ RawGitako.defaultProps = {
 
 export const SideBar = connect(SideBarCore)(RawGitako)
 
-function renderAccessDeniedError(hasToken: boolean) {
-  return (
-    <div className={'description'}>
-      <h5>Access Denied</h5>
-      {hasToken ? (
-        <>
-          <p>
-            Current access token is either invalid or not granted with permissions to access this
-            project.
-          </p>
-          <p>
-            You can grant or request access{' '}
-            <a href={`https://github.com/settings/connections/applications/${oauth.clientId}`}>
-              here
-            </a>{' '}
-            if you setup Gitako with OAuth.
-          </p>
-        </>
-      ) : (
-        <p>
-          Gitako needs access token to read this project due to{' '}
-          <a href="https://developer.github.com/v3/#rate-limiting" target="_blank">
-            GitHub rate limiting
-          </a>{' '}
-          and{' '}
-          <a href="https://developer.github.com/v3/#authentication" target="_blank">
-            auth needs
-          </a>
-          . Please setup access token in the settings panel below.
-        </p>
-      )}
-    </div>
-  )
+function AccessDeniedError({ hasToken }: { hasToken: boolean }) {
+  return <AccessDeniedDescription hasToken={hasToken} />
 }
 
 async function trySetUpAccessTokenWithCode() {
   try {
     const search = parseURLSearch()
     if ('code' in search) {
-      const res = await JSONRequest('https://github.com/login/oauth/access_token', {
-        code: search.code,
-        client_id: oauth.clientId,
-        client_secret: oauth.clientSecret,
-      })
-      const { access_token: accessToken, scope, error_description: errorDescription } = res
-      if (errorDescription) {
-        const TOKEN_EXPIRED_DESCRIPTION = `The code passed is incorrect or expired.`
-        if (errorDescription === TOKEN_EXPIRED_DESCRIPTION) {
-          alert(`Gitako: The OAuth token has expired, please try again.`)
-        } else {
-          throw new Error(errorDescription)
-        }
-      } else if (scope !== 'repo' || !accessToken) {
-        throw new Error(`Cannot resolve token response: '${JSON.stringify(res)}'`)
-      }
+      const accessToken = await platform.setOAuth(search.code)
       window.history.pushState(
         {},
         'removed search param',

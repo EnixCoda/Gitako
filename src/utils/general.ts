@@ -1,6 +1,5 @@
 import { ReactElement } from 'react'
 import * as ReactDOM from 'react-dom'
-import { TreeNode } from './VisibleNodesGenerator'
 
 export function pick<T>(source: T, keys: string[]): Partial<T> {
   if (keys && typeof keys === 'object') {

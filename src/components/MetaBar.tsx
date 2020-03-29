@@ -1,22 +1,19 @@
 import { Breadcrumb } from '@primer/components'
 import * as React from 'react'
-import { MetaData } from 'utils/GitHubHelper'
 
 type Props = {
   metaData: MetaData
 }
 
-export function MetaBar({ metaData }: Props) {
-  const userUrl = metaData?.api?.owner.html_url
-  const repoUrl = metaData?.api?.html_url
+export function MetaBar({ metaData: { userName, repoName, branchName, repoUrl, userUrl } }: Props) {
   return (
     <div className={'meta-bar'}>
       <Breadcrumb>
-        <Breadcrumb.Item href={userUrl}>{metaData.userName}</Breadcrumb.Item>
+        <Breadcrumb.Item href={userUrl}>{userName}</Breadcrumb.Item>
         <Breadcrumb.Item className={'repo-name'} href={repoUrl}>
-          {metaData.repoName}
+          {repoName}
         </Breadcrumb.Item>
-        <Breadcrumb.Item selected>{metaData.branchName}</Breadcrumb.Item>
+        <Breadcrumb.Item selected>{branchName}</Breadcrumb.Item>
       </Breadcrumb>
     </div>
   )

@@ -3,7 +3,6 @@ import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { cx } from 'utils/cx'
 import { OperatingSystems, os } from 'utils/general'
-import { TreeNode } from 'utils/VisibleNodesGenerator'
 import { getFileIconSrc, getFolderIconSrc } from '../utils/parseIconMapCSV'
 import { Icon } from './Icon'
 

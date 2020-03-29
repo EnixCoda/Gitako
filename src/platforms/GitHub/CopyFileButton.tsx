@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { cx } from 'utils/cx'
-import { copyElementContent, getCodeElement } from 'utils/DOMHelper'
+import { copyElementContent } from 'utils/DOMHelper'
+import { getCodeElement } from './DOMHelper'
 
 type Props = {}
 

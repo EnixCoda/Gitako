@@ -1,8 +1,12 @@
 const localStorage = browser.storage.local
 
-export function get(mapping: string[] | null): Promise<any> | any {
+export async function get<
+  T extends {
+    [key: string]: any
+  }
+>(mapping: string | string[] | null = null): Promise<T | void> {
   try {
-    return localStorage.get(mapping || undefined)
+    return (await localStorage.get(mapping || undefined)) as T
   } catch (err) {}
 }
 

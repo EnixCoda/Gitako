@@ -1,7 +1,6 @@
 import { raiseError } from 'analytics'
-import { MetaData } from './GitHubHelper'
 
-export function parse(): MetaData & { path: string[] } {
+export function parse(): Partial<MetaData> & { path: string[] } {
   const { pathname } = window.location
   let [
     ,
@@ -14,6 +13,7 @@ export function parse(): MetaData & { path: string[] } {
   return {
     userName,
     repoName,
+    branchName: undefined,
     type,
     path,
   }
@@ -38,7 +38,7 @@ const TYPES = {
   // TODO: record more types
 }
 
-export function isInCodePage(metaData: MetaData = {}) {
+export function isInCodePage(metaData?: Partial<MetaData>) {
   const mergedRepo = { ...parse(), ...metaData }
   const { type, branchName } = mergedRepo
   return Boolean(

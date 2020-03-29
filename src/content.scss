@@ -1,7 +1,5 @@
 @import '~nprogress/nprogress.css';
 
-@import '~@primer/css/base/index.scss';
-
 @import '~@primer/css/support/variables/colors.scss';
 @import '~@primer/css/support/variables/color-system.scss';
 @import '~@primer/css/support/variables/typography.scss';
@@ -24,6 +22,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 }
 
 .#{$name}-ready {
+  // github
   .js-header-wrapper {
     background: $gray-dark;
   }
@@ -31,10 +30,32 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     max-width: 1012px;
     margin: 0 auto;
   }
+
+  // gitee
+  &.git-project {
+    #git-header-nav {
+      position: static;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    padding-top: 0;
+  }
+}
+
+.with-gitako-spacing {
+  // gitee
+  &.git-project {
+    width: auto; // shrink width
+    .site-content {
+      min-width: 1040px;
+    }
+  }
 }
 
 @media (min-width: $github-content-width) {
-  body {
+  // github
+  body.env-production {
     min-width: $github-content-width;
   }
 }
@@ -177,6 +198,11 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 }
 
 .#{$name}-side-bar {
+  @import '~@primer/css/base/index.scss';
+  button {
+    border-radius: 6px;
+  }
+
   .#{$name}-position-wrapper {
     position: fixed;
     top: 0;
@@ -515,6 +541,21 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           cursor: pointer;
         }
       }
+    }
+  }
+}
+
+// gitee
+.git-project {
+  // reset styles
+  .#{$name}-side-bar {
+    input[type='text'],
+    input[type='password'],
+    .ui-autocomplete-input,
+    textarea,
+    .uneditable-input {
+      padding: initial;
+      border: none;
     }
   }
 }

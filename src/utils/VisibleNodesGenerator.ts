@@ -21,16 +21,6 @@ import { findNode } from './general'
  *  v  stable
  */
 
-export type TreeNode = {
-  name: string
-  contents?: TreeNode[]
-  path: string
-  url?: string
-  sha?: string
-  type: 'tree' | 'blob' | 'commit'
-  accessDenied?: boolean
-}
-
 function filterDuplications<T>(arr: T[]) {
   return Array.from(new Set(arr))
 }

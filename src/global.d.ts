@@ -1,14 +1,19 @@
-type ValSet<T> = {
-  val: T
-  set: (val: T) => void
+type MetaData = {
+  userName: string
+  repoName: string
+  branchName: string
+  defaultBranchName?: string
+  repoUrl?: string
+  userUrl?: string
+  type?: 'tree' | 'blob' | string
 }
 
-type PartialValSet<T> = {
-  val: T
-  set: (val: Partial<T>) => void
-}
-
-declare module '*.csv' {
-  const content: string
-  export default content
+type TreeNode = {
+  name: string
+  contents?: TreeNode[]
+  path: string
+  type: 'tree' | 'blob' | 'commit'
+  url?: string
+  sha?: string
+  accessDenied?: boolean
 }

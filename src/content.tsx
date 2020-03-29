@@ -1,30 +1,35 @@
 import { withErrorLog } from 'analytics'
 import { Gitako } from 'components/Gitako'
 import { addMiddleware } from 'driver/connect'
+import { platform, resolvePlatformP } from 'platforms'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import './content.scss'
 
-addMiddleware(withErrorLog)
+resolvePlatformP.then(() => {
+  if (platform.resolveMeta()) {
+    addMiddleware(withErrorLog)
 
-function init() {
-  const SideBarElement = document.createElement('div')
-  document.body.appendChild(SideBarElement)
-  ReactDOM.render(<Gitako />, SideBarElement)
-}
+    function init() {
+      // injects a copy of stylesheets so that other extensions(e.g. dark reader) could read
+      function injectStyles(url: string) {
+        var linkElement = document.createElement('link')
+        linkElement.rel = 'stylesheet'
+        linkElement.setAttribute('href', url)
+        document.head.appendChild(linkElement)
+      }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init)
-} else {
-  init()
-}
+      injectStyles(browser.extension.getURL('content.css'))
 
-// injects a copy of stylesheets so that other extensions(e.g. dark reader) could read
-function injectStyles(url: string) {
-  var linkElement = document.createElement('link')
-  linkElement.rel = 'stylesheet'
-  linkElement.setAttribute('href', url)
-  document.head.appendChild(linkElement)
-}
+      const SideBarElement = document.createElement('div')
+      document.body.appendChild(SideBarElement)
+      ReactDOM.render(<Gitako />, SideBarElement)
+    }
 
-injectStyles(browser.extension.getURL('content.css'))
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init)
+    } else {
+      init()
+    }
+  }
+})

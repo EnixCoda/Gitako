@@ -1,4 +1,4 @@
-import { wikiLinks } from 'components/SettingsBar'
+import { wikiLinks } from 'components/settings/SettingsBar'
 import { SimpleToggleField } from 'components/SimpleToggleField'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
@@ -24,7 +24,7 @@ const options: {
   {
     key: 'native',
     value: 'native',
-    label: `Native GitHub icons`,
+    label: `GitHub icons`,
   },
 ]
 
