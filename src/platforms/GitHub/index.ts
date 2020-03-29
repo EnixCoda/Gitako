@@ -1,4 +1,5 @@
 import { platform } from 'platforms'
+import { GITHUB_OAUTH } from 'env'
 import * as React from 'react'
 import { useEvent } from 'react-use'
 import { bodySpacingClassName } from 'utils/DOMHelper'
@@ -155,6 +156,11 @@ export const GitHub: Platform = {
     return accessToken
   },
   useResizeStylesheets,
+  getOAuthLink() {
+    return `https://github.com/login/oauth/authorize?client_id=${
+      GITHUB_OAUTH.clientId
+    }&scope=repo&redirect_uri=${encodeURIComponent(window.location.href)}`
+  },
 }
 
 export function useGitHubAttachCopySnippetButton(copySnippetButton: boolean) {

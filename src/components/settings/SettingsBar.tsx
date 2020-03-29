@@ -1,13 +1,15 @@
 import { Link } from '@primer/components'
 import { Icon } from 'components/Icon'
+import { usePlatform } from 'containers/PlatformContext'
 import { VERSION } from 'env'
+import { GitHub } from 'platforms/GitHub'
 import * as React from 'react'
 import { useStates } from 'utils/hooks/useStates'
-import { AccessTokenSettings } from './settings/AccessTokenSettings'
-import { FileTreeSettings } from './settings/FileTreeSettings'
-import { SettingsSection } from './settings/SettingsSection'
-import { SidebarSettings } from './settings/SidebarSettings'
-import { SimpleField, SimpleToggleField } from './SimpleToggleField'
+import { SimpleField, SimpleToggleField } from '../SimpleToggleField'
+import { AccessTokenSettings } from './AccessTokenSettings'
+import { FileTreeSettings } from './FileTreeSettings'
+import { SettingsSection } from './SettingsSection'
+import { SidebarSettings } from './SidebarSettings'
 
 const WIKI_HOME_LINK = 'https://github.com/EnixCoda/Gitako/wiki'
 export const wikiLinks = {
@@ -23,22 +25,26 @@ type Props = {
   toggleShowSettings: () => void
 }
 
-const moreFields: SimpleField[] = [
-  {
-    key: 'copyFileButton',
-    label: 'Copy file shortcut',
-    wikiLink: wikiLinks.copyFileButton,
-  },
-  {
-    key: 'copySnippetButton',
-    label: 'Copy snippet shortcut',
-    wikiLink: wikiLinks.copySnippet,
-  },
-]
-
 function SettingsBarContent() {
   const useReloadHint = useStates<React.ReactNode>('')
   const { val: reloadHint } = useReloadHint
+
+  const platform = usePlatform()
+  const moreFields: SimpleField[] =
+    platform === GitHub
+      ? [
+          {
+            key: 'copyFileButton',
+            label: 'Copy file shortcut',
+            wikiLink: wikiLinks.copyFileButton,
+          },
+          {
+            key: 'copySnippetButton',
+            label: 'Copy snippet shortcut',
+            wikiLink: wikiLinks.copySnippet,
+          },
+        ]
+      : []
 
   return (
     <>
@@ -48,15 +54,17 @@ function SettingsBarContent() {
         <AccessTokenSettings />
         <SidebarSettings />
         <FileTreeSettings />
-        <SettingsSection title={'More'}>
-          {moreFields.map(field => (
-            <React.Fragment key={field.key}>
-              <SimpleToggleField field={field} />
-            </React.Fragment>
-          ))}
+        {moreFields.length > 0 && (
+          <SettingsSection title={'More'}>
+            {moreFields.map(field => (
+              <React.Fragment key={field.key}>
+                <SimpleToggleField field={field} />
+              </React.Fragment>
+            ))}
 
-          {reloadHint && <div className={'hint'}>{reloadHint}</div>}
-        </SettingsSection>
+            {reloadHint && <div className={'hint'}>{reloadHint}</div>}
+          </SettingsSection>
+        )}
         <SettingsSection title={'Contact'}>
           <a href="https://github.com/EnixCoda/Gitako/issues" target="_blank">
             Report bug / Request feature.

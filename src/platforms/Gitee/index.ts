@@ -1,4 +1,5 @@
 import { platform } from 'platforms'
+import { GITEE_OAUTH } from 'env'
 import * as React from 'react'
 import { useEvent } from 'react-use'
 import { bodySpacingClassName } from 'utils/DOMHelper'
@@ -104,7 +105,7 @@ export const Gitee: Platform = {
       userName,
       repoName,
       branchName,
-      userUrl: data?.parent?.url,
+      userUrl: data?.html_url?.replace(/(.*)\/.*?$/, '$1'),
       repoUrl: data?.html_url,
     }
 
@@ -155,6 +156,11 @@ export const Gitee: Platform = {
     return accessToken
   },
   useResizeStylesheets,
+  getOAuthLink() {
+    return `https://gitee.com/oauth/authorize?client_id=${
+      GITEE_OAUTH.clientId
+    }&scope=repo&response_type=code&redirect_uri=${encodeURIComponent(window.location.href)}`
+  },
 }
 
 export function useGiteeAttachCopySnippetButton(copySnippetButton: boolean) {
