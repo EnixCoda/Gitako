@@ -30,7 +30,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
     const shouldShow =
       intelligentToggle === null ? platform.shouldShow(props.metaData) : intelligentToggle
     props.setShouldShow(shouldShow)
-  }, [intelligentToggle])
+  }, [intelligentToggle, props.metaData])
 
   React.useEffect(() => {
     const { init } = props
