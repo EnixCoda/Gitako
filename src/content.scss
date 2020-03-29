@@ -199,6 +199,9 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
 .#{$name}-side-bar {
   @import '~@primer/css/base/index.scss';
+  button {
+    border-radius: 6px;
+  }
 
   .#{$name}-position-wrapper {
     position: fixed;

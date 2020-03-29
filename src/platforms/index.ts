@@ -14,13 +14,14 @@ const platformsMap: Record<
 
 const CustomDomainsStorageKey = 'CUSTOM_DOMAINS'
 async function loadCustomDomains() {
-  const c = await storageHelper.get([CustomDomainsStorageKey])
-  if (c) {
-    const { [CustomDomainsStorageKey]: customDomains } = c
+  const config = await storageHelper.get([CustomDomainsStorageKey])
+  if (config) {
+    const { [CustomDomainsStorageKey]: customDomains } = config
+    type CustomDomains = Record<string, string> // domain -> Platform
     if (customDomains) {
-      Object.keys(customDomains).forEach(domain => {
-        if (domain in platformsMap) {
-          platformsMap[domain as keyof typeof platformsMap].hosts.push(...customDomains[domain])
+      Object.keys(customDomains as CustomDomains).forEach(domain => {
+        if (customDomains[domain] in platformsMap) {
+          platformsMap[customDomains[domain] as keyof typeof platformsMap].hosts.push(domain)
         }
       })
     }
@@ -41,6 +42,15 @@ let $platform: Platform = dummyPlatformForTypeSafety
 
 export const resolvePlatformP = resolvePlatform()
 resolvePlatformP.then(platform => ($platform = platform))
+
+export async function getPlatformName() {
+  await resolvePlatformP
+  const keys = Object.keys(platformsMap) as (keyof typeof platformsMap)[]
+  for (const key of keys) {
+    const { platform } = platformsMap[key]
+    if (platform === $platform) return key
+  }
+}
 
 export const platform: Platform = new Proxy<Platform>(dummyPlatformForTypeSafety, {
   get(target, key: keyof Platform) {

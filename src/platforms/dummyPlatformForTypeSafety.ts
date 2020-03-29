@@ -2,16 +2,17 @@ export const dummyPlatformForTypeSafety: Platform = {
   resolveMeta() {
     return null
   },
-  getMetaData: callingDummyPlatformMethods,
-  getTreeData: callingDummyPlatformMethods,
+  getMetaData: dummyPlatformMethod,
+  getTreeData: dummyPlatformMethod,
   shouldShow() {
     return false
   },
-  getCurrentPath: callingDummyPlatformMethods,
-  setOAuth: callingDummyPlatformMethods,
-  useResizeStylesheets: callingDummyPlatformMethods,
+  getCurrentPath: dummyPlatformMethod,
+  setOAuth: dummyPlatformMethod,
+  useResizeStylesheets: dummyPlatformMethod,
+  getOAuthLink: dummyPlatformMethod,
 }
 
-function callingDummyPlatformMethods(): any {
+function dummyPlatformMethod(): any {
   throw new Error(`Do not call dummy platform methods`)
 }
