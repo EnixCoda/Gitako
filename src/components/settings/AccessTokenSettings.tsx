@@ -2,11 +2,12 @@ import { Button, TextInput } from '@primer/components'
 import { wikiLinks } from 'components/settings/SettingsBar'
 import { useConfigs } from 'containers/ConfigsContext'
 import { usePlatform } from 'containers/PlatformContext'
+import { Gitee } from 'platforms/Gitee'
 import * as React from 'react'
 import { useStates } from 'utils/hooks/useStates'
 import { SettingsSection } from './SettingsSection'
 
-const ACCESS_TOKEN_REGEXP = /^[0-9a-f]{40}$/
+const ACCESS_TOKEN_REGEXP = /^[0-9a-f]+$/
 
 type Props = {}
 
@@ -75,15 +76,20 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
         <Button onClick={() => configContext.set({ access_token: '' })}>Clear</Button>
       ) : (
         <div>
-          <a
-            className={'link-button'}
-            onClick={() => {
-              // use js here to make sure redirect_uri is latest url
-              window.location.href = platform.getOAuthLink()
-            }}
-          >
-            Create with OAuth (recommended)
-          </a>
+          {platform === Gitee ? (
+            // disabled for Gitee as it does not support dynamic redirect_uri
+            <span>OAuth for Gitee is unavailable</span>
+          ) : (
+            <a
+              className={'link-button'}
+              onClick={() => {
+                // use js here to make sure redirect_uri is latest url
+                window.location.href = platform.getOAuthLink()
+              }}
+            >
+              Create with OAuth (recommended)
+            </a>
+          )}
           <div className={'access-token-input-control'}>
             <TextInput
               backgroundColor="#fff"

@@ -140,6 +140,16 @@ export const Gitee: Platform = {
   getCurrentPath(branchName) {
     return URLHelper.getCurrentPath(branchName)
   },
+  useResizeStylesheets,
+  getOAuthLink() {
+    const params = new URLSearchParams({
+      client_id: GITEE_OAUTH.clientId,
+      scope: 'projects',
+      response_type: 'code',
+      redirect_uri: window.location.href,
+    })
+    return `https://gitee.com/oauth/authorize?` + params.toString()
+  },
   async setOAuth(code) {
     const res = await API.OAuth(code)
     const { access_token: accessToken, scope, error_description: errorDescription } = res
@@ -154,12 +164,6 @@ export const Gitee: Platform = {
       throw new Error(`Cannot resolve token response: '${JSON.stringify(res)}'`)
     }
     return accessToken
-  },
-  useResizeStylesheets,
-  getOAuthLink() {
-    return `https://gitee.com/oauth/authorize?client_id=${
-      GITEE_OAUTH.clientId
-    }&scope=repo&response_type=code&redirect_uri=${encodeURIComponent(window.location.href)}`
   },
 }
 

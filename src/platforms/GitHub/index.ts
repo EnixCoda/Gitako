@@ -157,9 +157,12 @@ export const GitHub: Platform = {
   },
   useResizeStylesheets,
   getOAuthLink() {
-    return `https://github.com/login/oauth/authorize?client_id=${
-      GITHUB_OAUTH.clientId
-    }&scope=repo&redirect_uri=${encodeURIComponent(window.location.href)}`
+    const params = new URLSearchParams({
+      client_id: GITHUB_OAUTH.clientId,
+      scope: 'repo',
+      redirect_uri: window.location.href,
+    })
+    return `https://github.com/login/oauth/authorize?` + params.toString()
   },
 }
 
