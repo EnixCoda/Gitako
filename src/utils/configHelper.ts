@@ -1,3 +1,4 @@
+import { getPlatformName } from 'platforms'
 import * as storageHelper from 'utils/storageHelper'
 
 export type Config = {
@@ -22,7 +23,7 @@ export enum configKeys {
   icons = 'icons',
 }
 
-export const defaultConfigs: Config = {
+const defaultConfigs: Config = {
   sideBarWidth: 260,
   shortcut: undefined,
   access_token: undefined,
@@ -43,11 +44,35 @@ function applyDefaultConfigs(configs: Partial<Config>) {
   }, {} as Config)
 }
 
+type Storage = {
+  // save root level `configVersion` for easier future migrating
+  [key in 'configVersion' | string]: string
+
+  // separate different platform configs to simplify interactions with browser storage API
+  // e.g.
+  // platform_GitHub?: Config
+}
+
+async function migrateConfig() {
+  const config = await storageHelper.get<Config | Storage>(configKeyArray)
+  if (!config || !('configVersion' in config) || config.configVersion < '1.0.1') {
+    await storageHelper.set({ platform_GitHub: config, configVersion: '1.0.1' })
+  }
+}
+
+let platformName: string
+const prepareConfig = new Promise(async resolve => {
+  await migrateConfig()
+  platformName = `platform_` + (await getPlatformName())
+  resolve()
+})
+
 export async function get(): Promise<Config> {
-  const config = await storageHelper.get<Config>(configKeyArray)
-  return applyDefaultConfigs(config || {})
+  await prepareConfig
+  const config = await storageHelper.get<Record<string, Config>>([platformName])
+  return applyDefaultConfigs((config && config[platformName]) || {})
 }
 
 export async function set(partialConfig: Partial<Config>) {
-  return await storageHelper.set(partialConfig)
+  return await storageHelper.set({ [platformName]: partialConfig })
 }

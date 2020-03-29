@@ -4,7 +4,7 @@ export async function get<
   T extends {
     [key: string]: any
   }
->(mapping: string[] | null): Promise<T | void> {
+>(mapping: string | string[] | null = null): Promise<T | void> {
   try {
     return (await localStorage.get(mapping || undefined)) as T
   } catch (err) {}
