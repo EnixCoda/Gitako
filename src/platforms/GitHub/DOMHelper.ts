@@ -1,9 +1,9 @@
 import { raiseError } from 'analytics'
 import { Clippy, ClippyClassName } from 'components/Clippy'
-import { CopyFileButton, copyFileButtonClassName } from 'components/CopyFileButton'
 import * as React from 'react'
 import { $ } from 'utils/DOMHelper'
 import { renderReact } from 'utils/general'
+import { CopyFileButton, copyFileButtonClassName } from './CopyFileButton'
 
 export function isInCodePage() {
   const branchListSelector = '#branch-select-menu.branch-select-menu'
