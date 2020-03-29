@@ -1,4 +1,4 @@
-import { platform } from 'platforms'
+import { usePlatform } from 'containers/PlatformContext'
 import { GITEE_OAUTH } from 'env'
 import * as React from 'react'
 import { useEvent } from 'react-use'
@@ -164,6 +164,7 @@ export const Gitee: Platform = {
 }
 
 export function useGiteeAttachCopySnippetButton(copySnippetButton: boolean) {
+  const platform = usePlatform()
   const attachCopySnippetButton = React.useCallback(
     function attachCopySnippetButton() {
       if (platform !== Gitee) return

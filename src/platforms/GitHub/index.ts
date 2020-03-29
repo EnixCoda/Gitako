@@ -1,4 +1,4 @@
-import { platform } from 'platforms'
+import { usePlatform } from 'containers/PlatformContext'
 import { GITHUB_OAUTH } from 'env'
 import * as React from 'react'
 import { useEvent } from 'react-use'
@@ -164,6 +164,7 @@ export const GitHub: Platform = {
 }
 
 export function useGitHubAttachCopySnippetButton(copySnippetButton: boolean) {
+  const platform = usePlatform()
   const attachCopySnippetButton = React.useCallback(
     function attachCopySnippetButton() {
       if (platform !== GitHub) return
@@ -176,6 +177,7 @@ export function useGitHubAttachCopySnippetButton(copySnippetButton: boolean) {
 }
 
 export function useGitHubAttachCopyFileButton(copyFileButton: boolean) {
+  const platform = usePlatform()
   const attachCopyFileButton = React.useCallback(
     function attachCopyFileButton() {
       if (platform !== GitHub) return

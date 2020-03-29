@@ -3,10 +3,10 @@ import { LoadingIndicator } from 'components/LoadingIndicator'
 import { Node } from 'components/Node'
 import { SearchBar } from 'components/SearchBar'
 import { useConfigs } from 'containers/ConfigsContext'
+import { usePlatform } from 'containers/PlatformContext'
 import { connect } from 'driver/connect'
 import { FileExplorerCore } from 'driver/core'
 import { ConnectorState, Props } from 'driver/core/FileExplorer'
-import { platform } from 'platforms'
 import * as React from 'react'
 import { useEvent, usePrevious } from 'react-use'
 import { FixedSizeList as List, ListChildComponentProps, ListProps } from 'react-window'
@@ -193,6 +193,7 @@ function ListView({
     }
   }, [listRef.current, focusedNode])
 
+  const platform = usePlatform()
   const lastNodeLength = usePrevious(nodes.length)
   React.useEffect(() => {
     if (listRef.current && !focusedNode && lastNodeLength !== nodes.length) {
