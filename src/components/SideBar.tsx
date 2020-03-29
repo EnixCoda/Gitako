@@ -1,4 +1,5 @@
 import { raiseError } from 'analytics'
+import { AccessDeniedDescription } from 'components/AccessDeniedDescription'
 import { FileExplorer } from 'components/FileExplorer'
 import { MetaBar } from 'components/MetaBar'
 import { Portal } from 'components/Portal'
@@ -12,7 +13,6 @@ import { SideBarCore } from 'driver/core'
 import { ConnectorState, Props } from 'driver/core/SideBar'
 import { platform } from 'platforms'
 import { useGitHubAttachCopyFileButton, useGitHubAttachCopySnippetButton } from 'platforms/GitHub'
-import { GitHubAccessDeniedError } from 'platforms/GitHub/components'
 import * as React from 'react'
 import { useEvent, useUpdateEffect } from 'react-use'
 import { cx } from 'utils/cx'
@@ -144,7 +144,7 @@ RawGitako.defaultProps = {
 export const SideBar = connect(SideBarCore)(RawGitako)
 
 function AccessDeniedError({ hasToken }: { hasToken: boolean }) {
-  return <GitHubAccessDeniedError hasToken={hasToken} />
+  return <AccessDeniedDescription hasToken={hasToken} />
 }
 
 async function trySetUpAccessTokenWithCode() {
