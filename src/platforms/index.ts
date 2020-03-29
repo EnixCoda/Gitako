@@ -3,12 +3,8 @@ import { dummyPlatformForTypeSafety } from './dummyPlatformForTypeSafety'
 import { Gitee } from './Gitee'
 import { GitHub } from './GitHub'
 
-const platformsMap: Record<
-  'GitHub' | 'GitLab' | 'Gitee',
-  { platform: Platform; hosts: string[] }
-> = {
+const platformsMap: Record<'GitHub' | 'Gitee', { platform: Platform; hosts: string[] }> = {
   GitHub: { platform: GitHub, hosts: ['github.com'] },
-  GitLab: { platform: GitHub, hosts: ['gitlab.com'] },
   Gitee: { platform: Gitee, hosts: ['gitee.com'] },
 }
 
