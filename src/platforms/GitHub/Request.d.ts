@@ -16,9 +16,11 @@ declare namespace GitHubAPI {
   }
 
   type MetaData = {
+    name: string
     default_branch: string
     html_url: string
     owner: {
+      login: string
       html_url: string
     }
   }

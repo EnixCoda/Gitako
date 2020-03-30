@@ -102,8 +102,8 @@ export const GitHub: Platform = {
     const { userName, repoName, branchName } = rawMetaData
     const data = await API.getRepoMeta(userName, repoName, accessToken)
     const metaData: MetaData = {
-      userName,
-      repoName,
+      userName: data.owner.login,
+      repoName: data.name,
       branchName,
       userUrl: data?.owner?.html_url,
       repoUrl: data?.html_url,
