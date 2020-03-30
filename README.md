@@ -4,13 +4,13 @@
   <img width="256" src="src/assets/icons/Gitako.png" />
 </p>
 
-Yet another extension for GitHub, available on both Chrome and Firefox. Inspired by [Octotree](https://github.com/buunguyen/octotree) & [GayHub](https://github.com/jawil/GayHub), thanks to them! Gitako is aimed at providing the best performance, better UX, more consistent UI and more essential features.
+Gitako is an file tree extension for GitHub, available for Chrome, Firefox and Edge. And more than that, it has lots of useful features.
 
 ### Features
 
 - 📂 neat file tree
 - 🔎 instant file search
-- 🏎 extremely fast even in gigantic projects
+- 🏎 extremely fast, even in gigantic projects
 - ⌨️ intuitive keyboard accessibility
 - 🚀 boosts page performance
 - ↔️ customizable layout
@@ -25,7 +25,7 @@ Yet another extension for GitHub, available on both Chrome and Firefox. Inspired
 
 [for Edge](https://microsoftedge.microsoft.com/addons/detail/alpoloddcggjhakjemghahlkofjekbca)
 
-[for Firefox(beta)](https://addons.mozilla.org/en-US/firefox/addon/gitako-github-file-tree/)
+[for Firefox](https://addons.mozilla.org/en-US/firefox/addon/gitako-github-file-tree/)
 
 ### Issues
 
