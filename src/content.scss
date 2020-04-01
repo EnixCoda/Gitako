@@ -342,6 +342,8 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
         .search-input-wrapper {
           .search-input {
             width: 100%;
+            box-shadow: none; // stay low
+            border-radius: 0; // its rounded corner not match with nearby elements
 
             &.error {
               border-color: $red;
