@@ -127,12 +127,14 @@ export function attachCopyFileBtn() {
         buttonGroup.appendChild(button)
       }
     })
-    return () => {
-      const buttons = document.querySelectorAll(`.${copyFileButtonClassName}`)
-      buttons.forEach(button => {
-        button.parentElement?.removeChild(button)
-      })
-    }
+  }
+
+  // return callback so that disabling after redirecting from file page to non-page works properly
+  return () => {
+    const buttons = document.querySelectorAll(`.${copyFileButtonClassName}`)
+    buttons.forEach(button => {
+      button.parentElement?.removeChild(button)
+    })
   }
 }
 
