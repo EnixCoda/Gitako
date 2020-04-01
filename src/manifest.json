@@ -6,11 +6,12 @@
     "128": "icons/Gitako-128.png",
     "256": "icons/Gitako-256.png"
   },
-  "permissions": ["storage", "<all_urls>"],
+  "permissions": ["storage", "*://*.github.com/*", "*://*.sentry.io/*"],
+  "optional_permissions": ["<all_urls>"],
   "web_accessible_resources": ["icons/vscode/*", "content.css"],
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "matches": ["https://github.com/*"],
       "js": ["firefox-shim.js", "browser-polyfill.js", "content.js"]
     }
   ]
