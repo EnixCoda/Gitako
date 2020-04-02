@@ -2,6 +2,7 @@ import { TextInput } from '@primer/components'
 import { Search } from '@primer/octicons-react'
 import * as React from 'react'
 import { cx } from 'utils/cx'
+import { isValidRegexpSource } from 'utils/general'
 
 type Props = {
   onSearch: (searchKey: string) => void
@@ -27,13 +28,4 @@ export function SearchBar({ onSearch, onFocus, searchKey }: Props) {
       />
     </div>
   )
-}
-
-function isValidRegexpSource(source: string) {
-  try {
-    new RegExp(source)
-    return true
-  } catch (err) {
-    return false
-  }
 }

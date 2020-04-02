@@ -150,3 +150,12 @@ export async function renderReact(element: ReactElement) {
     })
   })
 }
+
+export function isValidRegexpSource(source: string) {
+  try {
+    new RegExp(source)
+    return true
+  } catch (err) {
+    return false
+  }
+}

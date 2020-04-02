@@ -1,9 +1,9 @@
-import { Text } from '@primer/components'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { cx } from 'utils/cx'
 import { OperatingSystems, os } from 'utils/general'
 import { getFileIconSrc, getFolderIconSrc } from '../utils/parseIconMapCSV'
+import { Highlight } from './Highlight'
 import { Icon } from './Icon'
 
 function getIconType(node: TreeNode) {
@@ -25,36 +25,41 @@ type Props = {
   focused: boolean
   renderActions?(node: TreeNode): React.ReactNode
   style?: React.CSSProperties
+  regex?: RegExp
 }
-export function Node({ node, depth, expanded, focused, renderActions, style, onClick }: Props) {
-  const onClickNode: React.MouseEventHandler = React.useCallback(
-    event => {
-      if (
-        (os === OperatingSystems.macOS && event.metaKey) ||
-        (os === OperatingSystems.Windows && event.ctrlKey)
-      ) {
-        // The default behavior, open in new tab
-        return
-      }
-      event.preventDefault()
-
-      onClick(node)
-    },
-    [node, onClick],
-  )
-
+export function Node({
+  node,
+  depth,
+  expanded,
+  focused,
+  renderActions,
+  style,
+  onClick,
+  regex,
+}: Props) {
   const { name, path } = node
   return (
     <a
       href={node.url}
-      onClick={onClickNode}
+      onClick={event => {
+        if (
+          (os === OperatingSystems.macOS && event.metaKey) ||
+          (os === OperatingSystems.Windows && event.ctrlKey)
+        ) {
+          // The default behavior, open in new tab
+          return
+        }
+        event.preventDefault()
+
+        onClick(node)
+      }}
       className={cx(`node-item`, { focused, disabled: node.accessDenied, expanded })}
       style={{ ...style, paddingLeft: `${10 + 20 * depth}px` }}
       title={path}
     >
       <div className={'node-item-label'}>
         <NodeItemIcon node={node} open={expanded} />
-        <Text fontSize={14}>{name}</Text>
+        <Highlight match={regex} text={name} />
       </div>
       {renderActions && <div>{renderActions(node)}</div>}
     </a>

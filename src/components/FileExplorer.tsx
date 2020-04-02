@@ -11,6 +11,7 @@ import * as React from 'react'
 import { useEvent, usePrevious } from 'react-use'
 import { FixedSizeList as List, ListChildComponentProps, ListProps } from 'react-window'
 import { cx } from 'utils/cx'
+import { isValidRegexpSource } from 'utils/general'
 import { useOnLocationChange } from 'utils/hooks/useOnLocationChange'
 import { VisibleNodes } from 'utils/VisibleNodesGenerator'
 import { Icon } from './Icon'
@@ -58,11 +59,12 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
       <VirtualNode
         index={index}
         style={style}
+        regex={isValidRegexpSource(searchKey) ? new RegExp(searchKey, 'gi') : undefined}
         onNodeClick={onNodeClick}
         renderActions={renderActions}
       />
     ),
-    [renderActions, onNodeClick],
+    [renderActions, onNodeClick, searchKey],
   )
 
   const renderFiles = React.useCallback(
@@ -146,11 +148,13 @@ function VirtualNode({
   style,
   onNodeClick,
   renderActions,
+  regex,
 }: {
   index: number
   style: React.CSSProperties
   onNodeClick: (treeNode: TreeNode) => void
   renderActions: ((node: TreeNode) => React.ReactNode) | undefined
+  regex?: RegExp
 }) {
   const visibleNodes = React.useContext(VisibleNodesContext)
   if (!visibleNodes) return null
@@ -166,6 +170,7 @@ function VirtualNode({
       expanded={expandedNodes.has(node)}
       onClick={onNodeClick}
       renderActions={renderActions}
+      regex={regex}
     />
   )
 }
