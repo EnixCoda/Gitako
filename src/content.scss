@@ -423,15 +423,15 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           }
 
           .go-to-button {
-            display: none;
+            vertical-align: middle;
             white-space: nowrap;
             background: transparent;
             border: none;
             padding: 0;
           }
-          &:hover {
+          &:not(:hover) {
             .go-to-button {
-              display: inline-block;
+              display: none;
             }
           }
         }

@@ -98,7 +98,7 @@ export function focusFileExplorer() {
 }
 
 export function focusSearchInput() {
-  const searchInputSelector = '.search-input'
+  const searchInputSelector = '.search-input input'
   $(searchInputSelector, searchInputElement => {
     if (
       document.activeElement !== searchInputElement &&
