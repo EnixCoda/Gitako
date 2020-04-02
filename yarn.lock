@@ -6925,6 +6925,11 @@ pino@~5.13.0:
     quick-format-unescaped "^3.0.3"
     sonic-boom "^0.7.5"
 
+pjax-api@^3.30.1:
+  version "3.30.1"
+  resolved "https://registry.yarnpkg.com/pjax-api/-/pjax-api-3.30.1.tgz#a263950e15162f339dcddd6a3dd75d17c51e7b12"
+  integrity sha512-yH6SzgvYxHuyJXwn/AXdjL0PB6pdk/W/lyv+numHuDQTbEi9uvjG1N0a8uUtkiMdFfuCpCP7EoxjJzQfO4Z86w==
+
 pkg-dir@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/pkg-dir/-/pkg-dir-3.0.0.tgz#2749020f239ed990881b1f71210d51eb6523bea3"

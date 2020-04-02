@@ -173,5 +173,5 @@ export function useGiteeAttachCopySnippetButton(copySnippetButton: boolean) {
     [copySnippetButton],
   )
   React.useEffect(attachCopySnippetButton, [copySnippetButton])
-  useEvent('pjax:complete', attachCopySnippetButton, window)
+  useEvent('pjax:ready', attachCopySnippetButton, document)
 }
