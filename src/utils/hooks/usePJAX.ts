@@ -14,6 +14,7 @@ const config: Config = {
   ],
   update: {
     css: false,
+    script: false,
   },
   fetch: {
     cache(path) {
