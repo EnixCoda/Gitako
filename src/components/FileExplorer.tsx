@@ -59,7 +59,9 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
       <VirtualNode
         index={index}
         style={style}
-        regex={isValidRegexpSource(searchKey) ? new RegExp(searchKey, 'gi') : undefined}
+        regex={
+          searchKey && isValidRegexpSource(searchKey) ? new RegExp(searchKey, 'gi') : undefined
+        }
         onNodeClick={onNodeClick}
         renderActions={renderActions}
       />
