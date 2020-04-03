@@ -7,7 +7,6 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
 const srcPath = path.resolve(__dirname, 'src')
-const packagesPath = path.resolve(__dirname, 'packages')
 
 const plugins = [
   new CopyWebpackPlugin([
@@ -70,7 +69,7 @@ module.exports = {
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
-    modules: [srcPath, packagesPath, 'node_modules'],
+    modules: [srcPath, 'node_modules'],
   },
   module: {
     rules: [
@@ -80,7 +79,7 @@ module.exports = {
         options: {
           cacheDirectory: true,
         },
-        include: [srcPath, packagesPath],
+        include: [srcPath],
         exclude: /node_modules/,
         sideEffects: false,
       },
