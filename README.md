@@ -29,15 +29,15 @@ Gitako is an file tree extension for GitHub, available for Chrome, Firefox and E
 
 ### Issues
 
-Any bug report or feature request discussions are welcomed, feel free to draft a [issue](https://github.com/EnixCoda/Gitako/issues/)!
+Any bug report or feature request discussions are welcomed, feel free to draft an [issue](https://github.com/EnixCoda/Gitako/issues/)!
 
 ### About
 
-#### Name and logo meaning?
+#### Name and logo?
 
-GitHub's totem is a cute octopus. And octopus in Japanese is `タコ`(tako).
+The totem of GitHub is a cute octopus. And octopus in Japanese is `タコ`(tako).
 Then link them together:
 
     git + tako -> gitako
 
-The logo of Gitako is a tentacle of octopus, meaning Gitako works like a part of GitHub.
+The logo of Gitako is a tentacle of octopus, indicates that Gitako works like a part of GitHub.
