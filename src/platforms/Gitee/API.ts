@@ -2,10 +2,6 @@ import { raiseError } from 'analytics'
 import { GITEE_OAUTH } from 'env'
 import { errors } from 'platforms'
 
-function apiRateLimitExceeded(content: any /* safe any */) {
-  return content?.['documentation_url'] === 'https://developer.github.com/v3/#rate-limiting'
-}
-
 function isEmptyProject(content: any /* safe any */) {
   return content?.['message'] === 'Git Repository is empty.'
 }
@@ -41,12 +37,10 @@ async function request(
   if (res.ok) {
     return res.json()
   } else {
-    debugger
     if (res.status === 404 || res.status === 401) throw new Error(errors.NOT_FOUND)
     else if (res.status === 500) throw new Error(errors.SERVER_FAULT)
     else {
       const content = await res.json()
-      if (apiRateLimitExceeded(content)) throw new Error(errors.API_RATE_LIMIT)
       if (isEmptyProject(content)) throw new Error(errors.EMPTY_PROJECT)
       if (isBlockedProject(content)) throw new Error(errors.BLOCKED_PROJECT)
       // Unknown type of error, report it!
