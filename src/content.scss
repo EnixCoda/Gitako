@@ -381,6 +381,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           cursor: pointer;
           border-top: 1px solid $border-gray-light;
           white-space: nowrap;
+          transition: padding 0.3s ease; // on toggle expansion in search results
 
           @mixin icon-size() {
             width: 16px;
