@@ -7,7 +7,6 @@
     "256": "icons/Gitako-256.png"
   },
   "permissions": ["storage", "*://*.github.com/*", "*://*.sentry.io/*"],
-  "optional_permissions": ["<all_urls>"],
   "web_accessible_resources": ["icons/vscode/*", "content.css"],
   "content_scripts": [
     {

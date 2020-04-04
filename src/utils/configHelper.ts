@@ -1,4 +1,3 @@
-import { getPlatformName } from 'platforms'
 import * as storageHelper from 'utils/storageHelper'
 
 export type Config = {
@@ -74,7 +73,7 @@ async function migrateConfig() {
 let platformName: string
 const prepareConfig = new Promise(async resolve => {
   await migrateConfig()
-  platformName = `platform_` + (await getPlatformName())
+  platformName = `platform_` + platformName
   resolve()
 })
 

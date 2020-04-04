@@ -2,28 +2,29 @@ import { dummyPlatformForTypeSafety } from './dummyPlatformForTypeSafety'
 import { Gitee } from './Gitee'
 import { GitHub } from './GitHub'
 
-const platformsMap: Record<'GitHub' | 'Gitee', { platform: Platform; hosts: string[] }> = {
-  GitHub: { platform: GitHub, hosts: ['github.com'] },
-  Gitee: { platform: Gitee, hosts: ['gitee.com'] },
+const platforms: {
+  [name: string]: Platform
+} = {
+  GitHub: GitHub,
+  Gitee: Gitee,
 }
 
 function resolvePlatform() {
-  for (const { hosts, platform } of Object.values(platformsMap)) {
-    if (hosts.some(host => host === window.location.host || platform.resolveMeta())) {
-      return platform
-    }
+  for (const platform of Object.values(platforms)) {
+    if (platform.resolveMeta()) return platform
   }
   return dummyPlatformForTypeSafety
 }
 
-export function getPlatformName() {
-  const keys = Object.keys(platformsMap) as (keyof typeof platformsMap)[]
+function getPlatformName() {
+  const keys = Object.keys(platforms) as (keyof typeof platforms)[]
   for (const key of keys) {
-    if (platform === platformsMap[key].platform) return key
+    if (platform === platforms[key]) return key
   }
 }
 
 export const platform = resolvePlatform()
+export const platformName = getPlatformName()
 
 export const errors = {
   SERVER_FAULT: 'Server Fault',
