@@ -1,4 +1,3 @@
-import * as storageHelper from 'utils/storageHelper'
 import { dummyPlatformForTypeSafety } from './dummyPlatformForTypeSafety'
 import { Gitee } from './Gitee'
 import { GitHub } from './GitHub'
@@ -8,51 +7,23 @@ const platformsMap: Record<'GitHub' | 'Gitee', { platform: Platform; hosts: stri
   Gitee: { platform: Gitee, hosts: ['gitee.com'] },
 }
 
-const CustomDomainsStorageKey = 'CUSTOM_DOMAINS'
-async function loadCustomDomains() {
-  const config = await storageHelper.get([CustomDomainsStorageKey])
-  if (config) {
-    const { [CustomDomainsStorageKey]: customDomains } = config
-    type CustomDomains = Record<string, string> // domain -> Platform
-    if (customDomains) {
-      Object.keys(customDomains as CustomDomains).forEach(domain => {
-        if (customDomains[domain] in platformsMap) {
-          platformsMap[customDomains[domain] as keyof typeof platformsMap].hosts.push(domain)
-        }
-      })
-    }
-  }
-}
-loadCustomDomains()
-
-async function resolvePlatform(): Promise<Platform> {
+function resolvePlatform() {
   for (const { hosts, platform } of Object.values(platformsMap)) {
-    if (hosts.some(host => host === window.location.host)) {
+    if (hosts.some(host => host === window.location.host || platform.resolveMeta())) {
       return platform
     }
   }
   return dummyPlatformForTypeSafety
 }
 
-let $platform: Platform = dummyPlatformForTypeSafety
-
-export const resolvePlatformP = resolvePlatform()
-resolvePlatformP.then(platform => ($platform = platform))
-
-export async function getPlatformName() {
-  await resolvePlatformP
+export function getPlatformName() {
   const keys = Object.keys(platformsMap) as (keyof typeof platformsMap)[]
   for (const key of keys) {
-    const { platform } = platformsMap[key]
-    if (platform === $platform) return key
+    if (platform === platformsMap[key].platform) return key
   }
 }
 
-export const platform: Platform = new Proxy<Platform>(dummyPlatformForTypeSafety, {
-  get(target, key: keyof Platform) {
-    return $platform[key]
-  },
-})
+export const platform = resolvePlatform()
 
 export const errors = {
   SERVER_FAULT: 'Server Fault',

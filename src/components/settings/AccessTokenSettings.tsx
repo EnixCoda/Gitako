@@ -1,7 +1,7 @@
 import { Button, TextInput } from '@primer/components'
 import { wikiLinks } from 'components/settings/SettingsBar'
 import { useConfigs } from 'containers/ConfigsContext'
-import { usePlatform } from 'containers/PlatformContext'
+import { platform } from 'platforms'
 import { Gitee } from 'platforms/Gitee'
 import * as React from 'react'
 import { useStates } from 'utils/hooks/useStates'
@@ -17,7 +17,6 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
   const useAccessToken = useStates('')
   const useAccessTokenHint = useStates<React.ReactNode>('')
   const focusInput = useStates(false)
-  const platform = usePlatform()
 
   const { val: accessTokenHint } = useAccessTokenHint
   const { val: accessToken } = useAccessToken

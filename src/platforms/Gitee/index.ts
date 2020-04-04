@@ -1,5 +1,5 @@
-import { usePlatform } from 'containers/PlatformContext'
 import { GITEE_OAUTH } from 'env'
+import { platform } from 'platforms'
 import * as React from 'react'
 import { useEvent } from 'react-use'
 import { bodySpacingClassName } from 'utils/DOMHelper'
@@ -168,7 +168,6 @@ export const Gitee: Platform = {
 }
 
 export function useGiteeAttachCopySnippetButton(copySnippetButton: boolean) {
-  const platform = usePlatform()
   const attachCopySnippetButton = React.useCallback(
     function attachCopySnippetButton() {
       if (platform !== Gitee) return

@@ -1,7 +1,7 @@
 import { Link } from '@primer/components'
 import { Icon } from 'components/Icon'
-import { usePlatform } from 'containers/PlatformContext'
 import { VERSION } from 'env'
+import { platform } from 'platforms'
 import { GitHub } from 'platforms/GitHub'
 import * as React from 'react'
 import { useStates } from 'utils/hooks/useStates'
@@ -29,7 +29,6 @@ function SettingsBarContent() {
   const useReloadHint = useStates<React.ReactNode>('')
   const { val: reloadHint } = useReloadHint
 
-  const platform = usePlatform()
   const moreFields: SimpleField[] =
     platform === GitHub
       ? [

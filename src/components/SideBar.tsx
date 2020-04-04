@@ -7,7 +7,6 @@ import { Resizable } from 'components/Resizable'
 import { SettingsBar } from 'components/settings/SettingsBar'
 import { ToggleShowButton } from 'components/ToggleShowButton'
 import { useConfigs } from 'containers/ConfigsContext'
-import { usePlatform } from 'containers/PlatformContext'
 import { connect } from 'driver/connect'
 import { SideBarCore } from 'driver/core'
 import { ConnectorState, Props } from 'driver/core/SideBar'
@@ -23,7 +22,6 @@ import * as keyHelper from 'utils/keyHelper'
 const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
   const configContext = useConfigs()
   const accessToken = props.configContext.val.access_token
-  const platform = usePlatform()
 
   const intelligentToggle = configContext.val.intelligentToggle
   React.useEffect(() => {

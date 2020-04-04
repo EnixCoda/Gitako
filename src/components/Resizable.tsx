@@ -1,6 +1,6 @@
 import { HorizontalResizeHandler } from 'components/ResizeHandler'
 import { useConfigs } from 'containers/ConfigsContext'
-import { usePlatform } from 'containers/PlatformContext'
+import { platform } from 'platforms'
 import * as React from 'react'
 import { useWindowSize } from 'react-use'
 import { cx } from 'utils/cx'
@@ -33,7 +33,6 @@ export function Resizable({ baseSize, className, children }: React.PropsWithChil
     configContext.set({ sideBarWidth: size })
   }, [size])
 
-  const platform = usePlatform()
   platform.useResizeStylesheets(size)
 
   const onResize = React.useCallback((size: number) => {
