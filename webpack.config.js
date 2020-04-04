@@ -61,8 +61,9 @@ plugins.push(
 module.exports = {
   entry: {
     content: './src/content.tsx',
+    background: './src/background.ts',
   },
-  devtool: IN_PRODUCTION_MODE ? 'source-map' : 'eval-source-map',
+  devtool: IN_PRODUCTION_MODE ? 'source-map' : 'inline-source-map',
   mode: IN_PRODUCTION_MODE ? 'production' : 'development',
   output: {
     path: path.resolve(__dirname, 'dist'),

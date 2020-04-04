@@ -6,8 +6,15 @@
     "128": "icons/Gitako-128.png",
     "256": "icons/Gitako-256.png"
   },
-  "permissions": ["storage", "*://*.github.com/*", "*://*.sentry.io/*"],
+  "permissions": ["storage", "contextMenus", "activeTab", "*://*.github.com/*"],
+  "optional_permissions": ["http://*/*", "https://*/*"],
   "web_accessible_resources": ["icons/vscode/*", "content.css"],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "browser_action": {
+    "default_icon": "icons/Gitako.png"
+  },
   "content_scripts": [
     {
       "matches": ["https://github.com/*"],
