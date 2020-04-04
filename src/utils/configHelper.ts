@@ -56,6 +56,7 @@ type Storage = {
 async function migrateConfig() {
   // not referencing to enum above to prevent migrate future configs
   const config = await storageHelper.get<Config | Storage>([
+    'configVersion',
     'sideBarWidth',
     'shortcut',
     'access_token',
