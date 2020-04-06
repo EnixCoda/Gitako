@@ -175,7 +175,7 @@ export function useGitHubAttachCopySnippetButton(copySnippetButton: boolean) {
     [copySnippetButton],
   )
   React.useEffect(attachCopySnippetButton, [copySnippetButton])
-  useEvent('pjax:ready', attachCopySnippetButton, document)
+  useEvent('pjax:complete', attachCopySnippetButton, window)
 }
 
 export function useGitHubAttachCopyFileButton(copyFileButton: boolean) {
@@ -187,7 +187,7 @@ export function useGitHubAttachCopyFileButton(copyFileButton: boolean) {
     [copyFileButton],
   )
   React.useEffect(attachCopyFileButton, [copyFileButton])
-  useEvent('pjax:ready', attachCopyFileButton, document)
+  useEvent('pjax:complete', attachCopyFileButton, window)
 }
 
 function useResizeStylesheets(size: number) {

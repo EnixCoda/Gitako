@@ -212,7 +212,7 @@ function ListView({
     if (targetPath) expandTo(targetPath)
   }, [metaData.branchName])
   useOnLocationChange(goToCurrentItem)
-  useEvent('pjax:ready', goToCurrentItem, document)
+  useEvent('pjax:complete', goToCurrentItem, window)
   return (
     <List
       ref={listRef}

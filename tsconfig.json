@@ -9,7 +9,7 @@
     "baseUrl": ".",
     "outDir": "dist",
     "paths": {
-      "*": ["src/*"]
+      "*": ["src/*", "packages/*"]
     }
   },
   "include": ["src"]

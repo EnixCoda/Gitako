@@ -69,7 +69,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
     },
     [props.metaData?.branchName, configContext.val.intelligentToggle],
   )
-  useEvent('pjax:ready', updateSideBarVisibility, document)
+  useEvent('pjax:complete', updateSideBarVisibility, window)
 
   const copyFileButton = configContext.val.copyFileButton
   useGitHubAttachCopyFileButton(copyFileButton)

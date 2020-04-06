@@ -1,44 +1,40 @@
-import { Config, Pjax } from 'pjax-api'
+import * as PJAX from 'pjax'
 import * as React from 'react'
-import { useEvent } from 'react-use'
 import { useProgressBar } from './useProgressBar'
 
-const config: Config = {
-  areas: [
-    // github
-    '.repository-content',
-    '[data-pjax="#js-repo-pjax-container"]',
-    '.page-content',
-    // gitee
-    '#git-project-content',
-  ],
-  update: {
-    css: false,
-    script: false,
-  },
-  fetch: {
-    cache(path) {
-      return path
-    },
-  },
-}
-
 export function usePJAX() {
-  // make history travel work
-  React.useEffect(() => {
-    new Pjax({
-      ...config,
-      filter() {
-        return false
-      },
-    })
-  }, [])
-
+  // Note: shall not enable below pjax:send listener as there would be dual bar when GitHub PJAX links are triggered
+  // window.addEventListener('pjax:send', () => mountTopProgressBar())
+  const [pjax] = React.useState(
+    () =>
+      new PJAX({
+        elements: 'match-nothing-selector',
+        selectors: [
+          '.repository-content',
+          'title',
+          '[data-pjax="#js-repo-pjax-container"]',
+          '.page-content',
+          '#git-project-content',
+        ],
+        scrollTo: false,
+        analytics: false,
+        cacheBust: false,
+        forceCache: true, // TODO: merge namespace, add forceCache
+      }),
+  )
   const progressBar = useProgressBar()
-  useEvent('pjax:fetch', progressBar.mount, window)
-  useEvent('pjax:unload', progressBar.unmount, window)
-
-  return React.useCallback(url => {
-    Pjax.assign(url, config)
+  React.useEffect(() => {
+    window.addEventListener('pjax:complete', progressBar.unmount)
+    return () => window.removeEventListener('pjax:complete', progressBar.unmount)
   }, [])
+
+  const loadWithPJAX = React.useCallback(
+    function loadWithPJAX(URL: string) {
+      progressBar.mount()
+      pjax.loadUrl(URL, { scrollTo: 0 })
+    },
+    [pjax],
+  )
+
+  return loadWithPJAX
 }

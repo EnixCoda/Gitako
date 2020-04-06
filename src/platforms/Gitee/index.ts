@@ -176,7 +176,7 @@ export function useGiteeAttachCopySnippetButton(copySnippetButton: boolean) {
     [copySnippetButton],
   )
   React.useEffect(attachCopySnippetButton, [copySnippetButton])
-  useEvent('pjax:ready', attachCopySnippetButton, document)
+  useEvent('pjax:complete', attachCopySnippetButton, window)
 }
 
 function useResizeStylesheets(size: number) {
