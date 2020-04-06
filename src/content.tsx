@@ -12,8 +12,8 @@ if (platform.resolveMeta()) {
   function init() {
     // injects a copy of stylesheets so that other extensions(e.g. dark reader) could read
     function injectStyles(url: string) {
-      var linkElement = document.createElement('link')
-      linkElement.rel = 'stylesheet'
+      const linkElement = document.createElement('link')
+      linkElement.setAttribute('rel', 'stylesheet')
       linkElement.setAttribute('href', url)
       document.head.appendChild(linkElement)
     }
