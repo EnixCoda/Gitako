@@ -9,17 +9,8 @@ import './content.scss'
 if (platform.resolveMeta()) {
   addMiddleware(withErrorLog)
 
-  function init() {
-    // injects a copy of stylesheets so that other extensions(e.g. dark reader) could read
-    function injectStyles(url: string) {
-      const linkElement = document.createElement('link')
-      linkElement.setAttribute('rel', 'stylesheet')
-      linkElement.setAttribute('href', url)
-      document.head.appendChild(linkElement)
-    }
-
-    injectStyles(browser.extension.getURL('content.css'))
-
+  async function init() {
+    await injectStyles(browser.extension.getURL('content.css'))
     const SideBarElement = document.createElement('div')
     document.body.appendChild(SideBarElement)
     ReactDOM.render(<Gitako />, SideBarElement)
@@ -30,4 +21,16 @@ if (platform.resolveMeta()) {
   } else {
     init()
   }
+}
+
+// injects a copy of stylesheets so that other extensions(e.g. dark reader) could read
+// resolves when style is loaded to prevent render without proper styles
+async function injectStyles(url: string) {
+  return new Promise(resolve => {
+    const linkElement = document.createElement('link')
+    linkElement.setAttribute('rel', 'stylesheet')
+    linkElement.setAttribute('href', url)
+    linkElement.onload = () => resolve()
+    document.head.appendChild(linkElement)
+  })
 }
