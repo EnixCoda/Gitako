@@ -1,4 +1,3 @@
-import { raiseError } from 'analytics'
 import { GITHUB_OAUTH } from 'env'
 import { errors } from 'platforms'
 import { JSONRequest } from 'utils/general'
@@ -31,27 +30,24 @@ async function request(
   }
   const res = await fetch(url, { headers })
   const contentType = res.headers.get('Content-Type') || res.headers.get('content-type')
-  if (!contentType) {
-    throw new Error(`Response has no content type`)
-  } else if (!contentType.includes('application/json')) {
-    throw new Error(`Response content type is ${contentType}`)
-  }
+  const isJson = contentType?.includes('application/json')
   // About res.ok:
   // True if res.status between 200~299
   // Ref: https://developer.mozilla.org/en-US/docs/Web/API/Response/ok
   if (res.ok) {
-    return res.json()
+    if (isJson) return res.json()
+    throw new Error(`Response content type is "${contentType}"`)
   } else {
     if (res.status === 404 || res.status === 401) throw new Error(errors.NOT_FOUND)
     else if (res.status === 500) throw new Error(errors.SERVER_FAULT)
-    else {
+    else if (isJson) {
       const content = await res.json()
       if (apiRateLimitExceeded(content)) throw new Error(errors.API_RATE_LIMIT)
       if (isEmptyProject(content)) throw new Error(errors.EMPTY_PROJECT)
       if (isBlockedProject(content)) throw new Error(errors.BLOCKED_PROJECT)
-      // Unknown type of error, report it!
-      raiseError(new Error(res.statusText))
-      throw new Error(content && content.message)
+      throw new Error(`Unknown message content "${content?.message}"`)
+    } else {
+      throw new Error(`Response content type is "${contentType}"`)
     }
   }
 }
