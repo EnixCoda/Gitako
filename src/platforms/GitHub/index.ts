@@ -18,8 +18,8 @@ function parseTreeData(treeData: GitHubAPI.TreeData, metaData: MetaData) {
   const root: TreeNode = { name: '', path: '', contents: [], type: 'tree' }
   pathToNode.set('', root)
 
-  tree.forEach((item) => pathToItem.set(item.path, item))
-  tree.forEach((item) => {
+  tree.forEach(item => pathToItem.set(item.path, item))
+  tree.forEach(item => {
     // bottom-up search for the deepest node created
     let path = item.path
     const itemsToCreateTreeNode: GitHubAPI.TreeItem[] = []
@@ -111,10 +111,10 @@ export const GitHub: Platform = {
   },
   async getTreeData(metaData, accessToken) {
     const { userName, repoName, branchName } = metaData
-    const treeData = await API.getTreeData(userName, repoName, branchName)
+    const treeData = await API.getTreeData(userName, repoName, branchName, accessToken)
     const root = parseTreeData(treeData, metaData)
 
-    const gitModules = root.contents?.find((item) => item.name === '.gitmodules')
+    const gitModules = root.contents?.find(item => item.name === '.gitmodules')
     if (gitModules) {
       if (metaData.userName && metaData.repoName && gitModules.sha) {
         const blobData = await API.getBlobData(
