@@ -14,13 +14,17 @@ upload-for-analytics:
 	yarn sentry-cli releases finalize "$(FULL_VERSION)"
 
 compress:
-	rm -f dist/gitako.zip
-	cd dist && zip -r gitako-$(FULL_VERSION).zip * -x *.map -x *.DS_Store
+	rm -f dist/Gitako.zip
+	cd dist && zip -r Gitako.zip * -x *.map -x *.DS_Store
+
+rename-compressed:
+	cd dist && mv Gitako.zip Gitako-$(FULL_VERSION).zip
 
 release:
 	$(MAKE) build
 	$(MAKE) upload-for-analytics
 	$(MAKE) compress
+	$(MAKE) rename-compressed
 	$(MAKE) compress-source
 
 compress-source:
