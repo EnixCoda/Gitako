@@ -4,7 +4,6 @@ on:
   push:
     tags:
       - v[0-9]+.* # roughly matching version numbers
-      - test
 
 jobs:
   release:
