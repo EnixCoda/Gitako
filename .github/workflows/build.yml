@@ -1,0 +1,40 @@
+name: Build
+
+on:
+  push:
+    branches-ignore:
+      - do-not-build
+  pull_request:
+    branches-ignore:
+      - do-not-build
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - name: Cache deps
+        uses: actions/cache@v1
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Retrieve vscode icons
+        uses: actions/checkout@v2
+        with:
+          repository: 'vscode-icons/vscode-icons'
+          path: 'vscode-icons'
+
+      - name: Build
+        run: |
+          yarn
+          make build
