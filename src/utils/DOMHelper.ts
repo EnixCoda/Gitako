@@ -48,15 +48,14 @@ export function $<EE extends Element, E extends (element: EE) => any, O extends 
  * add the logo element into DOM
  */
 export function insertLogoMountPoint() {
-  const logoSelector = '.gitako .gitako-logo'
-  return $(logoSelector) || createLogoMountPoint()
-}
-
-function createLogoMountPoint() {
-  const logoMountElement = document.createElement('div')
-  logoMountElement.classList.add('gitako-logo-mount-point')
-  document.body.appendChild(logoMountElement)
-  return logoMountElement
+  const logoID = 'gitako-logo-mount-point'
+  const logoSelector = '#' + logoID
+  return $(logoSelector, undefined, function createLogoMountPoint() {
+    const logoMountElement = document.createElement('div')
+    logoMountElement.setAttribute('id', logoID)
+    document.body.appendChild(logoMountElement)
+    return logoMountElement
+  })
 }
 
 /**
