@@ -39,6 +39,7 @@ async function request(
     throw new Error(`Response content type is "${contentType}"`)
   } else {
     if (res.status === 404 || res.status === 401) throw new Error(errors.NOT_FOUND)
+    else if (res.status === 403) throw new Error(errors.API_RATE_LIMIT)
     else if (res.status === 500) throw new Error(errors.SERVER_FAULT)
     else if (isJson) {
       const content = await res.json()
