@@ -2,9 +2,7 @@ import { GITEE_OAUTH } from 'env'
 import { platform } from 'platforms'
 import * as React from 'react'
 import { useEvent } from 'react-use'
-import { bodySpacingClassName } from 'utils/DOMHelper'
 import { resolveGitModules } from 'utils/gitSubmodule'
-import { useMediaStyleSheet } from 'utils/hooks/useMediaStyleSheet'
 import { sortFoldersToFront } from 'utils/treeParser'
 import * as API from './API'
 import * as DOMHelper from './DOMHelper'
@@ -20,8 +18,8 @@ function parseTreeData(treeData: GiteeAPI.TreeData, metaData: MetaData) {
   const root: TreeNode = { name: '', path: '', contents: [], type: 'tree' }
   pathToNode.set('', root)
 
-  tree.forEach(item => pathToItem.set(item.path, item))
-  tree.forEach(item => {
+  tree.forEach((item) => pathToItem.set(item.path, item))
+  tree.forEach((item) => {
     // bottom-up search for the deepest node created
     let path = item.path
     const itemsToCreateTreeNode: GiteeAPI.TreeItem[] = []
@@ -116,7 +114,7 @@ export const Gitee: Platform = {
     const treeData = await API.getTreeData(userName, repoName, branchName)
     const root = parseTreeData(treeData, metaData)
 
-    const gitModules = root.contents?.find(item => item.name === '.gitmodules')
+    const gitModules = root.contents?.find((item) => item.name === '.gitmodules')
     if (gitModules) {
       if (metaData.userName && metaData.repoName && gitModules.sha) {
         const blobData = await API.getBlobData(
@@ -140,7 +138,6 @@ export const Gitee: Platform = {
   getCurrentPath(branchName) {
     return URLHelper.getCurrentPath(branchName)
   },
-  useResizeStylesheets,
   getOAuthLink() {
     const params = new URLSearchParams({
       client_id: GITEE_OAUTH.clientId,
@@ -177,18 +174,4 @@ export function useGiteeAttachCopySnippetButton(copySnippetButton: boolean) {
   )
   React.useEffect(attachCopySnippetButton, [copySnippetButton])
   useEvent('pjax:complete', attachCopySnippetButton, window)
-}
-
-function useResizeStylesheets(size: number) {
-  const CONTENT_WIDTH = 1040
-  useMediaStyleSheet(
-    `.${bodySpacingClassName} { margin-left: calc(var(--gitako-width) * 2 + ${CONTENT_WIDTH}px - 100vw); }`,
-    size => [`min-width: ${size + CONTENT_WIDTH}px`, `max-width: ${size * 2 + CONTENT_WIDTH}px`],
-    size,
-  )
-  useMediaStyleSheet(
-    `.${bodySpacingClassName} { margin-left: var(--gitako-width); }`,
-    size => [`max-width: ${size + CONTENT_WIDTH}px`],
-    size,
-  )
 }

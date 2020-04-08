@@ -44,6 +44,8 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 }
 
 .with-gitako-spacing {
+  margin-left: var(--gitako-width);
+
   // gitee
   &.git-project {
     width: auto; // shrink width

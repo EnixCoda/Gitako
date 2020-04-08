@@ -9,7 +9,6 @@ export const dummyPlatformForTypeSafety: Platform = {
   },
   getCurrentPath: dummyPlatformMethod,
   setOAuth: dummyPlatformMethod,
-  useResizeStylesheets: dummyPlatformMethod,
   getOAuthLink: dummyPlatformMethod,
 }
 

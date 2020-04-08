@@ -1,6 +1,5 @@
 import { HorizontalResizeHandler } from 'components/ResizeHandler'
 import { useConfigs } from 'containers/ConfigsContext'
-import { platform } from 'platforms'
 import * as React from 'react'
 import { useWindowSize } from 'react-use'
 import { cx } from 'utils/cx'
@@ -32,8 +31,6 @@ export function Resizable({ baseSize, className, children }: React.PropsWithChil
     document.documentElement.style.setProperty('--gitako-width', size + 'px')
     configContext.set({ sideBarWidth: size })
   }, [size])
-
-  platform.useResizeStylesheets(size)
 
   const onResize = React.useCallback((size: number) => {
     if (size < window.innerWidth - MINIMAL_CONTENT_VIEWPORT_WIDTH) setSize(size)

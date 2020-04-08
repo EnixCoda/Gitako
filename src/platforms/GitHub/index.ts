@@ -2,9 +2,7 @@ import { GITHUB_OAUTH } from 'env'
 import { platform } from 'platforms'
 import * as React from 'react'
 import { useEvent } from 'react-use'
-import { bodySpacingClassName } from 'utils/DOMHelper'
 import { resolveGitModules } from 'utils/gitSubmodule'
-import { useMediaStyleSheet } from 'utils/hooks/useMediaStyleSheet'
 import { sortFoldersToFront } from 'utils/treeParser'
 import * as API from './API'
 import * as DOMHelper from './DOMHelper'
@@ -20,8 +18,8 @@ function parseTreeData(treeData: GitHubAPI.TreeData, metaData: MetaData) {
   const root: TreeNode = { name: '', path: '', contents: [], type: 'tree' }
   pathToNode.set('', root)
 
-  tree.forEach(item => pathToItem.set(item.path, item))
-  tree.forEach(item => {
+  tree.forEach((item) => pathToItem.set(item.path, item))
+  tree.forEach((item) => {
     // bottom-up search for the deepest node created
     let path = item.path
     const itemsToCreateTreeNode: GitHubAPI.TreeItem[] = []
@@ -116,7 +114,7 @@ export const GitHub: Platform = {
     const treeData = await API.getTreeData(userName, repoName, branchName)
     const root = parseTreeData(treeData, metaData)
 
-    const gitModules = root.contents?.find(item => item.name === '.gitmodules')
+    const gitModules = root.contents?.find((item) => item.name === '.gitmodules')
     if (gitModules) {
       if (metaData.userName && metaData.repoName && gitModules.sha) {
         const blobData = await API.getBlobData(
@@ -155,7 +153,6 @@ export const GitHub: Platform = {
     }
     return accessToken
   },
-  useResizeStylesheets,
   getOAuthLink() {
     const params = new URLSearchParams({
       client_id: GITHUB_OAUTH.clientId,
@@ -188,18 +185,4 @@ export function useGitHubAttachCopyFileButton(copyFileButton: boolean) {
   )
   React.useEffect(attachCopyFileButton, [copyFileButton])
   useEvent('pjax:complete', attachCopyFileButton, window)
-}
-
-function useResizeStylesheets(size: number) {
-  const CONTENT_WIDTH = 1020
-  useMediaStyleSheet(
-    `.${bodySpacingClassName} { margin-left: calc(var(--gitako-width) * 2 + 1020px - 100vw); }`,
-    size => [`min-width: ${size + CONTENT_WIDTH}px`, `max-width: ${size * 2 + CONTENT_WIDTH}px`],
-    size,
-  )
-  useMediaStyleSheet(
-    `.${bodySpacingClassName} { margin-left: var(--gitako-width); }`,
-    size => [`max-width: ${size + CONTENT_WIDTH}px`],
-    size,
-  )
 }
