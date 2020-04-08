@@ -3,6 +3,7 @@ import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { useWindowSize } from 'react-use'
 import { cx } from 'utils/cx'
+import { setResizingState } from 'utils/DOMHelper'
 import * as features from 'utils/features'
 
 export type Size = number
@@ -25,6 +26,12 @@ export function Resizable({ baseSize, className, children }: React.PropsWithChil
   React.useEffect(() => {
     if (size > width - MINIMAL_CONTENT_VIEWPORT_WIDTH)
       setSize(width - MINIMAL_CONTENT_VIEWPORT_WIDTH)
+  }, [width, size])
+
+  React.useEffect(() => {
+    setResizingState(true)
+    const timer = setTimeout(() => setResizingState(false), 100)
+    return () => clearTimeout(timer)
   }, [width, size])
 
   React.useEffect(() => {

@@ -107,3 +107,10 @@ export function focusSearchInput() {
     }
   })
 }
+
+export function setResizingState(on: boolean) {
+  const target = document.querySelector('.gitako-toggle-show-button-wrapper')
+  if (!target) return
+  if (on) target.classList.add('resizing')
+  else target.classList.remove('resizing')
+}

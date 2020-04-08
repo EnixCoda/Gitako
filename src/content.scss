@@ -126,8 +126,13 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
   padding: 4px;
   border: 1px solid transparent;
   will-change: transform;
-  transition: transform $animation-duration ease;
   transform: translate(calc(var(--gitako-width) - 30px));
+
+  transition: transform $animation-duration ease;
+  // disable position transition when resizing sidebar
+  &.resizing {
+    transition: none;
+  }
 
   &.collapsed {
     border-color: $border-gray;
