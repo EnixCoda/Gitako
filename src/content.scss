@@ -124,47 +124,19 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
   align-items: center;
   cursor: pointer;
   padding: 4px;
-  will-change: transform;
   border: 1px solid transparent;
-
-  @mixin transform-expanded() {
-    transform: translate(calc(var(--gitako-width) - 30px));
-  }
-  @mixin transform-collapsed() {
-    transform: translate(5px);
-  }
-
-  @include transform-expanded();
-  animation: toggle-show-button-wrapper-expand $animation-duration;
+  will-change: transform;
+  transition: transform $animation-duration ease;
+  transform: translate(calc(var(--gitako-width) - 30px));
 
   &.collapsed {
     border-color: $border-gray;
     border-radius: 3px;
     background: $bg-gray;
-
-    @include transform-collapsed();
-    animation: toggle-show-button-wrapper-collapse $animation-duration;
+    transform: translate(5px);
 
     .action-icon {
       color: $blue;
-    }
-  }
-
-  @keyframes toggle-show-button-wrapper-expand {
-    from {
-      @include transform-collapsed();
-    }
-    to {
-      @include transform-expanded();
-    }
-  }
-
-  @keyframes toggle-show-button-wrapper-collapse {
-    from {
-      @include transform-expanded();
-    }
-    to {
-      @include transform-collapsed();
     }
   }
 
