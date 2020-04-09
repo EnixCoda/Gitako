@@ -1,5 +1,4 @@
 import { raiseError } from 'analytics'
-import { GITEE_OAUTH } from 'env'
 import { errors } from 'platforms'
 
 function isEmptyProject(content: any /* safe any */) {
@@ -85,27 +84,16 @@ export async function getBlobData(
   return await request(url, { accessToken })
 }
 
-export async function OAuth(code: string): Promise<GiteeAPI.OAuth> {
-  if (!GITEE_OAUTH.clientId || !GITEE_OAUTH.clientSecret)
-    throw new Error(`No Gitee OAuth credientials`)
-  const params = new URLSearchParams({
-    grant_type: 'authorization_code',
-    code: code,
-    client_id: GITEE_OAUTH.clientId,
-    client_secret: GITEE_OAUTH.clientSecret,
-  })
-
-  const res = await fetch('https://gitee.com/oauth/token?' + params.toString(), {
-    mode: 'cors',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-    },
-    redirect: 'follow',
-    referrerPolicy: 'no-referrer',
+export async function OAuth(code: string): Promise<string | null> {
+  const endpoint = 'https://gitako.now.sh/oauth/gitee?'
+  const res = await fetch(endpoint + new URLSearchParams({ code }).toString(), {
     method: 'post',
   })
-  return res.json()
+
+  if (res.ok) {
+    const body = await res.json()
+    const accessToken = body?.accessToken
+    if (typeof accessToken === 'string') return accessToken
+  }
+  return null
 }

@@ -1,3 +1,4 @@
+import { raiseError } from 'analytics'
 import { GITHUB_OAUTH } from 'env'
 import { errors } from 'platforms'
 import { JSONRequest } from 'utils/general'
@@ -82,10 +83,42 @@ export async function getBlobData(
   return await request(url, { accessToken })
 }
 
-export async function OAuth(code: string): Promise<GitHubAPI.OAuth> {
-  return await JSONRequest('https://github.com/login/oauth/access_token', {
+export async function OAuth(code: string): Promise<string | null> {
+  try {
+    // TODO: deprecate legacy OAuth
+    if (+Date.now() < +new Date(2020, 5, 1)) return legacyOAuth(code)
+    else return safeOAuth(code)
+  } catch (err) {
+    return null
+  }
+}
+
+async function safeOAuth(code: string) {
+  const endpoint = `https://gitako.now.sh/oauth/github?`
+  const res = await fetch(endpoint + new URLSearchParams({ code }).toString(), {
+    method: 'post',
+  })
+  if (res.ok) {
+    const body = await res.json()
+    const accessToken = body?.accessToken
+    if (typeof accessToken === 'string') return accessToken
+  }
+  return null
+}
+
+async function legacyOAuth(code: string) {
+  const res = await JSONRequest('https://github.com/login/oauth/access_token', {
     code,
     client_id: GITHUB_OAUTH.clientId,
     client_secret: GITHUB_OAUTH.clientSecret,
   })
+
+  const { access_token: accessToken, scope, error_description: errorDescription } = res
+  if (errorDescription) {
+    raiseError(new Error(errorDescription))
+  } else if (scope !== 'repo' || !accessToken) {
+    raiseError(new Error(`Cannot resolve token response: '${JSON.stringify(res)}'`))
+  } else {
+    return accessToken
+  }
 }

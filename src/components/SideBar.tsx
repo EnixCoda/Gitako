@@ -1,4 +1,3 @@
-import { raiseError } from 'analytics'
 import { AccessDeniedDescription } from 'components/AccessDeniedDescription'
 import { FileExplorer } from 'components/FileExplorer'
 import { MetaBar } from 'components/MetaBar'
@@ -32,7 +31,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
 
   React.useEffect(() => {
     const { init } = props
-    ;(async function() {
+    ;(async function () {
       if (!accessToken) {
         const accessToken = await trySetUpAccessTokenWithCode()
         configContext.set({ access_token: accessToken || undefined })
@@ -146,18 +145,15 @@ function AccessDeniedError({ hasToken }: { hasToken: boolean }) {
 }
 
 async function trySetUpAccessTokenWithCode() {
-  try {
-    const search = parseURLSearch()
-    if ('code' in search) {
-      const accessToken = await platform.setOAuth(search.code)
-      window.history.replaceState(
-        {},
-        'removed search param',
-        window.location.pathname.replace(window.location.search, ''),
-      )
-      return accessToken
-    }
-  } catch (err) {
-    raiseError(err)
+  const search = parseURLSearch()
+  if ('code' in search) {
+    const accessToken = await platform.setOAuth(search.code)
+    if (!accessToken) alert(`Gitako: The OAuth token has expired, please try again.`)
+    window.history.replaceState(
+      {},
+      'removed search param',
+      window.location.pathname.replace(window.location.search, ''),
+    )
+    return accessToken
   }
 }
