@@ -150,7 +150,7 @@ async function trySetUpAccessTokenWithCode() {
     const search = parseURLSearch()
     if ('code' in search) {
       const accessToken = await platform.setOAuth(search.code)
-      window.history.pushState(
+      window.history.replaceState(
         {},
         'removed search param',
         window.location.pathname.replace(window.location.search, ''),
