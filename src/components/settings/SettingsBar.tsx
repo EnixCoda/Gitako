@@ -17,7 +17,7 @@ export const wikiLinks = {
   changeLog: `${WIKI_HOME_LINK}/Change-Log`,
   copyFileButton: `${WIKI_HOME_LINK}/Copy-file-and-snippet`,
   copySnippet: `${WIKI_HOME_LINK}/Copy-file-and-snippet`,
-  createAccessToken: `${WIKI_HOME_LINK}/How-to-create-access-token-for-Gitako%3F`,
+  createAccessToken: `${WIKI_HOME_LINK}/Access-token-for-Gitako`,
 }
 
 type Props = {
