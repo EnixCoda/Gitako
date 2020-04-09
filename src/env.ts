@@ -7,7 +7,6 @@ export const GITHUB_OAUTH = {
 
 export const GITEE_OAUTH = {
   clientId: process.env.GITEE_OAUTH_CLIENT_ID || '',
-  clientSecret: process.env.GITEE_OAUTH_CLIENT_SECRET || '',
 }
 
 export const VERSION = process.env.VERSION

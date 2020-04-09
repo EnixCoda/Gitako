@@ -138,20 +138,8 @@ export const GitHub: Platform = {
   getCurrentPath(branchName) {
     return URLHelper.getCurrentPath(branchName)
   },
-  async setOAuth(code) {
-    const res = await API.OAuth(code)
-    const { access_token: accessToken, scope, error_description: errorDescription } = res
-    if (errorDescription) {
-      if (errorDescription === `The code passed is incorrect or expired.`) {
-        alert(`Gitako: The OAuth token has expired, please try again.`)
-        return null
-      } else {
-        throw new Error(errorDescription)
-      }
-    } else if (scope !== 'repo' || !accessToken) {
-      throw new Error(`Cannot resolve token response: '${JSON.stringify(res)}'`)
-    }
-    return accessToken
+  setOAuth(code) {
+    return API.OAuth(code)
   },
   getOAuthLink() {
     const params = new URLSearchParams({
