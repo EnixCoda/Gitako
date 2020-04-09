@@ -22,6 +22,7 @@ import * as keyHelper from 'utils/keyHelper'
 const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
   const configContext = useConfigs()
   const accessToken = props.configContext.val.access_token
+  const [baseSize] = React.useState(() => configContext.val.sideBarWidth)
 
   const intelligentToggle = configContext.val.intelligentToggle
   React.useEffect(() => {
@@ -88,7 +89,6 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
     errorDueToAuth,
     metaData,
     treeData: treeRoot,
-    baseSize,
     error,
     shouldShow,
     showSettings,
@@ -132,7 +132,6 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
 }
 
 RawGitako.defaultProps = {
-  baseSize: 260,
   shouldShow: false,
   showSettings: false,
   errorDueToAuth: false,

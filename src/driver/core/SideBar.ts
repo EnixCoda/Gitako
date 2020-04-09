@@ -29,8 +29,6 @@ export type ConnectorState = {
   setShouldShow: GetCreatedMethod<typeof setShouldShow>
   toggleShowSideBar: GetCreatedMethod<typeof toggleShowSideBar>
   toggleShowSettings: GetCreatedMethod<typeof toggleShowSettings>
-} & {
-  baseSize: number
 }
 
 type BoundMethodCreator<Args extends any[] = []> = MethodCreator<Props, ConnectorState, Args>
@@ -62,10 +60,7 @@ export const init: BoundMethodCreator = dispatch => async () => {
     dispatch.call(setMetaData, metaData)
 
     const [, { configContext }] = dispatch.get()
-    const { sideBarWidth, access_token: accessToken, intelligentToggle } = configContext.val
-    dispatch.set({
-      baseSize: sideBarWidth,
-    })
+    const { access_token: accessToken } = configContext.val
 
     if (!metaData.branchName || !metaData.userName || !metaData.repoName) return
     const getTreeDataAggressively = platform.getTreeData(
