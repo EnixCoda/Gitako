@@ -1,0 +1,13 @@
+{
+  "name": "gitako-server",
+  "version": "0.1.0",
+  "main": "api/index.ts",
+  "author": "Enix",
+  "license": "MIT",
+  "dependencies": {
+    "@now/node": "^1.5.0",
+    "@types/node-fetch": "^2.5.5",
+    "node-fetch": "^2.6.0",
+    "typescript": "^3.8.3"
+  }
+}

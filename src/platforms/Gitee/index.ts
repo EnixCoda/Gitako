@@ -143,7 +143,9 @@ export const Gitee: Platform = {
       client_id: GITEE_OAUTH.clientId,
       scope: 'projects',
       response_type: 'code',
-      redirect_uri: window.location.href,
+      redirect_uri:
+        'https://gitako.now.sh/redirect/?' +
+        new URLSearchParams({ redirect: window.location.href }).toString(),
     })
     return `https://gitee.com/oauth/authorize?` + params.toString()
   },
