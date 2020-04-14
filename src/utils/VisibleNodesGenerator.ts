@@ -16,32 +16,46 @@ import { findNode } from './general'
  *  |                            |                          |   searchedNodes + toggleNode -> expandedNodes
  *  |2 search key                | when search              | onSearch
  *  |                            |                          |   treeNodes + searchKey -> searchedNodes
- *  |1 tree: { root <-> nodes }  | when tree init           | treeHelper.parse
+ *  |1 tree: { root <-> nodes }  | when tree init or search | treeHelper.parse
  *  |                                                       |   tree data from api -> { root, nodes }
  *  v  stable
  */
 
-function filterDuplications<T>(arr: T[]) {
-  return Array.from(new Set(arr))
-}
-
-function search(treeNodes: TreeNode[], regexps: RegExp[]): TreeNode[] {
-  if (!regexps.length) return treeNodes
-
-  const searchResults = ([] as TreeNode[]).concat(
-    ...regexps.map(keyRegex => treeNodes.filter(({ name }) => keyRegex.test(name))),
-  )
-  return filterDuplications(searchResults)
-}
-
-function getNodes(root: TreeNode, nodes: TreeNode[] = []) {
-  if (root.contents) {
-    root.contents.forEach(node => {
-      nodes.push(node)
-      getNodes(node, nodes)
-    })
+function search(
+  root: TreeNode,
+  regexps: RegExp[],
+  onMatch: (node: TreeNode) => void,
+): TreeNode | null {
+  if (!regexps.length) {
+    return root
   }
-  return nodes
+
+  // go traverse no matter root matches or not to make sure find all nodes matches
+  const children =
+    root.type === 'tree'
+      ? root.contents
+          ?.map(item => search(item, regexps, onMatch))
+          .filter(function (result): result is TreeNode {
+            return result !== null
+          })
+      : []
+
+  if (isNodeMatch(root, regexps)) {
+    onMatch(root)
+    return root
+  }
+
+  if (children?.length) {
+    return {
+      ...root,
+      contents: children,
+    }
+  }
+  return null
+}
+
+function isNodeMatch(root: TreeNode, regexps: RegExp[]): boolean {
+  return regexps.some(regexp => regexp.test(root.name))
 }
 
 function compressTree(root: TreeNode, prefix: string[] = []): TreeNode {
@@ -62,38 +76,31 @@ function compressTree(root: TreeNode, prefix: string[] = []): TreeNode {
 
 class L1 {
   root: TreeNode
-  nodes: TreeNode[]
-  compressedRoot: TreeNode
 
   constructor(root: TreeNode) {
     this.root = root
-    this.nodes = getNodes(root)
-    this.compressedRoot = compressTree(root)
   }
 }
 
 class L2 {
   l1: L1
   couldCompress: boolean
-  compressed: boolean
-  searchedNodes: TreeNode[] | null
+  exactMatches: TreeNode[] = []
+  finalRoot: TreeNode | null = null
 
   constructor(l1: L1, options: Options) {
     this.l1 = l1
     this.couldCompress = Boolean(options.compress)
-    this.compressed = false
-    this.searchedNodes = null
+    this.search([])
   }
 
   search = (regexps: RegExp[]) => {
-    this.compressed = !regexps.length
-    this.searchedNodes = regexps.length
-      ? search(this.l1.nodes, regexps)
-      : this.getRoot().contents || []
-  }
-
-  getRoot = () => {
-    return this.couldCompress && this.compressed ? this.l1.compressedRoot : this.l1.root
+    const shouldCompress = this.couldCompress && !regexps.length
+    this.exactMatches.length = 0
+    const rootNode = regexps.length
+      ? search(this.l1.root, regexps, node => this.exactMatches.push(node))
+      : this.l1.root
+    this.finalRoot = rootNode && shouldCompress ? compressTree(rootNode) : rootNode
   }
 }
 
@@ -127,35 +134,31 @@ class L3 {
     this.generateVisibleNodes()
   }
 
-  expandTo = (path: string) => {
-    const root = this.l2.getRoot()
-    const node = findNode(root, path.split('/'), node => this.setExpand(node, true))
+  expandTo = (path: string, expandAlongTheWay?: boolean) => {
+    const rootNode = this.l2.finalRoot
+    if (expandAlongTheWay && path.includes('/')) {
+      this.expandTo(path.slice(0, path.lastIndexOf('/')), true)
+    }
+    const node = rootNode && findNode(rootNode, path.split('/'), node => this.setExpand(node, true))
     if (node) this.setExpand(node, true)
     return node
   }
 
   generateVisibleNodes = () => {
-    if (this.l2.searchedNodes === null) return
     this.depths.clear()
-    const nodesSet = new Set() // prevent duplication
-    const nodes = [],
-      stack: (TreeNode | null)[] = this.l2.searchedNodes.slice().reverse()
-    let current: TreeNode | null,
-      depth = 0
-    while (stack.length) {
-      current = stack.pop()!
-      if (current === null) {
-        depth -= 1
-        continue
+    const nodes: TreeNode[] = []
+    if (this.l2.finalRoot !== null) {
+      const traverse = (root: TreeNode, depth = 0) => {
+        nodes.push(root)
+        this.depths.set(root, depth)
+        if (this.expandedNodes.has(root) && root.type === 'tree' && root.contents?.length) {
+          for (const item of root.contents) {
+            traverse(item, depth + 1)
+          }
+        }
       }
-      if (nodesSet.has(current)) continue
-      nodes.push(current)
-      nodesSet.add(current)
-      this.depths.set(current, depth)
-      if (current && this.expandedNodes.has(current)) {
-        stack.push(null) // use null as pop depth flag
-        if (current.contents) stack.push(...current.contents.slice().reverse())
-        depth += 1
+      for (const item of this.l2.finalRoot.contents || []) {
+        traverse(item)
       }
     }
     this.nodes = nodes
@@ -163,7 +166,7 @@ class L3 {
 }
 
 export type VisibleNodes = {
-  nodes: L1['nodes']
+  nodes: L3['nodes']
   depths: L3['depths']
   expandedNodes: L3['expandedNodes']
   focusedNode: L4['focusedNode']
@@ -198,7 +201,7 @@ export class VisibleNodesGenerator {
   l3: L3
   l4: L4
 
-  search: L2['search']
+  search: (regexps: RegExp[]) => void
   setExpand: L3['setExpand']
   toggleExpand: L3['toggleExpand']
   expandTo: L3['expandTo']
@@ -210,11 +213,13 @@ export class VisibleNodesGenerator {
     this.l3 = new L3(this.l1, this.l2)
     this.l4 = new L4(this.l1, this.l2, this.l3)
 
-    this.search = (...args) => {
-      const r = this.l2.search(...args)
+    this.search = regexps => {
+      this.l2.search(regexps)
+      for (const node of this.l2.exactMatches) {
+        this.expandTo(node.path, true)
+      }
       this.l3.generateVisibleNodes()
       this.l4.focusNode(null)
-      return r
     }
     this.setExpand = (...args) => this.l3.setExpand(...args)
     this.toggleExpand = (...args) => this.l3.toggleExpand(...args)
