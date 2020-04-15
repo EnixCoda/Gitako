@@ -20,9 +20,9 @@ import { SizeObserver } from './SizeObserver'
 const VisibleNodesContext = React.createContext<VisibleNodes | null>(null)
 
 const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplorer(props) {
-  const { visibleNodes, freeze, onNodeClick, searchKey } = props
+  const { state, visibleNodes, freeze, onNodeClick, searchKey } = props
   const {
-    val: { access_token: accessToken, compressSingletonFolder },
+    val: { compressSingletonFolder },
   } = useConfigs()
 
   React.useEffect(() => {
@@ -32,8 +32,8 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
 
   React.useEffect(() => {
     const { setUpTree, treeRoot, metaData } = props
-    setUpTree({ treeRoot, metaData, compressSingletonFolder, accessToken })
-  }, [props.setUpTree, props.treeRoot, compressSingletonFolder, accessToken])
+    setUpTree({ treeRoot, metaData, compressSingletonFolder })
+  }, [props.setUpTree, props.treeRoot, compressSingletonFolder])
 
   React.useEffect(() => {
     const { execAfterRender } = props
@@ -69,8 +69,7 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
     [renderActions, onNodeClick, searchKey],
   )
 
-  const renderFiles = React.useCallback(
-    ({ nodes, focusedNode }: VisibleNodes) => {
+  function renderFiles({ nodes, focusedNode }: VisibleNodes) {
       const inSearch = searchKey !== ''
       if (inSearch && nodes.length === 0) {
         return (
@@ -94,9 +93,7 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
           )}
         </SizeObserver>
       )
-    },
-    [searchKey, ListView, renderNode],
-  )
+  }
 
   const revealNode = React.useCallback(function revealNode(
     goTo: (path: string[]) => void,
@@ -118,8 +115,15 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
         onKeyDown={props.handleKeyDown}
         onClick={freeze ? props.toggleShowSettings : undefined}
       >
-        {props.stateText ? (
-          <LoadingIndicator text={props.stateText} />
+        {state !== 'done' ? (
+          <LoadingIndicator
+            text={
+              {
+                pulling: 'Fetching File List...',
+                rendering: 'Rendering File List...',
+              }[state]
+            }
+          />
         ) : (
           visibleNodes && (
             <>
@@ -139,6 +143,7 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
 
 RawFileExplorer.defaultProps = {
   freeze: false,
+  state: 'pulling',
   searchKey: '',
   visibleNodes: null,
 }

@@ -290,6 +290,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           &-icon {
             width: 20px;
             height: 20px;
+            margin-right: 2px;
 
             .octicon {
               width: 20px;

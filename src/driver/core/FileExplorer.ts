@@ -15,7 +15,7 @@ export type Props = {
 }
 
 export type ConnectorState = {
-  stateText: string
+  state: 'pulling' | 'rendering' | 'done'
   visibleNodes: VisibleNodes | null
   searchKey: string
   searched: boolean // derived state from searchKey, = !!searchKey
@@ -57,14 +57,13 @@ let visibleNodesGenerator: VisibleNodesGenerator
 
 type BoundMethodCreator<Args extends any[] = []> = MethodCreator<Props, ConnectorState, Args>
 
-export const init: BoundMethodCreator = dispatch => () =>
-  dispatch.call(setStateText, 'Fetching File List...')
+export const init: BoundMethodCreator = dispatch => () => dispatch.set({ state: 'pulling' })
 
 export const setUpTree: BoundMethodCreator<[
-  Pick<Props, 'treeRoot' | 'metaData' | 'accessToken'> & Pick<Config, 'compressSingletonFolder'>,
+  Pick<Props, 'treeRoot' | 'metaData'> & Pick<Config, 'compressSingletonFolder'>,
 ]> = dispatch => async ({ treeRoot, metaData, compressSingletonFolder }) => {
   if (!treeRoot) return
-  dispatch.call(setStateText, 'Rendering File List...')
+  dispatch.set({ state: 'rendering' })
 
   visibleNodesGenerator = new VisibleNodesGenerator(treeRoot, {
     compress: compressSingletonFolder,
@@ -73,7 +72,7 @@ export const setUpTree: BoundMethodCreator<[
   visibleNodesGenerator.init()
 
   tasksAfterRender.push(DOMHelper.focusSearchInput)
-  dispatch.call(setStateText, '')
+  dispatch.set({ state: 'done' })
   const targetPath = platform.getCurrentPath(metaData.branchName)
   if (targetPath) dispatch.call(goTo, targetPath)
 }
@@ -84,13 +83,6 @@ export const execAfterRender: BoundMethodCreator = dispatch => () => {
   }
   tasksAfterRender.length = 0
 }
-
-export const setStateText: BoundMethodCreator<[ConnectorState['stateText']]> = dispatch => (
-  text: string,
-) =>
-  dispatch.set({
-    stateText: text,
-  })
 
 export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch => event => {
   const [{ searched, visibleNodes }, { loadWithPJAX }] = dispatch.get()
