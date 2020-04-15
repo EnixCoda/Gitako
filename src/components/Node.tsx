@@ -59,7 +59,16 @@ export function Node({
     >
       <div className={'node-item-label'}>
         <NodeItemIcon node={node} open={expanded} />
-        <Highlight match={regex} text={name} />
+        {name.includes('/') ? (
+          name.split('/').map((chunk, index) => (
+            <React.Fragment key={chunk}>
+              {index > 0 && '/'}
+              <Highlight match={regex} text={chunk} />
+            </React.Fragment>
+          ))
+        ) : (
+          <Highlight match={regex} text={name} />
+        )}
       </div>
       {renderActions && <div>{renderActions(node)}</div>}
     </a>

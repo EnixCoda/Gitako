@@ -16,7 +16,7 @@ import { findNode } from './general'
  *  |                            |                          |   searchedNodes + toggleNode -> expandedNodes
  *  |2 search key                | when search              | onSearch
  *  |                            |                          |   treeNodes + searchKey -> searchedNodes
- *  |1 tree: { root <-> nodes }  | when tree init or search | treeHelper.parse
+ *  |1 tree: { root <-> nodes }  | when tree init           | treeHelper.parse
  *  |                                                       |   tree data from api -> { root, nodes }
  *  v  stable
  */
@@ -24,32 +24,41 @@ import { findNode } from './general'
 function search(
   root: TreeNode,
   regexps: RegExp[],
-  onMatch: (node: TreeNode) => void,
+  onChildMatch: (node: TreeNode) => void,
 ): TreeNode | null {
-  if (!regexps.length) {
-    return root
-  }
-
   // go traverse no matter root matches or not to make sure find all nodes matches
-  const children =
-    root.type === 'tree'
-      ? root.contents
-          ?.map(item => search(item, regexps, onMatch))
-          .filter(function (result): result is TreeNode {
-            return result !== null
-          })
-      : []
+  const contents = []
+  if (root.type === 'tree' && root.contents) {
+    let childMatch = false
+    for (const item of root.contents) {
+      if (isNodeMatch(item, regexps)) {
+        childMatch = true
+        break
+      }
+    }
+
+    for (const item of root.contents) {
+      const $item = search(item, regexps, onChildMatch)
+      if ($item) {
+        if ($item !== item) childMatch = true
+        contents.push($item)
+      }
+    }
+
+    if (childMatch) {
+      onChildMatch(root)
+    }
+
+    if (contents?.length) {
+      return {
+        ...root,
+        contents,
+      }
+    }
+  }
 
   if (isNodeMatch(root, regexps)) {
-    onMatch(root)
     return root
-  }
-
-  if (children?.length) {
-    return {
-      ...root,
-      contents: children,
-    }
   }
   return null
 }
@@ -61,17 +70,32 @@ function isNodeMatch(root: TreeNode, regexps: RegExp[]): boolean {
 function compressTree(root: TreeNode, prefix: string[] = []): TreeNode {
   if (root.contents) {
     if (root.contents.length === 1) {
-      const singleton = root.contents[0]
+      const [singleton] = root.contents
       if (singleton.type === 'tree') {
         return compressTree(singleton, [...prefix, root.name])
       }
     }
+
+    let compressed = false
+    const contents = []
+    for (const item of root.contents) {
+      const $item = compressTree(item)
+      if ($item !== item) compressed = true
+      contents.push($item)
+    }
+    if (compressed)
+      return {
+        ...root,
+        name: [...prefix, root.name].join('/'),
+        contents,
+      }
   }
-  return {
-    ...root,
-    name: [...prefix, root.name].join('/'),
-    contents: root.contents ? root.contents.map(node => compressTree(node)) : undefined,
-  }
+  return prefix.length
+    ? {
+        ...root,
+        name: [...prefix, root.name].join('/'),
+      }
+    : root
 }
 
 class L1 {
@@ -84,23 +108,21 @@ class L1 {
 
 class L2 {
   l1: L1
-  couldCompress: boolean
-  exactMatches: TreeNode[] = []
-  finalRoot: TreeNode | null = null
+  compress: boolean
+  root: TreeNode | null = null
 
   constructor(l1: L1, options: Options) {
     this.l1 = l1
-    this.couldCompress = Boolean(options.compress)
-    this.search([])
+    this.compress = Boolean(options.compress)
   }
 
-  search = (regexps: RegExp[]) => {
-    const shouldCompress = this.couldCompress && !regexps.length
-    this.exactMatches.length = 0
-    const rootNode = regexps.length
-      ? search(this.l1.root, regexps, node => this.exactMatches.push(node))
-      : this.l1.root
-    this.finalRoot = rootNode && shouldCompress ? compressTree(rootNode) : rootNode
+  search = (regexps: RegExp[], onChildMatch: (node: TreeNode) => void) => {
+    const rootNode = regexps.length ? search(this.l1.root, regexps, onChildMatch) : this.l1.root
+
+    this.root =
+      rootNode && this.compress
+        ? { ...rootNode, contents: rootNode.contents?.map(node => compressTree(node)) }
+        : rootNode
   }
 }
 
@@ -108,34 +130,31 @@ class L3 {
   l1: L1
   l2: L2
 
-  nodes: TreeNode[]
-  expandedNodes: Set<TreeNode>
-  depths: Map<TreeNode, number>
+  nodes: TreeNode[] = []
+  expandedNodes: Set<TreeNode['path']> = new Set()
+  depths: Map<TreeNode, number> = new Map()
 
   constructor(l1: L1, l2: L2) {
     this.l1 = l1
     this.l2 = l2
-    this.expandedNodes = new Set<TreeNode>()
-    this.depths = new Map()
-    this.nodes = []
   }
 
   toggleExpand = (node: TreeNode) => {
-    this.setExpand(node, !this.expandedNodes.has(node))
+    this.setExpand(node, !this.expandedNodes.has(node.path))
   }
 
   setExpand = (node: TreeNode, expand: boolean) => {
     if (expand && node.contents) {
       // only node with contents is expandable
-      this.expandedNodes.add(node)
+      this.expandedNodes.add(node.path)
     } else {
-      this.expandedNodes.delete(node)
+      this.expandedNodes.delete(node.path)
     }
     this.generateVisibleNodes()
   }
 
   expandTo = (path: string, expandAlongTheWay?: boolean) => {
-    const rootNode = this.l2.finalRoot
+    const rootNode = this.l2.root
     if (expandAlongTheWay && path.includes('/')) {
       this.expandTo(path.slice(0, path.lastIndexOf('/')), true)
     }
@@ -144,20 +163,26 @@ class L3 {
     return node
   }
 
+  search = (regexps: RegExp[]) => {
+    this.expandedNodes.clear()
+    this.l2.search(regexps, node => this.expandedNodes.add(node.path))
+    this.generateVisibleNodes()
+  }
+
   generateVisibleNodes = () => {
     this.depths.clear()
     const nodes: TreeNode[] = []
-    if (this.l2.finalRoot !== null) {
+    if (this.l2.root?.contents) {
       const traverse = (root: TreeNode, depth = 0) => {
         nodes.push(root)
         this.depths.set(root, depth)
-        if (this.expandedNodes.has(root) && root.type === 'tree' && root.contents?.length) {
+        if (this.expandedNodes.has(root.path) && root.type === 'tree' && root.contents?.length) {
           for (const item of root.contents) {
             traverse(item, depth + 1)
           }
         }
       }
-      for (const item of this.l2.finalRoot.contents || []) {
+      for (const item of this.l2.root.contents) {
         traverse(item)
       }
     }
@@ -201,7 +226,7 @@ export class VisibleNodesGenerator {
   l3: L3
   l4: L4
 
-  search: (regexps: RegExp[]) => void
+  search: L3['search']
   setExpand: L3['setExpand']
   toggleExpand: L3['toggleExpand']
   expandTo: L3['expandTo']
@@ -214,11 +239,7 @@ export class VisibleNodesGenerator {
     this.l4 = new L4(this.l1, this.l2, this.l3)
 
     this.search = regexps => {
-      this.l2.search(regexps)
-      for (const node of this.l2.exactMatches) {
-        this.expandTo(node.path, true)
-      }
-      this.l3.generateVisibleNodes()
+      this.l3.search(regexps)
       this.l4.focusNode(null)
     }
     this.setExpand = (...args) => this.l3.setExpand(...args)
@@ -228,8 +249,7 @@ export class VisibleNodesGenerator {
   }
 
   init() {
-    this.l2.search([])
-    this.l3.generateVisibleNodes()
+    this.search([])
   }
 
   get visibleNodes() {

@@ -62,11 +62,11 @@ export const init: BoundMethodCreator = dispatch => () =>
 
 export const setUpTree: BoundMethodCreator<[
   Pick<Props, 'treeRoot' | 'metaData' | 'accessToken'> & Pick<Config, 'compressSingletonFolder'>,
-]> = dispatch => async ({ treeRoot, metaData, compressSingletonFolder, accessToken }) => {
+]> = dispatch => async ({ treeRoot, metaData, compressSingletonFolder }) => {
   if (!treeRoot) return
   dispatch.call(setStateText, 'Rendering File List...')
 
-  visibleNodesGenerator = new VisibleNodesGenerator(treeRoot as TreeNode, {
+  visibleNodesGenerator = new VisibleNodesGenerator(treeRoot, {
     compress: compressSingletonFolder,
   })
 
@@ -123,7 +123,7 @@ export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch
         break
 
       case 'ArrowLeft':
-        if (expandedNodes.has(focusedNode)) {
+        if (expandedNodes.has(focusedNode.path)) {
           dispatch.call(setExpand, focusedNode, false)
         } else {
           // go forward to the start of the list, find the closest node with lower depth
@@ -138,7 +138,7 @@ export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch
       case 'ArrowRight':
         // expand node or focus on first content node or redirect to file page
         if (focusedNode.type === 'tree') {
-          if (expandedNodes.has(focusedNode)) {
+          if (expandedNodes.has(focusedNode.path)) {
             const nextNode = nodes[focusedNodeIndex + 1]
             const d1 = depths.get(nextNode)
             const d2 = depths.get(focusedNode)

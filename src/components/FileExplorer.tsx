@@ -169,7 +169,7 @@ function VirtualNode({
       node={node}
       depth={depths.get(node) || 0}
       focused={focusedNode === node}
-      expanded={expandedNodes.has(node)}
+      expanded={expandedNodes.has(node.path)}
       onClick={onNodeClick}
       renderActions={renderActions}
       regex={regex}
