@@ -161,6 +161,7 @@ export function attachCopySnippet() {
                *  </article>
                */
               if (target.parentNode) {
+                removeAttachedOnes() // show no more than one button
                 const clippyElement = await renderReact(
                   React.createElement(Clippy, { codeSnippetElement: target }),
                 )
@@ -171,13 +172,16 @@ export function attachCopySnippet() {
             }
           }
         }
-        readmeElement.addEventListener('mouseover', mouseOverCallback)
-        return () => {
-          readmeElement.removeEventListener('mouseover', mouseOverCallback)
+        function removeAttachedOnes() {
           const buttons = document.querySelectorAll(`.${ClippyClassName}`)
           buttons.forEach(button => {
             button.parentElement?.removeChild(button)
           })
+        }
+        readmeElement.addEventListener('mouseover', mouseOverCallback)
+        return () => {
+          readmeElement.removeEventListener('mouseover', mouseOverCallback)
+          removeAttachedOnes()
         }
       },
       () => {
