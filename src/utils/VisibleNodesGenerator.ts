@@ -23,7 +23,7 @@ import { findNode } from './general'
 
 function search(
   root: TreeNode,
-  regexps: RegExp[],
+  regexp: RegExp,
   onChildMatch: (node: TreeNode) => void,
 ): TreeNode | null {
   // go traverse no matter root matches or not to make sure find all nodes matches
@@ -31,14 +31,14 @@ function search(
   if (root.type === 'tree' && root.contents) {
     let childMatch = false
     for (const item of root.contents) {
-      if (isNodeMatch(item, regexps)) {
+      if (isNodeMatch(item, regexp)) {
         childMatch = true
         break
       }
     }
 
     for (const item of root.contents) {
-      const $item = search(item, regexps, onChildMatch)
+      const $item = search(item, regexp, onChildMatch)
       if ($item) {
         if ($item !== item) childMatch = true
         contents.push($item)
@@ -57,14 +57,14 @@ function search(
     }
   }
 
-  if (isNodeMatch(root, regexps)) {
+  if (isNodeMatch(root, regexp)) {
     return root
   }
   return null
 }
 
-function isNodeMatch(root: TreeNode, regexps: RegExp[]): boolean {
-  return regexps.some(regexp => regexp.test(root.name))
+function isNodeMatch(root: TreeNode, regexp: RegExp): boolean {
+  return regexp.test(root.name)
 }
 
 function compressTree(root: TreeNode, prefix: string[] = []): TreeNode {
@@ -116,8 +116,8 @@ class L2 {
     this.compress = Boolean(options.compress)
   }
 
-  search = (regexps: RegExp[], onChildMatch: (node: TreeNode) => void) => {
-    const rootNode = regexps.length ? search(this.l1.root, regexps, onChildMatch) : this.l1.root
+  search = (regexp: RegExp | null, onChildMatch: (node: TreeNode) => void) => {
+    const rootNode = regexp ? search(this.l1.root, regexp, onChildMatch) : this.l1.root
 
     this.root =
       rootNode && this.compress
@@ -163,9 +163,9 @@ class L3 {
     return node
   }
 
-  search = (regexps: RegExp[]) => {
+  search = (regexp: RegExp | null) => {
     this.expandedNodes.clear()
-    this.l2.search(regexps, node => this.expandedNodes.add(node.path))
+    this.l2.search(regexp, node => this.expandedNodes.add(node.path))
     this.generateVisibleNodes()
   }
 
@@ -249,7 +249,7 @@ export class VisibleNodesGenerator {
   }
 
   init() {
-    this.search([])
+    this.search(null)
   }
 
   get visibleNodes() {

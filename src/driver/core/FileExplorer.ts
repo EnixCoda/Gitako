@@ -200,7 +200,7 @@ export const search: BoundMethodCreator<[string]> = dispatch => searchKey => {
 }
 
 export const goTo: BoundMethodCreator<[string[]]> = dispatch => async currentPath => {
-  visibleNodesGenerator.search([])
+  visibleNodesGenerator.search(null)
   tasksAfterRender.push(() => {
     dispatch.call(expandTo, currentPath)
   })
