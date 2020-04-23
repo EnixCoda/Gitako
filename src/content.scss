@@ -6,8 +6,6 @@
 @import '~@primer/css/support/variables/misc.scss';
 @import '~@primer/css/support/variables/layout.scss';
 
-@import './themes/dark.scss';
-
 $name: gitako;
 
 $min-screen-width: 1280px;
@@ -21,6 +19,26 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
 :root {
   --gitako-width: #{$side-bar-base-width};
+
+  --gitako-text-color: #{$black};
+  --gitako-link-color: #{$blue};
+  --gitako-icon-color: #{rgba($blue-800, .55)};
+
+  --gitako-bg-color: #{$bg-gray-light};
+  --gitako-bg-alt-color: #{$bg-blue-light};
+
+  --gitako-border-color: #{$border-gray-light};
+
+  --gitako-node-bg-color: #{$bg-white};
+  --gitako-node-bg-color-hover: #{$bg-gray-light};
+  --gitako-node-bg-color-active: #{$bg-gray};
+
+  --gitako-input-bg-color: #{$bg-white};
+  --gitako-button-bg-color: #{$bg-white};
+  --gitako-button-bg-image: linear-gradient(-180deg, #{$bg-white} 0%, #{$gray-100} 90%);
+
+  --gitako-scrollbar-track-color: #{$bg-blue-light};
+  --gitako-scrollbar-thumb-color: #{$border-gray};
 }
 
 .#{$name}-ready {
@@ -185,6 +203,20 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     font-weight: 600;
   }
 
+  // ------- scrollbar
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+      border-radius: 10px;
+      margin: 2px 0 2px 0;
+      background-color: var(--gitako-scrollbar-track-color);
+  }
+  ::-webkit-scrollbar-thumb {
+      border-radius: 4px;
+      background-color: var(--gitako-scrollbar-thumb-color);
+  }
+
   .#{$name}-position-wrapper {
     position: fixed;
     top: 0;
@@ -208,12 +240,12 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     user-select: none;
     width: 0;
     background: $bg-gray;
-    border-right: 1px solid $border-gray;
+    border-right: 1px solid var(--gitako-border-color);
     overflow: hidden;
     &:hover,
     &:active {
       width: 16px;
-      background: $bg-gray-light;
+      background: var(--gitako-bg-alt-color);
     }
 
     .octicon {
@@ -228,24 +260,28 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     height: 100%;
     display: flex;
     flex-direction: column;
-    background: $bg-gray-light;
-    border-right: 1px solid $border-gray-light;
-    border-left: 1px solid $border-gray;
+    background: var(--gitako-bg-color);
+    color: var(--gitako-text-color);
+    border: none; // I found that it is better looking without this border because of the resize handler borders
     overflow: hidden;
 
     &.hidden {
       @extend %hidden;
     }
 
+    a {
+      color: var(--gitako-link-color);
+    }
+
     .octicon {
       transition: transform 0.3s ease;
-      color: rgba($blue-800, 0.55);
+      color: var(--gitako-icon-color);
       width: 100%;
       height: 100%;
     }
 
     .octicon-color {
-      color: rgba($blue-800, 0.55);
+      color: var(--gitako-icon-color);
     }
 
     .octicon-wrapper {
@@ -266,9 +302,8 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
         position: relative; // prevent overlap by outline of other elements
         padding: 10px;
         padding-right: 30px; // space for toggle button
-        background: $bg-blue-light;
-        border-bottom: 1px solid $border-gray;
-
+        background: var(--gitako-bg-alt-color);
+        
         .repo-name {
           font-weight: bolder;
         }
@@ -326,6 +361,9 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
             width: 100%;
             box-shadow: none; // stay low
             border-radius: 0; // its rounded corner not match with nearby elements
+            background-color: var(--gitako-input-bg-color);
+            color: var(--gitako-text-color);
+            border-color: var(--gitako-border-color);
 
             &.error {
               border-color: $red;
@@ -339,15 +377,16 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
         }
 
         .node-item {
-          background: $bg-white;
+          background: var(--gitako-node-bg-color);
+          
           &:hover {
-            background: $bg-gray-light;
+            background: var(--gitako-node-bg-color-hover);
           }
           &.focused,
           &:active {
-            background: $bg-gray;
+            background: var(--gitako-node-bg-color-active);
           }
-
+          
           &.disabled {
             .node-item {
               pointer-events: none;
@@ -357,11 +396,11 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           display: flex;
           justify-content: space-between;
           margin: 0;
-          color: $blue;
+          color: var(--gitako-link-color);
           line-height: 20px;
           padding: 6px 10px;
           cursor: pointer;
-          border-top: 1px solid $border-gray-light;
+          border-bottom: 1px solid var(--gitako-border-color);
           white-space: nowrap;
           transition: padding 0.3s ease; // on toggle expansion in search results
 
@@ -423,12 +462,12 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
     .#{$name}-settings-bar {
       z-index: 2;
-      background: $bg-gray-light;
+      background: var(--gitako-bg-color);
       display: flex;
       flex-direction: column;
       max-height: 100%;
       &-title {
-        border-top: 1px solid $border-gray-light;
+        border-top: 1px solid var(--gitako-border-color);
         padding: 10px;
         box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.2), 0 3px 4px 0 rgba(0, 0, 0, 0.14),
           0 3px 3px -2px rgba(0, 0, 0, 0.12);
@@ -446,7 +485,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           height: 10px;
           top: 0;
           left: 0;
-          background: $bg-gray-light;
+          background: var(--gitako-bg-color);
           z-index: 1;
         }
         .settings-section {
@@ -470,8 +509,19 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
             select {
               width: 100%;
               height: 36px; // same height as text inputs
-              background: $bg-white;
               -moz-appearance: menulist-button;
+            }
+            .TextInput-wrapper,
+            select,
+            button {
+                background-color: var(--gitako-input-bg-color);
+                color: var(--gitako-text-color);
+                border-color: var(--gitako-border-color);
+                box-shadow: none; // flat inputs
+                border-radius: 6px;
+            }
+            button {
+                background-image: var(--gitako-button-bg-image);
             }
             &.field-checkbox {
               padding-left: 20px;
@@ -516,8 +566,8 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
         justify-content: space-between;
         align-items: center;
         padding: 6px 10px;
-        border-top: 1px solid $border-gray-light;
-
+        border-top: 1px solid var(--gitako-border-color);
+        background-color: var(--gitako-bg-alt-color);
         .show-settings-icon {
           width: 20px;
           height: 20px;
@@ -560,6 +610,24 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 // dark theme
 .#{$name}-side-bar {
   &.theme-dark {
-    @include theme-dark;
+    --gitako-text-color: #{$gray-100};
+    --gitako-link-color: #{$gray-100};
+    --gitako-icon-color: #{$gray-100};
+
+    --gitako-bg-color: #{$gray-900};
+    --gitako-bg-alt-color: #{$gray-800};
+
+    --gitako-border-color: #{$black};
+
+    --gitako-node-bg-color: #{$gray-800};
+    --gitako-node-bg-color-hover: #{$gray-700};
+    --gitako-node-bg-color-active: #{$gray-700};
+
+    --gitako-input-bg-color: #{$gray-700};
+    --gitako-button-bg-color: #{$gray-600};
+    --gitako-button-bg-image: linear-gradient(-180deg, #{$gray-600} 0%, #{$gray-700} 90%);
+
+    --gitako-scrollbar-track-color: #{$gray-700};
+    --gitako-scrollbar-thumb-color: #{rgba($gray-600, .7)};
   }
 }
