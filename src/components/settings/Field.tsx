@@ -5,7 +5,7 @@ type Props = {
   id?: string
   className?: string
   checkbox?: boolean
-  title: React.ReactNode
+  title?: React.ReactNode
 }
 
 export function Field({
@@ -24,7 +24,11 @@ export function Field({
         </>
       ) : (
         <>
-          <label htmlFor={id}>{title}</label>
+          {
+            title
+              ? <label htmlFor={id}>{title}</label> 
+              : ''
+          }
           <div>{children}</div>
         </>
       )}

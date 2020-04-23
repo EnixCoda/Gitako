@@ -5,6 +5,7 @@ import { platform } from 'platforms'
 import { Gitee } from 'platforms/Gitee'
 import * as React from 'react'
 import { useStates } from 'utils/hooks/useStates'
+import { Field } from './Field'
 import { SettingsSection } from './SettingsSection'
 
 const ACCESS_TOKEN_REGEXP = /^[0-9a-f]+$/
@@ -71,42 +72,45 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
         </>
       }
     >
-      {hasAccessToken ? (
-        <Button onClick={() => configContext.set({ access_token: '' })}>Clear</Button>
-      ) : (
-        <div>
-          {platform === Gitee ? (
-            // disabled for Gitee as it does not support dynamic redirect_uri
-            <span>OAuth for Gitee is unavailable</span>
-          ) : (
-            <a
-              className={'link-button'}
-              onClick={() => {
-                // use js here to make sure redirect_uri is latest url
-                window.location.href = platform.getOAuthLink()
-              }}
-            >
-              Create with OAuth (recommended)
-            </a>
-          )}
-          <div className={'access-token-input-control'}>
-            <TextInput
-              backgroundColor="#fff"
-              marginRight={1}
-              className={'access-token-input'}
-              value={accessToken}
-              placeholder="Or input here manually"
-              onFocus={() => focusInput.set(true)}
-              onBlur={() => focusInput.set(false)}
-              onChange={onInputAccessToken}
-              onKeyPress={onPressAccessToken}
-            />
-            <Button onClick={() => saveToken()} disabled={!accessToken}>
-              Save
-            </Button>
+      <Field>
+        {hasAccessToken ? (
+          <Button onClick={() => configContext.set({ access_token: '' })}>Clear</Button>
+        ) : (
+          <div>
+            {platform === Gitee ? (
+              // disabled for Gitee as it does not support dynamic redirect_uri
+              <span>OAuth for Gitee is unavailable</span>
+            ) : (
+              <a
+                className={'link-button'}
+                onClick={() => {
+                  // use js here to make sure redirect_uri is latest url
+                  window.location.href = platform.getOAuthLink()
+                }}
+              >
+                Create with OAuth (recommended)
+              </a>
+            )}
+            <div className={'access-token-input-control'}>
+              <TextInput
+                backgroundColor="#fff"
+                marginRight={1}
+                className={'access-token-input'}
+                value={accessToken}
+                placeholder="Or input here manually"
+                onFocus={() => focusInput.set(true)}
+                onBlur={() => focusInput.set(false)}
+                onChange={onInputAccessToken}
+                onKeyPress={onPressAccessToken}
+              />
+              <Button onClick={() => saveToken()} disabled={!accessToken}>
+                Save
+              </Button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </Field>
+
       {accessTokenHint && !focusInput.val && <span className={'hint'}>{accessTokenHint}</span>}
     </SettingsSection>
   )
