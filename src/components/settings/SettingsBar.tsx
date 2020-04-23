@@ -10,6 +10,7 @@ import { AccessTokenSettings } from './AccessTokenSettings'
 import { FileTreeSettings } from './FileTreeSettings'
 import { SettingsSection } from './SettingsSection'
 import { SidebarSettings } from './SidebarSettings'
+import { ThemeSettings } from './ThemeSettings'
 
 const WIKI_HOME_LINK = 'https://github.com/EnixCoda/Gitako/wiki'
 export const wikiLinks = {
@@ -53,6 +54,7 @@ function SettingsBarContent() {
         <AccessTokenSettings />
         <SidebarSettings />
         <FileTreeSettings />
+        <ThemeSettings />
         {moreFields.length > 0 && (
           <SettingsSection title={'More'}>
             {moreFields.map(field => (

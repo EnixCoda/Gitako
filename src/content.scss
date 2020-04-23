@@ -6,6 +6,8 @@
 @import '~@primer/css/support/variables/misc.scss';
 @import '~@primer/css/support/variables/layout.scss';
 
+@import './themes/dark.scss';
+
 $name: gitako;
 
 $min-screen-width: 1280px;
@@ -552,5 +554,12 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
   }
   to {
     transform: rotateZ(360deg);
+  }
+}
+
+// dark theme
+.#{$name}-side-bar {
+  &.theme-dark {
+    @include theme-dark;
   }
 }

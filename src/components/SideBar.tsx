@@ -96,7 +96,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
     toggleShowSettings,
   } = props
   return (
-    <div className={'gitako-side-bar'}>
+    <div className={cx('gitako-side-bar', `theme-${configContext.val.theme}`)}>
       <Portal into={logoContainerElement}>
         <ToggleShowButton
           error={error}
