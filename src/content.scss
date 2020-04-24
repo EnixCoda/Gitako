@@ -24,6 +24,8 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
   --gitako-link-color: #{$blue};
   --gitako-icon-color: #{rgba($blue-800, .55)};
 
+  --gitako-error-color: #{$red};
+
   --gitako-bg-color: #{$bg-gray-light};
   --gitako-bg-alt-color: #{$bg-blue-light};
 
@@ -155,18 +157,18 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
   }
 
   &.collapsed {
-    border-color: $border-gray;
+    border-color: var(--gitako-border-color);
     border-radius: 3px;
-    background: $bg-gray;
+    background: var(--gitako-bg-alt-color);
     transform: translate(5px);
 
     .action-icon {
-      color: $blue;
+      color: var(--gitako-link-color);
     }
   }
 
   .action-icon {
-    color: $gray;
+    color: var(--gitako-icon-color);;
     width: 20px;
     height: 20px;
     text-align: center;
@@ -179,7 +181,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
   &.error {
     .action-icon {
-      color: $red;
+      color: var(--gitako-error-color);
     }
   }
 
@@ -239,13 +241,12 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     cursor: ew-resize;
     user-select: none;
     width: 0;
-    background: $bg-gray;
+    background: var(--gitako-bg-alt-color);
     border-right: 1px solid var(--gitako-border-color);
     overflow: hidden;
     &:hover,
     &:active {
       width: 16px;
-      background: var(--gitako-bg-alt-color);
     }
 
     .octicon {
@@ -366,7 +367,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
             border-color: var(--gitako-border-color);
 
             &.error {
-              border-color: $red;
+              border-color: var(--gitako-error-color);
             }
           }
         }
@@ -546,7 +547,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
         margin-bottom: 4px;
       }
       .hint {
-        color: $gray;
+        color: var(--gitako-error-color);
       }
       .access-token-input-control {
         display: flex;
@@ -607,27 +608,27 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
   }
 }
 
-// dark theme
-.#{$name}-side-bar {
-  &.theme-dark {
-    --gitako-text-color: #{$gray-100};
-    --gitako-link-color: #{$gray-100};
-    --gitako-icon-color: #{$gray-100};
+// themes
+.#{$name}-theme-dark {
+  --gitako-text-color: #{$gray-100};
+  --gitako-link-color: #{$gray-100};
+  --gitako-icon-color: #{$gray-100};
 
-    --gitako-bg-color: #{$gray-900};
-    --gitako-bg-alt-color: #{$gray-800};
+  --gitako-error-color: #{$red-300};
 
-    --gitako-border-color: #{$black};
+  --gitako-bg-color: #{$gray-900};
+  --gitako-bg-alt-color: #{$gray-800};
 
-    --gitako-node-bg-color: #{$gray-800};
-    --gitako-node-bg-color-hover: #{$gray-700};
-    --gitako-node-bg-color-active: #{$gray-700};
+  --gitako-border-color: #{$black};
 
-    --gitako-input-bg-color: #{$gray-700};
-    --gitako-button-bg-color: #{$gray-600};
-    --gitako-button-bg-image: linear-gradient(-180deg, #{$gray-600} 0%, #{$gray-700} 90%);
+  --gitako-node-bg-color: #{$gray-800};
+  --gitako-node-bg-color-hover: #{$gray-700};
+  --gitako-node-bg-color-active: #{$gray-700};
 
-    --gitako-scrollbar-track-color: #{$gray-700};
-    --gitako-scrollbar-thumb-color: #{rgba($gray-600, .7)};
-  }
+  --gitako-input-bg-color: #{$gray-700};
+  --gitako-button-bg-color: #{$gray-600};
+  --gitako-button-bg-image: linear-gradient(-180deg, #{$gray-600} 0%, #{$gray-700} 90%);
+
+  --gitako-scrollbar-track-color: #{$gray-700};
+  --gitako-scrollbar-thumb-color: #{rgba($gray-600, .7)};
 }

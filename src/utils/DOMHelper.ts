@@ -114,3 +114,15 @@ export function setResizingState(on: boolean) {
   if (on) target.classList.add('resizing')
   else target.classList.remove('resizing')
 }
+
+export function setTheme(theme: string='default') {
+  // remove old theme classes
+  document.body.classList.forEach(className => {
+    if(className.includes('gitako-theme-')) {
+      document.body.classList.remove(className)
+    }
+  })
+
+  // add the new theme class
+  document.body.classList.add(`gitako-theme-${theme}`)
+}
