@@ -522,6 +522,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
                 border-radius: 6px;
             }
             button {
+                background-color: var(--gitako-button-bg-color);
                 background-image: var(--gitako-button-bg-image);
             }
             &.field-checkbox {
