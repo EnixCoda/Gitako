@@ -20,15 +20,11 @@ export function Field({
       {checkbox ? (
         <>
           {children}
-          <label htmlFor={id}>{title}</label>
+          {title && <label htmlFor={id}>{title}</label>}
         </>
       ) : (
         <>
-          {
-            title
-              ? <label htmlFor={id}>{title}</label> 
-              : ''
-          }
+          {title && <label htmlFor={id}>{title}</label>}
           <div>{children}</div>
         </>
       )}
