@@ -4,13 +4,13 @@
   <img width="256" src="src/assets/icons/Gitako.png" />
 </p>
 
-Yet another extension for GitHub, available on both Chrome and Firefox. Inspired by [Octotree](https://github.com/buunguyen/octotree) & [GayHub](https://github.com/jawil/GayHub), thanks to them! Gitako is aimed at providing the best performance, better UX, more consistent UI and more essential features.
+Gitako is a file tree extension for GitHub, available for Chrome, Firefox and Edge. And more than that, it has lots of useful features.
 
 ### Features
 
 - 📂 neat file tree
 - 🔎 instant file search
-- 🏎 extremely fast even in gigantic projects
+- 🏎 extremely fast, even in gigantic projects
 - ⌨️ intuitive keyboard accessibility
 - 🚀 boosts page performance
 - ↔️ customizable layout
@@ -25,19 +25,19 @@ Yet another extension for GitHub, available on both Chrome and Firefox. Inspired
 
 [for Edge](https://microsoftedge.microsoft.com/addons/detail/alpoloddcggjhakjemghahlkofjekbca)
 
-[for Firefox(beta)](https://addons.mozilla.org/en-US/firefox/addon/gitako-github-file-tree/)
+[for Firefox](https://addons.mozilla.org/en-US/firefox/addon/gitako-github-file-tree/)
 
 ### Issues
 
-Any bug report or feature request discussions are welcomed, feel free to draft a [issue](https://github.com/EnixCoda/Gitako/issues/)!
+Any bug report or feature request discussions are welcomed, feel free to draft an [issue](https://github.com/EnixCoda/Gitako/issues/)!
 
 ### About
 
-#### Name and logo meaning?
+#### Name and logo?
 
-GitHub's totem is a cute octopus. And octopus in Japanese is `タコ`(tako).
+The totem of GitHub is a cute octopus. And octopus in Japanese is `タコ`(tako).
 Then link them together:
 
     git + tako -> gitako
 
-The logo of Gitako is a tentacle of octopus, meaning Gitako works like a part of GitHub.
+The logo of Gitako is a tentacle of octopus, indicates that Gitako works like a part of GitHub.
