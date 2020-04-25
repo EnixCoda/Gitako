@@ -19,7 +19,7 @@ Gitako is a file tree extension for GitHub, available for Chrome, Firefox and Ed
 - 🗂 support git submodule
 - 🎨 friendly UI and rich icons
 
-### Install
+### Installation
 
 [![Install for Chrome](./ChromeWebStoreBadge.svg)](https://chrome.google.com/webstore/detail/gitako-github-file-tree/giljefjcheohhamkjphiebfjnlphnokk)
 
@@ -27,9 +27,11 @@ Gitako is a file tree extension for GitHub, available for Chrome, Firefox and Ed
 
 [for Firefox](https://addons.mozilla.org/en-US/firefox/addon/gitako-github-file-tree/)
 
-### Issues
+### Help Gitako
 
-Any bug report or feature request discussions are welcomed, feel free to draft an [issue](https://github.com/EnixCoda/Gitako/issues/)!
+In case Gitako helped you, either star it at GitHub or leave a review at extension store will encourage me a lot!
+
+Any bug report or feature request discussions are welcome, feel free to draft an [issue](https://github.com/EnixCoda/Gitako/issues/)!
 
 ### About
 
