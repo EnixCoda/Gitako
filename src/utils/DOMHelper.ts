@@ -2,6 +2,8 @@
  * this helper helps manipulating DOM
  */
 
+import { Config } from './configHelper'
+
 /**
  * when gitako is ready, make page's header narrower
  * or cancel it
@@ -115,14 +117,8 @@ export function setResizingState(on: boolean) {
   else target.classList.remove('resizing')
 }
 
-export function setTheme(theme: string='default') {
-  // remove old theme classes
-  document.body.classList.forEach(className => {
-    if(className.includes('gitako-theme-')) {
-      document.body.classList.remove(className)
-    }
-  })
-
-  // add the new theme class
-  document.body.classList.add(`gitako-theme-${theme}`)
+export function setTheme(theme: Config['theme']) {
+  const className = `gitako-theme-${theme}`
+  document.body.classList.add(className)
+  return () => document.body.classList.remove(className)
 }

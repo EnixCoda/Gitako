@@ -16,6 +16,7 @@ import { useEvent, useUpdateEffect } from 'react-use'
 import { cx } from 'utils/cx'
 import { parseURLSearch } from 'utils/general'
 import { usePJAX } from 'utils/hooks/usePJAX'
+import { useTheme } from 'utils/hooks/useTheme'
 import * as keyHelper from 'utils/keyHelper'
 
 const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
@@ -29,6 +30,8 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
       intelligentToggle === null ? platform.shouldShow(props.metaData) : intelligentToggle
     props.setShouldShow(shouldShow)
   }, [intelligentToggle, props.metaData])
+
+  useTheme(configContext.val.theme)
 
   React.useEffect(() => {
     const { init } = props

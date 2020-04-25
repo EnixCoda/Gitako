@@ -22,16 +22,13 @@ export type ConnectorState = {
   treeData?: TreeNode
   logoContainerElement: Element | null
   disabled: boolean
-  initializingPromise: Promise<void> | null,
-  // theme
-  theme: string
+  initializingPromise: Promise<void> | null
 } & {
   init: GetCreatedMethod<typeof init>
   setMetaData: GetCreatedMethod<typeof setMetaData>
   setShouldShow: GetCreatedMethod<typeof setShouldShow>
   toggleShowSideBar: GetCreatedMethod<typeof toggleShowSideBar>
   toggleShowSettings: GetCreatedMethod<typeof toggleShowSettings>
-  setTheme: GetCreatedMethod<typeof setTheme>
 }
 
 type BoundMethodCreator<Args extends any[] = []> = MethodCreator<Props, ConnectorState, Args>
@@ -63,9 +60,7 @@ export const init: BoundMethodCreator = dispatch => async () => {
     dispatch.call(setMetaData, metaData)
 
     const [, { configContext }] = dispatch.get()
-    const { access_token: accessToken, theme } = configContext.val
-
-    dispatch.call(setTheme, theme)
+    const { access_token: accessToken } = configContext.val
 
     if (!metaData.branchName || !metaData.userName || !metaData.repoName) return
     const getTreeDataAggressively = platform.getTreeData(
@@ -183,6 +178,3 @@ export const toggleShowSettings: BoundMethodCreator = dispatch => () =>
 
 export const setMetaData: BoundMethodCreator<[ConnectorState['metaData']]> = dispatch => metaData =>
   dispatch.set({ metaData })
-
-export const setTheme: BoundMethodCreator<[ConnectorState['theme']]> = dispatch => theme =>  
-  DOMHelper.setTheme(theme)
