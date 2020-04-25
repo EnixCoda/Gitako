@@ -1,3 +1,4 @@
+import { Option, Select } from 'components/Select'
 import { wikiLinks } from 'components/settings/SettingsBar'
 import { SimpleToggleField } from 'components/SimpleToggleField'
 import { useConfigs } from 'containers/ConfigsContext'
@@ -6,11 +7,7 @@ import { Config } from 'utils/configHelper'
 import { Field } from './Field'
 import { SettingsSection } from './SettingsSection'
 
-const options: {
-  key: Config['icons']
-  value: Config['icons']
-  label: string
-}[] = [
+const options: Option<Config['icons']>[] = [
   {
     key: 'rich',
     value: 'rich',
@@ -35,21 +32,12 @@ export function FileTreeSettings(props: React.PropsWithChildren<Props>) {
   return (
     <SettingsSection title={'File Tree'}>
       <Field title="Icons" id="file-tree-icons">
-        <select
+        <Select
           id="file-tree-icons"
-          onChange={e => {
-            configContext.set({
-              icons: e.target.value as Config['icons'],
-            })
-          }}
+          onChange={icons => configContext.set({ icons })}
           value={configContext.val.icons}
-        >
-          {options.map(option => (
-            <option key={option.key} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+          options={options}
+        />
       </Field>
       <SimpleToggleField
         field={{

@@ -17,3 +17,9 @@ type TreeNode = {
   sha?: string
   accessDenied?: boolean
 }
+
+// for input components
+type IO<V> = {
+  value: V
+  onChange(value: V): void
+}
