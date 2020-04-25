@@ -16,6 +16,11 @@ const options: Option<Config['theme']>[] = [
     value: 'dark',
     label: `Dark`,
   },
+  {
+    key: 'inverted',
+    value: 'inverted',
+    label: `Inverted`,
+  },
 ]
 
 type Props = {}

@@ -608,7 +608,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
   }
 }
 
-// themes
+// dark theme
 .#{$name}-theme-dark {
   --gitako-text-color: #{$gray-100};
   --gitako-link-color: #{$gray-100};
@@ -631,4 +631,16 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
   --gitako-scrollbar-track-color: #{$gray-700};
   --gitako-scrollbar-thumb-color: #{rgba($gray-600, .7)};
+}
+
+// inverted theme (keeps default colors and inverts everything)
+.#{$name}-theme-inverted {
+  .#{$name}-toggle-show-button-wrapper,
+  .#{$name}-position-wrapper {
+    filter: invert(100%);
+
+    .node-item-icon {
+      filter: invert(100%);
+    }
+  }
 }
