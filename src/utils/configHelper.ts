@@ -9,7 +9,7 @@ export type Config = {
   copySnippetButton: boolean
   intelligentToggle: boolean | null // `null` stands for intelligent, boolean for sidebar open status
   icons: 'rich' | 'dim' | 'native',
-  theme: 'default' | 'dark' | 'inverted',
+  theme: 'default' | 'dark' | 'inverted' | 'material',
 }
 
 export enum configKeys {

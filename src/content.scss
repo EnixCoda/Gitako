@@ -644,3 +644,34 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     }
   }
 }
+
+// material theme
+.#{$name}-theme-material {
+  // https://www.materialui.co/colors
+  $md-blue-grey-900: #263238;
+  $md-blue-grey-100: #CFD8DC;
+  $md-blue-grey-300: #90A4AE;
+  $md-teal: #009688;
+
+  --gitako-text-color: #{$md-blue-grey-100};
+  --gitako-link-color: #{$md-teal};
+  --gitako-icon-color: #{$md-blue-grey-300};
+
+  --gitako-error-color: #{$red};
+
+  --gitako-bg-color: #{$md-blue-grey-900};
+  --gitako-bg-alt-color: #{$md-blue-grey-900};
+
+  --gitako-border-color: #{$md-blue-grey-900};
+
+  --gitako-node-bg-color: transparent;
+  --gitako-node-bg-color-hover: #{rgba($md-blue-grey-300, .1)};
+  --gitako-node-bg-color-active: #{rgba($md-blue-grey-300, .3)};
+
+  --gitako-input-bg-color: #{rgba($md-blue-grey-300, .3)};
+  --gitako-button-bg-color: #{$md-teal};
+  --gitako-button-bg-image: none;
+
+  --gitako-scrollbar-track-color: #{$md-blue-grey-900};
+  --gitako-scrollbar-thumb-color: #{rgba($md-blue-grey-300, .3)};
+}
