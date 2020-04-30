@@ -60,7 +60,7 @@ export function raiseError(error: Error, extra?: any) {
 
 export const withErrorLog: Middleware = function withErrorLog(method, args) {
   return [
-    async function(...args: any[]) {
+    async function (...args: any[]) {
       try {
         await method.apply(null, args)
       } catch (error) {

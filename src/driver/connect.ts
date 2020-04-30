@@ -114,6 +114,6 @@ export function connect<BaseP, ExtraP>(mapping: Sources<BaseP, ExtraP>) {
 
 export type GetCreatedMethod<MC> = MC extends MethodCreator<infer P, infer S, infer Args>
   ? Args extends any[]
-    ? ((...args: Args) => void)
+    ? (...args: Args) => void
     : never
   : never
