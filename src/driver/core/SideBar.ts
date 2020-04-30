@@ -50,7 +50,6 @@ export const init: BoundMethodCreator = dispatch => async () => {
       dispatch.set({ disabled: true })
       return
     }
-    const detectedBranchName = metaData.branchName
     DOMHelper.markGitakoReadyState(true)
     dispatch.set({
       errorDueToAuth: false,
@@ -62,10 +61,11 @@ export const init: BoundMethodCreator = dispatch => async () => {
     const [, { configContext }] = dispatch.get()
     const { access_token: accessToken } = configContext.val
 
-    if (!metaData.branchName || !metaData.userName || !metaData.repoName) return
+    if (!metaData.userName || !metaData.repoName) return
+    const guessDefaultBranch = 'master'
     const getTreeDataAggressively = platform.getTreeData(
       {
-        branchName: metaData.branchName,
+        branchName: metaData.branchName || guessDefaultBranch,
         userName: metaData.userName,
         repoName: metaData.repoName,
       },
@@ -81,13 +81,13 @@ export const init: BoundMethodCreator = dispatch => async () => {
     let getTreeData = getTreeDataAggressively
     const metaDataFromAPI = await platform.getMetaData(
       {
-        branchName: metaData.branchName,
         userName: metaData.userName,
         repoName: metaData.repoName,
       },
       accessToken,
     )
     const projectDefaultBranchName = metaDataFromAPI?.defaultBranchName
+    const detectedBranchName = metaData.branchName
     if (
       !detectedBranchName &&
       projectDefaultBranchName &&

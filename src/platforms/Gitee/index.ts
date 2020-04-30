@@ -92,22 +92,18 @@ export const Gitee: Platform = {
 
     const metaData = {
       ...URLHelper.parse(),
-      branchName: detectedBranchName || 'master',
+      branchName: detectedBranchName,
     } as MetaData
     return metaData
   },
-  async getMetaData(rawMetaData, accessToken) {
-    const { userName, repoName, branchName } = rawMetaData
+  async getMetaData(partialMetaData, accessToken) {
+    const { userName, repoName } = partialMetaData
     const data = await API.getRepoMeta(userName, repoName, accessToken)
-    const metaData: MetaData = {
-      userName,
-      repoName,
-      branchName,
+    return {
       userUrl: data?.html_url?.replace(/(.*)\/.*?$/, '$1'),
       repoUrl: data?.html_url,
+      defaultBranchName: data.default_branch,
     }
-
-    return metaData
   },
   async getTreeData(metaData, accessToken) {
     const { userName, repoName, branchName } = metaData
