@@ -29,6 +29,7 @@ async function request(
   if (accessToken) {
     headers.Authorization = `token ${accessToken}`
   }
+  try {
   const res = await fetch(url, { headers })
   const contentType = res.headers.get('Content-Type') || res.headers.get('content-type')
   const isJson = contentType?.includes('application/json')
@@ -51,6 +52,9 @@ async function request(
     } else {
       throw new Error(`Response content type is "${contentType}"`)
     }
+  }
+  } catch (err) {
+    throw new Error(errors.CONNECTION_BLOCKED)
   }
 }
 

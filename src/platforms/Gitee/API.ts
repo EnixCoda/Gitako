@@ -23,29 +23,33 @@ async function request(
   if (accessToken) {
     headers.Authorization = `token ${accessToken}`
   }
-  const res = await fetch(url, { headers })
-  const contentType = res.headers.get('Content-Type') || res.headers.get('content-type')
-  if (!contentType) {
-    throw new Error(`Response has no content type`)
-  } else if (!contentType.includes('application/json')) {
-    throw new Error(`Response content type is ${contentType}`)
-  }
-  // About res.ok:
-  // True if res.status between 200~299
-  // Ref: https://developer.mozilla.org/en-US/docs/Web/API/Response/ok
-  if (res.ok) {
-    return res.json()
-  } else {
-    if (res.status === 404 || res.status === 401) throw new Error(errors.NOT_FOUND)
-    else if (res.status === 500) throw new Error(errors.SERVER_FAULT)
-    else {
-      const content = await res.json()
-      if (isEmptyProject(content)) throw new Error(errors.EMPTY_PROJECT)
-      if (isBlockedProject(content)) throw new Error(errors.BLOCKED_PROJECT)
-      // Unknown type of error, report it!
-      raiseError(new Error(res.statusText))
-      throw new Error(content && content.message)
+  try {
+    const res = await fetch(url, { headers })
+    const contentType = res.headers.get('Content-Type') || res.headers.get('content-type')
+    if (!contentType) {
+      throw new Error(`Response has no content type`)
+    } else if (!contentType.includes('application/json')) {
+      throw new Error(`Response content type is ${contentType}`)
     }
+    // About res.ok:
+    // True if res.status between 200~299
+    // Ref: https://developer.mozilla.org/en-US/docs/Web/API/Response/ok
+    if (res.ok) {
+      return res.json()
+    } else {
+      if (res.status === 404 || res.status === 401) throw new Error(errors.NOT_FOUND)
+      else if (res.status === 500) throw new Error(errors.SERVER_FAULT)
+      else {
+        const content = await res.json()
+        if (isEmptyProject(content)) throw new Error(errors.EMPTY_PROJECT)
+        if (isBlockedProject(content)) throw new Error(errors.BLOCKED_PROJECT)
+        // Unknown type of error, report it!
+        raiseError(new Error(res.statusText))
+        throw new Error(content && content.message)
+      }
+    }
+  } catch (err) {
+    throw new Error(errors.CONNECTION_BLOCKED)
   }
 }
 

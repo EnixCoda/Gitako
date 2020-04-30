@@ -1,6 +1,6 @@
 import { ConfigsContextShape } from 'containers/ConfigsContext'
 import { GetCreatedMethod, MethodCreator } from 'driver/connect'
-import { errors, platform } from 'platforms'
+import { errors, platform, platformName } from 'platforms'
 import * as DOMHelper from 'utils/DOMHelper'
 
 export type Props = {
@@ -133,13 +133,17 @@ export const handleError: BoundMethodCreator<[Error]> = dispatch => async err =>
   if (err.message === errors.EMPTY_PROJECT) {
     dispatch.call(setError, 'This project seems to be empty.')
   } else if (err.message === errors.BLOCKED_PROJECT) {
-    dispatch.call(setError, 'This project is blocked.')
+    dispatch.call(setError, 'Access to the project is blocked.')
   } else if (
     err.message === errors.NOT_FOUND ||
     err.message === errors.BAD_CREDENTIALS ||
     err.message === errors.API_RATE_LIMIT
   ) {
     dispatch.set({ errorDueToAuth: true })
+  } else if (err.message === errors.CONNECTION_BLOCKED) {
+    dispatch.call(setError, `Cannot connect to ${platformName}.`)
+  } else if (err.message === errors.SERVER_FAULT) {
+    dispatch.call(setError, `${platformName} server went down.`)
   } else {
     DOMHelper.markGitakoReadyState(false)
     dispatch.call(setError, 'Some thing went wrong.')

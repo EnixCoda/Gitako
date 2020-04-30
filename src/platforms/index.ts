@@ -33,4 +33,5 @@ export const errors = {
   API_RATE_LIMIT: 'API rate limit',
   EMPTY_PROJECT: 'Empty project',
   BLOCKED_PROJECT: 'Blocked project',
+  CONNECTION_BLOCKED: 'Connection blocked',
 }
