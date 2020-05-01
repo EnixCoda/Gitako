@@ -6,7 +6,6 @@
     "GITEE_OAUTH_CLIENT_SECRET": "@gitako-gitee-oauth-client-secret",
     "GITEE_OAUTH_CLIENT_ID": "@gitako-gitee-oauth-client-id"
   },
-  "alias": "gitako.now.sh",
   "routes": [
     { "src": "/redirect/?", "dest": "/api/redirect.ts" },
     { "src": "/oauth/github/?", "dest": "/api/github.ts" },
