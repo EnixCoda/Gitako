@@ -1,4 +1,5 @@
 import { GITHUB_OAUTH } from 'env'
+import { Base64 } from 'js-base64'
 import { platform } from 'platforms'
 import * as React from 'react'
 import { useEvent } from 'react-use'
@@ -52,6 +53,7 @@ function parseTreeData(treeData: GitHubAPI.TreeData, metaData: MetaData) {
               )
             : undefined,
         contents: item.type === 'tree' ? [] : undefined,
+        sha: item.sha,
       }
       const parentNode = pathToNode.get(path)
       if (parentNode && parentNode.contents) {
