@@ -1,7 +1,4 @@
-import { raiseError } from 'analytics'
-import { GITHUB_OAUTH } from 'env'
 import { errors } from 'platforms'
-import { JSONRequest } from 'utils/general'
 
 function apiRateLimitExceeded(content: any /* safe any */) {
   return content?.['documentation_url'] === 'https://developer.github.com/v3/#rate-limiting'
@@ -30,29 +27,29 @@ async function request(
     headers.Authorization = `token ${accessToken}`
   }
   try {
-  const res = await fetch(url, { headers })
-  const contentType = res.headers.get('Content-Type') || res.headers.get('content-type')
-  const isJson = contentType?.includes('application/json')
-  // About res.ok:
-  // True if res.status between 200~299
-  // Ref: https://developer.mozilla.org/en-US/docs/Web/API/Response/ok
-  if (res.ok) {
-    if (isJson) return res.json()
-    throw new Error(`Response content type is "${contentType}"`)
-  } else {
-    if (res.status === 404 || res.status === 401) throw new Error(errors.NOT_FOUND)
-    else if (res.status === 403) throw new Error(errors.API_RATE_LIMIT)
-    else if (res.status === 500) throw new Error(errors.SERVER_FAULT)
-    else if (isJson) {
-      const content = await res.json()
-      if (apiRateLimitExceeded(content)) throw new Error(errors.API_RATE_LIMIT)
-      if (isEmptyProject(content)) throw new Error(errors.EMPTY_PROJECT)
-      if (isBlockedProject(content)) throw new Error(errors.BLOCKED_PROJECT)
-      throw new Error(`Unknown message content "${content?.message}"`)
-    } else {
+    const res = await fetch(url, { headers })
+    const contentType = res.headers.get('Content-Type') || res.headers.get('content-type')
+    const isJson = contentType?.includes('application/json')
+    // About res.ok:
+    // True if res.status between 200~299
+    // Ref: https://developer.mozilla.org/en-US/docs/Web/API/Response/ok
+    if (res.ok) {
+      if (isJson) return res.json()
       throw new Error(`Response content type is "${contentType}"`)
+    } else {
+      if (res.status === 404 || res.status === 401) throw new Error(errors.NOT_FOUND)
+      else if (res.status === 403) throw new Error(errors.API_RATE_LIMIT)
+      else if (res.status === 500) throw new Error(errors.SERVER_FAULT)
+      else if (isJson) {
+        const content = await res.json()
+        if (apiRateLimitExceeded(content)) throw new Error(errors.API_RATE_LIMIT)
+        if (isEmptyProject(content)) throw new Error(errors.EMPTY_PROJECT)
+        if (isBlockedProject(content)) throw new Error(errors.BLOCKED_PROJECT)
+        throw new Error(`Unknown message content "${content?.message}"`)
+      } else {
+        throw new Error(`Response content type is "${contentType}"`)
+      }
     }
-  }
   } catch (err) {
     throw new Error(errors.CONNECTION_BLOCKED)
   }
@@ -89,40 +86,17 @@ export async function getBlobData(
 
 export async function OAuth(code: string): Promise<string | null> {
   try {
-    // TODO: deprecate legacy OAuth
-    if (+Date.now() < +new Date(2020, 5, 1)) return legacyOAuth(code)
-    else return safeOAuth(code)
+    const endpoint = `https://gitako.now.sh/oauth/github?`
+    const res = await fetch(endpoint + new URLSearchParams({ code }).toString(), {
+      method: 'post',
+    })
+    if (res.ok) {
+      const body = await res.json()
+      const accessToken = body?.accessToken
+      if (typeof accessToken === 'string') return accessToken
+    }
+    return null
   } catch (err) {
     return null
-  }
-}
-
-async function safeOAuth(code: string) {
-  const endpoint = `https://gitako.now.sh/oauth/github?`
-  const res = await fetch(endpoint + new URLSearchParams({ code }).toString(), {
-    method: 'post',
-  })
-  if (res.ok) {
-    const body = await res.json()
-    const accessToken = body?.accessToken
-    if (typeof accessToken === 'string') return accessToken
-  }
-  return null
-}
-
-async function legacyOAuth(code: string) {
-  const res = await JSONRequest('https://github.com/login/oauth/access_token', {
-    code,
-    client_id: GITHUB_OAUTH.clientId,
-    client_secret: GITHUB_OAUTH.clientSecret,
-  })
-
-  const { access_token: accessToken, scope, error_description: errorDescription } = res
-  if (errorDescription) {
-    raiseError(new Error(errorDescription))
-  } else if (scope !== 'repo' || !accessToken) {
-    raiseError(new Error(`Cannot resolve token response: '${JSON.stringify(res)}'`))
-  } else {
-    return accessToken
   }
 }
