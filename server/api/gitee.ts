@@ -1,7 +1,7 @@
 import fetch from 'node-fetch'
 import { createCodeHandler } from '.'
 
-const { GITEE_OAUTH_CLIENT_ID, GITEE_OAUTH_CLIENT_SECRET } = process.env
+const { GITEE_OAUTH_CLIENT_ID = '', GITEE_OAUTH_CLIENT_SECRET = '' } = process.env
 
 async function oauth(code: string) {
   const params = new URLSearchParams({
