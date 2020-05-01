@@ -76,10 +76,15 @@ function getUrlForRedirect(
   type = 'blob',
   path = '',
 ) {
-  return `https://github.com/${userName}/${repoName}/${type}/${branchName}/${path}`
+  return `https://${window.location.host}/${userName}/${repoName}/${type}/${branchName}/${path}`
+}
+
+export function isEnterprise() {
+  return !window.location.host.endsWith('github.com')
 }
 
 export const GitHub: Platform = {
+  isEnterprise,
   resolveMeta() {
     if (!URLHelper.isInRepoPage()) {
       return null

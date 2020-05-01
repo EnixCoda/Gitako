@@ -1,4 +1,7 @@
 export const dummyPlatformForTypeSafety: Platform = {
+  isEnterprise() {
+    return false
+  },
   resolveMeta() {
     return null
   },
