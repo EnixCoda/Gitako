@@ -49,40 +49,77 @@ type Storage = {
 
   // separate different platform configs to simplify interactions with browser storage API
   // e.g.
-  // platform_GitHub?: Config
+  // platform_github.com?: Config
 }
 
 async function migrateConfig() {
   // not referencing to enum above to prevent migrate future configs
-  const config = await storageHelper.get<Config | Storage>([
-    'configVersion',
-    'sideBarWidth',
-    'shortcut',
-    'access_token',
-    'compressSingletonFolder',
-    'copyFileButton',
-    'copySnippetButton',
-    'intelligentToggle',
-    'icons',
-  ])
-  if (!config || !('configVersion' in config) || config.configVersion < '1.0.1') {
-    await storageHelper.set({ platform_GitHub: config, configVersion: '1.0.1' })
+  const migrations: {
+    version: string
+    migrate(version: string): Promise<void>
+  }[] = [
+    {
+      version: '1.0.1',
+      async migrate(version) {
+        const config: any | void = await storageHelper.get<Config | Storage>([
+          'configVersion',
+          'sideBarWidth',
+          'shortcut',
+          'access_token',
+          'compressSingletonFolder',
+          'copyFileButton',
+          'copySnippetButton',
+          'intelligentToggle',
+          'icons',
+        ])
+        if (config && (!('configVersion' in config) || config.configVersion < version)) {
+          await storageHelper.set({ platform_GitHub: config, configVersion: version })
+        }
+      },
+    },
+    {
+      version: '1.3.4',
+      async migrate(version) {
+        const config: any | void = await storageHelper.get<Config | Storage>([
+          'configVersion',
+          'platform_undefined', // this was a mistake :(
+          'platform_GitHub',
+          'platform_github.com',
+        ])
+        if (
+          config &&
+          'configVersion' in config &&
+          config.configVersion < version &&
+          (config.platform_GitHub || config.platform_undefined) &&
+          !config['platform_github.com']
+        ) {
+          await storageHelper.set({
+            ['platform_github.com']: config.platform_GitHub || config.platform_undefined,
+            configVersion: version,
+          })
+        }
+      },
+    },
+  ]
+
+  for (const { version, migrate } of migrations) {
+    await migrate(version)
   }
 }
 
-let platformName: string
+// do NOT use platform name
+const platformStorageKey = `platform_` + window.location.host.toLowerCase()
 const prepareConfig = new Promise(async resolve => {
   await migrateConfig()
-  platformName = `platform_` + platformName
   resolve()
 })
 
 export async function get(): Promise<Config> {
   await prepareConfig
-  const config = await storageHelper.get<Record<string, Config>>([platformName])
-  return applyDefaultConfigs((config && config[platformName]) || {})
+  const config = await storageHelper.get<Record<string, Config>>([platformStorageKey])
+  return applyDefaultConfigs((config && config[platformStorageKey]) || {})
 }
 
 export async function set(config: Config) {
-  return await storageHelper.set({ [platformName]: config })
+  return await storageHelper.set({ [platformStorageKey]: config })
 }
