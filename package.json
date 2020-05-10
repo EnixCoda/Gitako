@@ -39,6 +39,8 @@
     "react-use": "^13.8.0",
     "react-window": "^1.8.5",
     "styled-components": "^5.0.1",
+    "webext-domain-permission-toggle": "^1.0.0",
+    "webext-dynamic-content-scripts": "^6.0.3",
     "webextension-polyfill": "^0.5.0"
   },
   "devDependencies": {

@@ -1,4 +1,5 @@
 import { errors } from 'platforms'
+import { isEnterprise } from '.'
 
 function apiRateLimitExceeded(content: any /* safe any */) {
   return content?.['documentation_url'] === 'https://developer.github.com/v3/#rate-limiting'
@@ -58,12 +59,14 @@ async function request(
   }
 }
 
+const API_ENDPOINT = isEnterprise() ? `${window.location.host}/api/v3` : 'api.github.com'
+
 export async function getRepoMeta(
   userName: string,
   repoName: string,
   accessToken?: string,
 ): Promise<GitHubAPI.MetaData> {
-  const url = `https://api.github.com/repos/${userName}/${repoName}`
+  const url = `https://${API_ENDPOINT}/repos/${userName}/${repoName}`
   return await request(url, { accessToken })
 }
 
@@ -73,7 +76,7 @@ export async function getTreeData(
   branchName: string,
   accessToken?: string,
 ): Promise<GitHubAPI.TreeData> {
-  const url = `https://api.github.com/repos/${userName}/${repoName}/git/trees/${branchName}?recursive=1`
+  const url = `https://${API_ENDPOINT}/repos/${userName}/${repoName}/git/trees/${branchName}?recursive=1`
   return await request(url, { accessToken })
 }
 
@@ -83,7 +86,7 @@ export async function getBlobData(
   sha: string,
   accessToken?: string,
 ): Promise<GitHubAPI.BlobData> {
-  const url = `https://api.github.com/repos/${userName}/${repoName}/git/blobs/${sha}`
+  const url = `https://${API_ENDPOINT}/repos/${userName}/${repoName}/git/blobs/${sha}`
   return await request(url, { accessToken })
 }
 

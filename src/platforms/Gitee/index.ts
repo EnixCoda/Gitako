@@ -78,6 +78,9 @@ function getUrlForRedirect(
 }
 
 export const Gitee: Platform = {
+  isEnterprise() {
+    return !window.location.host.endsWith('gitee.com')
+  },
   resolveMeta() {
     if (!DOMHelper.isInRepoPage()) {
       return null

@@ -1,4 +1,5 @@
 type Platform = {
+  isEnterprise(): boolean
   resolveMeta(): MetaData | null
   getMetaData(
     metaData: Pick<MetaData, 'userName' | 'repoName'>,
