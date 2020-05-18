@@ -82,6 +82,10 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
             <a
               className={'link-button'}
               onClick={() => {
+                if (platform.isEnterprise()) {
+                  alert(`OAuth for enterprise is not available.`)
+                  return
+                }
                 // use js here to make sure redirect_uri is latest url
                 window.location.href = platform.getOAuthLink()
               }}
