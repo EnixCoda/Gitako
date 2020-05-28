@@ -1,20 +1,20 @@
-import Octicon, {
-  ChevronDown,
-  ChevronRight,
-  File,
-  FileCode,
-  FileMedia,
-  FilePdf,
-  FileSubmodule as Submodule,
-  FileZip,
-  Gear,
-  Grabber,
+import {
+  ChevronDownIcon as ChevronDown,
+  ChevronRightIcon as ChevronRight,
+  FileCodeIcon as FileCode,
+  FileIcon as File,
+  FileMediaIcon as FileMedia,
+  FileSubmoduleIcon as Submodule,
+  FileZipIcon as FileZip,
+  GearIcon as Gear,
+  GrabberIcon as Grabber,
   Icon as OcticonIcon,
-  Markdown,
-  Octoface,
-  Reply,
-  X,
-} from '@primer/octicons-react'
+  IconProps,
+  MarkdownIcon as Markdown,
+  OctofaceIcon as Octoface,
+  ReplyIcon as Reply,
+  XIcon as X,
+} from '@primer/octicons-v2-react'
 import * as React from 'react'
 import { cx } from 'utils/cx'
 
@@ -65,11 +65,12 @@ function getSVGIconComponent(
         IconComponent: Reply,
         name: 'Reply',
       }
-    case '.pdf':
-      return {
-        IconComponent: FilePdf,
-        name: 'FilePdf',
-      }
+    // not supported in octicon v2 yet
+    // case '.pdf':
+    //   return {
+    //     IconComponent: FilePdf,
+    //     name: 'FilePdf',
+    //   }
     case '.zip':
     case '.rar':
     case '.7z':
@@ -122,18 +123,13 @@ type Props = {
   className?: string
   placeholder?: boolean
   onClick?: (event: React.MouseEvent<HTMLElement>) => void
-}
+} & IconProps
 
 export function Icon({ type, className = undefined, placeholder, ...otherProps }: Props) {
   let children: React.ReactNode = null
   if (!placeholder) {
     const { name, IconComponent } = getSVGIconComponent(type)
-    const mergedClassName = cx('octicon', name)
-    children = React.createElement(Octicon, {
-      icon: IconComponent,
-      className: mergedClassName,
-      verticalAlign: 'text-bottom',
-    })
+    children = <IconComponent className={cx('octicon', name)} {...otherProps} />
   }
   return (
     <div className={cx('octicon-wrapper', className)} {...otherProps}>

@@ -18,8 +18,7 @@
   "dependencies": {
     "@primer/components": "^16.0.0",
     "@primer/css": "^14.2.0",
-    "@primer/octicons": "^9.2.0",
-    "@primer/octicons-react": "^9.2.0",
+    "@primer/octicons-v2-react": "^0.0.0-53e900d",
     "@sentry/browser": "^5.12.1",
     "@types/firefox-webext-browser": "^70.0.1",
     "@types/history": "^4.7.5",
