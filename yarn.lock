@@ -1013,17 +1013,15 @@
   dependencies:
     prop-types "^15.6.1"
 
+"@primer/octicons-v2-react@^0.0.0-53e900d":
+  version "0.0.0-53e900d"
+  resolved "https://registry.yarnpkg.com/@primer/octicons-v2-react/-/octicons-v2-react-0.0.0-53e900d.tgz#305002484d8612e6a57afda73bb59804f194728c"
+  integrity sha512-WPdeMtK4d8pVcFSapGeTA4ylFyPwo9cjzjzTgxoRnw9vYVvQZbjBGcr6/LKRPOsYPWzAjv6uu/riuGms59WRCg==
+
 "@primer/octicons@^9.1.1":
   version "9.5.0"
   resolved "https://registry.yarnpkg.com/@primer/octicons/-/octicons-9.5.0.tgz#36e9422a6f790afde6b49a7d2d6daf1402076afd"
   integrity sha512-GZw9p9c6GdxcvtU6ENvAgYIAi8E3by/3D+ZwZWan0+QnA55/KQQXPgeOh/rm70BbiSHU0mu1gRKyRO2XUnfKjQ==
-  dependencies:
-    object-assign "^4.1.1"
-
-"@primer/octicons@^9.2.0":
-  version "9.2.0"
-  resolved "https://registry.yarnpkg.com/@primer/octicons/-/octicons-9.2.0.tgz#705783d57335c4ffbde4650e4d22302947208c6e"
-  integrity sha512-3vv7bBqVUHhU7ChpmQhmzz3WmHEKKSk9z/xEK5KnU8Egh96RoqKIim07geRj825ISa+IWj9cPdOA1ShqW5k3Yw==
   dependencies:
     object-assign "^4.1.1"
 

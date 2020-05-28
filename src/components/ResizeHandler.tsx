@@ -47,7 +47,7 @@ export function HorizontalResizeHandler({ onResize, size, style }: Props) {
 
   return (
     <div className={'gitako-resize-handler'} onMouseDown={onPointerDown} style={style}>
-      <Icon type={'grabber'} className={'grabber-icon'} />
+      <Icon type={'grabber'} className={'grabber-icon'} size={20} />
     </div>
   )
 }
