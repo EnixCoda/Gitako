@@ -357,7 +357,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           justify-content: space-between;
           margin: 0;
           color: $blue;
-          line-height: 20px;
+          line-height: 18px;
           padding: 8px 10px;
           cursor: pointer;
           border-bottom: 1px solid $border-gray-light;
@@ -375,7 +375,8 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
           &-type-icon {
             margin-right: 4px;
-            @include icon-size();
+            width: 16px;
+            // not specify height here, it'll break vertical alignment
 
             & + .octicon-wrapper,
             & + .node-item-icon {
