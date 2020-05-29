@@ -16,7 +16,10 @@ export function SearchBar({ onSearch, onFocus, searchKey }: Props) {
       <TextInput
         backgroundColor="white"
         icon={SearchIcon as any}
-        onFocus={onFocus}
+        onFocus={e => {
+          onFocus(e)
+          e.target.select()
+        }}
         tabIndex={0}
         className={cx('search-input', {
           error: !isValidRegexpSource(searchKey),
