@@ -265,7 +265,6 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
         padding: 10px;
         padding-right: 30px; // space for toggle button
         background: $bg-blue-light;
-        border-bottom: 1px solid $border-gray;
 
         .repo-name {
           font-weight: bolder;
@@ -273,6 +272,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
       }
 
       .description {
+        border-top: 1px solid $border-gray;
         padding: 4px 10px;
       }
 
@@ -282,6 +282,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
         display: flex;
         justify-content: center;
         align-items: center;
+        border-top: 1px solid $border-gray;
 
         .loading-indicator {
           display: flex;
@@ -359,7 +360,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           line-height: 20px;
           padding: 8px 10px;
           cursor: pointer;
-          border-top: 1px solid $border-gray-light;
+          border-bottom: 1px solid $border-gray-light;
           white-space: nowrap;
           transition: padding 0.3s ease; // on toggle expansion in search results
 
