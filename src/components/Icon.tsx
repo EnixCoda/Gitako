@@ -8,6 +8,7 @@ import {
   FileZipIcon as FileZip,
   GearIcon as Gear,
   GrabberIcon as Grabber,
+  HourglassIcon as Hourglass,
   Icon as OcticonIcon,
   IconProps,
   MarkdownIcon as Markdown,
@@ -25,6 +26,11 @@ function getSVGIconComponent(
   name: string
 } {
   switch (type) {
+    case 'hourglass':
+      return {
+        IconComponent: Hourglass,
+        name: 'Hourglass',
+      }
     case 'submodule':
       return {
         IconComponent: Submodule,
