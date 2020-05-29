@@ -425,7 +425,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
       background: $bg-gray-light;
       display: flex;
       flex-direction: column;
-      max-height: 100%;
+      max-height: calc(100vh - 120px);
       &-title {
         border-top: 1px solid $border-gray-light;
         padding: 10px;
