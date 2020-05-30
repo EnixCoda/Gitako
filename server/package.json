@@ -2,7 +2,7 @@
   "name": "gitako-server",
   "version": "0.1.0",
   "main": "api/index.ts",
-  "author": "Enix",
+  "author": "EnixCoda",
   "license": "MIT",
   "dependencies": {
     "@now/node": "^1.5.0",
