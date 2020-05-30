@@ -4,9 +4,13 @@ on:
   push:
     branches:
       - '**'
+    paths-ignore:
+      - 'server/**'
   pull_request:
     branches:
       - '**'
+    paths-ignore:
+      - 'server/**'
 
 jobs:
   build:
