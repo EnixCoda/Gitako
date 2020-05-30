@@ -4,6 +4,6 @@
     { "src": "/redirect/?", "dest": "/api/redirect.ts" },
     { "src": "/oauth/github/?", "dest": "/api/github.ts" },
     { "src": "/oauth/gitee/?", "dest": "/api/gitee.ts" },
-    { "src": "/", "dest": "https://github.com/EnixCoda/Gitako" }
+    { "src": "/", "dest": "/api/index.ts" }
   ]
 }
