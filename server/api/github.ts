@@ -1,7 +1,7 @@
 import fetch from 'node-fetch'
 import { createCodeHandler } from './utils'
 
-const { GITHUB_OAUTH_CLIENT_ID, GITHUB_OAUTH_CLIENT_SECRET } = process.env
+const { GITHUB_OAUTH_CLIENT_ID = '', GITHUB_OAUTH_CLIENT_SECRET = '' } = process.env
 
 async function oauth(code: string) {
   const res = await fetch('https://github.com/login/oauth/access_token', {
