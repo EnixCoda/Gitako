@@ -1,5 +1,5 @@
 import fetch from 'node-fetch'
-import { createCodeHandler } from '.'
+import { createCodeHandler } from './utils'
 
 const { GITHUB_OAUTH_CLIENT_ID, GITHUB_OAUTH_CLIENT_SECRET } = process.env
 
