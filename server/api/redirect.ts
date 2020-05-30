@@ -1,5 +1,5 @@
 import { NowRequest, NowResponse } from '@now/node'
-import { sendRejection } from './index'
+import { sendRejection } from './utils'
 
 export default async function handleRedirect(request: NowRequest, response: NowResponse) {
   const { redirect, ...params } = request.query
