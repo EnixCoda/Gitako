@@ -6,6 +6,6 @@
     { "src": "/oauth/gitee/?", "dest": "/api/gitee.ts" }
   ],
   "redirects": [
-    { "src": "/", "destination": "https://github.com/EnixCoda/Gitako", "permanent": false }
+    { "src": "/", "destination": "https://github.com/EnixCoda/Gitako", "permanent": true }
   ]
 }
