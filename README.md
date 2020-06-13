@@ -44,3 +44,33 @@ Then link them together:
     git + tako -> gitako
 
 The logo of Gitako is a tentacle of octopus, indicates that Gitako works like a part of GitHub.
+
+## Contributors
+
+### Code Contributors
+
+This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+<a href="https://github.com/EnixCoda/Gitako/graphs/contributors"><img src="https://opencollective.com/Gitako/contributors.svg?width=890&button=false" /></a>
+
+### Financial Contributors
+
+Become a financial contributor and help us sustain our community. [[Contribute](https://opencollective.com/Gitako/contribute)]
+
+#### Individuals
+
+<a href="https://opencollective.com/Gitako"><img src="https://opencollective.com/Gitako/individuals.svg?width=890"></a>
+
+#### Organizations
+
+Support this project with your organization. Your logo will show up here with a link to your website. [[Contribute](https://opencollective.com/Gitako/contribute)]
+
+<a href="https://opencollective.com/Gitako/organization/0/website"><img src="https://opencollective.com/Gitako/organization/0/avatar.svg"></a>
+<a href="https://opencollective.com/Gitako/organization/1/website"><img src="https://opencollective.com/Gitako/organization/1/avatar.svg"></a>
+<a href="https://opencollective.com/Gitako/organization/2/website"><img src="https://opencollective.com/Gitako/organization/2/avatar.svg"></a>
+<a href="https://opencollective.com/Gitako/organization/3/website"><img src="https://opencollective.com/Gitako/organization/3/avatar.svg"></a>
+<a href="https://opencollective.com/Gitako/organization/4/website"><img src="https://opencollective.com/Gitako/organization/4/avatar.svg"></a>
+<a href="https://opencollective.com/Gitako/organization/5/website"><img src="https://opencollective.com/Gitako/organization/5/avatar.svg"></a>
+<a href="https://opencollective.com/Gitako/organization/6/website"><img src="https://opencollective.com/Gitako/organization/6/avatar.svg"></a>
+<a href="https://opencollective.com/Gitako/organization/7/website"><img src="https://opencollective.com/Gitako/organization/7/avatar.svg"></a>
+<a href="https://opencollective.com/Gitako/organization/8/website"><img src="https://opencollective.com/Gitako/organization/8/avatar.svg"></a>
+<a href="https://opencollective.com/Gitako/organization/9/website"><img src="https://opencollective.com/Gitako/organization/9/avatar.svg"></a>
