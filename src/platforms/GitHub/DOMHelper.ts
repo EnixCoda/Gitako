@@ -185,12 +185,17 @@ export function attachCopySnippet() {
         }
       },
       () => {
-        const plainReadmeSelector = '.repository-content div#readme .plain'
-        $(plainReadmeSelector, undefined, () =>
-          raiseError(
-            new Error('cannot find mount point for copy snippet button while readme exists'),
-          ),
-        )
+        // in URL like `/{user}/{repo}/delete/{branch}/path/to/file
+        const deleteReadmeSelector = '.repository-content div#readme del'
+        if (!$(deleteReadmeSelector)) {
+          // in pages where readme is not markdown, e.g. txt
+          const plainReadmeSelector = '.repository-content div#readme .plain'
+          if (!$(plainReadmeSelector)) {
+            raiseError(
+              new Error('cannot find mount point for copy snippet button while readme exists'),
+            )
+          }
+        }
       },
     )
   })
