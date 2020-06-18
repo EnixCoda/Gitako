@@ -27,8 +27,24 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     background: $gray-dark;
   }
   .Header {
-    max-width: 1012px;
+    max-width: 1280px;
     margin: 0 auto;
+    @media (min-width: 1280px) {
+      padding: 0 32px !important;
+    }
+  }
+  .pagehead.repohead {
+    box-shadow: inset 0 -1px 0 #e1e4e8;
+
+    & > * {
+      max-width: 1280px;
+      margin: auto;
+
+      &.UnderlineNav {
+        position: relative;
+        overflow: visible !important;
+      }
+    }
   }
 
   // gitee
