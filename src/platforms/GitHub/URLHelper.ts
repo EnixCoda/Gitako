@@ -29,26 +29,6 @@ export function isInRepoPage() {
   return Boolean(document.querySelector(repoHeaderSelector))
 }
 
-// route types related to determining if sidebar should show
-const TYPES = {
-  TREE: 'tree',
-  BLOB: 'blob',
-  COMMIT: 'commit',
-  // known but not related types: issues, pulls, wiki, insight,
-  // TODO: record more types
-}
-
-export function isInCodePage(metaData?: Partial<MetaData>) {
-  const mergedRepo = { ...parse(), ...metaData }
-  const { type, branchName } = mergedRepo
-  return Boolean(
-    isInRepoPage() &&
-      (!type || type === TYPES.TREE || type === TYPES.BLOB) &&
-      type !== TYPES.COMMIT &&
-      (branchName || (!type && !branchName)),
-  )
-}
-
 function isCommitPath(path: string[]) {
   return isCompleteCommitSHA(path[0])
 }

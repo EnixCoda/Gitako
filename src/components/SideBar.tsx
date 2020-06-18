@@ -25,8 +25,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
 
   const intelligentToggle = configContext.val.intelligentToggle
   React.useEffect(() => {
-    const shouldShow =
-      intelligentToggle === null ? platform.shouldShow(props.metaData) : intelligentToggle
+    const shouldShow = intelligentToggle === null ? platform.shouldShow() : intelligentToggle
     props.setShouldShow(shouldShow)
   }, [intelligentToggle, props.metaData])
 
@@ -60,11 +59,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
   const updateSideBarVisibility = React.useCallback(
     function updateSideBarVisibility() {
       if (configContext.val.intelligentToggle === null) {
-        props.setShouldShow(
-          platform.shouldShow({
-            branchName: props.metaData?.branchName,
-          }),
-        )
+        props.setShouldShow(platform.shouldShow())
       }
     },
     [props.metaData?.branchName, configContext.val.intelligentToggle],

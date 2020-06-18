@@ -131,8 +131,8 @@ export const Gitee: Platform = {
 
     return root
   },
-  shouldShow(metaData) {
-    return URLHelper.isInCodePage(metaData)
+  shouldShow() {
+    return DOMHelper.isInCodePage()
   },
   getCurrentPath(branchName) {
     return URLHelper.getCurrentPath(branchName)
