@@ -80,6 +80,16 @@ export async function getTreeData(
   return await request(url, { accessToken })
 }
 
+export async function getPullTreeData(
+  userName: string,
+  repoName: string,
+  pullId: string,
+  accessToken?: string,
+): Promise<GitHubAPI.PullTreeData> {
+  const url = `https://${API_ENDPOINT}/repos/${userName}/${repoName}/pulls/${pullId}/files`
+  return await request(url, { accessToken })
+}
+
 export async function getBlobData(
   userName: string,
   repoName: string,

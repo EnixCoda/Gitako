@@ -29,6 +29,10 @@ export function isInRepoPage() {
   return Boolean(document.querySelector(repoHeaderSelector))
 }
 
+export function isInPullPage() {
+  return parse().type === 'pull'
+}
+
 function isCommitPath(path: string[]) {
   return isCompleteCommitSHA(path[0])
 }

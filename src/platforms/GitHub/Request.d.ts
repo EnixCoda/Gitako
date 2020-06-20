@@ -15,6 +15,21 @@ declare namespace GitHubAPI {
     url: string
   }
 
+  type PullTreeItem = {
+    additions: number
+    blob_url: string
+    changes: number
+    contents_url: string
+    deletions: number
+    filename: string
+    patch: string
+    raw_url: string
+    sha: string
+    status: 'modified' | 'added' | 'removed'
+  }
+
+  type PullTreeData = PullTreeItem[]
+
   type MetaData = {
     name: string
     default_branch: string

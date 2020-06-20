@@ -9,22 +9,19 @@ import * as API from './API'
 import * as DOMHelper from './DOMHelper'
 import * as URLHelper from './URLHelper'
 
-function parseTreeData(treeData: GitHubAPI.TreeData, metaData: MetaData) {
-  const { tree } = treeData
-
+function processTree(tree: TreeNode[]): TreeNode {
   // nodes are created from items and put onto tree
-  const pathToNode = new Map<string, TreeNode>()
-  const pathToItem = new Map<string, GitHubAPI.TreeItem>()
-
-  const root: TreeNode = { name: '', path: '', contents: [], type: 'tree' }
-  pathToNode.set('', root)
-
+  const pathToItem = new Map<string, TreeNode>()
   tree.forEach(item => pathToItem.set(item.path, item))
+
+  const pathToCreated = new Map<string, TreeNode>()
+  const root: TreeNode = { name: '', path: '', contents: [], type: 'tree' }
+  pathToCreated.set('', root)
   tree.forEach(item => {
     // bottom-up search for the deepest node created
     let path = item.path
-    const itemsToCreateTreeNode: GitHubAPI.TreeItem[] = []
-    while (path !== '' && !pathToNode.has(path)) {
+    const itemsToCreateTreeNode: TreeNode[] = []
+    while (path !== '' && !pathToCreated.has(path)) {
       const item = pathToItem.get(path)
       if (item) {
         itemsToCreateTreeNode.push(item)
@@ -38,28 +35,13 @@ function parseTreeData(treeData: GitHubAPI.TreeData, metaData: MetaData) {
     while (itemsToCreateTreeNode.length) {
       const item = itemsToCreateTreeNode.pop()
       if (!item) continue
-      const node: TreeNode = {
-        path: item.path || '',
-        type: item.type || 'blob',
-        name: item.path?.replace(/^.*\//, '') || '',
-        url:
-          item.url && item.type && item.path
-            ? getUrlForRedirect(
-                metaData.userName,
-                metaData.repoName,
-                metaData.branchName,
-                item.type,
-                item.path,
-              )
-            : undefined,
-        contents: item.type === 'tree' ? [] : undefined,
-        sha: item.sha,
-      }
-      const parentNode = pathToNode.get(path)
-      if (parentNode && parentNode.contents) {
+      const node: TreeNode = item
+      const parentNode = pathToCreated.get(path)
+      if (parentNode) {
+        if (!parentNode.contents) parentNode.contents = []
         parentNode.contents.push(node)
       }
-      pathToNode.set(node.path, node)
+      pathToCreated.set(node.path, node)
       path = node.path
     }
   })
@@ -114,8 +96,63 @@ export const GitHub: Platform = {
   },
   async getTreeData(metaData, accessToken) {
     const { userName, repoName, branchName } = metaData
+
+    if (URLHelper.isInPullPage()) {
+      const treeData = await API.getPullTreeData(
+        userName,
+        repoName,
+        URLHelper.parse().path[0],
+        accessToken,
+      )
+
+      const nodes: TreeNode[] = treeData.map(item => {
+        const id = document.querySelector(`*[data-path^="${item.filename}"]`)?.parentElement?.id
+        return {
+          path: item.filename || '',
+          type: 'blob',
+          name: item.filename?.replace(/^.*\//, '') || '',
+          url: `#${id}`,
+          contents: undefined,
+          sha: item.sha,
+        }
+      })
+
+      const missingFolders = findMissingFolders(nodes)
+      nodes.push(
+        ...missingFolders.map(
+          folder =>
+            ({
+              name: folder.replace(/^.*\//, ''),
+              path: folder,
+              type: 'tree',
+            } as TreeNode),
+        ),
+      )
+
+      const tree = processTree(nodes)
+      return tree
+    }
+
     const treeData = await API.getTreeData(userName, repoName, branchName, accessToken)
-    const root = parseTreeData(treeData, metaData)
+    const root = processTree(
+      treeData.tree.map(item => ({
+        path: item.path || '',
+        type: item.type || 'blob',
+        name: item.path?.replace(/^.*\//, '') || '',
+        url:
+          item.url && item.type && item.path
+            ? getUrlForRedirect(
+                metaData.userName,
+                metaData.repoName,
+                metaData.branchName,
+                item.type,
+                item.path,
+              )
+            : undefined,
+        contents: item.type === 'tree' ? [] : undefined,
+        sha: item.sha,
+      })),
+    )
 
     const gitModules = root.contents?.find(item => item.name === '.gitmodules')
     if (gitModules) {
@@ -136,7 +173,7 @@ export const GitHub: Platform = {
     return root
   },
   shouldShow() {
-    return DOMHelper.isInCodePage()
+    return DOMHelper.isInCodePage() || URLHelper.isInPullPage()
   },
   getCurrentPath(branchName) {
     return URLHelper.getCurrentPath(branchName)
@@ -152,6 +189,33 @@ export const GitHub: Platform = {
     })
     return `https://github.com/login/oauth/authorize?` + params.toString()
   },
+}
+
+function findMissingFolders(nodes: TreeNode[]) {
+  const folders = new Set<string>()
+  const foundFolders = new Set<string>()
+  for (const node of nodes) {
+    let path = node.path
+    if (node.type === 'tree') foundFolders.add(path)
+    else {
+      while (true) {
+        // 'a/b' -> 'a'
+        // 'a' -> ''
+        path = path.substring(0, path.lastIndexOf('/'))
+        if (path === '') break
+        folders.add(path)
+      }
+    }
+  }
+
+  const missingFolders: string[] = []
+  for (const folder of folders) {
+    if (!foundFolders.has(folder)) {
+      missingFolders.push(folder)
+    }
+  }
+
+  return missingFolders
 }
 
 export function useGitHubAttachCopySnippetButton(copySnippetButton: boolean) {

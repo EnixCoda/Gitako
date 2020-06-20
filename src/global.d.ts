@@ -5,7 +5,7 @@ type MetaData = {
   defaultBranchName?: string
   repoUrl?: string
   userUrl?: string
-  type?: 'tree' | 'blob' | string
+  type?: 'tree' | 'blob' | 'pull' | string
 }
 
 type TreeNode = {
