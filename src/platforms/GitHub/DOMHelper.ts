@@ -6,12 +6,15 @@ import { renderReact } from 'utils/general'
 import { CopyFileButton, copyFileButtonClassName } from './CopyFileButton'
 
 export function isInCodePage() {
-  const branchListSelector = '#branch-select-menu.branch-select-menu'
+  const branchListSelector = ['#branch-select-menu', '.branch-select-menu'].join()
   return Boolean($(branchListSelector))
 }
 
 export function getCurrentBranch() {
-  const selectedBranchButtonSelector = '.repository-content .branch-select-menu summary'
+  const selectedBranchButtonSelector = [
+    '.repository-content #branch-select-menu summary',
+    '.repository-content .branch-select-menu summary',
+  ].join()
   const branchButtonElement: HTMLElement = $(selectedBranchButtonSelector)
   if (branchButtonElement) {
     const branchNameSpanElement = branchButtonElement.querySelector('span')
