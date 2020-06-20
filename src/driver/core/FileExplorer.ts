@@ -197,11 +197,12 @@ export const search: BoundMethodCreator<[string]> = dispatch => searchKey => {
 }
 
 export const goTo: BoundMethodCreator<[string[]]> = dispatch => async currentPath => {
+  dispatch.set({ searchKey: '', searched: false })
   visibleNodesGenerator.search(null)
+  dispatch.call(updateVisibleNodes)
   tasksAfterRender.push(() => {
     dispatch.call(expandTo, currentPath)
   })
-  dispatch.set({ searchKey: '', searched: false })
 }
 
 export const setExpand: BoundMethodCreator<[TreeNode, boolean]> = dispatch => (
