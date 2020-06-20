@@ -20,7 +20,6 @@ export type ConnectorState = {
   searchKey: string
   searched: boolean // derived state from searchKey, = !!searchKey
 
-  init: GetCreatedMethod<typeof init>
   execAfterRender: GetCreatedMethod<typeof execAfterRender>
   handleKeyDown: GetCreatedMethod<typeof handleKeyDown>
   search: GetCreatedMethod<typeof search>
@@ -56,8 +55,6 @@ const tasksAfterRender: Task[] = []
 let visibleNodesGenerator: VisibleNodesGenerator
 
 type BoundMethodCreator<Args extends any[] = []> = MethodCreator<Props, ConnectorState, Args>
-
-export const init: BoundMethodCreator = dispatch => () => dispatch.set({ state: 'pulling' })
 
 export const setUpTree: BoundMethodCreator<[
   Pick<Props, 'treeRoot' | 'metaData'> & Pick<Config, 'compressSingletonFolder'>,

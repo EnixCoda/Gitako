@@ -35,11 +35,6 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
   } = useConfigs()
 
   React.useEffect(() => {
-    const { init } = props
-    init()
-  }, [])
-
-  React.useEffect(() => {
     const { setUpTree, treeRoot, metaData } = props
     setUpTree({ treeRoot, metaData, compressSingletonFolder })
   }, [setUpTree, treeRoot, compressSingletonFolder])
