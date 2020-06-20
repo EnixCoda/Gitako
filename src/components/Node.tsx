@@ -19,7 +19,7 @@ function getIconType(node: TreeNode) {
 
 type Props = {
   node: TreeNode
-  onClick(node: TreeNode): void
+  onClick(event: React.MouseEvent<HTMLElement, MouseEvent>, node: TreeNode): void
   depth: number
   expanded: boolean
   focused: boolean
@@ -49,9 +49,8 @@ export function Node({
           // The default behavior, open in new tab
           return
         }
-        event.preventDefault()
 
-        onClick(node)
+        onClick(event, node)
       }}
       className={cx(`node-item`, { focused, disabled: node.accessDenied, expanded })}
       style={{ ...style, paddingLeft: `${10 + 20 * depth}px` }}

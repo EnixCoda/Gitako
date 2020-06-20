@@ -230,18 +230,29 @@ export const focusNode: BoundMethodCreator<[TreeNode | null, boolean]> = dispatc
   dispatch.call(updateVisibleNodes)
 }
 
-export const onNodeClick: BoundMethodCreator<[TreeNode]> = dispatch => node => {
+export const onNodeClick: BoundMethodCreator<[
+  React.MouseEvent<HTMLElement, MouseEvent>,
+  TreeNode,
+]> = dispatch => (event, node) => {
+  let preventDefault = true
   if (node.type === 'tree') {
     dispatch.call(toggleNodeExpansion, node, true)
   } else if (node.type === 'blob') {
     const [, { loadWithPJAX }] = dispatch.get()
     dispatch.call(focusNode, node, true)
-    if (node.url) loadWithPJAX(node.url)
+    if (node.url) {
+      if (node.url.startsWith('#')) {
+        preventDefault = false
+      } else {
+        loadWithPJAX(node.url)
+      }
+    }
   } else if (node.type === 'commit') {
     if (node.url) {
       window.open(node.url, '_blank')
     }
   }
+  if (preventDefault) event.preventDefault()
 }
 
 export const expandTo: BoundMethodCreator<[string[]]> = dispatch => currentPath => {

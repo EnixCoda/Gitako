@@ -175,7 +175,7 @@ function ListView({
   width: number
   focusedNode: TreeNode | null
   searchKey: string
-  onNodeClick(node: TreeNode): void
+  onNodeClick(event: React.MouseEvent<HTMLElement, MouseEvent>, node: TreeNode): void
   renderActions?(node: TreeNode): React.ReactNode
   visibleNodes: VisibleNodes
 } & Pick<Props, 'metaData'> &
