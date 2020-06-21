@@ -1,3 +1,7 @@
+/**
+ * This script rewrites code of pjax-api to resolve few issues on FireFox.
+ * This is a bit dirty but really effective.
+ */
 const fs = require('fs').promises
 const path = require('path')
 
