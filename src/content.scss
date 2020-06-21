@@ -278,9 +278,9 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
       .meta-bar {
         position: relative; // prevent overlap by outline of other elements
-        height: 53px; // GitHub header height if login
+        min-height: 53px; // GitHub header height if login
         flex-shrink: 0;
-        padding: 4px 10px;
+        padding: 5px 10px;
         padding-right: 30px; // space for toggle button
         background: $bg-blue-light;
       }
