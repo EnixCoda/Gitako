@@ -16,8 +16,8 @@
     "roll": "make release"
   },
   "dependencies": {
-    "@primer/components": "^16.0.0",
-    "@primer/css": "^14.2.0",
+    "@primer/components": "^19.1.1",
+    "@primer/css": "^14.4.0",
     "@primer/octicons-react": "^10.0.0",
     "@sentry/browser": "^5.12.1",
     "@types/firefox-webext-browser": "^70.0.1",
@@ -30,6 +30,7 @@
     "@types/react-dom": "^16.8.5",
     "@types/react-window": "^1.8.1",
     "@types/styled-components": "^5.0.1",
+    "@types/styled-system__css": "^5.0.11",
     "ini": "^1.3.5",
     "js-base64": "^2.5.1",
     "nprogress": "^0.2.0",
