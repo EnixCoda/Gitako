@@ -15,7 +15,7 @@ import {
   OctofaceIcon as Octoface,
   ReplyIcon as Reply,
   XIcon as X,
-} from '@primer/octicons-v2-react'
+} from '@primer/octicons-react'
 import * as React from 'react'
 import { cx } from 'utils/cx'
 

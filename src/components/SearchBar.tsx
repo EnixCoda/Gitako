@@ -1,5 +1,5 @@
 import { TextInput } from '@primer/components'
-import { SearchIcon } from '@primer/octicons-v2-react'
+import { SearchIcon } from '@primer/octicons-react'
 import * as React from 'react'
 import { cx } from 'utils/cx'
 import { isValidRegexpSource } from 'utils/general'
