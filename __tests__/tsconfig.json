@@ -1,0 +1,9 @@
+{
+  "extends": "../tsconfig.json",
+  "include": ["."],
+  "compilerOptions": {
+    "target": "ES3",
+    "module": "CommonJS",
+    "baseUrl": null
+  }
+}
