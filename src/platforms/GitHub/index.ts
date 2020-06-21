@@ -97,21 +97,21 @@ export const GitHub: Platform = {
   async getTreeData(metaData, accessToken) {
     const { userName, repoName, branchName } = metaData
 
-    if (URLHelper.isInPullPage()) {
-      const treeData = await API.getPullTreeData(
-        userName,
-        repoName,
-        URLHelper.parse().path[0],
-        accessToken,
-      )
+    const pullId = URLHelper.isInPullPage()
+    if (pullId) {
+      const treeData = await API.getPullTreeData(userName, repoName, pullId, accessToken)
+
+      const creator = await createPullFileResolver(userName, repoName, pullId)
 
       const nodes: TreeNode[] = treeData.map(item => {
-        const id = document.querySelector(`*[data-path^="${item.filename}"]`)?.parentElement?.id
+        const id = creator(item.filename)
         return {
           path: item.filename || '',
           type: 'blob',
           name: item.filename?.replace(/^.*\//, '') || '',
-          url: `#${id}`,
+          url: id
+            ? `https://${window.location.host}/${metaData.userName}/${metaData.repoName}/pull/${pullId}/files#${id}`
+            : `#`,
           contents: undefined,
           sha: item.sha,
         }
@@ -173,7 +173,7 @@ export const GitHub: Platform = {
     return root
   },
   shouldShow() {
-    return DOMHelper.isInCodePage() || URLHelper.isInPullPage()
+    return Boolean(DOMHelper.isInCodePage() || URLHelper.isInPullPage())
   },
   getCurrentPath(branchName) {
     return URLHelper.getCurrentPath(branchName)
@@ -189,6 +189,18 @@ export const GitHub: Platform = {
     })
     return `https://github.com/login/oauth/authorize?` + params.toString()
   },
+}
+
+async function createPullFileResolver(userName: string, repoName: string, pullId: string) {
+  const doc =
+    URLHelper.parse().path[1] === 'files'
+      ? document
+      : await API.getPullPageDocument(userName, repoName, pullId)
+
+  return (path: string) => {
+    const id = doc.querySelector(`*[data-path^="${path}"]`)?.parentElement?.id
+    return id
+  }
 }
 
 function findMissingFolders(nodes: TreeNode[]) {

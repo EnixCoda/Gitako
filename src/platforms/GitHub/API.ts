@@ -90,6 +90,15 @@ export async function getPullTreeData(
   return await request(url, { accessToken })
 }
 
+export async function getPullPageDocument(
+  userName: string,
+  repoName: string,
+  pullId: string,
+): Promise<Document> {
+  const url = `https://${window.location.host}/${userName}/${repoName}/pull/${pullId}/files?_pjax=%23js-repo-pjax-container`
+  return new DOMParser().parseFromString(await (await fetch(url)).text(), 'text/html')
+}
+
 export async function getBlobData(
   userName: string,
   repoName: string,

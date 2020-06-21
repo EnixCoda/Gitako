@@ -242,7 +242,7 @@ export const onNodeClick: BoundMethodCreator<[
     const [, { loadWithPJAX }] = dispatch.get()
     dispatch.call(focusNode, node, true)
     if (node.url) {
-      if (node.url.startsWith('#')) {
+      if (node.url.includes('#')) {
         preventDefault = false
       } else {
         loadWithPJAX(node.url)

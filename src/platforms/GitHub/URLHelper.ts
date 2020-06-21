@@ -30,7 +30,8 @@ export function isInRepoPage() {
 }
 
 export function isInPullPage() {
-  return parse().type === 'pull'
+  const { type, path } = parse()
+  return type === 'pull' ? path[0] : false
 }
 
 function isCommitPath(path: string[]) {
