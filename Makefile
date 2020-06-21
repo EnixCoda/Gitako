@@ -5,6 +5,9 @@ build:
 	rm -rf dist
 	yarn build
 
+test:
+	yarn test
+
 upload-for-analytics:
 	# make sure sentry can retrieve current commit on remote
 	git push --tags
@@ -22,6 +25,7 @@ rename-compressed:
 
 release:
 	$(MAKE) build
+	$(MAKE) test
 	$(MAKE) upload-for-analytics
 	$(MAKE) compress
 	$(MAKE) rename-compressed
