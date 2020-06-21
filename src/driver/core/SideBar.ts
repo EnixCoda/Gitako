@@ -141,7 +141,12 @@ export const handleError: BoundMethodCreator<[Error]> = dispatch => async err =>
   ) {
     dispatch.set({ errorDueToAuth: true })
   } else if (err.message === errors.CONNECTION_BLOCKED) {
-    dispatch.call(setError, `Cannot connect to ${platformName}.`)
+    const [, props] = dispatch.get()
+    if (props.configContext.val.access_token) {
+      dispatch.call(setError, `Cannot connect to ${platformName}.`)
+    } else {
+      dispatch.set({ errorDueToAuth: true })
+    }
   } else if (err.message === errors.SERVER_FAULT) {
     dispatch.call(setError, `${platformName} server went down.`)
   } else {
