@@ -1,4 +1,5 @@
-import { Breadcrumb } from '@primer/components'
+import { BranchName, Breadcrumb, Flex, Grid, Text } from '@primer/components'
+import { GitBranchIcon } from '@primer/octicons-react'
 import * as React from 'react'
 
 type Props = {
@@ -7,14 +8,21 @@ type Props = {
 
 export function MetaBar({ metaData: { userName, repoName, branchName, repoUrl, userUrl } }: Props) {
   return (
-    <div className={'meta-bar'}>
+    <Flex flexDirection="column" justifyContent="space-between" className={'meta-bar'}>
       <Breadcrumb>
         <Breadcrumb.Item href={userUrl}>{userName}</Breadcrumb.Item>
-        <Breadcrumb.Item className={'repo-name'} href={repoUrl}>
-          {repoName}
+        <Breadcrumb.Item href={repoUrl}>
+          <Text fontWeight="bolder">{repoName}</Text>
         </Breadcrumb.Item>
-        <Breadcrumb.Item selected>{branchName}</Breadcrumb.Item>
       </Breadcrumb>
-    </div>
+      <Grid gridTemplateColumns="repeat(2, max-content)">
+        <div className={'octicon-wrapper'}>
+          <GitBranchIcon size="small" />
+        </div>
+        <BranchName as="span" backgroundColor="blue.0">
+          {branchName}
+        </BranchName>
+      </Grid>
+    </Flex>
   )
 }
