@@ -95,7 +95,9 @@ export async function getPullPageDocument(
   repoName: string,
   pullId: string,
 ): Promise<Document> {
-  const url = `https://${window.location.host}/${userName}/${repoName}/pull/${pullId}/files?_pjax=%23js-repo-pjax-container`
+  const search = new URLSearchParams(window.location.search)
+  search.set('_pjax', '#js-repo-pjax-container')
+  const url = `https://${window.location.host}/${userName}/${repoName}/pull/${pullId}/files?${search}`
   return new DOMParser().parseFromString(await (await fetch(url)).text(), 'text/html')
 }
 
