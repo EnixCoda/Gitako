@@ -73,7 +73,9 @@ export const GitHub: Platform = {
     }
 
     let detectedBranchName
-    if (DOMHelper.isInCodePage()) {
+    if (URLHelper.isInPullPage()) {
+      detectedBranchName = DOMHelper.getIssueTitle()
+    } else if (DOMHelper.isInCodePage()) {
       // not working well with non-branch blob
       // cannot handle '/' split branch name, should not use when possibly on branch page
       detectedBranchName = DOMHelper.getCurrentBranch() || URLHelper.parseSHA()

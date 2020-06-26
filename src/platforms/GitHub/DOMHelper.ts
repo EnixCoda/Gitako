@@ -10,6 +10,12 @@ export function isInCodePage() {
   return Boolean($(branchListSelector))
 }
 
+export function getIssueTitle() {
+  const title = $('.gh-header-title .js-issue-title')?.textContent
+  const id = $('.gh-header-title .gh-header-number')?.textContent
+  if (title && id) return `${id} ${title}`
+}
+
 export function getCurrentBranch() {
   const selectedBranchButtonSelector = [
     '.repository-content #branch-select-menu summary',
