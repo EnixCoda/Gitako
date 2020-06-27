@@ -1,4 +1,4 @@
-import { BranchName, Breadcrumb, Flex, Grid, Text } from '@primer/components'
+import { BranchName, Breadcrumb, Flex, Text } from '@primer/components'
 import { GitBranchIcon } from '@primer/octicons-react'
 import * as React from 'react'
 
@@ -15,14 +15,14 @@ export function MetaBar({ metaData: { userName, repoName, branchName, repoUrl, u
           <Text fontWeight="bolder">{repoName}</Text>
         </Breadcrumb.Item>
       </Breadcrumb>
-      <Grid gridTemplateColumns="repeat(2, max-content)">
+      <Flex flexWrap="nowrap">
         <div className={'octicon-wrapper'}>
           <GitBranchIcon size="small" />
         </div>
         <BranchName as="span" backgroundColor="blue.0">
           {branchName}
         </BranchName>
-      </Grid>
+      </Flex>
     </Flex>
   )
 }
