@@ -1,3 +1,4 @@
+import { raiseError } from 'analytics'
 import { GITHUB_OAUTH } from 'env'
 import { Base64 } from 'js-base64'
 import { platform } from 'platforms'
@@ -194,10 +195,19 @@ export const GitHub: Platform = {
 }
 
 async function createPullFileResolver(userName: string, repoName: string, pullId: string) {
-  const doc =
-    URLHelper.parse().path[1] === 'files'
-      ? document
-      : await API.getPullPageDocument(userName, repoName, pullId)
+  let doc: Document
+  if (URLHelper.parse().path[1] === 'files') {
+    doc = document
+  } else {
+    const shas = DOMHelper.getPullSHA()
+    if (!shas) {
+      raiseError(new Error(`Cannot resolve sha from DOM`))
+      doc = document
+      // fallback, at least not throw error
+    } else {
+      doc = await API.getPullPageDocument(userName, repoName, pullId, shas.baseSHA, shas.headSHA)
+    }
+  }
 
   return (path: string) => {
     const id = doc.querySelector(`*[data-path^="${path}"]`)?.parentElement?.id

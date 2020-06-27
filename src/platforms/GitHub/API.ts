@@ -93,11 +93,14 @@ export async function getPullTreeData(
 export async function getPullPageDocument(
   userName: string,
   repoName: string,
-  pullId: string,
+  pullId: string, // not used
+  baseSHA: string,
+  headSHA: string,
 ): Promise<Document> {
   const search = new URLSearchParams(window.location.search)
-  search.set('_pjax', '#js-repo-pjax-container')
-  const url = `https://${window.location.host}/${userName}/${repoName}/pull/${pullId}/files?${search}`
+  search.set('sha1', baseSHA)
+  search.set('sha2', headSHA)
+  const url = `https://${window.location.host}/${userName}/${repoName}/diffs?${search}`
   return new DOMParser().parseFromString(await (await fetch(url)).text(), 'text/html')
 }
 
