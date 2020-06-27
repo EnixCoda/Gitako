@@ -144,7 +144,7 @@ module.exports = {
   testMatch: ['**/__tests__/cases/*.ts?(x)', '**/?(*.)+(spec|test).ts?(x)'],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
-  testPathIgnorePatterns: ['/node_modules/', './*.d.ts'],
+  testPathIgnorePatterns: ['/node_modules/', '.d.ts$', '<rootDir>/vscode-icons/'],
 
   // The regexp pattern or array of patterns that Jest uses to detect test files
   // testRegex: [],
