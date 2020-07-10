@@ -51,6 +51,16 @@ function parseTreeData(treeData: GiteeAPI.TreeData, metaData: MetaData) {
                 item.path,
               )
             : undefined,
+        rawUrl:
+          item.url && item.type && item.path
+            ? getUrlForRedirect(
+                metaData.userName,
+                metaData.repoName,
+                metaData.branchName,
+                'raw',
+                item.path,
+              )
+            : undefined,
         contents: item.type === 'tree' ? [] : undefined,
       }
       const parentNode = pathToNode.get(path)

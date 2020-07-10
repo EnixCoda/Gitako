@@ -152,6 +152,16 @@ export const GitHub: Platform = {
                 item.path,
               )
             : undefined,
+        rawUrl:
+          item.url && item.type && item.path
+            ? getUrlForRedirect(
+                metaData.userName,
+                metaData.repoName,
+                metaData.branchName,
+                'raw',
+                item.path,
+              )
+            : undefined,
         contents: item.type === 'tree' ? [] : undefined,
         sha: item.sha,
       })),
