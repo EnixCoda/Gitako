@@ -115,6 +115,7 @@ export const GitHub: Platform = {
           url: id
             ? `https://${window.location.host}/${metaData.userName}/${metaData.repoName}/pull/${pullId}/files${window.location.search}#${id}`
             : `#`,
+          rawUrl: item.raw_url,
           contents: undefined,
           sha: item.sha,
         }

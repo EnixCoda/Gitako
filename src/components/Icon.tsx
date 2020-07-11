@@ -15,6 +15,7 @@ import {
   OctofaceIcon as Octoface,
   ReplyIcon as Reply,
   XIcon as X,
+  LinkExternalIcon as LinkExternal,
 } from '@primer/octicons-react'
 import * as React from 'react'
 import { cx } from 'utils/cx'
@@ -116,6 +117,11 @@ function getSVGIconComponent(
     // case '': return FileSubmodule
     // case '': return FileSymlinkDirectory
     // case '': return FileSymlinkFile
+    case 'hover':
+      return {
+        IconComponent: LinkExternal,
+        name: 'LinkExternal',
+      }
     default:
       return {
         IconComponent: File,

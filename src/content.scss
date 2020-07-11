@@ -256,6 +256,9 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
       color: rgba($blue-800, 0.55);
       width: 100%;
       height: 100%;
+      &.LinkExternal {
+        color: rgba($red-800, 0.8);
+      }
     }
 
     .octicon-color {
