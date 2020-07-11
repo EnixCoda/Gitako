@@ -102,7 +102,32 @@ export const GitHub: Platform = {
 
     const pullId = URLHelper.isInPullPage()
     if (pullId) {
-      const treeData = await API.getPullTreeData(userName, repoName, pullId, accessToken)
+      // https://developer.github.com/v3/pulls/#list-pull-requests-files
+      const GITHUB_API_RESPONSE_LENGTH_LIMIT = 3000
+      const GITHUB_API_PAGED_RESPONSE_LENGTH_LIMIT = 30
+      const MAX_PAGE = Math.ceil(
+        GITHUB_API_RESPONSE_LENGTH_LIMIT / GITHUB_API_PAGED_RESPONSE_LENGTH_LIMIT,
+      )
+      let page = 1
+      const [pullData, treeData] = await Promise.all([
+        API.getPullData(userName, repoName, pullId, accessToken),
+        API.getPullTreeData(userName, repoName, pullId, page, accessToken),
+      ])
+
+      const count = pullData.changed_files
+      if (treeData.length < count) {
+        const restPages = []
+        while (page * GITHUB_API_PAGED_RESPONSE_LENGTH_LIMIT < count) {
+          restPages.push(++page)
+        }
+        if (page > MAX_PAGE) {
+          // TODO: hint
+        }
+        const moreFiles = await Promise.all(
+          restPages.map(page => API.getPullTreeData(userName, repoName, pullId, page, accessToken)),
+        )
+        treeData.push(...([] as GitHubAPI.PullTreeData).concat(...moreFiles))
+      }
 
       const creator = await createPullFileResolver(userName, repoName, pullId)
 
