@@ -25,7 +25,14 @@ declare namespace GitHubAPI {
     patch: string
     raw_url: string
     sha: string
-    status: 'modified' | 'added' | 'removed'
+    status: 'modified' | 'added' | 'removed' | 'renamed'
+  }
+
+  type PullData = {
+    state: 'open' | 'closed'
+    title: string
+    body: string
+    changed_files: number
   }
 
   type PullTreeData = PullTreeItem[]

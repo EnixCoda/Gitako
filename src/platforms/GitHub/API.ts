@@ -80,13 +80,25 @@ export async function getTreeData(
   return await request(url, { accessToken })
 }
 
-export async function getPullTreeData(
+export async function getPullData(
   userName: string,
   repoName: string,
   pullId: string,
   accessToken?: string,
+): Promise<GitHubAPI.PullData> {
+  const url = `https://${API_ENDPOINT}/repos/${userName}/${repoName}/pulls/${pullId}`
+  return await request(url, { accessToken })
+}
+
+export async function getPullTreeData(
+  userName: string,
+  repoName: string,
+  pullId: string,
+  page: number,
+  accessToken?: string,
 ): Promise<GitHubAPI.PullTreeData> {
-  const url = `https://${API_ENDPOINT}/repos/${userName}/${repoName}/pulls/${pullId}/files`
+  const search = new URLSearchParams({ page: page.toString() })
+  const url = `https://${API_ENDPOINT}/repos/${userName}/${repoName}/pulls/${pullId}/files?${search}`
   return await request(url, { accessToken })
 }
 

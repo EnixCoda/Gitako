@@ -8,16 +8,14 @@ Gitako is a file tree extension for GitHub, available for Chrome, Firefox and Ed
 
 ### Features
 
-- 📂 neat file tree
-- 🔎 instant file search
-- 💼 [support GitHub enterprise](https://github.com/EnixCoda/Gitako/wiki/Use-in-GitHub-enterprise)
-- 🏎 extremely fast, even in gigantic projects
+- 📂 neat file tree for repository and pull request
+- 🔎 instant file search and navigation
+- 🕶️ support private repositories and [GitHub enterprise](https://github.com/EnixCoda/Gitako/wiki/Use-in-GitHub-enterprise)
+- 🏎 extremely fast even in gigantic projects
 - ⌨️ intuitive keyboard accessibility
-- 🚀 boosts page performance
-- ↔️ customizable layout
-- 📋 copy snippets and file
-- 🕶️ support private repositories
 - 🗂 support git submodule
+- ↔️ resizable layout
+- 📋 copy snippets and file
 - 🎨 friendly UI and rich icons
 
 ### Installation
