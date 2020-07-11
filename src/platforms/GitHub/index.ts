@@ -112,9 +112,9 @@ export const GitHub: Platform = {
           path: item.filename || '',
           type: 'blob',
           name: item.filename?.replace(/^.*\//, '') || '',
-          url: id
-            ? `https://${window.location.host}/${metaData.userName}/${metaData.repoName}/pull/${pullId}/files${window.location.search}#${id}`
-            : `#`,
+          url: `https://${window.location.host}/${metaData.userName}/${
+            metaData.repoName
+          }/pull/${pullId}/files${window.location.search}#${id || ''}`,
           contents: undefined,
           sha: item.sha,
         }
