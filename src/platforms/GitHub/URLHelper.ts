@@ -24,11 +24,6 @@ export function parseSHA() {
   return type === 'blob' || type === 'tree' ? path[0] : undefined
 }
 
-export function isInRepoPage() {
-  const repoHeaderSelector = '.repohead'
-  return Boolean(document.querySelector(repoHeaderSelector))
-}
-
 export function isInPullPage() {
   const { type, path } = parse()
   return type === 'pull' ? path[0] : false

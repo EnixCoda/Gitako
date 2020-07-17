@@ -5,6 +5,14 @@ import { $ } from 'utils/DOMHelper'
 import { renderReact } from 'utils/general'
 import { CopyFileButton, copyFileButtonClassName } from './CopyFileButton'
 
+export function isInRepoPage() {
+  const repoHeadSelector = '.repohead' // legacy
+  const authorNameSelector = '.author[itemprop="author"]'
+  return Boolean(
+    document.querySelector(repoHeadSelector) || document.querySelector(authorNameSelector),
+  )
+}
+
 export function isInCodePage() {
   const branchListSelector = ['#branch-select-menu', '.branch-select-menu'].join()
   return Boolean($(branchListSelector))

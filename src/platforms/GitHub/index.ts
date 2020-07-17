@@ -69,7 +69,7 @@ export function isEnterprise() {
 export const GitHub: Platform = {
   isEnterprise,
   resolveMeta() {
-    if (!URLHelper.isInRepoPage()) {
+    if (!DOMHelper.isInRepoPage()) {
       return null
     }
 
