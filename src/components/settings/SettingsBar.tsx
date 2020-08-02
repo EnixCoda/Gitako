@@ -42,6 +42,10 @@ function SettingsBarContent() {
             label: 'Copy snippet shortcut',
             wikiLink: wikiLinks.copySnippet,
           },
+          {
+            key: 'shrinkGitHubHeader',
+            label: 'Shrink GitHub Header(experimental)',
+          },
         ]
       : []
 

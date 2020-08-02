@@ -23,36 +23,37 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
 .#{$name}-ready {
   // github
-  .js-header-wrapper {
-    background: $gray-dark;
-  }
-  .Header {
-    max-width: 1280px;
-    margin: 0 auto;
-    @media (max-width: 1020px) {
-      overflow: hidden; // prevent blank scroll area when Gitako is open and window is narrow
+  &.shrink-github-header {
+    .js-header-wrapper {
+      background: $gray-dark;
     }
-    @media (min-width: 1280px) {
-      padding: 0 32px !important;
-    }
-  }
-
-  main {
-    // overflow: hidden;
-    // This prevents blank scroll area when Gitako is open and window is narrow.
-    // But it conflicts with the pr toolbar. Keep it here as a reminder.
-
-    & > *:first-child {
-      // repo info and nav bar
-      box-shadow: inset 0 -1px 0 #e1e4e8; // from .UnderlineNav
-
-      & > * {
-        max-width: 1280px;
-        margin: 0 auto;
+    .Header {
+      max-width: 1280px;
+      margin: 0 auto;
+      @media (max-width: 1020px) {
+        overflow: hidden; // prevent blank scroll area when Gitako is open and window is narrow
       }
+      @media (min-width: 1280px) {
+        padding: 0 32px !important;
+      }
+    }
+    main {
+      // overflow: hidden;
+      // This prevents blank scroll area when Gitako is open and window is narrow.
+      // But it conflicts with the pr toolbar. Keep it here as a reminder.
 
-      nav {
-        overflow: auto !important;
+      & > *:first-child {
+        // repo info and nav bar
+        box-shadow: inset 0 -1px 0 #e1e4e8; // from .UnderlineNav
+
+        & > * {
+          max-width: 1280px;
+          margin: 0 auto;
+        }
+
+        nav {
+          overflow: auto !important;
+        }
       }
     }
   }

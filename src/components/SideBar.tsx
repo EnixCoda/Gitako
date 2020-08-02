@@ -10,7 +10,11 @@ import { connect } from 'driver/connect'
 import { SideBarCore } from 'driver/core'
 import { ConnectorState, Props } from 'driver/core/SideBar'
 import { platform } from 'platforms'
-import { useGitHubAttachCopyFileButton, useGitHubAttachCopySnippetButton } from 'platforms/GitHub'
+import {
+  GitHub,
+  useGitHubAttachCopyFileButton,
+  useGitHubAttachCopySnippetButton,
+} from 'platforms/GitHub'
 import * as React from 'react'
 import { useEvent, useUpdateEffect } from 'react-use'
 import { cx } from 'utils/cx'
@@ -23,6 +27,18 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
   const configContext = useConfigs()
   const accessToken = props.configContext.val.access_token
   const [baseSize] = React.useState(() => configContext.val.sideBarWidth)
+
+  const { shrinkGitHubHeader } = configContext.val
+  React.useEffect(() => {
+    if (platform === GitHub) {
+      const ele = document.body
+      if (shrinkGitHubHeader) {
+        ele.classList.add('shrink-github-header')
+      } else {
+        ele.classList.remove('shrink-github-header')
+      }
+    }
+  }, [shrinkGitHubHeader])
 
   const intelligentToggle = configContext.val.intelligentToggle
   React.useEffect(() => {

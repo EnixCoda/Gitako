@@ -10,6 +10,7 @@ export type Config = {
   intelligentToggle: boolean | null // `null` stands for intelligent, boolean for sidebar open status
   icons: 'rich' | 'dim' | 'native'
   toggleButtonVerticalDistance: number
+  shrinkGitHubHeader: boolean
 }
 
 export enum configKeys {
@@ -22,6 +23,7 @@ export enum configKeys {
   intelligentToggle = 'intelligentToggle',
   icons = 'icons',
   toggleButtonVerticalDistance = 'toggleButtonVerticalDistance',
+  shrinkGitHubHeader = 'shrinkGitHubHeader',
 }
 
 const defaultConfigs: Config = {
@@ -34,6 +36,7 @@ const defaultConfigs: Config = {
   intelligentToggle: null,
   icons: 'rich',
   toggleButtonVerticalDistance: 80,
+  shrinkGitHubHeader: false,
 }
 
 const configKeyArray = Object.values(configKeys)
