@@ -1,10 +1,11 @@
 import { HorizontalResizeHandler } from 'components/ResizeHandler'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
-import { useWindowSize } from 'react-use'
+import { useDebounce, useWindowSize } from 'react-use'
 import { cx } from 'utils/cx'
 import { setResizingState } from 'utils/DOMHelper'
 import * as features from 'utils/features'
+import { useCSSVariable } from './useCSSVariable'
 
 export type Size = number
 type Props = {
@@ -34,10 +35,8 @@ export function Resizable({ baseSize, className, children }: React.PropsWithChil
     return () => clearTimeout(timer)
   }, [width, size])
 
-  React.useEffect(() => {
-    document.documentElement.style.setProperty('--gitako-width', size + 'px')
-    configContext.set({ sideBarWidth: size })
-  }, [size])
+  useCSSVariable('--gitako-width', `${size}px`)
+  useDebounce(() => configContext.set({ sideBarWidth: size }), 100, [size])
 
   const onResize = React.useCallback((size: number) => {
     if (size < window.innerWidth - MINIMAL_CONTENT_VIEWPORT_WIDTH) setSize(size)
