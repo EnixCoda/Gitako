@@ -47,7 +47,7 @@ export function ToggleShowButton({ error, onClick }: Props) {
             setDistance(e.clientY - buttonHeight / 2)
           }
         }}
-        title={'You can drag me'}
+        title={'Gitako (draggable)'}
       >
         <img draggable={false} src={iconSrc} />
       </button>
