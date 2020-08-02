@@ -2,14 +2,13 @@ import iconSrc from 'assets/icons/Gitako.png'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
-import { cx } from 'utils/cx'
 
 type Props = {
   error?: string
 } & Pick<React.HTMLAttributes<HTMLButtonElement>, 'onClick'>
 
 export function ToggleShowButton({ error, onClick }: Props) {
-  const ref = React.useRef<HTMLButtonElement>(null)
+  const ref = React.useRef<HTMLDivElement>(null)
   const config = useConfigs()
   const [distance, setDistance] = React.useState(config.val.toggleButtonVerticalDistance)
   const { height } = useWindowSize()
@@ -34,27 +33,26 @@ export function ToggleShowButton({ error, onClick }: Props) {
   )
 
   return (
-    <button
-      ref={ref}
-      className={cx('gitako-toggle-show-button-wrapper', {
-        error,
-      })}
-      onClick={onClick}
-      draggable
-      onDragStart={event => {
-        hideDragPreview(event)
-      }}
-      onDrag={e => {
-        if (e.clientY !== 0) {
-          // It will be 0 when release pointer
-          setDistance(e.clientY - buttonHeight / 2)
-        }
-      }}
-      title={'You can drag me'}
-    >
-      <img draggable={false} src={iconSrc} />
+    <div ref={ref} className={'gitako-toggle-show-button-wrapper'}>
+      <button
+        className={'gitako-toggle-show-button'}
+        onClick={onClick}
+        draggable
+        onDragStart={event => {
+          hideDragPreview(event)
+        }}
+        onDrag={e => {
+          if (e.clientY !== 0) {
+            // It will be 0 when release pointer
+            setDistance(e.clientY - buttonHeight / 2)
+          }
+        }}
+        title={'You can drag me'}
+      >
+        <img draggable={false} src={iconSrc} />
+      </button>
       {error && <span className={'error-message'}>{error}</span>}
-    </button>
+    </div>
   )
 }
 
