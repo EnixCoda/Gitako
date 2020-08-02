@@ -89,15 +89,13 @@ export function SettingsBar(props: Props) {
         >
           {VERSION}
         </Link>
-        {activated ? (
-          <Icon
-            type={'chevron-down'}
-            className={'hide-settings-icon'}
-            onClick={toggleShowSettings}
-          />
-        ) : (
-          <Icon type={'gear'} className={'show-settings-icon'} onClick={toggleShowSettings} />
-        )}
+        <button className={'settings-button'} onClick={toggleShowSettings}>
+          {activated ? (
+            <Icon type={'chevron-down'} className={'hide-settings-icon'} />
+          ) : (
+            <Icon type={'gear'} className={'show-settings-icon'} />
+          )}
+        </button>
       </div>
     </div>
   )
