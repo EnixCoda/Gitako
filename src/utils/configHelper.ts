@@ -9,6 +9,7 @@ export type Config = {
   copySnippetButton: boolean
   intelligentToggle: boolean | null // `null` stands for intelligent, boolean for sidebar open status
   icons: 'rich' | 'dim' | 'native'
+  toggleButtonVerticalDistance: number
 }
 
 export enum configKeys {
@@ -20,6 +21,7 @@ export enum configKeys {
   copySnippetButton = 'copySnippetButton',
   intelligentToggle = 'intelligentToggle',
   icons = 'icons',
+  toggleButtonVerticalDistance = 'toggleButtonVerticalDistance',
 }
 
 const defaultConfigs: Config = {
@@ -31,6 +33,7 @@ const defaultConfigs: Config = {
   copySnippetButton: true,
   intelligentToggle: null,
   icons: 'rich',
+  toggleButtonVerticalDistance: 80,
 }
 
 const configKeyArray = Object.values(configKeys)

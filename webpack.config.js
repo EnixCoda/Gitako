@@ -104,6 +104,11 @@ module.exports = {
         loader: ['json-loader'],
         include: [srcPath],
       },
+      {
+        test: /\.png$/,
+        loader: ['url-loader'],
+        include: [srcPath],
+      },
     ],
   },
   plugins,

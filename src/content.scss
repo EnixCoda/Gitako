@@ -139,54 +139,52 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
   visibility: hidden;
 }
 
-.#{$name}-toggle-show-button-wrapper {
-  $animation-duration: 0.5s;
-  position: fixed;
-  top: 5px;
-  left: 0;
-  z-index: $minimal-z-index;
+@mixin icon-button {
   display: inline-flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  padding: 4px;
-  border: 1px solid transparent;
-  will-change: transform;
-  transform: translate(calc(var(--gitako-width) - 30px));
+  padding: 0;
+}
 
-  transition: transform $animation-duration ease;
-  // disable position transition when resizing sidebar
-  &.resizing {
-    transition: none;
+@mixin button-color {
+  border: none;
+  background: $gray-000;
+  &:hover {
+    background: $gray-200;
   }
+  &:active {
+    background: $gray-300;
+  }
+}
 
-  &.collapsed {
-    border-color: $border-gray;
-    border-radius: 3px;
-    background: $bg-gray;
-    transform: translate(5px);
-
-    .action-icon {
-      color: $blue;
+.#{$name}-toggle-show-button-wrapper {
+  @include icon-button;
+  width: 48px;
+  height: 48px;
+  position: fixed;
+  top: 80px;
+  left: -16px;
+  z-index: $minimal-z-index;
+  background: transparent;
+  border: none;
+  padding: 0;
+  transition: left ease 0.5s;
+  &:hover {
+    left: -12px;
+    img {
+      filter: drop-shadow(0 0 2px #888888);
+      width: 92%;
+      height: 92%;
     }
   }
 
-  .action-icon {
-    color: $gray;
-    width: 20px;
-    height: 20px;
-    text-align: center;
-    transition: all $animation-duration ease;
-    .octicon {
-      width: 100%;
-      height: 100%;
-    }
-  }
-
-  &.error {
-    .action-icon {
-      color: $red;
-    }
+  img {
+    filter: drop-shadow(0 0 1px #aaaaaa);
+    transition: all ease 0.3s;
+    width: 90%;
+    height: 90%;
+    object-fit: contain;
   }
 
   .error-message {
@@ -286,13 +284,46 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
       max-height: calc(100vh - 34px); // temporary fix for layout issue occurred since Chrome v76
       min-height: 0; // make content shrinkable
 
-      .meta-bar {
-        position: relative; // prevent overlap by outline of other elements
-        min-height: 53px; // GitHub header height if login
-        flex-shrink: 0;
-        padding: 5px 10px;
-        padding-right: 30px; // space for toggle button
-        background: $bg-blue-light;
+      .header {
+        $button-size: 32px;
+        position: relative;
+
+        .meta-bar {
+          position: relative; // prevent overlap by outline of other elements
+          min-height: 53px; // GitHub header height if login
+          flex-shrink: 0;
+          padding: 5px 10px;
+          padding-right: $button-size; // space for toggle button
+          background: $gray-000;
+        }
+
+        .close-side-bar-button-position {
+          position: absolute;
+          right: 6px;
+          top: 0;
+          height: 100%;
+          display: inline-flex;
+          align-items: center;
+          .close-side-bar-button {
+            @include icon-button;
+            @include button-color;
+            width: $button-size;
+            height: $button-size;
+            border-radius: $button-size;
+            transition: background linear 0.3s;
+
+            .action-icon {
+              color: $gray;
+              width: 20px;
+              height: 20px;
+              text-align: center;
+              .octicon {
+                width: 100%;
+                height: 100%;
+              }
+            }
+          }
+        }
       }
 
       .description {
