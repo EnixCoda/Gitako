@@ -21,7 +21,7 @@ const options: Option<Config['toggleButtonContent']>[] = [
   {
     key: 'octoface',
     value: 'octoface',
-    label: `Octoface`,
+    label: `The Classic Octoface`,
   },
 ]
 

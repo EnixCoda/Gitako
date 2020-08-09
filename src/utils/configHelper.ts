@@ -37,7 +37,7 @@ const defaultConfigs: Config = {
   copySnippetButton: true,
   intelligentToggle: null,
   icons: 'rich',
-  toggleButtonVerticalDistance: 80,
+  toggleButtonVerticalDistance: 124, // align with GitHub's navbar items
   toggleButtonContent: 'logo',
   shrinkGitHubHeader: false,
 }
