@@ -17,3 +17,11 @@ type TreeNode = {
   sha?: string
   accessDenied?: boolean
 }
+
+type IO<T> = {
+  value: T
+  onChange(value: T): void
+}
+
+// do not use with generics
+type Override<Original, Incoming> = Omit<Original, keyof Incoming> & Incoming
