@@ -2,6 +2,7 @@ import iconSrc from 'assets/icons/Gitako.png'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
+import { Icon } from './Icon'
 
 type Props = {
   error?: string
@@ -32,6 +33,7 @@ export function ToggleShowButton({ error, onClick }: Props) {
     [distance],
   )
 
+  const toggleIconMode = config.val.toggleButtonContent
   return (
     <div ref={ref} className={'gitako-toggle-show-button-wrapper'}>
       <button
@@ -49,7 +51,11 @@ export function ToggleShowButton({ error, onClick }: Props) {
         }}
         title={'Gitako (draggable)'}
       >
-        <img draggable={false} src={iconSrc} />
+        {toggleIconMode === 'octoface' ? (
+          <Icon className={'octoface-icon'} type={'octoface'} />
+        ) : (
+          <img className={'tentacle'} draggable={false} src={iconSrc} />
+        )}
       </button>
       {error && <span className={'error-message'}>{error}</span>}
     </div>

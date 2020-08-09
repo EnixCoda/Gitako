@@ -140,10 +140,14 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
   visibility: hidden;
 }
 
-@mixin icon-button {
+@mixin flex-center {
   display: inline-flex;
   justify-content: center;
   align-items: center;
+}
+
+@mixin icon-button {
+  @include flex-center();
   cursor: pointer;
   padding: 0;
 }
@@ -163,24 +167,47 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
   z-index: $minimal-z-index;
   position: fixed;
   top: 80px;
-  left: -16px;
+  left: 0px;
   display: inline-flex;
   align-items: center;
 
   .#{$name}-toggle-show-button {
     @include icon-button;
-    width: 48px;
-    height: 48px;
     background: transparent;
     border: none;
     padding: 0;
-    transition: left ease 0.5s;
+    .octoface-icon {
+      @include flex-center();
+
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      border: 1px solid $border-gray-dark;
+      background: $bg-black;
+      &:active {
+        background: $bg-black-fade;
+      }
+      color: $text-white;
+      transition: all linear 0.3s;
+      font-size: 16px;
+      transform: translateX(0px);
+      &:active,
+      &:hover {
+        font-size: 20px;
+        transform: translateX(4px);
+      }
+    }
+    .tentacle {
+      width: 40px;
+      height: 40px;
+      transition: transform ease 0.4s;
+      transform: translateX(-16px);
+    }
+    &:active,
     &:hover {
-      left: -12px;
-      img {
+      .tentacle {
+        transform: translateX(-12px);
         filter: drop-shadow(0 0 2px #888888);
-        width: 92%;
-        height: 92%;
       }
     }
 
@@ -345,9 +372,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
       .loading-indicator-container {
         width: 100%;
         height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        @include flex-center();
         border-top: 1px solid $border-gray;
 
         .loading-indicator {

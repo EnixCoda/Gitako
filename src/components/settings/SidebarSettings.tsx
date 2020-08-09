@@ -1,7 +1,9 @@
 import { Button, TextInput } from '@primer/components'
+import { Option, SelectInput } from 'components/SelectInput'
 import { SimpleToggleField } from 'components/SimpleToggleField'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
+import { Config } from 'utils/configHelper'
 import { friendlyFormatShortcut } from 'utils/general'
 import { useStates } from 'utils/hooks/useStates'
 import * as keyHelper from 'utils/keyHelper'
@@ -9,6 +11,19 @@ import { Field } from './Field'
 import { SettingsSection } from './SettingsSection'
 
 type Props = {}
+
+const options: Option<Config['toggleButtonContent']>[] = [
+  {
+    key: 'logo',
+    value: 'logo',
+    label: `Gitako Logo`,
+  },
+  {
+    key: 'octoface',
+    value: 'octoface',
+    label: `Octoface`,
+  },
+]
 
 export function SidebarSettings(props: React.PropsWithChildren<Props>) {
   const configContext = useConfigs()
@@ -63,6 +78,18 @@ export function SidebarSettings(props: React.PropsWithChildren<Props>) {
             </Button>
           )}
         </div>
+      </Field>
+      <Field id="toggle-button-content" title="Content of the Toggle Button">
+        <SelectInput
+          id="toggle-button-content"
+          options={options}
+          onChange={v => {
+            configContext.set({
+              toggleButtonContent: v,
+            })
+          }}
+          value={configContext.val.toggleButtonContent}
+        ></SelectInput>
       </Field>
       <SimpleToggleField
         field={{
