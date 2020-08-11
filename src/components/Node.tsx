@@ -5,6 +5,7 @@ import { OperatingSystems, os } from 'utils/general'
 import { getFileIconSrc, getFolderIconSrc } from '../utils/parseIconMapCSV'
 import { Highlight } from './Highlight'
 import { Icon } from './Icon'
+import { useStates } from 'utils/hooks/useStates'
 
 function getIconType(node: TreeNode) {
   switch (node.type) {
@@ -38,6 +39,7 @@ export function Node({
   regex,
 }: Props) {
   const { name, path } = node
+  const hover = useStates(false)
   return (
     <a
       href={node.url}
@@ -55,9 +57,11 @@ export function Node({
       className={cx(`node-item`, { focused, disabled: node.accessDenied, expanded })}
       style={{ ...style, paddingLeft: `${10 + 20 * depth}px` }}
       title={path}
+      onMouseOver={() => hover.set(true)}
+      onMouseOut={() => hover.set(false)}
     >
       <div className={'node-item-label'}>
-        <NodeItemIcon node={node} open={expanded} />
+        <NodeItemIcon node={node} open={expanded} hover={hover.val} />
         {name.includes('/') ? (
           name.split('/').map((chunk, index) => (
             <React.Fragment key={chunk}>
@@ -77,20 +81,25 @@ export function Node({
 const NodeItemIcon = React.memo(function NodeItemIcon({
   node,
   open = false,
+  hover = false,
 }: {
   node: TreeNode
   open?: boolean
+  hover?: boolean
 }) {
   const {
     val: { icons },
   } = useConfigs()
+
+  const hoverBlob = hover && node.type === 'blob'
+
+  if (icons === 'native') return <Icon type={hoverBlob ? 'hover' : getIconType(node)} />
 
   const src = React.useMemo(
     () => (node.type === 'tree' ? getFolderIconSrc(node, open) : getFileIconSrc(node)),
     [open],
   )
 
-  if (icons === 'native') return <Icon type={getIconType(node)} />
   return (
     <>
       <Icon
@@ -100,6 +109,8 @@ const NodeItemIcon = React.memo(function NodeItemIcon({
       />
       {node.type === 'commit' ? (
         <Icon type={getIconType(node)} />
+      ) : hoverBlob ? (
+        <Icon type={'hover'} />
       ) : (
         <img alt={node.name} className={cx('node-item-icon', { dim: icons === 'dim' })} src={src} />
       )}

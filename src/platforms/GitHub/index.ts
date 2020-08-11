@@ -140,6 +140,7 @@ export const GitHub: Platform = {
           url: `https://${window.location.host}/${metaData.userName}/${
             metaData.repoName
           }/pull/${pullId}/files${window.location.search}#${id || ''}`,
+          rawUrl: item.raw_url,
           contents: undefined,
           sha: item.sha,
         }
@@ -174,6 +175,16 @@ export const GitHub: Platform = {
                 metaData.repoName,
                 metaData.branchName,
                 item.type,
+                item.path,
+              )
+            : undefined,
+        rawUrl:
+          item.url && item.type && item.path
+            ? getUrlForRedirect(
+                metaData.userName,
+                metaData.repoName,
+                metaData.branchName,
+                'raw',
                 item.path,
               )
             : undefined,

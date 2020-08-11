@@ -14,6 +14,7 @@ type TreeNode = {
   path: string
   type: 'tree' | 'blob' | 'commit'
   url?: string
+  rawUrl?: string
   sha?: string
   accessDenied?: boolean
 }

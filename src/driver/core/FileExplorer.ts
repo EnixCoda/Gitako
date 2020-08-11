@@ -235,6 +235,20 @@ export const onNodeClick: BoundMethodCreator<[
   React.MouseEvent<HTMLElement, MouseEvent>,
   TreeNode,
 ]> = dispatch => (event, node) => {
+  const el = event.target as HTMLElement
+  if (
+    node.type === 'blob' &&
+    node.rawUrl &&
+    el != null &&
+    el.classList &&
+    el.classList.length > 0
+  ) {
+    if (['node-item-icon', 'octicon'].findIndex(cls => el.classList.contains(cls)) !== -1) {
+      window.open(node.rawUrl, '_blank')
+      event.preventDefault()
+      return
+    }
+  }
   let preventDefault = true
   if (node.type === 'tree') {
     dispatch.call(toggleNodeExpansion, node, true)
