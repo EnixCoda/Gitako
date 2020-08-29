@@ -139,17 +139,31 @@ class L3 {
     this.l2 = l2
   }
 
-  toggleExpand = (node: TreeNode) => {
-    this.setExpand(node, !this.expandedNodes.has(node.path))
+  toggleExpand = (node: TreeNode, recursive?: boolean) => {
+    const expand = !this.expandedNodes.has(node.path)
+    if (recursive) {
+      const recursiveSetExpand = (node: TreeNode, expand: boolean) => {
+        this.barelySetExpand(node, expand)
+        node.contents?.forEach($node => recursiveSetExpand($node, expand))
+      }
+      recursiveSetExpand(node, expand)
+      this.generateVisibleNodes()
+    } else {
+      this.setExpand(node, expand)
+    }
   }
 
-  setExpand = (node: TreeNode, expand: boolean) => {
+  barelySetExpand = (node: TreeNode, expand: boolean) => {
     if (expand && node.contents) {
       // only node with contents is expandable
       this.expandedNodes.add(node.path)
     } else {
       this.expandedNodes.delete(node.path)
     }
+  }
+
+  setExpand = (node: TreeNode, expand: boolean) => {
+    this.barelySetExpand(node, expand)
     this.generateVisibleNodes()
   }
 

@@ -213,11 +213,14 @@ export const setExpand: BoundMethodCreator<[TreeNode, boolean]> = dispatch => (
   dispatch.call(focusNode, node, false)
 }
 
-export const toggleNodeExpansion: BoundMethodCreator<[TreeNode, boolean]> = dispatch => (
-  node,
-  skipScrollToNode,
-) => {
-  visibleNodesGenerator.toggleExpand(node)
+export const toggleNodeExpansion: BoundMethodCreator<[
+  TreeNode,
+  {
+    skipScrollToNode?: boolean
+    recursive?: boolean
+  },
+]> = dispatch => (node, { skipScrollToNode = false, recursive = false }) => {
+  visibleNodesGenerator.toggleExpand(node, recursive)
   dispatch.call(focusNode, node, skipScrollToNode)
   tasksAfterRender.push(DOMHelper.focusFileExplorer)
 }
@@ -235,25 +238,22 @@ export const onNodeClick: BoundMethodCreator<[
   React.MouseEvent<HTMLElement, MouseEvent>,
   TreeNode,
 ]> = dispatch => (event, node) => {
-  let preventDefault = true
+  const preventDefault = !(node.type === 'blob' && node.url?.includes('#'))
+  if (preventDefault) event.preventDefault()
+
   if (node.type === 'tree') {
-    dispatch.call(toggleNodeExpansion, node, true)
+    dispatch.call(toggleNodeExpansion, node, { skipScrollToNode: true, recursive: event.shiftKey })
   } else if (node.type === 'blob') {
     const [, { loadWithPJAX }] = dispatch.get()
     dispatch.call(focusNode, node, true)
-    if (node.url) {
-      if (node.url.includes('#')) {
-        preventDefault = false
-      } else {
-        loadWithPJAX(node.url)
-      }
+    if (node.url && !node.url.includes('#')) {
+      loadWithPJAX(node.url)
     }
   } else if (node.type === 'commit') {
     if (node.url) {
       window.open(node.url, '_blank')
     }
   }
-  if (preventDefault) event.preventDefault()
 }
 
 export const expandTo: BoundMethodCreator<[string[]]> = dispatch => currentPath => {
