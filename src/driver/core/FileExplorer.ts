@@ -68,11 +68,18 @@ export const setUpTree: BoundMethodCreator<[
   })
 
   visibleNodesGenerator.init()
-
   tasksAfterRender.push(DOMHelper.focusSearchInput)
   dispatch.set({ state: 'done' })
-  const targetPath = platform.getCurrentPath(metaData.branchName)
-  if (targetPath) dispatch.call(goTo, targetPath)
+
+  if (platform.shouldExpandAll?.()) {
+    visibleNodesGenerator.visibleNodes.nodes.forEach(node =>
+      dispatch.call(toggleNodeExpansion, node, { skipScrollToNode: true, recursive: true }),
+    )
+    dispatch.call(updateVisibleNodes)
+  } else {
+    const targetPath = platform.getCurrentPath(metaData.branchName)
+    if (targetPath) dispatch.call(goTo, targetPath)
+  }
 }
 
 export const execAfterRender: BoundMethodCreator = dispatch => () => {

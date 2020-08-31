@@ -203,6 +203,9 @@ export const GitHub: Platform = {
   shouldShow() {
     return Boolean(DOMHelper.isInCodePage() || URLHelper.isInPullPage())
   },
+  shouldExpandAll() {
+    return Boolean(URLHelper.isInPullPage())
+  },
   getCurrentPath(branchName) {
     return URLHelper.getCurrentPath(branchName)
   },

@@ -7,6 +7,7 @@ type Platform = {
   ): Promise<Pick<MetaData, 'userUrl' | 'repoUrl' | 'defaultBranchName'>>
   getTreeData(metaData: MetaData, accessToken?: string): Promise<TreeNode>
   shouldShow(): boolean
+  shouldExpandAll?(): boolean
   getCurrentPath(branchName: string): string[] | null
   setOAuth(code: string): Promise<string | null>
   getOAuthLink(): string
