@@ -20,7 +20,7 @@ export function MetaBar({ metaData: { userName, repoName, branchName, repoUrl, u
           <GitBranchIcon size="small" />
         </div>
         <BranchName as="span" backgroundColor="blue.0">
-          {branchName}
+          {branchName || '...'}
         </BranchName>
       </Flex>
     </Flex>
