@@ -12,7 +12,7 @@ import { SettingsSection } from './SettingsSection'
 
 type Props = {}
 
-const options: Option<Config['toggleButtonContent']>[] = [
+const toggleButtonContentOptions: Option<Config['toggleButtonContent']>[] = [
   {
     key: 'logo',
     value: 'logo',
@@ -36,8 +36,8 @@ export function SidebarSettings(props: React.PropsWithChildren<Props>) {
   }, [configContext.val.shortcut])
 
   return (
-    <SettingsSection title={'Toggle Sidebar'}>
-      <Field id="toggle-sidebar-shortcut" title="Keyboard Shortcut">
+    <SettingsSection title={'Sidebar'}>
+      <Field id="toggle-sidebar-shortcut" title="Keyboard shortcut to toggle visibility">
         <div className={'toggle-shortcut-input-control'}>
           <TextInput
             id="toggle-sidebar-shortcut"
@@ -79,10 +79,10 @@ export function SidebarSettings(props: React.PropsWithChildren<Props>) {
           )}
         </div>
       </Field>
-      <Field id="toggle-button-content" title="Content of the Toggle Button">
+      <Field id="toggle-button-content" title="Icon of the toggle button">
         <SelectInput
           id="toggle-button-content"
-          options={options}
+          options={toggleButtonContentOptions}
           onChange={v => {
             configContext.set({
               toggleButtonContent: v,

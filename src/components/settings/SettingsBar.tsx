@@ -44,7 +44,7 @@ function SettingsBarContent() {
           },
           {
             key: 'shrinkGitHubHeader',
-            label: 'Shrink GitHub Header(experimental)',
+            label: 'Shrink GitHub header(experimental)',
           },
         ]
       : []
@@ -68,7 +68,7 @@ function SettingsBarContent() {
             {reloadHint && <div className={'hint'}>{reloadHint}</div>}
           </SettingsSection>
         )}
-        <SettingsSection title={'Contact'}>
+        <SettingsSection title={'Feedback'}>
           <a href="https://github.com/EnixCoda/Gitako/issues" target="_blank">
             Report bug / Request feature.
           </a>

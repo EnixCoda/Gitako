@@ -7,7 +7,7 @@ import { Option, SelectInput } from '../SelectInput'
 import { Field } from './Field'
 import { SettingsSection } from './SettingsSection'
 
-const options: Option<Config['icons']>[] = [
+const iconOptions: Option<Config['icons']>[] = [
   {
     key: 'rich',
     value: 'rich',
@@ -25,16 +25,41 @@ const options: Option<Config['icons']>[] = [
   },
 ]
 
+const recursiveToggleFolderOptions: Option<Config['recursiveToggleFolder']>[] = [
+  {
+    key: 'shift',
+    value: 'shift',
+    label: `⇧(shift)`,
+  },
+  {
+    key: 'alt',
+    value: 'alt',
+    label: `⌥(alt)`,
+  },
+]
+
 type Props = {}
 
 export function FileTreeSettings(props: React.PropsWithChildren<Props>) {
   const configContext = useConfigs()
   return (
     <SettingsSection title={'File Tree'}>
+      <Field id="recursive-toggle-folder" title="Toggle folders recursively while holding">
+        <SelectInput
+          id="recursive-toggle-folder"
+          options={recursiveToggleFolderOptions}
+          onChange={v => {
+            configContext.set({
+              recursiveToggleFolder: v,
+            })
+          }}
+          value={configContext.val.recursiveToggleFolder}
+        ></SelectInput>
+      </Field>
       <Field title="Icons" id="file-tree-icons">
         <SelectInput<Config['icons']>
           id="file-tree-icons"
-          options={options}
+          options={iconOptions}
           onChange={v => {
             configContext.set({
               icons: v,

@@ -11,6 +11,7 @@ export type Props = {
   freeze: boolean
   accessToken: string | undefined
   toggleShowSettings: React.MouseEventHandler
+  config: Config
   loadWithPJAX(url: string): void
 }
 
@@ -242,7 +243,19 @@ export const onNodeClick: BoundMethodCreator<[
   if (preventDefault) event.preventDefault()
 
   if (node.type === 'tree') {
-    dispatch.call(toggleNodeExpansion, node, { skipScrollToNode: true, recursive: event.shiftKey })
+    const [
+      ,
+      {
+        config: { recursiveToggleFolder },
+      },
+    ] = dispatch.get()
+    const recursive =
+      (recursiveToggleFolder === 'shift' && event.shiftKey) ||
+      (recursiveToggleFolder === 'alt' && event.altKey)
+    dispatch.call(toggleNodeExpansion, node, {
+      skipScrollToNode: true,
+      recursive,
+    })
   } else if (node.type === 'blob') {
     const [, { loadWithPJAX }] = dispatch.get()
     dispatch.call(focusNode, node, true)

@@ -137,6 +137,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
                   freeze={showSettings}
                   accessToken={accessToken}
                   loadWithPJAX={loadWithPJAX}
+                  config={configContext.val}
                 />
               )
             )}

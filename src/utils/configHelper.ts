@@ -11,6 +11,7 @@ export type Config = {
   icons: 'rich' | 'dim' | 'native'
   toggleButtonVerticalDistance: number
   toggleButtonContent: 'logo' | 'octoface'
+  recursiveToggleFolder: 'shift' | 'alt'
   shrinkGitHubHeader: boolean
 }
 
@@ -25,6 +26,7 @@ export enum configKeys {
   icons = 'icons',
   toggleButtonVerticalDistance = 'toggleButtonVerticalDistance',
   toggleButtonContent = 'toggleButtonContent',
+  recursiveToggleFolder = 'recursiveToggleFolder',
   shrinkGitHubHeader = 'shrinkGitHubHeader',
 }
 
@@ -39,6 +41,7 @@ const defaultConfigs: Config = {
   icons: 'rich',
   toggleButtonVerticalDistance: 124, // align with GitHub's navbar items
   toggleButtonContent: 'logo',
+  recursiveToggleFolder: 'shift',
   shrinkGitHubHeader: false,
 }
 

@@ -545,11 +545,11 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           }
 
           .field {
-            margin-bottom: 4px;
+            margin-bottom: 8px;
 
             label {
               display: inline-block;
-              margin-bottom: 2px;
+              margin-bottom: 0px;
               font-weight: 600;
             }
             input {
