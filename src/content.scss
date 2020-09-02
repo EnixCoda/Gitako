@@ -199,7 +199,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     .tentacle {
       width: 40px;
       height: 40px;
-      transition: transform ease 0.4s;
+      transition: all ease 0.4s;
       transform: translateX(-16px);
     }
     &:active,
