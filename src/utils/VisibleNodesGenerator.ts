@@ -14,7 +14,7 @@ import { findNode } from './general'
  *  |                            |                          |   expandedNodes + focusNode -> visibleNodes
  *  |3 expansion                 | when fold/unfold         | onExpansionChange
  *  |                            |                          |   searchedNodes + toggleNode -> expandedNodes
- *  |2 search key                | when search              | onSearch
+ *  |2 filters                   | when filter(search)      | onSearch
  *  |                            |                          |   treeNodes + searchKey -> searchedNodes
  *  |1 tree: { root <-> nodes }  | when tree init           | treeHelper.parse
  *  |                                                       |   tree data from api -> { root, nodes }
@@ -23,22 +23,23 @@ import { findNode } from './general'
 
 function search(
   root: TreeNode,
-  regexp: RegExp,
+  match: (node: TreeNode) => boolean,
   onChildMatch: (node: TreeNode) => void,
 ): TreeNode | null {
-  // go traverse no matter root matches or not to make sure find all nodes matches
+  // go traverse no matter root matches or not to make sure find all nodes
   const contents = []
+
   if (root.type === 'tree' && root.contents) {
     let childMatch = false
     for (const item of root.contents) {
-      if (isNodeMatch(item, regexp)) {
+      if (match(item)) {
         childMatch = true
         break
       }
     }
 
     for (const item of root.contents) {
-      const $item = search(item, regexp, onChildMatch)
+      const $item = search(item, match, onChildMatch)
       if ($item) {
         if ($item !== item) childMatch = true
         contents.push($item)
@@ -57,14 +58,10 @@ function search(
     }
   }
 
-  if (isNodeMatch(root, regexp)) {
+  if (match(root)) {
     return root
   }
   return null
-}
-
-function isNodeMatch(root: TreeNode, regexp: RegExp): boolean {
-  return regexp.test(root.name)
 }
 
 function compressTree(root: TreeNode, prefix: string[] = []): TreeNode {
@@ -116,8 +113,11 @@ class L2 {
     this.compress = Boolean(options.compress)
   }
 
-  search = (regexp: RegExp | null, onChildMatch: (node: TreeNode) => void) => {
-    const rootNode = regexp ? search(this.l1.root, regexp, onChildMatch) : this.l1.root
+  search = (
+    match: null | ((node: TreeNode) => boolean),
+    onChildMatch: (node: TreeNode) => void,
+  ) => {
+    const rootNode = match ? search(this.l1.root, match, onChildMatch) : this.l1.root
 
     this.root =
       rootNode && this.compress
@@ -179,7 +179,9 @@ class L3 {
 
   search = (regexp: RegExp | null) => {
     this.expandedNodes.clear()
-    this.l2.search(regexp, node => this.expandedNodes.add(node.path))
+    this.l2.search(regexp && (node => regexp.test(node.name)), node =>
+      this.expandedNodes.add(node.path),
+    )
     this.generateVisibleNodes()
   }
 
