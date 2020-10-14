@@ -107,7 +107,7 @@ class L1 {
 }
 
 class L2 {
-  l1: L1
+  private l1: L1
   compress: boolean
   root: TreeNode | null = null
 
@@ -127,8 +127,8 @@ class L2 {
 }
 
 class L3 {
-  l1: L1
-  l2: L2
+  private l1: L1
+  private l2: L2
 
   nodes: TreeNode[] = []
   expandedNodes: Set<TreeNode['path']> = new Set()
@@ -212,9 +212,9 @@ export type VisibleNodes = {
 }
 
 class L4 {
-  l1: L1
-  l2: L2
-  l3: L3
+  private l1: L1
+  private l2: L2
+  private l3: L3
 
   focusedNode: TreeNode | null
 
@@ -235,16 +235,10 @@ type Options = {
 }
 
 export class VisibleNodesGenerator {
-  l1: L1
-  l2: L2
-  l3: L3
-  l4: L4
-
-  search: L3['search']
-  setExpand: L3['setExpand']
-  toggleExpand: L3['toggleExpand']
-  expandTo: L3['expandTo']
-  focusNode: L4['focusNode']
+  private l1: L1
+  private l2: L2
+  private l3: L3
+  private l4: L4
 
   constructor(root: TreeNode, options: Options) {
     this.l1 = new L1(root)
@@ -252,19 +246,17 @@ export class VisibleNodesGenerator {
     this.l3 = new L3(this.l1, this.l2)
     this.l4 = new L4(this.l1, this.l2, this.l3)
 
-    this.search = regexps => {
+    this.search(null)
+  }
+
+  search: L3['search'] = regexps => {
       this.l3.search(regexps)
       this.l4.focusNode(null)
     }
-    this.setExpand = (...args) => this.l3.setExpand(...args)
-    this.toggleExpand = (...args) => this.l3.toggleExpand(...args)
-    this.expandTo = (...args) => this.l3.expandTo(...args)
-    this.focusNode = (...args) => this.l4.focusNode(...args)
-  }
-
-  init() {
-    this.search(null)
-  }
+  setExpand: L3['setExpand'] = (...args) => this.l3.setExpand(...args)
+  toggleExpand: L3['toggleExpand'] = (...args) => this.l3.toggleExpand(...args)
+  expandTo: L3['expandTo'] = (...args) => this.l3.expandTo(...args)
+  focusNode: L4['focusNode'] = (...args) => this.l4.focusNode(...args)
 
   get visibleNodes() {
     return {

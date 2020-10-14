@@ -67,7 +67,6 @@ export const setUpTree: BoundMethodCreator<[
     compress: compressSingletonFolder,
   })
 
-  visibleNodesGenerator.init()
   tasksAfterRender.push(DOMHelper.focusSearchInput)
   dispatch.set({ state: 'done' })
 
