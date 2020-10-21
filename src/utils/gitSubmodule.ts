@@ -38,13 +38,14 @@ type ParsedModule = {
   [key: string]: string | undefined
 }
 
-function handleParsed(root: TreeNode, parsed: ParsedINI) {
-  Object.values(parsed).forEach(value => {
+// TODO: merge into getTreeData callback
+async function handleParsed(root: TreeNode, parsed: ParsedINI) {
+  for (const value of Object.values(parsed)) {
     if (typeof value === 'string') return
     const url = value?.url
     const path = value?.path
     if (typeof url === 'string' && typeof path === 'string') {
-      const node = findNode(root, path.split('/'))
+      const node = await findNode(root, path)
       if (node) {
         if (subModuleURLRegex.HTTPGit.test(url)) {
           node.url = transformModuleHTTPDotGitURL(node, url)
@@ -61,16 +62,16 @@ function handleParsed(root: TreeNode, parsed: ParsedINI) {
         // raiseError(new Error(`Submodule node not found`), { path })
       }
     } else {
-      handleParsed(root, value as ParsedINI)
+      await handleParsed(root, value as ParsedINI)
     }
-  })
+  }
 }
 
-export function resolveGitModules(root: TreeNode, content: string) {
+export async function resolveGitModules(root: TreeNode, content: string) {
   try {
     if (Array.isArray(root.contents)) {
       const parsed: ParsedINI = ini.parse(content)
-      handleParsed(root, parsed)
+      await handleParsed(root, parsed)
     }
   } catch (err) {
     throw new Error(`Error resolving git modules`)

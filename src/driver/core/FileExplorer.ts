@@ -31,24 +31,14 @@ export type ConnectorState = {
   expandTo: GetCreatedMethod<typeof expandTo>
 }
 
-function getVisibleParentNode(
-  nodes: TreeNode[],
-  focusedNode: TreeNode,
-  depths: Map<TreeNode, number>,
-) {
-  const focusedNodeIndex = nodes.indexOf(focusedNode)
-  const focusedNodeDepth = depths.get(focusedNode)
-  let indexOfParentNode = focusedNodeIndex - 1
-  let depth: number | undefined
-  while (indexOfParentNode !== -1) {
-    depth = depths.get(nodes[indexOfParentNode])
-    if (depth === undefined || focusedNodeDepth === undefined || !(depth >= focusedNodeDepth)) {
-      break
+function getVisibleParentNode(nodes: TreeNode[], focusedNode: TreeNode) {
+  let index = nodes.indexOf(focusedNode) - 1
+  while (index >= 0) {
+    if (nodes[index].contents?.includes(focusedNode)) {
+      return nodes[index]
     }
-    --indexOfParentNode
+    --index
   }
-  const parentNode = nodes[indexOfParentNode]
-  return parentNode
 }
 
 type Task = () => void
@@ -58,14 +48,22 @@ let visibleNodesGenerator: VisibleNodesGenerator
 type BoundMethodCreator<Args extends any[] = []> = MethodCreator<Props, ConnectorState, Args>
 
 export const setUpTree: BoundMethodCreator<[
-  Pick<Props, 'treeRoot' | 'metaData'> & Pick<Config, 'compressSingletonFolder'>,
-]> = dispatch => async ({ treeRoot, metaData, compressSingletonFolder }) => {
+  Pick<Props, 'treeRoot' | 'metaData'> & { config: Config },
+]> = dispatch => async ({ treeRoot, metaData, config }) => {
   if (!treeRoot) return
   dispatch.set({ state: 'rendering' })
 
-  visibleNodesGenerator = new VisibleNodesGenerator(treeRoot, {
+  const { compressSingletonFolder } = config
+
+  visibleNodesGenerator = new VisibleNodesGenerator({
+    root: treeRoot,
     compress: compressSingletonFolder,
+    async getTreeData(path) {
+      const { root } = await platform.getTreeData(metaData, path, false, config.access_token)
+      return root
+    },
   })
+  visibleNodesGenerator.hub.addEventListener('emit', visibleNodes => dispatch.set({ visibleNodes }))
 
   tasksAfterRender.push(DOMHelper.focusSearchInput)
   dispatch.set({ state: 'done' })
@@ -74,7 +72,6 @@ export const setUpTree: BoundMethodCreator<[
     visibleNodesGenerator.visibleNodes.nodes.forEach(node =>
       dispatch.call(toggleNodeExpansion, node, { skipScrollToNode: true, recursive: true }),
     )
-    dispatch.call(updateVisibleNodes)
   } else {
     const targetPath = platform.getCurrentPath(metaData.branchName)
     if (targetPath) dispatch.call(goTo, targetPath)
@@ -91,7 +88,7 @@ export const execAfterRender: BoundMethodCreator = dispatch => () => {
 export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch => event => {
   const [{ searched, visibleNodes }, { loadWithPJAX }] = dispatch.get()
   if (!visibleNodes) return
-  const { nodes, focusedNode, expandedNodes, depths } = visibleNodes
+  const { nodes, focusedNode, expandedNodes } = visibleNodes
   function handleVerticalMove(index: number) {
     if (0 <= index && index < nodes.length) {
       DOMHelper.focusFileExplorer()
@@ -123,7 +120,7 @@ export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch
           dispatch.call(setExpand, focusedNode, false)
         } else {
           // go forward to the start of the list, find the closest node with lower depth
-          const parentNode = getVisibleParentNode(nodes, focusedNode, depths)
+          const parentNode = getVisibleParentNode(nodes, focusedNode)
           if (parentNode) {
             dispatch.call(focusNode, parentNode, false)
           }
@@ -136,9 +133,7 @@ export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch
         if (focusedNode.type === 'tree') {
           if (expandedNodes.has(focusedNode.path)) {
             const nextNode = nodes[focusedNodeIndex + 1]
-            const d1 = depths.get(nextNode)
-            const d2 = depths.get(focusedNode)
-            if (d1 !== undefined && d2 !== undefined && d1 > d2) {
+            if (focusedNode.contents?.includes(nextNode)) {
               dispatch.call(focusNode, nextNode, false)
             }
           } else {
@@ -200,23 +195,21 @@ export const search: BoundMethodCreator<[string]> = dispatch => searchKey => {
   dispatch.set({ searchKey, searched: searchKey !== '' })
   const regexps = searchKeyToRegexps(searchKey)
   visibleNodesGenerator.search(regexps)
-  dispatch.call(updateVisibleNodes)
 }
 
 export const goTo: BoundMethodCreator<[string[]]> = dispatch => async currentPath => {
   dispatch.set({ searchKey: '', searched: false })
   visibleNodesGenerator.search(null)
-  dispatch.call(updateVisibleNodes)
   tasksAfterRender.push(() => {
     dispatch.call(expandTo, currentPath)
   })
 }
 
-export const setExpand: BoundMethodCreator<[TreeNode, boolean]> = dispatch => (
+export const setExpand: BoundMethodCreator<[TreeNode, boolean]> = dispatch => async (
   node,
   expand = false,
 ) => {
-  visibleNodesGenerator.setExpand(node, expand)
+  await visibleNodesGenerator.setExpand(node, expand)
   dispatch.call(focusNode, node, false)
 }
 
@@ -226,8 +219,8 @@ export const toggleNodeExpansion: BoundMethodCreator<[
     skipScrollToNode?: boolean
     recursive?: boolean
   },
-]> = dispatch => (node, { skipScrollToNode = false, recursive = false }) => {
-  visibleNodesGenerator.toggleExpand(node, recursive)
+]> = dispatch => async (node, { skipScrollToNode = false, recursive = false }) => {
+  await visibleNodesGenerator.toggleExpand(node, recursive)
   dispatch.call(focusNode, node, skipScrollToNode)
   tasksAfterRender.push(DOMHelper.focusFileExplorer)
 }
@@ -235,10 +228,7 @@ export const toggleNodeExpansion: BoundMethodCreator<[
 export const focusNode: BoundMethodCreator<[TreeNode | null, boolean]> = dispatch => (
   node: TreeNode | null,
 ) => {
-  const [{ visibleNodes }] = dispatch.get()
-  if (!visibleNodes) return
   visibleNodesGenerator.focusNode(node)
-  dispatch.call(updateVisibleNodes)
 }
 
 export const onNodeClick: BoundMethodCreator<[
@@ -275,15 +265,9 @@ export const onNodeClick: BoundMethodCreator<[
   }
 }
 
-export const expandTo: BoundMethodCreator<[string[]]> = dispatch => currentPath => {
-  const nodeExpandedTo = visibleNodesGenerator.expandTo(currentPath.join('/'))
+export const expandTo: BoundMethodCreator<[string[]]> = dispatch => async currentPath => {
+  const nodeExpandedTo = await visibleNodesGenerator.expandTo(currentPath.join('/'))
   if (nodeExpandedTo) {
     visibleNodesGenerator.focusNode(nodeExpandedTo)
   }
-  dispatch.call(updateVisibleNodes)
-}
-
-export const updateVisibleNodes: BoundMethodCreator = dispatch => () => {
-  const { visibleNodes } = visibleNodesGenerator
-  dispatch.set({ visibleNodes })
 }

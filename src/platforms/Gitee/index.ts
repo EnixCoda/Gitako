@@ -108,7 +108,7 @@ export const Gitee: Platform = {
       defaultBranchName: data.default_branch,
     }
   },
-  async getTreeData(metaData, accessToken) {
+  async getTreeData(metaData, path, recursive, accessToken) {
     const { userName, repoName, branchName } = metaData
     const treeData = await API.getTreeData(userName, repoName, branchName)
     const root = parseTreeData(treeData, metaData)
@@ -124,12 +124,12 @@ export const Gitee: Platform = {
         )
 
         if (blobData && blobData.encoding === 'base64' && blobData.content) {
-          resolveGitModules(root, Base64.decode(blobData.content))
+          await resolveGitModules(root, Base64.decode(blobData.content))
         }
       }
     }
 
-    return root
+    return { root }
   },
   shouldShow() {
     return DOMHelper.isInCodePage()

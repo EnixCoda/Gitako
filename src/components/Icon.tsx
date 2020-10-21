@@ -1,6 +1,7 @@
 import {
   ChevronDownIcon as ChevronDown,
   ChevronRightIcon as ChevronRight,
+  ClockIcon as Clock,
   FileCodeIcon as FileCode,
   FileIcon as File,
   FileMediaIcon as FileMedia,
@@ -26,6 +27,11 @@ function getSVGIconComponent(
   name: string
 } {
   switch (type) {
+    case 'loading':
+      return {
+        IconComponent: Clock,
+        name: 'Clock',
+      }
     case 'hourglass':
       return {
         IconComponent: Hourglass,

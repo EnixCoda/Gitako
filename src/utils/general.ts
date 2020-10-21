@@ -47,38 +47,49 @@ export function friendlyFormatShortcut(shortcut?: string) {
 }
 
 /**
- * if item's name matches path, return self-depth of the item
+ * if item's name matches path, return the depth of the item
  * else return 0
  */
 function measureDistance(item: TreeNode, path: TreeNode['name'][]): number {
   const pathString = path.join('/')
-  if (item.name.indexOf(pathString + '/') === 0) {
+  if (item.name.startsWith(pathString + '/')) {
     // If accessing a leading item of compressed node, path will be shorter than item.name
     return path.length
-  } else if (pathString === item.name || pathString.indexOf(item.name + '/') === 0) {
+  } else if (pathString === item.name || pathString.startsWith(item.name + '/')) {
     return item.name.split('/').length
   }
   return 0
 }
 
+export async function traverse<T>(
+  range: T[] = [],
+  conditionAndEffect: (node: T) => Async<boolean>,
+  getChildren: (node: T) => T[],
+) {
+  for (const item of range) {
+    if (await conditionAndEffect(item)) {
+      await traverse(getChildren(item), conditionAndEffect, getChildren)
+    }
+  }
+}
+
 /**
  * look for the first item matches given path under root.content
  */
-export function findNode(
-  root: TreeNode,
-  path: TreeNode['name'][],
-  callback?: (node: TreeNode) => void,
-): TreeNode | undefined {
-  if (Array.isArray(root.contents)) {
-    for (const item of root.contents) {
-      const distance = measureDistance(item, path)
-      if (distance > 0) {
-        if (callback) callback(item)
-        if (path.length === distance) return item
-        return findNode(item, path.slice(distance), callback)
+export async function findNode(root: TreeNode, path: TreeNode['path']) {
+  let node: TreeNode | undefined
+  await traverse(
+    [root],
+    $node => {
+      if (path === $node.path) {
+        node = $node
+        return false
       }
-    }
-  }
+      return path.startsWith($node.path)
+    },
+    node => node.contents || [],
+  )
+  return node
 }
 
 export function createStyleSheet(content: string) {
@@ -157,5 +168,16 @@ export function isValidRegexpSource(source: string) {
     return true
   } catch (err) {
     return false
+  }
+}
+
+export function withEffect<Method extends (...args: any[]) => any>(
+  method: Method,
+  effect: (payload: ReturnType<Method>) => void,
+): (...args: Parameters<Method>) => ReturnType<Method> {
+  return (...args) => {
+    const returnValue = method.apply(null, args)
+    Promise.resolve(returnValue).then(effect)
+    return returnValue
   }
 }

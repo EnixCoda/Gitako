@@ -23,5 +23,8 @@ type IO<T> = {
   onChange(value: T): void
 }
 
-// do not use with generics
 type Override<Original, Incoming> = Omit<Original, keyof Incoming> & Incoming
+
+type VoidFN<T> = (payload: T) => void
+
+type Async<T> = T | Promise<T>

@@ -1,25 +1,5 @@
-import { findNode } from './general'
-
-/**
- * This is the stack for generating an array of nodes for rendering
- *
- * when lower layer changes, higher layers would reset
- * when higher layer changes, lower layers would not notice
- *
- *  render stack                 | when will change         | on change callback
- *
- *  ^  changes frequently
- *  |
- *  |4 focus                     | when hover/focus move    | onFocusChange
- *  |                            |                          |   expandedNodes + focusNode -> visibleNodes
- *  |3 expansion                 | when fold/unfold         | onExpansionChange
- *  |                            |                          |   searchedNodes + toggleNode -> expandedNodes
- *  |2 filters                   | when filter(search)      | onSearch
- *  |                            |                          |   treeNodes + searchKey -> searchedNodes
- *  |1 tree: { root <-> nodes }  | when tree init           | treeHelper.parse
- *  |                                                       |   tree data from api -> { root, nodes }
- *  v  stable
- */
+import { EventHub } from './EventHub'
+import { findNode, traverse, withEffect } from './general'
 
 function search(
   root: TreeNode,
@@ -31,18 +11,18 @@ function search(
 
   if (root.type === 'tree' && root.contents) {
     let childMatch = false
-    for (const item of root.contents) {
-      if (match(item)) {
+    for (const node of root.contents) {
+      if (match(node)) {
         childMatch = true
         break
       }
     }
 
-    for (const item of root.contents) {
-      const $item = search(item, match, onChildMatch)
-      if ($item) {
-        if ($item !== item) childMatch = true
-        contents.push($item)
+    for (const node of root.contents) {
+      const $node = search(node, match, onChildMatch)
+      if ($node) {
+        if ($node !== node) childMatch = true
+        contents.push($node)
       }
     }
 
@@ -75,10 +55,10 @@ function compressTree(root: TreeNode, prefix: string[] = []): TreeNode {
 
     let compressed = false
     const contents = []
-    for (const item of root.contents) {
-      const $item = compressTree(item)
-      if ($item !== item) compressed = true
-      contents.push($item)
+    for (const node of root.contents) {
+      const $node = compressTree(node)
+      if ($node !== node) compressed = true
+      contents.push($node)
     }
     if (compressed)
       return {
@@ -95,177 +75,242 @@ function compressTree(root: TreeNode, prefix: string[] = []): TreeNode {
     : root
 }
 
-class L1 {
-  root: TreeNode
-
-  constructor(root: TreeNode) {
-    this.root = root
+function mergeNodes(target: TreeNode, source: TreeNode) {
+  for (const node of source.contents || []) {
+    const dup = target.contents?.find($node => $node.path === node.path)
+    if (dup) {
+      mergeNodes(dup, node)
+    } else {
+      if (!target.contents) target.contents = []
+      target.contents.push(node)
+    }
   }
 }
 
-class L2 {
-  private l1: L1
-  compress: boolean
-  root: TreeNode | null = null
+class BaseLayer {
+  baseRoot: TreeNode
+  getTreeData: (path: string) => Async<TreeNode>
+  loading: Set<TreeNode['path']> = new Set()
 
-  constructor(l1: L1, options: Options) {
-    this.l1 = l1
+  baseHub = new EventHub<{
+    emit: BaseLayer['baseRoot']
+    loadingChange: BaseLayer['loading']
+  }>()
+
+  constructor({ root, getTreeData }: Options) {
+    this.baseRoot = root
+    this.getTreeData = getTreeData
+  }
+
+  loadTreeData = async (path: string) => {
+    const node = await findNode(this.baseRoot, path)
+    if (node && node.type !== 'tree') return node
+    if (node?.contents?.length) return node // check in memory
+    if (this.loading.has(path)) return
+
+    this.loading.add(path)
+    this.baseHub.emit('loadingChange', this.loading)
+    mergeNodes(this.baseRoot, await this.getTreeData(path))
+    this.loading.delete(path)
+    this.baseHub.emit('loadingChange', this.loading)
+    this.baseHub.emit('emit', this.baseRoot)
+
+    return await findNode(this.baseRoot, path)
+  }
+}
+
+class ShakeLayer extends BaseLayer {
+  shackedRoot: TreeNode | null = null
+  lastMatch: Parameters<ShakeLayer['shake']>[0] = undefined
+  shakeHub = new EventHub<{ emit: TreeNode | null }>()
+
+  constructor(options: Options) {
+    super(options)
+
+    this.baseHub.addEventListener('emit', () => this.shake(this.lastMatch))
+  }
+
+  shake = withEffect(
+    (p?: { match: (node: TreeNode) => boolean; onChildMatch: (node: TreeNode) => void }) => {
+      this.lastMatch = p
+      if (p) {
+        const { match, onChildMatch } = p
+        this.shackedRoot = search(this.baseRoot, match, onChildMatch)
+      } else this.shackedRoot = this.baseRoot
+    },
+    () => this.shakeHub.emit('emit', this.shackedRoot),
+  )
+}
+
+class CompressLayer extends ShakeLayer {
+  private compress: boolean
+  depths = new Map<TreeNode, number>()
+  compressedRoot: TreeNode | null = null
+  compressHub = new EventHub<{ emit: TreeNode | null }>()
+
+  constructor(options: Options) {
+    super(options)
     this.compress = Boolean(options.compress)
+
+    this.shakeHub.addEventListener('emit', () => this.compressTree())
   }
 
-  search = (
-    match: null | ((node: TreeNode) => boolean),
-    onChildMatch: (node: TreeNode) => void,
-  ) => {
-    const rootNode = match ? search(this.l1.root, match, onChildMatch) : this.l1.root
+  compressTree = withEffect(
+    () => {
+      this.depths.clear()
+      this.compressedRoot =
+        this.shackedRoot && this.compress
+          ? {
+              ...this.shackedRoot,
+              contents: this.shackedRoot.contents?.map(node => compressTree(node)),
+            }
+          : this.shackedRoot
 
-    this.root =
-      rootNode && this.compress
-        ? { ...rootNode, contents: rootNode.contents?.map(node => compressTree(node)) }
-        : rootNode
-  }
+      const recordDepth = (node: TreeNode, depth = 0) => {
+        this.depths.set(node, depth)
+        for (const $node of node.contents || []) {
+          recordDepth($node, depth + 1)
+        }
+      }
+      if (this.compressedRoot) recordDepth(this.compressedRoot, -1)
+    },
+    () => this.compressHub.emit('emit', this.compressedRoot),
+  )
 }
 
-class L3 {
-  private l1: L1
-  private l2: L2
-
+class FlattenLayer extends CompressLayer {
+  focusedNode: TreeNode | null = null
   nodes: TreeNode[] = []
   expandedNodes: Set<TreeNode['path']> = new Set()
-  depths: Map<TreeNode, number> = new Map()
+  flattenHub = new EventHub<{ emit: null }>()
 
-  constructor(l1: L1, l2: L2) {
-    this.l1 = l1
-    this.l2 = l2
+  constructor(options: Options) {
+    super(options)
+
+    this.compressHub.addEventListener('emit', () => this.generateVisibleNodes())
   }
 
-  toggleExpand = (node: TreeNode, recursive?: boolean) => {
-    const expand = !this.expandedNodes.has(node.path)
-    if (recursive) {
-      const recursiveSetExpand = (node: TreeNode, expand: boolean) => {
-        this.barelySetExpand(node, expand)
-        node.contents?.forEach($node => recursiveSetExpand($node, expand))
-      }
-      recursiveSetExpand(node, expand)
-      this.generateVisibleNodes()
-    } else {
-      this.setExpand(node, expand)
-    }
+  generateVisibleNodes = withEffect(
+    async () => {
+      const nodes: TreeNode[] = []
+      await traverse(
+        this.compressedRoot?.contents,
+        node => {
+          nodes.push(node)
+          return node.type === 'tree' && this.expandedNodes.has(node.path)
+        },
+        node => {
+          return node.contents || []
+        },
+      )
+      this.nodes = nodes
+    },
+    () => this.flattenHub.emit('emit', null),
+  )
+
+  focusNode = (node: TreeNode | null) => {
+    this.focusedNode = node
   }
 
   barelySetExpand = (node: TreeNode, expand: boolean) => {
-    if (expand && node.contents) {
-      // only node with contents is expandable
+    if (expand) {
       this.expandedNodes.add(node.path)
     } else {
       this.expandedNodes.delete(node.path)
     }
   }
 
-  setExpand = (node: TreeNode, expand: boolean) => {
+  $setExpand = (node: TreeNode, expand: boolean) => {
     this.barelySetExpand(node, expand)
-    this.generateVisibleNodes()
+    if (expand && node.type === 'tree') return this.loadTreeData(node.path)
   }
+  setExpand = withEffect(this.$setExpand, this.generateVisibleNodes)
 
-  expandTo = (path: string, expandAlongTheWay?: boolean) => {
-    const rootNode = this.l2.root
-    if (expandAlongTheWay && path.includes('/')) {
-      this.expandTo(path.slice(0, path.lastIndexOf('/')), true)
-    }
-    const node = rootNode && findNode(rootNode, path.split('/'), node => this.setExpand(node, true))
-    if (node) this.setExpand(node, true)
-    return node
-  }
-
-  search = (regexp: RegExp | null) => {
-    this.expandedNodes.clear()
-    this.l2.search(regexp && (node => regexp.test(node.name)), node =>
-      this.expandedNodes.add(node.path),
+  toggleExpand = withEffect(async (node: TreeNode, recursive = false) => {
+    const expand = !this.expandedNodes.has(node.path)
+    await traverse(
+      [node],
+      async node => {
+        await this.$setExpand(node, expand)
+        return recursive
+      },
+      node => node.contents || [],
     )
-    this.generateVisibleNodes()
-  }
+  }, this.generateVisibleNodes)
 
-  generateVisibleNodes = () => {
-    this.depths.clear()
-    const nodes: TreeNode[] = []
-    if (this.l2.root?.contents) {
-      const traverse = (root: TreeNode, depth = 0) => {
-        nodes.push(root)
-        this.depths.set(root, depth)
-        if (this.expandedNodes.has(root.path) && root.type === 'tree' && root.contents?.length) {
-          for (const item of root.contents) {
-            traverse(item, depth + 1)
+  expandTo = withEffect(async (path: string) => {
+    const rootNode = this.compressedRoot
+    if (rootNode) {
+      await traverse(
+        [rootNode],
+        async node => {
+          const match = path.startsWith(node.path)
+          if (node.path && match) {
+            // rootNode.path === ''
+            await this.$setExpand(node, true)
           }
-        }
-      }
-      for (const item of this.l2.root.contents) {
-        traverse(item)
-      }
+          return match
+        },
+        node => node?.contents || [],
+      )
+
+      const node = await findNode(rootNode, path)
+      return node
     }
-    this.nodes = nodes
-  }
-}
+  }, this.generateVisibleNodes)
 
-export type VisibleNodes = {
-  nodes: L3['nodes']
-  depths: L3['depths']
-  expandedNodes: L3['expandedNodes']
-  focusedNode: L4['focusedNode']
-}
-
-class L4 {
-  private l1: L1
-  private l2: L2
-  private l3: L3
-
-  focusedNode: TreeNode | null
-
-  constructor(l1: L1, l2: L2, l3: L3) {
-    this.l1 = l1
-    this.l2 = l2
-    this.l3 = l3
-    this.focusedNode = null
-  }
-
-  focusNode = (node: TreeNode | null) => {
-    this.focusedNode = node
-  }
+  search = withEffect((regexp: RegExp | null) => {
+    this.focusNode(null)
+    this.shake(
+      regexp
+        ? {
+            match: node => regexp.test(node.name),
+            onChildMatch: node => this.$setExpand(node, true),
+          }
+        : undefined,
+    )
+  }, this.generateVisibleNodes)
 }
 
 type Options = {
-  compress?: boolean
+  root: BaseLayer['baseRoot']
+  getTreeData: BaseLayer['getTreeData']
+  compress: CompressLayer['compress']
 }
 
-export class VisibleNodesGenerator {
-  private l1: L1
-  private l2: L2
-  private l3: L3
-  private l4: L4
+export type VisibleNodes = {
+  loading: BaseLayer['loading']
+  depths: CompressLayer['depths']
+  nodes: FlattenLayer['nodes']
+  expandedNodes: FlattenLayer['expandedNodes']
+  focusedNode: FlattenLayer['focusedNode']
+}
 
-  constructor(root: TreeNode, options: Options) {
-    this.l1 = new L1(root)
-    this.l2 = new L2(this.l1, options)
-    this.l3 = new L3(this.l1, this.l2)
-    this.l4 = new L4(this.l1, this.l2, this.l3)
+export class VisibleNodesGenerator extends FlattenLayer {
+  hub = new EventHub<{
+    emit: VisibleNodes
+  }>()
+  constructor(options: Options) {
+    super(options)
+
+    this.focusNode = withEffect(this.focusNode.bind(this), this.update.bind(this))
 
     this.search(null)
+    this.flattenHub.addEventListener('emit', () => this.update())
+    this.baseHub.addEventListener('loadingChange', () => this.update())
   }
 
-  search: L3['search'] = regexps => {
-      this.l3.search(regexps)
-      this.l4.focusNode(null)
-    }
-  setExpand: L3['setExpand'] = (...args) => this.l3.setExpand(...args)
-  toggleExpand: L3['toggleExpand'] = (...args) => this.l3.toggleExpand(...args)
-  expandTo: L3['expandTo'] = (...args) => this.l3.expandTo(...args)
-  focusNode: L4['focusNode'] = (...args) => this.l4.focusNode(...args)
+  update() {
+    this.hub.emit('emit', this.visibleNodes)
+  }
 
-  get visibleNodes() {
+  get visibleNodes(): VisibleNodes {
     return {
-      nodes: this.l3.nodes,
-      depths: this.l3.depths,
-      expandedNodes: this.l3.expandedNodes,
-      focusedNode: this.l4.focusedNode,
+      nodes: this.nodes,
+      depths: this.depths,
+      expandedNodes: this.expandedNodes,
+      focusedNode: this.focusedNode,
+      loading: this.loading,
     }
   }
 }

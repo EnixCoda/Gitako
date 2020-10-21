@@ -21,6 +21,7 @@ export type ConnectorState = {
   // file tree data
   treeData?: TreeNode
   logoContainerElement: Element | null
+  defer?: boolean
   disabled: boolean
   initializingPromise: Promise<void> | null
 } & {
@@ -69,6 +70,8 @@ export const init: BoundMethodCreator = dispatch => async () => {
         userName: metaData.userName,
         repoName: metaData.repoName,
       },
+      '/',
+      true,
       accessToken,
     )
     const caughtAggressiveError = getTreeDataAggressively?.catch(error => {
@@ -103,6 +106,8 @@ export const init: BoundMethodCreator = dispatch => async () => {
           userName: metaData.userName,
           repoName: metaData.repoName,
         },
+        '/',
+        true,
         accessToken,
       )
     } else {
@@ -114,9 +119,9 @@ export const init: BoundMethodCreator = dispatch => async () => {
       })
     }
     getTreeData
-      .then(async treeData => {
+      .then(async ({ root: treeData, defer }) => {
         if (treeData) {
-          dispatch.set({ treeData })
+          dispatch.set({ treeData, defer })
         }
       })
       .catch(err => dispatch.call(handleError, err))

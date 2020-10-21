@@ -100,6 +100,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
     errorDueToAuth,
     metaData,
     treeData: treeRoot,
+    defer,
     error,
     shouldShow,
     showSettings,
@@ -119,7 +120,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
           <div className={'gitako-side-bar-content'}>
             <div className={'header'}>
               {metaData ? <MetaBar metaData={metaData} /> : <div />}
-
+              {defer && <p>In Async Mode</p>}
               <div className={'close-side-bar-button-position'}>
                 <button className={'close-side-bar-button'} onClick={toggleShowSideBar}>
                   <Icon className={'action-icon'} type={'x'} />
