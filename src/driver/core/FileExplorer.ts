@@ -31,7 +31,7 @@ export type ConnectorState = {
 }
 
 function getVisibleParentNode(nodes: TreeNode[], focusedNode: TreeNode) {
-  let index = nodes.indexOf(focusedNode) - 1
+  let index = nodes.findIndex(node => node.path === focusedNode.path) - 1
   while (index >= 0) {
     if (nodes[index].contents?.includes(focusedNode)) {
       return nodes[index]
@@ -93,7 +93,7 @@ export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch
   // prevent document body scrolling if the keypress results in Gitako action
   let muteEvent = true
   if (focusedNode) {
-    const focusedNodeIndex = nodes.indexOf(focusedNode)
+    const focusedNodeIndex = nodes.findIndex(node => node.path === focusedNode.path)
     switch (key) {
       case 'ArrowUp':
         // focus on previous node

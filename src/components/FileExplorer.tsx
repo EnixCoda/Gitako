@@ -11,6 +11,7 @@ import * as React from 'react'
 import { useEvent } from 'react-use'
 import { FixedSizeList, ListChildComponentProps } from 'react-window'
 import { cx } from 'utils/cx'
+import { focusFileExplorer } from 'utils/DOMHelper'
 import { isValidRegexpSource } from 'utils/general'
 import { useOnLocationChange } from 'utils/hooks/useOnLocationChange'
 import { VisibleNodes } from 'utils/VisibleNodesGenerator'
@@ -36,6 +37,10 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
     const { setUpTree, treeRoot, metaData } = props
     setUpTree({ treeRoot, metaData, config })
   }, [setUpTree, treeRoot, config.compressSingletonFolder, config.access_token])
+
+  React.useEffect(() => {
+    if (visibleNodes?.focusedNode) focusFileExplorer()
+  })
 
   function renderFiles(visibleNodes: VisibleNodes) {
     const inSearch = searchKey !== ''
@@ -172,10 +177,10 @@ function ListView({
   const { focusedNode, nodes } = visibleNodes
   React.useEffect(() => {
     if (listRef.current && focusedNode) {
-      const index = nodes.indexOf(focusedNode)
+      const index = nodes.findIndex(node => node.path === focusedNode.path)
       if (index !== -1) {
         listRef.current.scrollToItem(index, 'smart')
-    }
+      }
     }
   }, [focusedNode])
 

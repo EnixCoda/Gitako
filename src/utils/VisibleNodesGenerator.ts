@@ -201,7 +201,7 @@ class FlattenLayer extends CompressLayer {
       if (
         focusedNode &&
         this.compressedRoot &&
-        (await findNode(this.compressedRoot, focusedNode.path)) !== focusedNode
+        !(await findNode(this.compressedRoot, focusedNode.path))
       ) {
         // rescue the focus after expanding async singleton folder
         await traverse(
