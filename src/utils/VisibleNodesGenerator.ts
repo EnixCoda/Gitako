@@ -155,9 +155,8 @@ class CompressLayer extends ShakeLayer {
     this.shakeHub.addEventListener('emit', () => this.compressTree())
   }
 
-  compressTree = withEffect(
+  private compressTree = withEffect(
     () => {
-      this.depths.clear()
       this.compressedRoot =
         this.shackedRoot && this.compress
           ? {
@@ -166,13 +165,16 @@ class CompressLayer extends ShakeLayer {
             }
           : this.shackedRoot
 
-      const recordDepth = (node: TreeNode, depth = 0) => {
-        this.depths.set(node, depth)
-        for (const $node of node.contents || []) {
-          recordDepth($node, depth + 1)
+      if (this.compressedRoot) {
+        this.depths.clear()
+        const recordDepth = (node: TreeNode, depth = 0) => {
+          this.depths.set(node, depth)
+          for (const $node of node.contents || []) {
+            recordDepth($node, depth + 1)
+          }
         }
+        recordDepth(this.compressedRoot, -1)
       }
-      if (this.compressedRoot) recordDepth(this.compressedRoot, -1)
     },
     () => this.compressHub.emit('emit', this.compressedRoot),
   )
@@ -193,6 +195,28 @@ class FlattenLayer extends CompressLayer {
   generateVisibleNodes = withEffect(
     async () => {
       const nodes: TreeNode[] = []
+
+      const focusedNode = this.focusedNode
+
+      if (
+        focusedNode &&
+        this.compressedRoot &&
+        (await findNode(this.compressedRoot, focusedNode.path)) !== focusedNode
+      ) {
+        // rescue the focus after expanding async singleton folder
+        await traverse(
+          this.compressedRoot.contents,
+          node => {
+            if (node.type === 'tree' && node.path.startsWith(focusedNode.path)) {
+              this.focusNode(node)
+            }
+
+            return node.type === 'tree' && this.expandedNodes.has(node.path)
+          },
+          node => node.contents || [],
+        )
+      }
+
       await traverse(
         this.compressedRoot?.contents,
         node => {
@@ -295,7 +319,6 @@ export class VisibleNodesGenerator extends FlattenLayer {
 
     this.focusNode = withEffect(this.focusNode.bind(this), this.update.bind(this))
 
-    this.search(null)
     this.flattenHub.addEventListener('emit', () => this.update())
     this.baseHub.addEventListener('loadingChange', () => this.update())
   }

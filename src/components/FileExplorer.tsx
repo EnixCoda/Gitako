@@ -8,7 +8,7 @@ import { FileExplorerCore } from 'driver/core'
 import { ConnectorState, Props } from 'driver/core/FileExplorer'
 import { platform } from 'platforms'
 import * as React from 'react'
-import { useEvent, usePrevious } from 'react-use'
+import { useEvent } from 'react-use'
 import { FixedSizeList, ListChildComponentProps } from 'react-window'
 import { cx } from 'utils/cx'
 import { isValidRegexpSource } from 'utils/general'
@@ -39,7 +39,7 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
 
   function renderFiles(visibleNodes: VisibleNodes) {
     const inSearch = searchKey !== ''
-    const { nodes, focusedNode } = visibleNodes
+    const { nodes } = visibleNodes
     if (inSearch && nodes.length === 0) {
       return (
         <Text marginTop={6} textAlign="center" color="text.gray">
@@ -51,8 +51,6 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
       <SizeObserver className={'files'}>
         {({ width = 0, height = 0 }) => (
           <ListView
-            focusedNode={focusedNode}
-            nodes={nodes}
             height={height}
             width={width}
             searchKey={searchKey}
@@ -153,10 +151,8 @@ const VirtualNode = React.memo(function VirtualNode({
 })
 
 function ListView({
-  nodes,
   width,
   height,
-  focusedNode,
   metaData,
   expandTo,
   searchKey,
@@ -164,10 +160,8 @@ function ListView({
   renderActions,
   visibleNodes,
 }: {
-  nodes: TreeNode[]
   height: number
   width: number
-  focusedNode: TreeNode | null
   searchKey: string
   onNodeClick(event: React.MouseEvent<HTMLElement, MouseEvent>, node: TreeNode): void
   renderActions?(node: TreeNode): React.ReactNode
@@ -175,18 +169,15 @@ function ListView({
 } & Pick<Props, 'metaData'> &
   Pick<ConnectorState, 'expandTo'>) {
   const listRef = React.useRef<FixedSizeList>(null)
+  const { focusedNode, nodes } = visibleNodes
   React.useEffect(() => {
-    if (focusedNode && listRef.current) {
-      listRef.current.scrollToItem(nodes.indexOf(focusedNode), 'smart')
+    if (listRef.current && focusedNode) {
+      const index = nodes.indexOf(focusedNode)
+      if (index !== -1) {
+        listRef.current.scrollToItem(index, 'smart')
     }
-  }, [listRef.current, focusedNode])
-
-  const lastNodeLength = usePrevious(nodes.length)
-  React.useEffect(() => {
-    if (listRef.current && !focusedNode && lastNodeLength !== nodes.length) {
-      listRef.current.scrollTo(0)
     }
-  }, [listRef.current, focusedNode, nodes.length])
+  }, [focusedNode])
 
   const goToCurrentItem = React.useCallback(() => {
     const targetPath = platform.getCurrentPath(metaData.branchName)
@@ -197,8 +188,8 @@ function ListView({
   return (
     <FixedSizeList
       ref={listRef}
-      itemKey={(index, { nodes = [] }) => nodes[index]?.path}
-      itemData={{ nodes, searchKey, onNodeClick, renderActions, visibleNodes }}
+      itemKey={(index, { visibleNodes }) => visibleNodes?.nodes[index]?.path}
+      itemData={{ searchKey, onNodeClick, renderActions, visibleNodes }}
       itemCount={nodes.length}
       itemSize={36}
       height={height}
