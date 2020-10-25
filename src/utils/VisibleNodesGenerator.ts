@@ -259,12 +259,12 @@ class FlattenLayer extends CompressLayer {
     }
   }, this.generateVisibleNodes)
 
-  search = withEffect((regexp: RegExp | null) => {
+  search = withEffect((match: ((node: TreeNode) => boolean) | null) => {
     this.focusNode(null)
     this.shake(
-      regexp
+      match
         ? {
-            match: node => regexp.test(node.name),
+            match,
             onChildMatch: node => this.$setExpand(node, true),
           }
         : undefined,
@@ -298,6 +298,10 @@ export class VisibleNodesGenerator extends FlattenLayer {
     this.search(null)
     this.flattenHub.addEventListener('emit', () => this.update())
     this.baseHub.addEventListener('loadingChange', () => this.update())
+  }
+
+  onUpdate(callback: (visibleNodes: VisibleNodes) => void) {
+    return this.hub.addEventListener('emit', callback)
   }
 
   update() {

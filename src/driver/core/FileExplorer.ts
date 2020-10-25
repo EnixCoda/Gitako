@@ -2,7 +2,7 @@ import { GetCreatedMethod, MethodCreator } from 'driver/connect'
 import { platform } from 'platforms'
 import { Config } from 'utils/configHelper'
 import * as DOMHelper from 'utils/DOMHelper'
-import { searchKeyToRegexps } from 'utils/general'
+import { searchKeyToRegexp } from 'utils/general'
 import { VisibleNodes, VisibleNodesGenerator } from 'utils/VisibleNodesGenerator'
 
 export type Props = {
@@ -21,7 +21,6 @@ export type ConnectorState = {
   searchKey: string
   searched: boolean // derived state from searchKey, = !!searchKey
 
-  execAfterRender: GetCreatedMethod<typeof execAfterRender>
   handleKeyDown: GetCreatedMethod<typeof handleKeyDown>
   search: GetCreatedMethod<typeof search>
   onNodeClick: GetCreatedMethod<typeof onNodeClick>
@@ -42,7 +41,6 @@ function getVisibleParentNode(nodes: TreeNode[], focusedNode: TreeNode) {
 }
 
 type Task = () => void
-const tasksAfterRender: Task[] = []
 let visibleNodesGenerator: VisibleNodesGenerator
 
 type BoundMethodCreator<Args extends any[] = []> = MethodCreator<Props, ConnectorState, Args>
@@ -63,26 +61,18 @@ export const setUpTree: BoundMethodCreator<[
       return root
     },
   })
-  visibleNodesGenerator.hub.addEventListener('emit', visibleNodes => dispatch.set({ visibleNodes }))
+  visibleNodesGenerator.onUpdate(visibleNodes => dispatch.set({ visibleNodes }))
 
-  tasksAfterRender.push(DOMHelper.focusSearchInput)
   dispatch.set({ state: 'done' })
 
   if (platform.shouldExpandAll?.()) {
     visibleNodesGenerator.visibleNodes.nodes.forEach(node =>
-      dispatch.call(toggleNodeExpansion, node, { skipScrollToNode: true, recursive: true }),
+      dispatch.call(toggleNodeExpansion, node, { recursive: true }),
     )
   } else {
     const targetPath = platform.getCurrentPath(metaData.branchName)
     if (targetPath) dispatch.call(goTo, targetPath)
   }
-}
-
-export const execAfterRender: BoundMethodCreator = dispatch => () => {
-  for (const task of tasksAfterRender) {
-    task()
-  }
-  tasksAfterRender.length = 0
 }
 
 export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch => event => {
@@ -192,13 +182,13 @@ export const onFocusSearchBar: BoundMethodCreator = dispatch => () => dispatch.c
 
 export const search: BoundMethodCreator<[string]> = dispatch => searchKey => {
   dispatch.set({ searchKey, searched: searchKey !== '' })
-  const regexps = searchKeyToRegexps(searchKey)
-  visibleNodesGenerator.search(regexps)
+  const regexp = searchKeyToRegexp(searchKey)
+  visibleNodesGenerator.search(regexp && (node => regexp.test(node.name)))
 }
 
-export const goTo: BoundMethodCreator<[string[]]> = dispatch => async currentPath => {
+export const goTo: BoundMethodCreator<[string[]]> = dispatch => currentPath => {
   dispatch.set({ searchKey: '', searched: false })
-  await visibleNodesGenerator.search(null)
+  visibleNodesGenerator.search(null)
   dispatch.call(expandTo, currentPath)
 }
 
@@ -216,9 +206,8 @@ export const toggleNodeExpansion: BoundMethodCreator<[
     recursive?: boolean
   },
 ]> = dispatch => async (node, { recursive = false }) => {
-  await visibleNodesGenerator.toggleExpand(node, recursive)
   visibleNodesGenerator.focusNode(node)
-  tasksAfterRender.push(DOMHelper.focusFileExplorer)
+  await visibleNodesGenerator.toggleExpand(node, recursive)
 }
 
 export const focusNode: BoundMethodCreator<[TreeNode | null]> = dispatch => (
@@ -244,10 +233,7 @@ export const onNodeClick: BoundMethodCreator<[
     const recursive =
       (recursiveToggleFolder === 'shift' && event.shiftKey) ||
       (recursiveToggleFolder === 'alt' && event.altKey)
-    dispatch.call(toggleNodeExpansion, node, {
-      skipScrollToNode: true,
-      recursive,
-    })
+    dispatch.call(toggleNodeExpansion, node, { recursive })
   } else if (node.type === 'blob') {
     const [, { loadWithPJAX }] = dispatch.get()
     dispatch.call(focusNode, node)

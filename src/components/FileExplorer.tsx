@@ -37,11 +37,6 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
     setUpTree({ treeRoot, metaData, config })
   }, [setUpTree, treeRoot, config.compressSingletonFolder, config.access_token])
 
-  React.useEffect(() => {
-    const { execAfterRender } = props
-    execAfterRender()
-  })
-
   function renderFiles(visibleNodes: VisibleNodes) {
     const inSearch = searchKey !== ''
     const { nodes, focusedNode } = visibleNodes
@@ -147,7 +142,7 @@ const VirtualNode = React.memo(function VirtualNode({
       key={node.path}
       node={node}
       depth={depths.get(node) || 0}
-      focused={focusedNode === node}
+      focused={focusedNode?.path === node.path}
       loading={loading.has(node.path)}
       expanded={expandedNodes.has(node.path)}
       onClick={onNodeClick}

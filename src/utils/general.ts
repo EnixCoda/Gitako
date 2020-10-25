@@ -141,7 +141,7 @@ export async function JSONRequest(url: string, data: any, extra: RequestInit = {
   ).json()
 }
 
-export function searchKeyToRegexps(searchKey: string) {
+export function searchKeyToRegexp(searchKey: string) {
   if (!searchKey) return null
 
   try {
