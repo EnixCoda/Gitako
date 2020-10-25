@@ -92,10 +92,10 @@ export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch
   function handleVerticalMove(index: number) {
     if (0 <= index && index < nodes.length) {
       DOMHelper.focusFileExplorer()
-      dispatch.call(focusNode, nodes[index], false)
+      dispatch.call(focusNode, nodes[index])
     } else {
       DOMHelper.focusSearchInput()
-      dispatch.call(focusNode, null, false)
+      dispatch.call(focusNode, null)
     }
   }
 
@@ -122,7 +122,7 @@ export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch
           // go forward to the start of the list, find the closest node with lower depth
           const parentNode = getVisibleParentNode(nodes, focusedNode)
           if (parentNode) {
-            dispatch.call(focusNode, parentNode, false)
+            dispatch.call(focusNode, parentNode)
           }
         }
         break
@@ -134,7 +134,7 @@ export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch
           if (expandedNodes.has(focusedNode.path)) {
             const nextNode = nodes[focusedNodeIndex + 1]
             if (focusedNode.contents?.includes(nextNode)) {
-              dispatch.call(focusNode, nextNode, false)
+              dispatch.call(focusNode, nextNode)
             }
           } else {
             dispatch.call(setExpand, focusedNode, true)
@@ -172,11 +172,11 @@ export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch
       switch (key) {
         case 'ArrowDown':
           DOMHelper.focusFileExplorer()
-          dispatch.call(focusNode, nodes[0], false)
+          dispatch.call(focusNode, nodes[0])
           break
         case 'ArrowUp':
           DOMHelper.focusFileExplorer()
-          dispatch.call(focusNode, nodes[nodes.length - 1], false)
+          dispatch.call(focusNode, nodes[nodes.length - 1])
           break
         default:
           muteEvent = false
@@ -188,8 +188,7 @@ export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch
   }
 }
 
-export const onFocusSearchBar: BoundMethodCreator = dispatch => () =>
-  dispatch.call(focusNode, null, false)
+export const onFocusSearchBar: BoundMethodCreator = dispatch => () => dispatch.call(focusNode, null)
 
 export const search: BoundMethodCreator<[string]> = dispatch => searchKey => {
   dispatch.set({ searchKey, searched: searchKey !== '' })
@@ -199,10 +198,8 @@ export const search: BoundMethodCreator<[string]> = dispatch => searchKey => {
 
 export const goTo: BoundMethodCreator<[string[]]> = dispatch => async currentPath => {
   dispatch.set({ searchKey: '', searched: false })
-  visibleNodesGenerator.search(null)
-  tasksAfterRender.push(() => {
-    dispatch.call(expandTo, currentPath)
-  })
+  await visibleNodesGenerator.search(null)
+  dispatch.call(expandTo, currentPath)
 }
 
 export const setExpand: BoundMethodCreator<[TreeNode, boolean]> = dispatch => async (
@@ -210,22 +207,21 @@ export const setExpand: BoundMethodCreator<[TreeNode, boolean]> = dispatch => as
   expand = false,
 ) => {
   await visibleNodesGenerator.setExpand(node, expand)
-  dispatch.call(focusNode, node, false)
+  dispatch.call(focusNode, node)
 }
 
 export const toggleNodeExpansion: BoundMethodCreator<[
   TreeNode,
   {
-    skipScrollToNode?: boolean
     recursive?: boolean
   },
-]> = dispatch => async (node, { skipScrollToNode = false, recursive = false }) => {
+]> = dispatch => async (node, { recursive = false }) => {
   await visibleNodesGenerator.toggleExpand(node, recursive)
-  dispatch.call(focusNode, node, skipScrollToNode)
+  visibleNodesGenerator.focusNode(node)
   tasksAfterRender.push(DOMHelper.focusFileExplorer)
 }
 
-export const focusNode: BoundMethodCreator<[TreeNode | null, boolean]> = dispatch => (
+export const focusNode: BoundMethodCreator<[TreeNode | null]> = dispatch => (
   node: TreeNode | null,
 ) => {
   visibleNodesGenerator.focusNode(node)
@@ -254,7 +250,7 @@ export const onNodeClick: BoundMethodCreator<[
     })
   } else if (node.type === 'blob') {
     const [, { loadWithPJAX }] = dispatch.get()
-    dispatch.call(focusNode, node, true)
+    dispatch.call(focusNode, node)
     if (node.url && !node.url.includes('#')) {
       loadWithPJAX(node.url)
     }
