@@ -132,9 +132,7 @@ const VirtualNode = React.memo(function VirtualNode({
   style,
   data,
 }: ListChildComponentProps) {
-  const { searchKey, onNodeClick, renderActions, visibleNodes } = data
-  const regex =
-    searchKey && isValidRegexpSource(searchKey) ? new RegExp(searchKey, 'gi') : undefined
+  const { regex, onNodeClick, renderActions, visibleNodes } = data
   if (!visibleNodes) return null
 
   const { nodes, focusedNode, expandedNodes, loading, depths } = visibleNodes as VisibleNodes
@@ -155,6 +153,15 @@ const VirtualNode = React.memo(function VirtualNode({
   )
 })
 
+type ListViewProps = {
+  height: number
+  width: number
+  searchKey: string
+  onNodeClick(event: React.MouseEvent<HTMLElement, MouseEvent>, node: TreeNode): void
+  renderActions?(node: TreeNode): React.ReactNode
+  visibleNodes: VisibleNodes
+}
+
 function ListView({
   width,
   height,
@@ -164,15 +171,7 @@ function ListView({
   onNodeClick,
   renderActions,
   visibleNodes,
-}: {
-  height: number
-  width: number
-  searchKey: string
-  onNodeClick(event: React.MouseEvent<HTMLElement, MouseEvent>, node: TreeNode): void
-  renderActions?(node: TreeNode): React.ReactNode
-  visibleNodes: VisibleNodes
-} & Pick<Props, 'metaData'> &
-  Pick<ConnectorState, 'expandTo'>) {
+}: ListViewProps & Pick<Props, 'metaData'> & Pick<ConnectorState, 'expandTo'>) {
   const listRef = React.useRef<FixedSizeList>(null)
   const { focusedNode, nodes } = visibleNodes
   React.useEffect(() => {
@@ -188,13 +187,25 @@ function ListView({
     const targetPath = platform.getCurrentPath(metaData.branchName)
     if (targetPath) expandTo(targetPath)
   }, [metaData.branchName])
+
   useOnLocationChange(goToCurrentItem)
   useEvent('pjax:ready', goToCurrentItem, document)
+
+  const itemData = React.useMemo(
+    () => ({
+      regex: searchKey && isValidRegexpSource(searchKey) ? new RegExp(searchKey, 'gi') : undefined,
+      onNodeClick,
+      renderActions,
+      visibleNodes,
+    }),
+    [searchKey, onNodeClick, renderActions, visibleNodes],
+  )
+
   return (
     <FixedSizeList
       ref={listRef}
       itemKey={(index, { visibleNodes }) => visibleNodes?.nodes[index]?.path}
-      itemData={{ searchKey, onNodeClick, renderActions, visibleNodes }}
+      itemData={itemData}
       itemCount={nodes.length}
       itemSize={36}
       height={height}
