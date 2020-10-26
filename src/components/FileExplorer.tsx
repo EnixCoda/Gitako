@@ -175,13 +175,13 @@ function ListView({
   const listRef = React.useRef<FixedSizeList>(null)
   const { focusedNode, nodes } = visibleNodes
   React.useEffect(() => {
-    if (listRef.current && focusedNode?.path) {
+    if (listRef.current && focusedNode) {
       const index = nodes.findIndex(node => node.path === focusedNode.path)
       if (index !== -1) {
         listRef.current.scrollToItem(index, 'smart')
       }
     }
-  }, [focusedNode?.path])
+  })
 
   const goToCurrentItem = React.useCallback(() => {
     const targetPath = platform.getCurrentPath(metaData.branchName)
