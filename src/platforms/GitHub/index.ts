@@ -151,22 +151,9 @@ export const GitHub: Platform = {
           url: `https://${window.location.host}/${metaData.userName}/${
             metaData.repoName
           }/pull/${pullId}/files${window.location.search}#${id || ''}`,
-          contents: undefined,
           sha: item.sha,
         }
       })
-
-      const missingFolders = findMissingFolders(nodes)
-      nodes.push(
-        ...missingFolders.map(
-          folder =>
-            ({
-              name: folder.replace(/^.*\//, ''),
-              path: folder,
-              type: 'tree',
-            } as TreeNode),
-        ),
-      )
 
       const root = processTree(nodes)
       return { root }

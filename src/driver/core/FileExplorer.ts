@@ -61,17 +61,21 @@ export const setUpTree: BoundMethodCreator<[
     },
   })
   visibleNodesGenerator.onUpdate(visibleNodes => dispatch.set({ visibleNodes }))
-
-  dispatch.set({ state: 'done' })
-
   if (platform.shouldExpandAll?.()) {
-    visibleNodesGenerator.visibleNodes.nodes.forEach(node =>
-      dispatch.call(toggleNodeExpansion, node, { recursive: true }),
-    )
+    const unsubscribe = visibleNodesGenerator.onUpdate(visibleNodes => {
+      unsubscribe()
+      visibleNodes.nodes.forEach(node =>
+        dispatch.call(toggleNodeExpansion, node, { recursive: true }),
+      )
+    })
+    dispatch.call(search, '')
   } else {
     const targetPath = platform.getCurrentPath(metaData.branchName)
     if (targetPath) dispatch.call(goTo, targetPath)
+    else dispatch.call(search, '')
   }
+
+  dispatch.set({ state: 'done' })
 }
 
 export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch => event => {
