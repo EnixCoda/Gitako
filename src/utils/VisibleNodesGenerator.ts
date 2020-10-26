@@ -1,5 +1,5 @@
 import { EventHub } from './EventHub'
-import { findNode, traverse, withEffect } from './general'
+import { findNode, searchKeyToRegexp, traverse, withEffect } from './general'
 
 function search(
   root: TreeNode,
@@ -131,12 +131,27 @@ class ShakeLayer extends BaseLayer {
   }
 
   shake = withEffect(
-    (p?: { match: (node: TreeNode) => boolean; onChildMatch: (node: TreeNode) => void }) => {
+    (p?: {
+      match: {
+        // shape in object for better extensibility
+        searchKey: string
+      }
+      onChildMatch: (node: TreeNode) => void
+    }) => {
       this.lastMatch = p
       if (p) {
-        const { match, onChildMatch } = p
-        this.shackedRoot = search(this.baseRoot, match, onChildMatch)
-      } else this.shackedRoot = this.baseRoot
+        const {
+          match: { searchKey },
+          onChildMatch,
+        } = p
+
+        const regexp = searchKeyToRegexp(searchKey)
+        if (regexp) {
+          this.shackedRoot = search(this.baseRoot, node => regexp.test(node.name), onChildMatch)
+          return
+        }
+      }
+      this.shackedRoot = this.baseRoot
     },
     () => this.shakeHub.emit('emit', this.shackedRoot),
   )
@@ -232,7 +247,7 @@ class FlattenLayer extends CompressLayer {
 
   focusNode = (node: TreeNode | null) => {
     if (this.focusedNode !== node) {
-    this.focusedNode = node
+      this.focusedNode = node
       this.flattenHub.emit('emit', null)
     }
   }
@@ -284,7 +299,11 @@ class FlattenLayer extends CompressLayer {
     }
   }, this.generateVisibleNodes)
 
-  search = (match: ((node: TreeNode) => boolean) | null) => {
+  search = (
+    match: {
+      searchKey: string
+    } | null,
+  ) => {
     // this.focusNode(null)
     this.shake(
       match
@@ -305,6 +324,7 @@ type Options = {
 
 export type VisibleNodes = {
   loading: BaseLayer['loading']
+  lastMatch: ShakeLayer['lastMatch']
   depths: CompressLayer['depths']
   nodes: FlattenLayer['nodes']
   expandedNodes: FlattenLayer['expandedNodes']
@@ -333,6 +353,7 @@ export class VisibleNodesGenerator extends FlattenLayer {
   get visibleNodes(): VisibleNodes {
     return {
       nodes: this.nodes,
+      lastMatch: this.lastMatch,
       depths: this.depths,
       expandedNodes: this.expandedNodes,
       focusedNode: this.focusedNode,

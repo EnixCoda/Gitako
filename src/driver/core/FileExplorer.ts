@@ -2,7 +2,6 @@ import { GetCreatedMethod, MethodCreator } from 'driver/connect'
 import { platform } from 'platforms'
 import { Config } from 'utils/configHelper'
 import * as DOMHelper from 'utils/DOMHelper'
-import { searchKeyToRegexp } from 'utils/general'
 import { VisibleNodes, VisibleNodesGenerator } from 'utils/VisibleNodesGenerator'
 
 export type Props = {
@@ -182,8 +181,7 @@ export const onFocusSearchBar: BoundMethodCreator = dispatch => () => dispatch.c
 
 export const search: BoundMethodCreator<[string]> = dispatch => searchKey => {
   dispatch.set({ searchKey, searched: searchKey !== '' })
-  const regexp = searchKeyToRegexp(searchKey)
-  visibleNodesGenerator.search(regexp && (node => regexp.test(node.name)))
+  visibleNodesGenerator.search({ searchKey })
 }
 
 export const goTo: BoundMethodCreator<[string[]]> = dispatch => currentPath => {

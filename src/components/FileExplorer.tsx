@@ -42,9 +42,30 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
     if (visibleNodes?.focusedNode) focusFileExplorer()
   })
 
+  const renderActions: ((node: TreeNode) => React.ReactNode) | undefined = React.useMemo(
+    () =>
+      visibleNodes?.lastMatch?.match.searchKey
+        ? node => (
+            <button
+              title={'Reveal in file tree'}
+              className={'go-to-button'}
+              onClick={e => {
+                e.stopPropagation()
+                e.preventDefault()
+                goTo(node.path.split('/'))
+              }}
+            >
+              <Icon type="go-to" />
+            </button>
+          )
+        : undefined,
+    [visibleNodes, goTo],
+  )
+
   function renderFiles(visibleNodes: VisibleNodes) {
-    const inSearch = searchKey !== ''
     const { nodes } = visibleNodes
+    const searchKey = visibleNodes.lastMatch?.match.searchKey
+    const inSearch = searchKey !== ''
     if (inSearch && nodes.length === 0) {
       return (
         <Text marginTop={6} textAlign="center" color="text.gray">
@@ -58,25 +79,8 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
           <ListView
             height={height}
             width={width}
-            searchKey={searchKey}
             onNodeClick={onNodeClick}
-            renderActions={
-              searchKey
-                ? node => (
-                    <button
-                      title={'Reveal in file tree'}
-                      className={'go-to-button'}
-                      onClick={e => {
-                        e.stopPropagation()
-                        e.preventDefault()
-                        goTo(node.path.split('/'))
-                      }}
-                    >
-                      <Icon type="go-to" />
-                    </button>
-                  )
-                : undefined
-            }
+            renderActions={renderActions}
             visibleNodes={visibleNodes}
             expandTo={expandTo}
             metaData={metaData}
@@ -132,11 +136,19 @@ const VirtualNode = React.memo(function VirtualNode({
   style,
   data,
 }: ListChildComponentProps) {
-  const { regex, onNodeClick, renderActions, visibleNodes } = data
+  const { onNodeClick, renderActions, visibleNodes } = data
   if (!visibleNodes) return null
 
-  const { nodes, focusedNode, expandedNodes, loading, depths } = visibleNodes as VisibleNodes
+  const {
+    lastMatch,
+    nodes,
+    focusedNode,
+    expandedNodes,
+    loading,
+    depths,
+  } = visibleNodes as VisibleNodes
   const node = nodes[index]
+  const searchKey = lastMatch?.match.searchKey
   return (
     <Node
       style={style}
@@ -148,7 +160,7 @@ const VirtualNode = React.memo(function VirtualNode({
       expanded={expandedNodes.has(node.path)}
       onClick={onNodeClick}
       renderActions={renderActions}
-      regex={regex}
+      regex={searchKey && isValidRegexpSource(searchKey) ? new RegExp(searchKey, 'gi') : undefined}
     />
   )
 })
@@ -156,7 +168,6 @@ const VirtualNode = React.memo(function VirtualNode({
 type ListViewProps = {
   height: number
   width: number
-  searchKey: string
   onNodeClick(event: React.MouseEvent<HTMLElement, MouseEvent>, node: TreeNode): void
   renderActions?(node: TreeNode): React.ReactNode
   visibleNodes: VisibleNodes
@@ -167,7 +178,6 @@ function ListView({
   height,
   metaData,
   expandTo,
-  searchKey,
   onNodeClick,
   renderActions,
   visibleNodes,
@@ -193,12 +203,11 @@ function ListView({
 
   const itemData = React.useMemo(
     () => ({
-      regex: searchKey && isValidRegexpSource(searchKey) ? new RegExp(searchKey, 'gi') : undefined,
       onNodeClick,
       renderActions,
       visibleNodes,
     }),
-    [searchKey, onNodeClick, renderActions, visibleNodes],
+    [onNodeClick, renderActions, visibleNodes],
   )
 
   return (

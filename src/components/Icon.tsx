@@ -137,7 +137,12 @@ type Props = {
   onClick?: (event: React.MouseEvent<HTMLElement>) => void
 } & IconProps
 
-export function Icon({ type, className = undefined, placeholder, ...otherProps }: Props) {
+export const Icon = React.memo(function Icon({
+  type,
+  className = undefined,
+  placeholder,
+  ...otherProps
+}: Props) {
   let children: React.ReactNode = null
   if (!placeholder) {
     const { name, IconComponent } = getSVGIconComponent(type)
@@ -148,4 +153,4 @@ export function Icon({ type, className = undefined, placeholder, ...otherProps }
       {children}
     </div>
   )
-}
+})
