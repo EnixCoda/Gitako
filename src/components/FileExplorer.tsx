@@ -62,34 +62,6 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
     [visibleNodes, goTo],
   )
 
-  function renderFiles(visibleNodes: VisibleNodes) {
-    const { nodes } = visibleNodes
-    const searchKey = visibleNodes.lastMatch?.match.searchKey
-    const inSearch = searchKey !== ''
-    if (inSearch && nodes.length === 0) {
-      return (
-        <Text marginTop={6} textAlign="center" color="text.gray">
-          No results found.
-        </Text>
-      )
-    }
-    return (
-      <SizeObserver className={'files'}>
-        {({ width = 0, height = 0 }) => (
-          <ListView
-            height={height}
-            width={width}
-            onNodeClick={onNodeClick}
-            renderActions={renderActions}
-            visibleNodes={visibleNodes}
-            expandTo={expandTo}
-            metaData={metaData}
-          />
-        )}
-      </SizeObserver>
-    )
-  }
-
   return (
     <div
       className={cx(`file-explorer`, { freeze })}
@@ -114,7 +86,24 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
               onSearch={props.search}
               onFocus={props.onFocusSearchBar}
             />
-            {renderFiles(visibleNodes)}
+            {visibleNodes.lastMatch?.match.searchKey !== '' && visibleNodes.nodes.length === 0 && (
+              <Text marginTop={6} textAlign="center" color="text.gray">
+                No results found.
+              </Text>
+            )}
+            <SizeObserver className={'files'}>
+              {({ width = 0, height = 0 }) => (
+                <ListView
+                  height={height}
+                  width={width}
+                  onNodeClick={onNodeClick}
+                  renderActions={renderActions}
+                  visibleNodes={visibleNodes}
+                  expandTo={expandTo}
+                  metaData={metaData}
+                />
+              )}
+            </SizeObserver>
           </>
         )
       )}

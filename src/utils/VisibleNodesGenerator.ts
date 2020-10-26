@@ -304,7 +304,6 @@ class FlattenLayer extends CompressLayer {
       searchKey: string
     } | null,
   ) => {
-    // this.focusNode(null)
     this.shake(
       match
         ? {
