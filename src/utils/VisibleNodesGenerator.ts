@@ -166,14 +166,15 @@ class CompressLayer extends ShakeLayer {
           : this.shackedRoot
 
       if (this.compressedRoot) {
-        this.depths.clear()
+        const depths = new Map<TreeNode, number>()
         const recordDepth = (node: TreeNode, depth = 0) => {
-          this.depths.set(node, depth)
+          depths.set(node, depth)
           for (const $node of node.contents || []) {
             recordDepth($node, depth + 1)
           }
         }
         recordDepth(this.compressedRoot, -1)
+        this.depths = depths
       }
     },
     () => this.compressHub.emit('emit', this.compressedRoot),
@@ -195,7 +196,6 @@ class FlattenLayer extends CompressLayer {
   generateVisibleNodes = withEffect(
     async () => {
       const nodes: TreeNode[] = []
-
       const focusedNode = this.focusedNode
 
       if (
@@ -223,9 +223,7 @@ class FlattenLayer extends CompressLayer {
           nodes.push(node)
           return node.type === 'tree' && this.expandedNodes.has(node.path)
         },
-        node => {
-          return node.contents || []
-        },
+        node => node.contents || [],
       )
       this.nodes = nodes
     },
@@ -233,7 +231,10 @@ class FlattenLayer extends CompressLayer {
   )
 
   focusNode = (node: TreeNode | null) => {
+    if (this.focusedNode !== node) {
     this.focusedNode = node
+      this.flattenHub.emit('emit', null)
+    }
   }
 
   barelySetExpand = (node: TreeNode, expand: boolean) => {
@@ -283,8 +284,8 @@ class FlattenLayer extends CompressLayer {
     }
   }, this.generateVisibleNodes)
 
-  search = withEffect((match: ((node: TreeNode) => boolean) | null) => {
-    this.focusNode(null)
+  search = (match: ((node: TreeNode) => boolean) | null) => {
+    // this.focusNode(null)
     this.shake(
       match
         ? {
@@ -293,7 +294,7 @@ class FlattenLayer extends CompressLayer {
           }
         : undefined,
     )
-  }, this.generateVisibleNodes)
+  }
 }
 
 type Options = {
@@ -316,8 +317,6 @@ export class VisibleNodesGenerator extends FlattenLayer {
   }>()
   constructor(options: Options) {
     super(options)
-
-    this.focusNode = withEffect(this.focusNode.bind(this), this.update.bind(this))
 
     this.flattenHub.addEventListener('emit', () => this.update())
     this.baseHub.addEventListener('loadingChange', () => this.update())
