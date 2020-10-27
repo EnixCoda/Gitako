@@ -1,4 +1,4 @@
-import { Link } from '@primer/components'
+import { Label, Link } from '@primer/components'
 import { Icon } from 'components/Icon'
 import { VERSION } from 'env'
 import { platform } from 'platforms'
@@ -21,6 +21,7 @@ export const wikiLinks = {
 }
 
 type Props = {
+  defer?: boolean
   activated: boolean
   toggleShowSettings: () => void
 }
@@ -79,7 +80,7 @@ function SettingsBarContent() {
 }
 
 export function SettingsBar(props: Props) {
-  const { toggleShowSettings, activated } = props
+  const { defer, toggleShowSettings, activated } = props
   return (
     <div className={'gitako-settings-bar'}>
       {activated && <SettingsBarContent />}
@@ -93,13 +94,24 @@ export function SettingsBar(props: Props) {
         >
           {VERSION}
         </Link>
-        <button className={'settings-button'} onClick={toggleShowSettings}>
-          {activated ? (
-            <Icon type={'chevron-down'} className={'hide-settings-icon'} />
-          ) : (
-            <Icon type={'gear'} className={'show-settings-icon'} />
+        <div className={'header-right'}>
+          {defer && (
+            <Label
+              title="File tree data is loaded on demand. And search results are limited."
+              bg="yellow.5"
+              color="gray.6"
+            >
+              Lazy Mode
+            </Label>
           )}
-        </button>
+          <button className={'settings-button'} onClick={toggleShowSettings}>
+            {activated ? (
+              <Icon type={'chevron-down'} className={'hide-settings-icon'} />
+            ) : (
+              <Icon type={'gear'} className={'show-settings-icon'} />
+            )}
+          </button>
+        </div>
       </div>
     </div>
   )

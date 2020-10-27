@@ -30,6 +30,7 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
     expandTo,
     setUpTree,
     treeRoot,
+    defer,
   } = props
   const { val: config } = useConfigs()
 
@@ -87,9 +88,16 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
               onFocus={props.onFocusSearchBar}
             />
             {visibleNodes.lastMatch?.match.searchKey !== '' && visibleNodes.nodes.length === 0 && (
-              <Text marginTop={6} textAlign="center" color="text.gray">
-                No results found.
-              </Text>
+              <>
+                <Text marginTop={6} textAlign="center" color="text.gray">
+                  No results found.
+                </Text>
+                {defer && (
+                  <Text textAlign="center" color="gray.4" fontSize="12px">
+                    Lazy mode is ON. Search results are limited to loaded folders.
+                  </Text>
+                )}
+              </>
             )}
             <SizeObserver className={'files'}>
               {({ width = 0, height = 0 }) => (

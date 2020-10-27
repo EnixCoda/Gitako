@@ -12,6 +12,7 @@ export type Props = {
   toggleShowSettings: React.MouseEventHandler
   config: Config
   loadWithPJAX(url: string): void
+  defer?: boolean
 }
 
 export type ConnectorState = {

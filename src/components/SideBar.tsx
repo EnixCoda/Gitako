@@ -120,7 +120,6 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
           <div className={'gitako-side-bar-content'}>
             <div className={'header'}>
               {metaData ? <MetaBar metaData={metaData} /> : <div />}
-              {defer && <p>In Async Mode</p>}
               <div className={'close-side-bar-button-position'}>
                 <button className={'close-side-bar-button'} onClick={toggleShowSideBar}>
                   <Icon className={'action-icon'} type={'x'} />
@@ -139,11 +138,16 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
                   accessToken={accessToken}
                   loadWithPJAX={loadWithPJAX}
                   config={configContext.val}
+                  defer={defer}
                 />
               )
             )}
           </div>
-          <SettingsBar toggleShowSettings={toggleShowSettings} activated={showSettings} />
+          <SettingsBar
+            defer={defer}
+            toggleShowSettings={toggleShowSettings}
+            activated={showSettings}
+          />
         </div>
       </Resizable>
     </div>
