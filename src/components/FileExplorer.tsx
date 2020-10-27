@@ -182,13 +182,16 @@ function ListView({
   const listRef = React.useRef<FixedSizeList>(null)
   const { focusedNode, nodes } = visibleNodes
   React.useEffect(() => {
-    if (listRef.current && focusedNode) {
+    if (listRef.current && focusedNode?.path) {
       const index = nodes.findIndex(node => node.path === focusedNode.path)
       if (index !== -1) {
         listRef.current.scrollToItem(index, 'smart')
       }
     }
-  })
+  }, [focusedNode?.path])
+  // For some reason, removing the deps array above results in bug:
+  // If scroll fast and far, then clicking on items would result in redirect
+  // Not know the reason :(
 
   const goToCurrentItem = React.useCallback(() => {
     const targetPath = platform.getCurrentPath(metaData.branchName)
