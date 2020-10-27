@@ -80,7 +80,10 @@ export const setUpTree: BoundMethodCreator<[
 }
 
 export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch => event => {
-  const [{ searched, visibleNodes }, { loadWithPJAX }] = dispatch.get()
+  const {
+    state: { searched, visibleNodes },
+    props: { loadWithPJAX },
+  } = dispatch.get()
   if (!visibleNodes) return
   const { nodes, focusedNode, expandedNodes } = visibleNodes
   function handleVerticalMove(index: number) {
@@ -227,18 +230,19 @@ export const onNodeClick: BoundMethodCreator<[
   if (preventDefault) event.preventDefault()
 
   if (node.type === 'tree') {
-    const [
-      ,
-      {
+    const {
+      props: {
         config: { recursiveToggleFolder },
       },
-    ] = dispatch.get()
+    } = dispatch.get()
     const recursive =
       (recursiveToggleFolder === 'shift' && event.shiftKey) ||
       (recursiveToggleFolder === 'alt' && event.altKey)
     dispatch.call(toggleNodeExpansion, node, { recursive })
   } else if (node.type === 'blob') {
-    const [, { loadWithPJAX }] = dispatch.get()
+    const {
+      props: { loadWithPJAX },
+    } = dispatch.get()
     dispatch.call(focusNode, node)
     if (node.url && !node.url.includes('#')) {
       loadWithPJAX(node.url)
