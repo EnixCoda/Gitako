@@ -23,11 +23,11 @@ export function useUpdateReason<P /* extends {
     }
 
     if (output.length) {
-      console.log(`Updated due to`)
+      console.log(`[Updated Reasons]`)
       for (const record of output) {
         console.log(...record.map(r => (typeof r === 'function' ? '[fn]' : r)))
       }
-      console.log(`;`)
+      console.log(`;;`)
     }
 
     lastPropsRef.current = props
