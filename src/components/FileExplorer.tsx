@@ -180,15 +180,16 @@ function ListView({
   visibleNodes,
 }: ListViewProps & Pick<Props, 'metaData'> & Pick<ConnectorState, 'expandTo'>) {
   const listRef = React.useRef<FixedSizeList>(null)
-  const { focusedNode, nodes } = visibleNodes
+  // the change of depths indicates switch into/from search state
   React.useEffect(() => {
+    const { focusedNode, nodes } = visibleNodes
     if (listRef.current && focusedNode?.path) {
       const index = nodes.findIndex(node => node.path === focusedNode.path)
       if (index !== -1) {
         listRef.current.scrollToItem(index, 'smart')
       }
     }
-  }, [focusedNode?.path])
+  }, [visibleNodes])
   // For some reason, removing the deps array above results in bug:
   // If scroll fast and far, then clicking on items would result in redirect
   // Not know the reason :(
@@ -215,7 +216,7 @@ function ListView({
       ref={listRef}
       itemKey={(index, { visibleNodes }) => visibleNodes?.nodes[index]?.path}
       itemData={itemData}
-      itemCount={nodes.length}
+      itemCount={visibleNodes.nodes.length}
       itemSize={36}
       height={height}
       width={width}
