@@ -144,17 +144,16 @@ export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch
         break
       case 'Enter':
         // expand node or redirect to file page
-        if (focusedNode.type === 'tree') {
-          if (searched) {
-            dispatch.call(goTo, focusedNode.path.split('/'))
-          } else {
-            dispatch.call(setExpand, focusedNode, true)
+        if (searched) {
+          dispatch.call(goTo, focusedNode.path.split('/'))
+        } else {
+          if (focusedNode.type === 'tree') {
+            dispatch.call(toggleNodeExpansion, focusedNode, { recursive: event.altKey })
+          } else if (focusedNode.type === 'blob') {
+            if (focusedNode.url) loadWithPJAX(focusedNode.url)
+          } else if (focusedNode.type === 'commit') {
+            window.open(focusedNode.url)
           }
-        } else if (focusedNode.type === 'blob') {
-          if (searched) dispatch.call(goTo, focusedNode.path.split('/'))
-          else if (focusedNode.url) loadWithPJAX(focusedNode.url)
-        } else if (focusedNode.type === 'commit') {
-          window.open(focusedNode.url)
         }
         break
       default:
