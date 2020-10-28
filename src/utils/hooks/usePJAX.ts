@@ -20,6 +20,9 @@ const config: Config = {
       return path
     },
   },
+  fallback(target, reason) {
+    // prevent unexpected reload
+  },
 }
 
 export function usePJAX() {
