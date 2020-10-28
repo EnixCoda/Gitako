@@ -88,6 +88,7 @@
     "arrowParens": "avoid"
   },
   "resolutions": {
+    "react": "^17.0.1",
     "@types/styled-components": "^5.0.0"
   }
 }
