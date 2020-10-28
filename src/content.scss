@@ -612,6 +612,13 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
         padding: 2px 6px 2px 10px;
         border-top: 1px solid $border-gray-light;
 
+        .header-right {
+          display: flex;
+          align-items: center;
+          user-select: none;
+          cursor: help; // Will this make user hover for more time to see the tooltip?
+        }
+
         .settings-button {
           @include icon-button();
           @include button-color();

@@ -2,7 +2,6 @@ import { GetCreatedMethod, MethodCreator } from 'driver/connect'
 import { platform } from 'platforms'
 import { Config } from 'utils/configHelper'
 import * as DOMHelper from 'utils/DOMHelper'
-import { searchKeyToRegexps } from 'utils/general'
 import { VisibleNodes, VisibleNodesGenerator } from 'utils/VisibleNodesGenerator'
 
 export type Props = {
@@ -13,6 +12,7 @@ export type Props = {
   toggleShowSettings: React.MouseEventHandler
   config: Config
   loadWithPJAX(url: string): void
+  defer?: boolean
 }
 
 export type ConnectorState = {
@@ -21,7 +21,6 @@ export type ConnectorState = {
   searchKey: string
   searched: boolean // derived state from searchKey, = !!searchKey
 
-  execAfterRender: GetCreatedMethod<typeof execAfterRender>
   handleKeyDown: GetCreatedMethod<typeof handleKeyDown>
   search: GetCreatedMethod<typeof search>
   onNodeClick: GetCreatedMethod<typeof onNodeClick>
@@ -31,75 +30,69 @@ export type ConnectorState = {
   expandTo: GetCreatedMethod<typeof expandTo>
 }
 
-function getVisibleParentNode(
-  nodes: TreeNode[],
-  focusedNode: TreeNode,
-  depths: Map<TreeNode, number>,
-) {
-  const focusedNodeIndex = nodes.indexOf(focusedNode)
-  const focusedNodeDepth = depths.get(focusedNode)
-  let indexOfParentNode = focusedNodeIndex - 1
-  let depth: number | undefined
-  while (indexOfParentNode !== -1) {
-    depth = depths.get(nodes[indexOfParentNode])
-    if (depth === undefined || focusedNodeDepth === undefined || !(depth >= focusedNodeDepth)) {
-      break
+function getVisibleParentNode(nodes: TreeNode[], focusedNode: TreeNode) {
+  let index = nodes.findIndex(node => node.path === focusedNode.path) - 1
+  while (index >= 0) {
+    if (nodes[index].contents?.includes(focusedNode)) {
+      return nodes[index]
     }
-    --indexOfParentNode
+    --index
   }
-  const parentNode = nodes[indexOfParentNode]
-  return parentNode
 }
 
 type Task = () => void
-const tasksAfterRender: Task[] = []
 let visibleNodesGenerator: VisibleNodesGenerator
 
 type BoundMethodCreator<Args extends any[] = []> = MethodCreator<Props, ConnectorState, Args>
 
 export const setUpTree: BoundMethodCreator<[
-  Pick<Props, 'treeRoot' | 'metaData'> & Pick<Config, 'compressSingletonFolder'>,
-]> = dispatch => async ({ treeRoot, metaData, compressSingletonFolder }) => {
+  Pick<Props, 'treeRoot' | 'metaData'> & { config: Config },
+]> = dispatch => async ({ treeRoot, metaData, config }) => {
   if (!treeRoot) return
   dispatch.set({ state: 'rendering' })
 
-  visibleNodesGenerator = new VisibleNodesGenerator(treeRoot, {
+  const { compressSingletonFolder } = config
+
+  visibleNodesGenerator = new VisibleNodesGenerator({
+    root: treeRoot,
     compress: compressSingletonFolder,
+    async getTreeData(path) {
+      const { root } = await platform.getTreeData(metaData, path, false, config.access_token)
+      return root
+    },
   })
-
-  visibleNodesGenerator.init()
-  tasksAfterRender.push(DOMHelper.focusSearchInput)
-  dispatch.set({ state: 'done' })
-
+  visibleNodesGenerator.onUpdate(visibleNodes => dispatch.set({ visibleNodes }))
   if (platform.shouldExpandAll?.()) {
-    visibleNodesGenerator.visibleNodes.nodes.forEach(node =>
-      dispatch.call(toggleNodeExpansion, node, { skipScrollToNode: true, recursive: true }),
-    )
-    dispatch.call(updateVisibleNodes)
+    const unsubscribe = visibleNodesGenerator.onUpdate(visibleNodes => {
+      unsubscribe()
+      visibleNodes.nodes.forEach(node =>
+        dispatch.call(toggleNodeExpansion, node, { recursive: true }),
+      )
+    })
+    dispatch.call(search, '')
   } else {
     const targetPath = platform.getCurrentPath(metaData.branchName)
     if (targetPath) dispatch.call(goTo, targetPath)
+    else dispatch.call(search, '')
   }
-}
 
-export const execAfterRender: BoundMethodCreator = dispatch => () => {
-  for (const task of tasksAfterRender) {
-    task()
-  }
-  tasksAfterRender.length = 0
+  dispatch.set({ state: 'done' })
 }
 
 export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch => event => {
-  const [{ searched, visibleNodes }, { loadWithPJAX }] = dispatch.get()
+  const {
+    state: { searched, visibleNodes },
+    props: { loadWithPJAX },
+  } = dispatch.get()
   if (!visibleNodes) return
-  const { nodes, focusedNode, expandedNodes, depths } = visibleNodes
+  const { nodes, focusedNode, expandedNodes } = visibleNodes
   function handleVerticalMove(index: number) {
     if (0 <= index && index < nodes.length) {
       DOMHelper.focusFileExplorer()
-      dispatch.call(focusNode, nodes[index], false)
+      dispatch.call(focusNode, nodes[index])
     } else {
       DOMHelper.focusSearchInput()
-      dispatch.call(focusNode, null, false)
+      dispatch.call(focusNode, null)
     }
   }
 
@@ -107,7 +100,7 @@ export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch
   // prevent document body scrolling if the keypress results in Gitako action
   let muteEvent = true
   if (focusedNode) {
-    const focusedNodeIndex = nodes.indexOf(focusedNode)
+    const focusedNodeIndex = nodes.findIndex(node => node.path === focusedNode.path)
     switch (key) {
       case 'ArrowUp':
         // focus on previous node
@@ -124,9 +117,9 @@ export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch
           dispatch.call(setExpand, focusedNode, false)
         } else {
           // go forward to the start of the list, find the closest node with lower depth
-          const parentNode = getVisibleParentNode(nodes, focusedNode, depths)
+          const parentNode = getVisibleParentNode(nodes, focusedNode)
           if (parentNode) {
-            dispatch.call(focusNode, parentNode, false)
+            dispatch.call(focusNode, parentNode)
           }
         }
         break
@@ -137,10 +130,8 @@ export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch
         if (focusedNode.type === 'tree') {
           if (expandedNodes.has(focusedNode.path)) {
             const nextNode = nodes[focusedNodeIndex + 1]
-            const d1 = depths.get(nextNode)
-            const d2 = depths.get(focusedNode)
-            if (d1 !== undefined && d2 !== undefined && d1 > d2) {
-              dispatch.call(focusNode, nextNode, false)
+            if (focusedNode.contents?.includes(nextNode)) {
+              dispatch.call(focusNode, nextNode)
             }
           } else {
             dispatch.call(setExpand, focusedNode, true)
@@ -153,17 +144,16 @@ export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch
         break
       case 'Enter':
         // expand node or redirect to file page
-        if (focusedNode.type === 'tree') {
-          if (searched) {
-            dispatch.call(goTo, focusedNode.path.split('/'))
-          } else {
-            dispatch.call(setExpand, focusedNode, true)
+        if (searched) {
+          dispatch.call(goTo, focusedNode.path.split('/'))
+        } else {
+          if (focusedNode.type === 'tree') {
+            dispatch.call(toggleNodeExpansion, focusedNode, { recursive: event.altKey })
+          } else if (focusedNode.type === 'blob') {
+            if (focusedNode.url) loadWithPJAX(focusedNode.url)
+          } else if (focusedNode.type === 'commit') {
+            window.open(focusedNode.url)
           }
-        } else if (focusedNode.type === 'blob') {
-          if (searched) dispatch.call(goTo, focusedNode.path.split('/'))
-          else if (focusedNode.url) loadWithPJAX(focusedNode.url)
-        } else if (focusedNode.type === 'commit') {
-          window.open(focusedNode.url)
         }
         break
       default:
@@ -178,11 +168,11 @@ export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch
       switch (key) {
         case 'ArrowDown':
           DOMHelper.focusFileExplorer()
-          dispatch.call(focusNode, nodes[0], false)
+          dispatch.call(focusNode, nodes[0])
           break
         case 'ArrowUp':
           DOMHelper.focusFileExplorer()
-          dispatch.call(focusNode, nodes[nodes.length - 1], false)
+          dispatch.call(focusNode, nodes[nodes.length - 1])
           break
         default:
           muteEvent = false
@@ -194,52 +184,41 @@ export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch
   }
 }
 
-export const onFocusSearchBar: BoundMethodCreator = dispatch => () =>
-  dispatch.call(focusNode, null, false)
+export const onFocusSearchBar: BoundMethodCreator = dispatch => () => dispatch.call(focusNode, null)
 
 export const search: BoundMethodCreator<[string]> = dispatch => searchKey => {
   dispatch.set({ searchKey, searched: searchKey !== '' })
-  const regexps = searchKeyToRegexps(searchKey)
-  visibleNodesGenerator.search(regexps)
-  dispatch.call(updateVisibleNodes)
+  visibleNodesGenerator.search({ searchKey })
 }
 
-export const goTo: BoundMethodCreator<[string[]]> = dispatch => async currentPath => {
+export const goTo: BoundMethodCreator<[string[]]> = dispatch => currentPath => {
   dispatch.set({ searchKey: '', searched: false })
   visibleNodesGenerator.search(null)
-  dispatch.call(updateVisibleNodes)
-  tasksAfterRender.push(() => {
-    dispatch.call(expandTo, currentPath)
-  })
+  dispatch.call(expandTo, currentPath)
 }
 
-export const setExpand: BoundMethodCreator<[TreeNode, boolean]> = dispatch => (
+export const setExpand: BoundMethodCreator<[TreeNode, boolean]> = dispatch => async (
   node,
   expand = false,
 ) => {
-  visibleNodesGenerator.setExpand(node, expand)
-  dispatch.call(focusNode, node, false)
+  await visibleNodesGenerator.setExpand(node, expand)
+  dispatch.call(focusNode, node)
 }
 
 export const toggleNodeExpansion: BoundMethodCreator<[
   TreeNode,
   {
-    skipScrollToNode?: boolean
     recursive?: boolean
   },
-]> = dispatch => (node, { skipScrollToNode = false, recursive = false }) => {
-  visibleNodesGenerator.toggleExpand(node, recursive)
-  dispatch.call(focusNode, node, skipScrollToNode)
-  tasksAfterRender.push(DOMHelper.focusFileExplorer)
+]> = dispatch => async (node, { recursive = false }) => {
+  visibleNodesGenerator.focusNode(node)
+  await visibleNodesGenerator.toggleExpand(node, recursive)
 }
 
-export const focusNode: BoundMethodCreator<[TreeNode | null, boolean]> = dispatch => (
+export const focusNode: BoundMethodCreator<[TreeNode | null]> = dispatch => (
   node: TreeNode | null,
 ) => {
-  const [{ visibleNodes }] = dispatch.get()
-  if (!visibleNodes) return
   visibleNodesGenerator.focusNode(node)
-  dispatch.call(updateVisibleNodes)
 }
 
 export const onNodeClick: BoundMethodCreator<[
@@ -250,22 +229,20 @@ export const onNodeClick: BoundMethodCreator<[
   if (preventDefault) event.preventDefault()
 
   if (node.type === 'tree') {
-    const [
-      ,
-      {
+    const {
+      props: {
         config: { recursiveToggleFolder },
       },
-    ] = dispatch.get()
+    } = dispatch.get()
     const recursive =
       (recursiveToggleFolder === 'shift' && event.shiftKey) ||
       (recursiveToggleFolder === 'alt' && event.altKey)
-    dispatch.call(toggleNodeExpansion, node, {
-      skipScrollToNode: true,
-      recursive,
-    })
+    dispatch.call(toggleNodeExpansion, node, { recursive })
   } else if (node.type === 'blob') {
-    const [, { loadWithPJAX }] = dispatch.get()
-    dispatch.call(focusNode, node, true)
+    const {
+      props: { loadWithPJAX },
+    } = dispatch.get()
+    dispatch.call(focusNode, node)
     if (node.url && !node.url.includes('#')) {
       loadWithPJAX(node.url)
     }
@@ -276,15 +253,9 @@ export const onNodeClick: BoundMethodCreator<[
   }
 }
 
-export const expandTo: BoundMethodCreator<[string[]]> = dispatch => currentPath => {
-  const nodeExpandedTo = visibleNodesGenerator.expandTo(currentPath.join('/'))
+export const expandTo: BoundMethodCreator<[string[]]> = dispatch => async currentPath => {
+  const nodeExpandedTo = await visibleNodesGenerator.expandTo(currentPath.join('/'))
   if (nodeExpandedTo) {
     visibleNodesGenerator.focusNode(nodeExpandedTo)
   }
-  dispatch.call(updateVisibleNodes)
-}
-
-export const updateVisibleNodes: BoundMethodCreator = dispatch => () => {
-  const { visibleNodes } = visibleNodesGenerator
-  dispatch.set({ visibleNodes })
 }

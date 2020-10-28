@@ -21,6 +21,7 @@ export type ConnectorState = {
   // file tree data
   treeData?: TreeNode
   logoContainerElement: Element | null
+  defer?: boolean
   disabled: boolean
   initializingPromise: Promise<void> | null
 } & {
@@ -34,7 +35,9 @@ export type ConnectorState = {
 type BoundMethodCreator<Args extends any[] = []> = MethodCreator<Props, ConnectorState, Args>
 
 export const init: BoundMethodCreator = dispatch => async () => {
-  const [{ initializingPromise }] = dispatch.get()
+  const {
+    state: { initializingPromise },
+  } = dispatch.get()
   if (initializingPromise) await initializingPromise
 
   let done: any = null // cannot use type `(() => void) | null` here
@@ -58,7 +61,9 @@ export const init: BoundMethodCreator = dispatch => async () => {
     })
     dispatch.call(setMetaData, metaData)
 
-    const [, { configContext }] = dispatch.get()
+    const {
+      props: { configContext },
+    } = dispatch.get()
     const { access_token: accessToken } = configContext.val
 
     if (!metaData.userName || !metaData.repoName) return
@@ -69,6 +74,8 @@ export const init: BoundMethodCreator = dispatch => async () => {
         userName: metaData.userName,
         repoName: metaData.repoName,
       },
+      '/',
+      true,
       accessToken,
     )
     const caughtAggressiveError = getTreeDataAggressively?.catch(error => {
@@ -103,6 +110,8 @@ export const init: BoundMethodCreator = dispatch => async () => {
           userName: metaData.userName,
           repoName: metaData.repoName,
         },
+        '/',
+        true,
         accessToken,
       )
     } else {
@@ -114,9 +123,9 @@ export const init: BoundMethodCreator = dispatch => async () => {
       })
     }
     getTreeData
-      .then(async treeData => {
+      .then(async ({ root: treeData, defer }) => {
         if (treeData) {
-          dispatch.set({ treeData })
+          dispatch.set({ treeData, defer })
         }
       })
       .catch(err => dispatch.call(handleError, err))
@@ -141,7 +150,7 @@ export const handleError: BoundMethodCreator<[Error]> = dispatch => async err =>
   ) {
     dispatch.set({ errorDueToAuth: true })
   } else if (err.message === errors.CONNECTION_BLOCKED) {
-    const [, props] = dispatch.get()
+    const { props } = dispatch.get()
     if (props.configContext.val.access_token) {
       dispatch.call(setError, `Cannot connect to ${platformName}.`)
     } else {
@@ -157,7 +166,10 @@ export const handleError: BoundMethodCreator<[Error]> = dispatch => async err =>
 }
 
 export const toggleShowSideBar: BoundMethodCreator = dispatch => () => {
-  const [{ shouldShow }, { configContext }] = dispatch.get()
+  const {
+    state: { shouldShow },
+    props: { configContext },
+  } = dispatch.get()
   dispatch.call(setShouldShow, !shouldShow)
 
   const {

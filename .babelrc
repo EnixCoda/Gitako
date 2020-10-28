@@ -11,7 +11,8 @@
         "modules": false,
         "targets": {
           "esmodules": true
-        }
+        },
+        "exclude": ["babel-plugin-transform-async-to-generator"]
       }
     ],
     "@babel/preset-typescript",

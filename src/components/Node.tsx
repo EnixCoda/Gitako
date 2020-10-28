@@ -23,6 +23,7 @@ type Props = {
   depth: number
   expanded: boolean
   focused: boolean
+  loading: boolean
   renderActions?(node: TreeNode): React.ReactNode
   style?: React.CSSProperties
   regex?: RegExp
@@ -32,6 +33,7 @@ export function Node({
   depth,
   expanded,
   focused,
+  loading,
   renderActions,
   style,
   onClick,
@@ -57,7 +59,7 @@ export function Node({
       title={path}
     >
       <div className={'node-item-label'}>
-        <NodeItemIcon node={node} open={expanded} />
+        <NodeItemIcon node={node} open={expanded} loading={loading} />
         {name.includes('/') ? (
           name.split('/').map((chunk, index) => (
             <React.Fragment key={chunk}>
@@ -77,9 +79,11 @@ export function Node({
 const NodeItemIcon = React.memo(function NodeItemIcon({
   node,
   open = false,
+  loading,
 }: {
   node: TreeNode
   open?: boolean
+  loading?: boolean
 }) {
   const {
     val: { icons },
@@ -96,7 +100,7 @@ const NodeItemIcon = React.memo(function NodeItemIcon({
       <Icon
         className={'node-item-type-icon'}
         placeholder={node.type !== 'tree'}
-        type={getIconType(node)}
+        type={loading ? 'loading' : getIconType(node)}
       />
       {node.type === 'commit' ? (
         <Icon type={getIconType(node)} />

@@ -26,6 +26,15 @@ function processTree(tree: TreeNode[]): TreeNode {
       const item = pathToItem.get(path)
       if (item) {
         itemsToCreateTreeNode.push(item)
+      } else {
+        const $item: TreeNode = {
+          name: path.split('/').pop() || '',
+          path,
+          type: 'tree',
+          contents: [],
+        }
+        pathToItem.set(path, $item)
+        itemsToCreateTreeNode.push($item)
       }
       // 'a/b' -> 'a'
       // 'a' -> ''
@@ -66,6 +75,8 @@ export function isEnterprise() {
   return !window.location.host.endsWith('github.com')
 }
 
+const pathSHAMap = new Map<string, string>()
+
 export const GitHub: Platform = {
   isEnterprise,
   resolveMeta() {
@@ -97,7 +108,7 @@ export const GitHub: Platform = {
       defaultBranchName: data.default_branch,
     }
   },
-  async getTreeData(metaData, accessToken) {
+  async getTreeData(metaData, path = '/', recursive, accessToken) {
     const { userName, repoName, branchName } = metaData
 
     const pullId = URLHelper.isInPullPage()
@@ -140,28 +151,39 @@ export const GitHub: Platform = {
           url: `https://${window.location.host}/${metaData.userName}/${
             metaData.repoName
           }/pull/${pullId}/files${window.location.search}#${id || ''}`,
-          contents: undefined,
           sha: item.sha,
         }
       })
 
-      const missingFolders = findMissingFolders(nodes)
-      nodes.push(
-        ...missingFolders.map(
-          folder =>
-            ({
-              name: folder.replace(/^.*\//, ''),
-              path: folder,
-              type: 'tree',
-            } as TreeNode),
-        ),
-      )
-
-      const tree = processTree(nodes)
-      return tree
+      const root = processTree(nodes)
+      return { root }
     }
 
-    const treeData = await API.getTreeData(userName, repoName, branchName, accessToken)
+    const sha = path === '/' ? branchName : pathSHAMap.get(path)
+    if (!sha) throw new Error(`No sha for path "${path}"`)
+    const treeData = await API.getTreeData(userName, repoName, sha, recursive, accessToken)
+
+    // remove deep items
+    if (treeData.truncated) {
+      if (treeData.tree.some(item => item.path.includes('/')))
+        treeData.tree = treeData.tree.filter(item => !item.path.includes('/'))
+    }
+
+    // update map
+    if (path !== '/' || treeData.truncated) {
+      if (path !== '/') {
+        function sanitizePath(path: string) {
+          return path.replace(/\/\/+/g, '/').replace(/^\/|\/$/g, '') || '/'
+        }
+        treeData.tree.forEach(item => {
+          item.path = sanitizePath(`${path}/${item.path}`)
+        })
+      }
+      treeData.tree.forEach(item => {
+        pathSHAMap.set(item.path, item.sha)
+      })
+    }
+
     const root = processTree(
       treeData.tree.map(item => ({
         path: item.path || '',
@@ -193,12 +215,12 @@ export const GitHub: Platform = {
         )
 
         if (blobData && blobData.encoding === 'base64' && blobData.content) {
-          resolveGitModules(root, Base64.decode(blobData.content))
+          await resolveGitModules(root, Base64.decode(blobData.content))
         }
       }
     }
 
-    return root
+    return { root, defer: treeData.truncated }
   },
   shouldShow() {
     return Boolean(DOMHelper.isInCodePage() || URLHelper.isInPullPage())

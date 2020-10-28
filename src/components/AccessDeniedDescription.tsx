@@ -21,7 +21,7 @@ export function AccessDeniedDescription({ hasToken }: { hasToken: boolean }) {
               >
                 here
               </a>{' '}
-              if you setup Gitako with OAuth.
+              if you setup Gitako with OAuth. Or try clear and set token again.
             </p>
           )}
         </>

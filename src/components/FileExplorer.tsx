@@ -8,9 +8,10 @@ import { FileExplorerCore } from 'driver/core'
 import { ConnectorState, Props } from 'driver/core/FileExplorer'
 import { platform } from 'platforms'
 import * as React from 'react'
-import { useEvent, usePrevious } from 'react-use'
+import { useEvent } from 'react-use'
 import { FixedSizeList, ListChildComponentProps } from 'react-window'
 import { cx } from 'utils/cx'
+import { focusFileExplorer } from 'utils/DOMHelper'
 import { isValidRegexpSource } from 'utils/general'
 import { useOnLocationChange } from 'utils/hooks/useOnLocationChange'
 import { VisibleNodes } from 'utils/VisibleNodesGenerator'
@@ -29,66 +30,38 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
     expandTo,
     setUpTree,
     treeRoot,
+    defer,
   } = props
-  const {
-    val: { compressSingletonFolder },
-  } = useConfigs()
+  const { val: config } = useConfigs()
 
   React.useEffect(() => {
     const { setUpTree, treeRoot, metaData } = props
-    setUpTree({ treeRoot, metaData, compressSingletonFolder })
-  }, [setUpTree, treeRoot, compressSingletonFolder])
+    setUpTree({ treeRoot, metaData, config })
+  }, [setUpTree, treeRoot, config.compressSingletonFolder, config.access_token])
 
   React.useEffect(() => {
-    const { execAfterRender } = props
-    execAfterRender()
+    if (visibleNodes?.focusedNode) focusFileExplorer()
   })
 
-  function renderFiles(visibleNodes: VisibleNodes) {
-    const inSearch = searchKey !== ''
-    const { nodes, focusedNode } = visibleNodes
-    if (inSearch && nodes.length === 0) {
-      return (
-        <Text marginTop={6} textAlign="center" color="text.gray">
-          No results found.
-        </Text>
-      )
-    }
-    return (
-      <SizeObserver className={'files'}>
-        {({ width = 0, height = 0 }) => (
-          <ListView
-            focusedNode={focusedNode}
-            nodes={nodes}
-            height={height}
-            width={width}
-            searchKey={searchKey}
-            onNodeClick={onNodeClick}
-            renderActions={
-              searchKey
-                ? node => (
-                    <button
-                      title={'Reveal in file tree'}
-                      className={'go-to-button'}
-                      onClick={e => {
-                        e.stopPropagation()
-                        e.preventDefault()
-                        goTo(node.path.split('/'))
-                      }}
-                    >
-                      <Icon type="go-to" />
-                    </button>
-                  )
-                : undefined
-            }
-            visibleNodes={visibleNodes}
-            expandTo={expandTo}
-            metaData={metaData}
-          />
-        )}
-      </SizeObserver>
-    )
-  }
+  const renderActions: ((node: TreeNode) => React.ReactNode) | undefined = React.useMemo(
+    () =>
+      visibleNodes?.lastMatch?.match.searchKey
+        ? node => (
+            <button
+              title={'Reveal in file tree'}
+              className={'go-to-button'}
+              onClick={e => {
+                e.stopPropagation()
+                e.preventDefault()
+                goTo(node.path.split('/'))
+              }}
+            >
+              <Icon type="go-to" />
+            </button>
+          )
+        : undefined,
+    [visibleNodes, goTo],
+  )
 
   return (
     <div
@@ -114,7 +87,31 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
               onSearch={props.search}
               onFocus={props.onFocusSearchBar}
             />
-            {renderFiles(visibleNodes)}
+            {visibleNodes.lastMatch?.match.searchKey !== '' && visibleNodes.nodes.length === 0 && (
+              <>
+                <Text marginTop={6} textAlign="center" color="text.gray">
+                  No results found.
+                </Text>
+                {defer && (
+                  <Text textAlign="center" color="gray.4" fontSize="12px">
+                    Lazy mode is ON. Search results are limited to loaded folders.
+                  </Text>
+                )}
+              </>
+            )}
+            <SizeObserver className={'files'}>
+              {({ width = 0, height = 0 }) => (
+                <ListView
+                  height={height}
+                  width={width}
+                  onNodeClick={onNodeClick}
+                  renderActions={renderActions}
+                  visibleNodes={visibleNodes}
+                  expandTo={expandTo}
+                  metaData={metaData}
+                />
+              )}
+            </SizeObserver>
           </>
         )
       )}
@@ -136,76 +133,90 @@ const VirtualNode = React.memo(function VirtualNode({
   style,
   data,
 }: ListChildComponentProps) {
-  const { searchKey, onNodeClick, renderActions, visibleNodes } = data
-  const regex =
-    searchKey && isValidRegexpSource(searchKey) ? new RegExp(searchKey, 'gi') : undefined
+  const { onNodeClick, renderActions, visibleNodes } = data
   if (!visibleNodes) return null
 
-  const { nodes, depths, focusedNode, expandedNodes } = visibleNodes
+  const {
+    lastMatch,
+    nodes,
+    focusedNode,
+    expandedNodes,
+    loading,
+    depths,
+  } = visibleNodes as VisibleNodes
   const node = nodes[index]
+  const searchKey = lastMatch?.match.searchKey
   return (
     <Node
       style={style}
       key={node.path}
       node={node}
       depth={depths.get(node) || 0}
-      focused={focusedNode === node}
+      focused={focusedNode?.path === node.path}
+      loading={loading.has(node.path)}
       expanded={expandedNodes.has(node.path)}
       onClick={onNodeClick}
       renderActions={renderActions}
-      regex={regex}
+      regex={searchKey && isValidRegexpSource(searchKey) ? new RegExp(searchKey, 'gi') : undefined}
     />
   )
 })
 
-function ListView({
-  nodes,
-  width,
-  height,
-  focusedNode,
-  metaData,
-  expandTo,
-  searchKey,
-  onNodeClick,
-  renderActions,
-  visibleNodes,
-}: {
-  nodes: TreeNode[]
+type ListViewProps = {
   height: number
   width: number
-  focusedNode: TreeNode | null
-  searchKey: string
   onNodeClick(event: React.MouseEvent<HTMLElement, MouseEvent>, node: TreeNode): void
   renderActions?(node: TreeNode): React.ReactNode
   visibleNodes: VisibleNodes
-} & Pick<Props, 'metaData'> &
-  Pick<ConnectorState, 'expandTo'>) {
-  const listRef = React.useRef<FixedSizeList>(null)
-  React.useEffect(() => {
-    if (focusedNode && listRef.current) {
-      listRef.current.scrollToItem(nodes.indexOf(focusedNode), 'smart')
-    }
-  }, [listRef.current, focusedNode])
+}
 
-  const lastNodeLength = usePrevious(nodes.length)
+function ListView({
+  width,
+  height,
+  metaData,
+  expandTo,
+  onNodeClick,
+  renderActions,
+  visibleNodes,
+}: ListViewProps & Pick<Props, 'metaData'> & Pick<ConnectorState, 'expandTo'>) {
+  const listRef = React.useRef<FixedSizeList>(null)
+  // the change of depths indicates switch into/from search state
   React.useEffect(() => {
-    if (listRef.current && !focusedNode && lastNodeLength !== nodes.length) {
-      listRef.current.scrollTo(0)
+    const { focusedNode, nodes } = visibleNodes
+    if (listRef.current && focusedNode?.path) {
+      const index = nodes.findIndex(node => node.path === focusedNode.path)
+      if (index !== -1) {
+        listRef.current.scrollToItem(index, 'smart')
+      }
     }
-  }, [listRef.current, focusedNode, nodes.length])
+  }, [visibleNodes])
+  // For some reason, removing the deps array above results in bug:
+  // If scroll fast and far, then clicking on items would result in redirect
+  // Not know the reason :(
 
   const goToCurrentItem = React.useCallback(() => {
     const targetPath = platform.getCurrentPath(metaData.branchName)
     if (targetPath) expandTo(targetPath)
   }, [metaData.branchName])
+
   useOnLocationChange(goToCurrentItem)
   useEvent('pjax:ready', goToCurrentItem, document)
+
+  const itemData = React.useMemo(
+    () => ({
+      onNodeClick,
+      renderActions,
+      visibleNodes,
+    }),
+    [onNodeClick, renderActions, visibleNodes],
+  )
+
   return (
     <FixedSizeList
       ref={listRef}
-      itemKey={(index, { nodes = [] }) => nodes[index]?.path}
-      itemData={{ nodes, searchKey, onNodeClick, renderActions, visibleNodes }}
-      itemCount={nodes.length}
+      itemKey={(index, { visibleNodes }) => visibleNodes?.nodes[index]?.path}
+      itemData={itemData}
+      itemCount={visibleNodes.nodes.length}
       itemSize={36}
       height={height}
       width={width}

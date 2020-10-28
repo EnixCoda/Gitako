@@ -74,9 +74,13 @@ export async function getTreeData(
   userName: string,
   repoName: string,
   branchName: string,
+  recursive?: boolean,
   accessToken?: string,
 ): Promise<GitHubAPI.TreeData> {
-  const url = `https://${API_ENDPOINT}/repos/${userName}/${repoName}/git/trees/${branchName}?recursive=1`
+  const search = new URLSearchParams()
+  if (recursive) search.set('recursive', '1')
+  const url =
+    `https://${API_ENDPOINT}/repos/${userName}/${repoName}/git/trees/${branchName}?` + search
   return await request(url, { accessToken })
 }
 

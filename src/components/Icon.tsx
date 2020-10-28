@@ -1,6 +1,7 @@
 import {
   ChevronDownIcon as ChevronDown,
   ChevronRightIcon as ChevronRight,
+  ClockIcon as Clock,
   FileCodeIcon as FileCode,
   FileIcon as File,
   FileMediaIcon as FileMedia,
@@ -26,6 +27,11 @@ function getSVGIconComponent(
   name: string
 } {
   switch (type) {
+    case 'loading':
+      return {
+        IconComponent: Clock,
+        name: 'Clock',
+      }
     case 'hourglass':
       return {
         IconComponent: Hourglass,
@@ -131,7 +137,12 @@ type Props = {
   onClick?: (event: React.MouseEvent<HTMLElement>) => void
 } & IconProps
 
-export function Icon({ type, className = undefined, placeholder, ...otherProps }: Props) {
+export const Icon = React.memo(function Icon({
+  type,
+  className = undefined,
+  placeholder,
+  ...otherProps
+}: Props) {
   let children: React.ReactNode = null
   if (!placeholder) {
     const { name, IconComponent } = getSVGIconComponent(type)
@@ -142,4 +153,4 @@ export function Icon({ type, className = undefined, placeholder, ...otherProps }
       {children}
     </div>
   )
-}
+})
