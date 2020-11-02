@@ -28,9 +28,11 @@ Gitako is a file tree extension for GitHub, available for Chrome, Firefox and Ed
 
 ### Help Gitako
 
-In case Gitako helped you, either star it at GitHub or leave a review at extension store will encourage me a lot!
+If you appreciate Gitako and would like to help it grow better, please either
+- Give it a star ⭐️ at GitHub
+- Leave a review 👍 in the extension store
 
-Any bug report or feature request discussions are welcome, feel free to draft an [issue](https://github.com/EnixCoda/Gitako/issues/)!
+Feature request discussions and bug reports are welcome, feel free to draft an [issue](https://github.com/EnixCoda/Gitako/issues/)!
 
 ### About
 
