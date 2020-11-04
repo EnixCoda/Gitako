@@ -14,6 +14,7 @@ type Props = {
 }
 
 const MINIMAL_CONTENT_VIEWPORT_WIDTH = 100
+const MINIMAL_WIDTH = 240
 
 export function Resizable({ baseSize, className, children }: React.PropsWithChildren<Props>) {
   const [size, setSize] = React.useState(baseSize)
@@ -27,6 +28,7 @@ export function Resizable({ baseSize, className, children }: React.PropsWithChil
   React.useEffect(() => {
     if (size > width - MINIMAL_CONTENT_VIEWPORT_WIDTH)
       setSize(width - MINIMAL_CONTENT_VIEWPORT_WIDTH)
+    else if (size < MINIMAL_WIDTH) setSize(MINIMAL_WIDTH)
   }, [width, size])
 
   React.useEffect(() => {
@@ -39,7 +41,11 @@ export function Resizable({ baseSize, className, children }: React.PropsWithChil
   useDebounce(() => configContext.set({ sideBarWidth: size }), 100, [size])
 
   const onResize = React.useCallback((size: number) => {
-    if (size < window.innerWidth - MINIMAL_CONTENT_VIEWPORT_WIDTH) setSize(size)
+    // do NOT merge this with the above similar effect, side bar will jump otherwise
+    if (size > width - MINIMAL_CONTENT_VIEWPORT_WIDTH)
+      setSize(width - MINIMAL_CONTENT_VIEWPORT_WIDTH)
+    else if (size < MINIMAL_WIDTH) setSize(MINIMAL_WIDTH)
+    else setSize(size)
   }, [])
   return (
     <div className={cx('gitako-position-wrapper', className)}>
