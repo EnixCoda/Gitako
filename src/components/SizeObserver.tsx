@@ -30,18 +30,17 @@ export function SizeObserver({ type = 'div', children, ...rest }: Props) {
   }, [])
 
   React.useEffect(() => {
-    if (features.resize) {
-      const observer = new window.ResizeObserver(entries => {
-        const entry = entries[0]
-        if (!entry) return
-        const rect = entry.contentRect
-        safeSetSize(rect)
-      })
-
-      if (ref.current) observer.observe(ref.current)
-      return () => observer.disconnect()
-    } else {
-      if (ref.current) {
+    if (ref.current) {
+      if (features.resize) {
+        const observer = new window.ResizeObserver(entries => {
+          const entry = entries[0]
+          if (!entry) return
+          const rect = entry.contentRect
+          safeSetSize(rect)
+        })
+        observer.observe(ref.current)
+        return () => observer.disconnect()
+      } else {
         if ('getBoundingClientRect' in ref.current) {
           const rect = ref.current.getBoundingClientRect()
           setSize(rect)
