@@ -114,7 +114,7 @@ export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch
 
       case 'ArrowLeft':
         if (expandedNodes.has(focusedNode.path)) {
-          dispatch.call(setExpand, focusedNode, false)
+          dispatch.call(toggleNodeExpansion, focusedNode, { recursive: event.altKey })
         } else {
           // go forward to the start of the list, find the closest node with lower depth
           const parentNode = getVisibleParentNode(nodes, focusedNode)
@@ -134,7 +134,7 @@ export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch
               dispatch.call(focusNode, nextNode)
             }
           } else {
-            dispatch.call(setExpand, focusedNode, true)
+            dispatch.call(toggleNodeExpansion, focusedNode, { recursive: event.altKey })
           }
         } else if (focusedNode.type === 'blob') {
           if (focusedNode.url) loadWithPJAX(focusedNode.url)
