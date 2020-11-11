@@ -425,6 +425,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
         .files {
           flex: 1;
           overflow: auto;
+          overflow-x: hidden; // prevent x-scroll bar show up while sizing
         }
 
         .node-item {
@@ -448,7 +449,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           margin: 0;
           color: $blue;
           line-height: 18px;
-          padding: 8px 10px;
+          padding: 9px 10px;
           cursor: pointer;
           border-bottom: 1px solid $border-gray-light;
           white-space: nowrap;
