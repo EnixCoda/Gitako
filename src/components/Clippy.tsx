@@ -18,17 +18,24 @@ export function Clippy({ codeSnippetElement }: Props) {
     return () => window.clearTimeout(timer)
   }, [status])
 
-  const onClippyClick = React.useCallback(function onClippyClick() {
-    if (copyElementContent(codeSnippetElement)) {
-      setStatus('success')
-    } else {
-      setStatus('fail')
+  // Temporary fix:
+  // React moved root node of event delegation since v17
+  // onClick on <a /> won't work when rendered with `renderReact`
+  const elementRef = React.useRef<HTMLButtonElement | null>(null)
+  React.useEffect(() => {
+    const element = elementRef.current
+    if (element) {
+      function onClippyClick() {
+        setStatus(copyElementContent(codeSnippetElement) ? 'success' : 'fail')
+      }
+      element.addEventListener('click', onClippyClick)
+      return () => element.removeEventListener('click', onClippyClick)
     }
   }, [])
 
   return (
     <div className={className}>
-      <button className="clippy" onClick={onClippyClick}>
+      <button className="clippy" ref={elementRef}>
         <i className={cx('icon', status)} />
       </button>
     </div>
