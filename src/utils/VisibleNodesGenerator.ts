@@ -254,7 +254,10 @@ class FlattenLayer extends CompressLayer {
 
   barelySetExpand = (node: TreeNode, expand: boolean) => {
     if (expand) {
-      this.expandedNodes.add(node.path)
+      if (node.type === 'tree') {
+        // expanding non-tree node could cause unexpected UX
+        this.expandedNodes.add(node.path)
+      }
     } else {
       this.expandedNodes.delete(node.path)
     }
