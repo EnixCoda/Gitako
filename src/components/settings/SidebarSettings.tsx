@@ -94,7 +94,9 @@ export function SidebarSettings(props: React.PropsWithChildren<Props>) {
       <SimpleToggleField
         field={{
           key: 'intelligentToggle',
-          label: 'Auto toggle according to page content.',
+          label: 'Auto expand',
+          tooltip:
+            'Gitako will expand when exploring source files, pull requests, etc. And collapse otherwise.',
           overwrite: {
             value: enabled => enabled === null,
             onChange: checked => (checked ? null : true),

@@ -548,6 +548,10 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           .field {
             margin-bottom: 8px;
 
+            .help {
+              cursor: help;
+            }
+
             label {
               display: inline-block;
               margin-bottom: 0px;

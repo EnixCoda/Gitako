@@ -7,6 +7,7 @@ export type SimpleField = {
   key: keyof Config
   label: string
   wikiLink?: string
+  tooltip?: string
   description?: string
   overwrite?: {
     value: <T>(value: T) => boolean
@@ -31,11 +32,19 @@ export function SimpleToggleField({ field, onChange }: Props) {
         <>
           {field.label}{' '}
           {field.wikiLink ? (
-            <a href={field.wikiLink} target={'_blank'}>
+            <a href={field.wikiLink} title={field.tooltip} target={'_blank'}>
               (?)
             </a>
+          ) : field.description ? (
+            <p className={'note'} title={field.tooltip}>
+              {field.description}
+            </p>
           ) : (
-            field.description && <p className={'note'}>{field.description}</p>
+            field.tooltip && (
+              <span className={'help'} title={field.tooltip}>
+                (?)
+              </span>
+            )
           )}
         </>
       }

@@ -1,4 +1,4 @@
-import { Button, TextInput } from '@primer/components'
+import { Button, Text, TextInput } from '@primer/components'
 import { wikiLinks } from 'components/settings/SettingsBar'
 import { useConfigs } from 'containers/ConfigsContext'
 import { platform } from 'platforms'
@@ -65,19 +65,26 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
       title={
         <>
           Access Token{' '}
-          <a href={wikiLinks.createAccessToken} target="_blank">
+          <a
+            href={wikiLinks.createAccessToken}
+            title="A token is required to access private repositories or bypass API rate limits"
+            target="_blank"
+          >
             (?)
           </a>
         </>
       }
     >
       {hasAccessToken ? (
-        <Button onClick={() => configContext.set({ access_token: '' })}>Clear</Button>
+        <div>
+          <Text as="p">Your token has been saved.</Text>
+          <Button onClick={() => configContext.set({ access_token: '' })}>Clear</Button>
+        </div>
       ) : (
         <div>
           {platform === Gitee ? (
             // disabled for Gitee as it does not support dynamic redirect_uri
-            <span>OAuth for Gitee is unavailable</span>
+            <Text>Note: OAuth for Gitee is unavailable</Text>
           ) : (
             <a
               className={'link-button'}

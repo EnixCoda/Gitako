@@ -37,11 +37,13 @@ function SettingsBarContent() {
             key: 'copyFileButton',
             label: 'Copy file shortcut',
             wikiLink: wikiLinks.copyFileButton,
+            tooltip: `Read more in Gitako's Wiki`,
           },
           {
             key: 'copySnippetButton',
             label: 'Copy snippet shortcut',
             wikiLink: wikiLinks.copySnippet,
+            tooltip: `Read more in Gitako's Wiki`,
           },
           {
             key: 'shrinkGitHubHeader',

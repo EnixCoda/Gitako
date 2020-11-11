@@ -73,6 +73,7 @@ export function FileTreeSettings(props: React.PropsWithChildren<Props>) {
           key: 'compressSingletonFolder',
           label: 'Compress singleton folder',
           wikiLink: wikiLinks.compressSingletonFolder,
+          tooltip: 'Merge folders and their only child folder to make UI more compact.',
         }}
       />
     </SettingsSection>
