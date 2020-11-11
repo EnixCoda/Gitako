@@ -34,7 +34,7 @@ export function CopyFileButton(props: React.PropsWithChildren<Props>) {
       function copyCode() {
         const codeElement = getCodeElement()
         if (codeElement) {
-          setContent(copyElementContent(codeElement) ? contents.success : contents.error)
+          setContent(copyElementContent(codeElement, true) ? contents.success : contents.error)
         }
       }
       element.addEventListener('click', copyCode)

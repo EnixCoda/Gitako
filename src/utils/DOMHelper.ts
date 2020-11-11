@@ -73,16 +73,29 @@ export function scrollToRepoContent() {
 /**
  * copy content of a DOM element to clipboard
  */
-export function copyElementContent(element: Element): boolean {
-  let selection = window.getSelection()
-  if (selection) selection.removeAllRanges()
+export function copyElementContent(element: Element, trimLeadingSpace?: boolean): boolean {
+  window.getSelection()?.removeAllRanges()
+
   const range = document.createRange()
-  range.selectNode(element)
-  selection = window.getSelection()
-  if (selection) selection.addRange(range)
+  if (trimLeadingSpace) {
+    // Leading spaces can be produced by embedded DOM structures
+    let realWrapper: Element | null = element
+    while (realWrapper?.childElementCount === 1) realWrapper = realWrapper?.firstElementChild
+    if (realWrapper?.childElementCount && realWrapper.childElementCount > 1) {
+      const first = realWrapper.firstElementChild
+      const last = realWrapper.lastElementChild
+      if (first && last) {
+        range.selectNode(first)
+        range.setEndAfter(last)
+      }
+    }
+  } else {
+    range.selectNode(element)
+  }
+
+  window.getSelection()?.addRange(range)
   const isCopySuccessful = document.execCommand('copy')
-  selection = window.getSelection()
-  if (selection) selection.removeAllRanges()
+  window.getSelection()?.removeAllRanges()
   return isCopySuccessful
 }
 
