@@ -302,6 +302,7 @@ export function useGitHubAttachCopySnippetButton(copySnippetButton: boolean) {
   )
   React.useEffect(attachCopySnippetButton, [copySnippetButton])
   useEvent('pjax:ready', attachCopySnippetButton, document)
+  useEvent('pjax:end', attachCopySnippetButton, document) // GitHub emits pjax:end when navigate through its file list
 }
 
 export function useGitHubAttachCopyFileButton(copyFileButton: boolean) {
@@ -314,4 +315,5 @@ export function useGitHubAttachCopyFileButton(copyFileButton: boolean) {
   )
   React.useEffect(attachCopyFileButton, [copyFileButton])
   useEvent('pjax:ready', attachCopyFileButton, document)
+  useEvent('pjax:end', attachCopyFileButton, document) // GitHub emits pjax:end when navigate through its file list
 }
