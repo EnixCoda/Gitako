@@ -68,7 +68,15 @@ function getUrlForRedirect(
   type = 'blob',
   path = '',
 ) {
-  return `https://${window.location.host}/${userName}/${repoName}/${type}/${branchName}/${path}`
+  // Modern browsers have great support for handling unsafe URL,
+  // It may be possible to sanitize path with
+  // `path => path.includes('#') ? path.replace(/#/g, '%23') : '...'
+  return `https://${
+    window.location.host
+  }/${userName}/${repoName}/${type}/${branchName}/${path
+    .split('/')
+    .map(encodeURIComponent)
+    .join('/')}`
 }
 
 export function isEnterprise() {
@@ -142,18 +150,15 @@ export const GitHub: Platform = {
 
       const creator = await createPullFileResolver(userName, repoName, pullId)
 
-      const nodes: TreeNode[] = treeData.map(item => {
-        const id = creator(item.filename)
-        return {
-          path: item.filename || '',
-          type: 'blob',
-          name: item.filename?.replace(/^.*\//, '') || '',
-          url: `https://${window.location.host}/${metaData.userName}/${
-            metaData.repoName
-          }/pull/${pullId}/files${window.location.search}#${id || ''}`,
-          sha: item.sha,
-        }
-      })
+      const nodes: TreeNode[] = treeData.map(item => ({
+        path: item.filename || '',
+        type: 'blob',
+        name: item.filename?.replace(/^.*\//, '') || '',
+        url: `https://${window.location.host}/${metaData.userName}/${
+          metaData.repoName
+        }/pull/${pullId}/files${window.location.search}#${creator(item.filename) || ''}`,
+        sha: item.sha,
+      }))
 
       const root = processTree(nodes)
       return { root }
