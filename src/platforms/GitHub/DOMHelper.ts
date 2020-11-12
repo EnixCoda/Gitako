@@ -24,29 +24,6 @@ export function getIssueTitle() {
   if (title && id) return `${id} ${title}`
 }
 
-export function getPullSHA() {
-  return $('#js-repo-pjax-container', e => {
-    const commentNodes: ChildNode[] = []
-    e.childNodes.forEach(node => {
-      if (node.nodeType === document.COMMENT_NODE) {
-        commentNodes.push(node)
-      }
-    })
-    let baseSHA, headSHA
-    for (const node of commentNodes) {
-      const matchBase = node.textContent?.match(/base sha1:.*?(\w{40})/)
-      if (matchBase) baseSHA = matchBase[1]
-      const matchHead = node.textContent?.match(/head sha1:.*?(\w{40})/)
-      if (matchHead) headSHA = matchHead[1]
-    }
-    if (baseSHA && headSHA)
-      return {
-        baseSHA,
-        headSHA,
-      }
-  })
-}
-
 export function getCurrentBranch() {
   const selectedBranchButtonSelector = [
     '.repository-content #branch-select-menu summary',

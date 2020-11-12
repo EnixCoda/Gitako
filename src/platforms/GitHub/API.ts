@@ -110,14 +110,26 @@ export async function getPullPageDocument(
   userName: string,
   repoName: string,
   pullId: string, // not used
-  baseSHA: string,
-  headSHA: string,
 ): Promise<Document> {
+  // Response of this API contains view of few files but is not complete.
+  const filesDOM = await getDOM(
+    `https://${window.location.host}/${userName}/${repoName}/pull/${pullId}/files?_pjax=%23js-repo-pjax-container`,
+  )
+  const [baseSHA, headSHA] = [
+    filesDOM.querySelector('input[name="comparison_start_oid"]')?.getAttribute('value'),
+    filesDOM.querySelector('input[name="comparison_end_oid"]')?.getAttribute('value'),
+  ]
+  if (!baseSHA || !headSHA) throw new Error(`Cannot fetch SHA for comparison`)
+
+  // The SHA used to be retrieved from DOM of the pull page, but they can be unreliable if the PR has conflicts
   const search = new URLSearchParams(window.location.search)
   search.set('sha1', baseSHA)
   search.set('sha2', headSHA)
-  const url = `https://${window.location.host}/${userName}/${repoName}/diffs?${search}`
-  return new DOMParser().parseFromString(await (await fetch(url)).text(), 'text/html')
+  return await getDOM(`https://${window.location.host}/${userName}/${repoName}/diffs?${search}`)
+
+  async function getDOM(url: string) {
+    return new DOMParser().parseFromString(await (await fetch(url)).text(), 'text/html')
+  }
 }
 
 export async function getBlobData(
