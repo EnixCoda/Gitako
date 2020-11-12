@@ -98,7 +98,8 @@ export const init: BoundMethodCreator = dispatch => async () => {
     if (
       !detectedBranchName &&
       projectDefaultBranchName &&
-      projectDefaultBranchName !== metaData.branchName
+      projectDefaultBranchName !== metaData.branchName &&
+      metaData.type !== 'pull'
     ) {
       // Accessing repository's non-homepage(no branch name in URL, nor in DOM)
       // We predicted its default branch to be 'master' and sent aggressive request
