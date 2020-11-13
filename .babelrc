@@ -12,15 +12,14 @@
         "targets": {
           "esmodules": true
         },
-        "exclude": ["babel-plugin-transform-async-to-generator"]
+        "exclude": [
+          "@babel/plugin-transform-async-to-generator",
+          "@babel/plugin-proposal-object-rest-spread"
+        ]
       }
     ],
     "@babel/preset-typescript",
     "@babel/preset-react"
   ],
-  "plugins": [
-    "@babel/plugin-proposal-optional-chaining",
-    "@babel/plugin-proposal-class-properties",
-    "@babel/plugin-proposal-object-rest-spread"
-  ]
+  "plugins": ["@babel/plugin-proposal-optional-chaining", "@babel/plugin-proposal-class-properties"]
 }
