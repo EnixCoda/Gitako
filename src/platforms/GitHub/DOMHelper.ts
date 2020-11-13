@@ -19,9 +19,8 @@ export function isInCodePage() {
 }
 
 export function getIssueTitle() {
-  const title = $('.gh-header-title .js-issue-title')?.textContent
-  const id = $('.gh-header-title .gh-header-number')?.textContent
-  if (title && id) return `${id} ${title}`
+  const title: string | undefined = $('.gh-header-title')?.textContent
+  return title?.trim().replace(/\n/g, '')
 }
 
 export function getCurrentBranch() {
