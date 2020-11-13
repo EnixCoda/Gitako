@@ -8,25 +8,31 @@ import * as API from './API'
 import * as DOMHelper from './DOMHelper'
 import * as URLHelper from './URLHelper'
 
-function parseTreeData(treeData: GiteeAPI.TreeData, metaData: MetaData) {
-  const { tree } = treeData
-
+function processTree(tree: TreeNode[]): TreeNode {
   // nodes are created from items and put onto tree
-  const pathToNode = new Map<string, TreeNode>()
-  const pathToItem = new Map<string, GiteeAPI.TreeItem>()
-
-  const root: TreeNode = { name: '', path: '', contents: [], type: 'tree' }
-  pathToNode.set('', root)
-
+  const pathToItem = new Map<string, TreeNode>()
   tree.forEach(item => pathToItem.set(item.path, item))
+
+  const pathToCreated = new Map<string, TreeNode>()
+  const root: TreeNode = { name: '', path: '', contents: [], type: 'tree' }
+  pathToCreated.set('', root)
   tree.forEach(item => {
     // bottom-up search for the deepest node created
     let path = item.path
-    const itemsToCreateTreeNode: GiteeAPI.TreeItem[] = []
-    while (path !== '' && !pathToNode.has(path)) {
+    const itemsToCreateTreeNode: TreeNode[] = []
+    while (path !== '' && !pathToCreated.has(path)) {
       const item = pathToItem.get(path)
       if (item) {
         itemsToCreateTreeNode.push(item)
+      } else {
+        const $item: TreeNode = {
+          name: path.split('/').pop() || '',
+          path,
+          type: 'tree',
+          contents: [],
+        }
+        pathToItem.set(path, $item)
+        itemsToCreateTreeNode.push($item)
       }
       // 'a/b' -> 'a'
       // 'a' -> ''
@@ -37,27 +43,13 @@ function parseTreeData(treeData: GiteeAPI.TreeData, metaData: MetaData) {
     while (itemsToCreateTreeNode.length) {
       const item = itemsToCreateTreeNode.pop()
       if (!item) continue
-      const node: TreeNode = {
-        path: item.path || '',
-        type: item.type || 'blob',
-        name: item.path?.replace(/^.*\//, '') || '',
-        url:
-          item.url && item.type && item.path
-            ? getUrlForRedirect(
-                metaData.userName,
-                metaData.repoName,
-                metaData.branchName,
-                item.type,
-                item.path,
-              )
-            : undefined,
-        contents: item.type === 'tree' ? [] : undefined,
-      }
-      const parentNode = pathToNode.get(path)
-      if (parentNode && parentNode.contents) {
+      const node: TreeNode = item
+      const parentNode = pathToCreated.get(path)
+      if (parentNode) {
+        if (!parentNode.contents) parentNode.contents = []
         parentNode.contents.push(node)
       }
-      pathToNode.set(node.path, node)
+      pathToCreated.set(node.path, node)
       path = node.path
     }
   })
@@ -111,7 +103,26 @@ export const Gitee: Platform = {
   async getTreeData(metaData, path, recursive, accessToken) {
     const { userName, repoName, branchName } = metaData
     const treeData = await API.getTreeData(userName, repoName, branchName)
-    const root = parseTreeData(treeData, metaData)
+
+    const root = processTree(
+      treeData.tree.map(item => ({
+        path: item.path || '',
+        type: item.type || 'blob',
+        name: item.path?.replace(/^.*\//, '') || '',
+        url:
+          item.url && item.type && item.path
+            ? getUrlForRedirect(
+                metaData.userName,
+                metaData.repoName,
+                metaData.branchName,
+                item.type,
+                item.path,
+              )
+            : undefined,
+        contents: item.type === 'tree' ? [] : undefined,
+        sha: item.sha,
+      })),
+    )
 
     const gitModules = root.contents?.find(item => item.name === '.gitmodules')
     if (gitModules) {
