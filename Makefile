@@ -1,6 +1,9 @@
 RAW_VERSION?=$(shell node scripts/get-version.js)
 FULL_VERSION=v$(RAW_VERSION)
 
+pull-icons:
+	git clone git@github.com:vscode-icons/vscode-icons.git vscode-icons --depth=1
+
 build:
 	rm -rf dist
 	yarn build
