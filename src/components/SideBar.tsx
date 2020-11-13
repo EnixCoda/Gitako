@@ -16,10 +16,10 @@ import {
   useGitHubAttachCopySnippetButton,
 } from 'platforms/GitHub'
 import * as React from 'react'
-import { useEvent, useUpdateEffect } from 'react-use'
+import { useUpdateEffect } from 'react-use'
 import { cx } from 'utils/cx'
 import { parseURLSearch } from 'utils/general'
-import { usePJAX } from 'utils/hooks/usePJAX'
+import { useOnPJAXDone, usePJAX } from 'utils/hooks/usePJAX'
 import * as keyHelper from 'utils/keyHelper'
 import { Icon } from './Icon'
 
@@ -81,7 +81,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
     },
     [props.metaData?.branchName, configContext.val.intelligentToggle],
   )
-  useEvent('pjax:ready', updateSideBarVisibility, document)
+  useOnPJAXDone(updateSideBarVisibility)
 
   const copyFileButton = configContext.val.copyFileButton
   useGitHubAttachCopyFileButton(copyFileButton)

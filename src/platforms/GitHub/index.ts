@@ -2,8 +2,8 @@ import { GITHUB_OAUTH } from 'env'
 import { Base64 } from 'js-base64'
 import { platform } from 'platforms'
 import * as React from 'react'
-import { useEvent } from 'react-use'
 import { resolveGitModules } from 'utils/gitSubmodule'
+import { useOnPJAXDone } from 'utils/hooks/usePJAX'
 import { sortFoldersToFront } from 'utils/treeParser'
 import * as API from './API'
 import * as DOMHelper from './DOMHelper'
@@ -298,8 +298,7 @@ export function useGitHubAttachCopySnippetButton(copySnippetButton: boolean) {
     [copySnippetButton],
   )
   React.useEffect(attachCopySnippetButton, [copySnippetButton])
-  useEvent('pjax:ready', attachCopySnippetButton, document)
-  useEvent('pjax:end', attachCopySnippetButton, document) // GitHub emits pjax:end when navigate through its file list
+  useOnPJAXDone(attachCopySnippetButton)
 }
 
 export function useGitHubAttachCopyFileButton(copyFileButton: boolean) {
@@ -311,6 +310,5 @@ export function useGitHubAttachCopyFileButton(copyFileButton: boolean) {
     [copyFileButton],
   )
   React.useEffect(attachCopyFileButton, [copyFileButton])
-  useEvent('pjax:ready', attachCopyFileButton, document)
-  useEvent('pjax:end', attachCopyFileButton, document) // GitHub emits pjax:end when navigate through its file list
+  useOnPJAXDone(attachCopyFileButton)
 }

@@ -1,8 +1,8 @@
 import { GITEE_OAUTH } from 'env'
 import { platform } from 'platforms'
 import * as React from 'react'
-import { useEvent } from 'react-use'
 import { resolveGitModules } from 'utils/gitSubmodule'
+import { useOnPJAXDone } from 'utils/hooks/usePJAX'
 import { sortFoldersToFront } from 'utils/treeParser'
 import * as API from './API'
 import * as DOMHelper from './DOMHelper'
@@ -162,5 +162,5 @@ export function useGiteeAttachCopySnippetButton(copySnippetButton: boolean) {
     [copySnippetButton],
   )
   React.useEffect(attachCopySnippetButton, [copySnippetButton])
-  useEvent('pjax:ready', attachCopySnippetButton, document)
+  useOnPJAXDone(attachCopySnippetButton)
 }

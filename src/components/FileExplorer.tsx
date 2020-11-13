@@ -8,12 +8,12 @@ import { FileExplorerCore } from 'driver/core'
 import { ConnectorState, Props } from 'driver/core/FileExplorer'
 import { platform } from 'platforms'
 import * as React from 'react'
-import { useEvent } from 'react-use'
 import { FixedSizeList, ListChildComponentProps } from 'react-window'
 import { cx } from 'utils/cx'
 import { focusFileExplorer } from 'utils/DOMHelper'
 import { isValidRegexpSource } from 'utils/general'
 import { useOnLocationChange } from 'utils/hooks/useOnLocationChange'
+import { useOnPJAXDone } from 'utils/hooks/usePJAX'
 import { VisibleNodes } from 'utils/VisibleNodesGenerator'
 import { Icon } from './Icon'
 import { SizeObserver } from './SizeObserver'
@@ -200,7 +200,8 @@ function ListView({
   }, [metaData.branchName])
 
   useOnLocationChange(goToCurrentItem)
-  useEvent('pjax:ready', goToCurrentItem, document)
+  // `false` for ignoring pjax:end, which could cause unexpected results of history.goBack
+  useOnPJAXDone(goToCurrentItem, false)
 
   const itemData = React.useMemo(
     () => ({

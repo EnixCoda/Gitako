@@ -45,3 +45,8 @@ export function usePJAX() {
     Pjax.assign(url, config)
   }, [])
 }
+
+export function useOnPJAXDone(callback: () => void, both = true) {
+  useEvent('pjax:ready', callback, document)
+  if (both) useEvent('pjax:end', callback, document) // emit by GitHub
+}
