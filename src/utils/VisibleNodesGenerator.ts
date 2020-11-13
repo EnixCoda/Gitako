@@ -265,7 +265,9 @@ class FlattenLayer extends CompressLayer {
 
   $setExpand = (node: TreeNode, expand: boolean) => {
     this.barelySetExpand(node, expand)
-    if (expand && node.type === 'tree') return this.loadTreeData(node.path)
+    // The `node.contents?.length` condition is critical to search performance as it reduces lots of function calls
+    if (expand && node.type === 'tree' && !node.contents?.length)
+      return this.loadTreeData(node.path)
   }
   setExpand = withEffect(this.$setExpand, this.generateVisibleNodes)
 
