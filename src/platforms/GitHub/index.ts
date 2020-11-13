@@ -249,12 +249,7 @@ export const GitHub: Platform = {
 }
 
 async function createPullFileResolver(userName: string, repoName: string, pullId: string) {
-  let doc: Document
-  if (URLHelper.parse().path[1] === 'files') {
-    doc = document
-  } else {
-    doc = await API.getPullPageDocument(userName, repoName, pullId)
-  }
+  const doc = await API.getPullPageDocument(userName, repoName, pullId)
 
   return (path: string) => {
     const id = doc.querySelector(`*[data-path^="${path}"]`)?.parentElement?.id

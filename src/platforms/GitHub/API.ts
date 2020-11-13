@@ -115,9 +115,11 @@ export async function getPullPageDocument(
   const filesDOM = await getDOM(
     `https://${window.location.host}/${userName}/${repoName}/pull/${pullId}/files?_pjax=%23js-repo-pjax-container`,
   )
+  const hookElement: HTMLDivElement | null = filesDOM.querySelector('div.js-pull-refresh-on-pjax')
+  const hookSearchParams = new URLSearchParams(hookElement?.dataset.url)
   const [baseSHA, headSHA] = [
-    filesDOM.querySelector('input[name="comparison_start_oid"]')?.getAttribute('value'),
-    filesDOM.querySelector('input[name="comparison_end_oid"]')?.getAttribute('value'),
+    hookSearchParams.get('start_commit_oid'),
+    hookSearchParams.get('end_commit_oid'),
   ]
   if (!baseSHA || !headSHA) throw new Error(`Cannot fetch SHA for comparison`)
 
