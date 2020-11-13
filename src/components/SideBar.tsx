@@ -19,12 +19,13 @@ import * as React from 'react'
 import { useUpdateEffect } from 'react-use'
 import { cx } from 'utils/cx'
 import { parseURLSearch } from 'utils/general'
-import { loadWithPJAX, useOnPJAXDone, usePJAX } from 'utils/hooks/usePJAX'
+import { loadWithPJAX, useOnPJAXDone, usePJAX, useRedirectedEvents } from 'utils/hooks/usePJAX'
 import { useProgressBar } from 'utils/hooks/useProgressBar'
 import * as keyHelper from 'utils/keyHelper'
 import { Icon } from './Icon'
 
 const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
+  useRedirectedEvents(document, 'pjax:ready', 'pjax:end')
   const configContext = useConfigs()
   const accessToken = props.configContext.val.access_token
   const [baseSize] = React.useState(() => configContext.val.sideBarWidth)
@@ -82,7 +83,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
     },
     [props.metaData?.branchName, configContext.val.intelligentToggle],
   )
-  useOnPJAXDone(updateSideBarVisibility)
+  useOnPJAXDone(updateSideBarVisibility, true)
 
   const copyFileButton = configContext.val.copyFileButton
   useGitHubAttachCopyFileButton(copyFileButton)

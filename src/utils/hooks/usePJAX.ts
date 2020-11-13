@@ -40,7 +40,21 @@ export const loadWithPJAX = (url: string) => {
   Pjax.assign(url, config)
 }
 
-export function useOnPJAXDone(callback: () => void, both = true) {
-  useEvent('pjax:ready', callback, document)
-  if (both) useEvent('pjax:end', callback, document) // emit by GitHub
+export function useOnPJAXDone(callback: () => void, legacy?: boolean) {
+  useEvent(legacy ? 'pjax:end' : 'pjax:ready', callback, document)
+}
+
+export function useRedirectedEvents(
+  originalTarget: Window | Document | Element,
+  originalEvent: string,
+  redirectedEvent: string,
+  redirectToTarget = originalTarget,
+) {
+  useEvent(
+    originalEvent,
+    () => {
+      redirectToTarget.dispatchEvent(new Event(redirectedEvent))
+    },
+    originalTarget,
+  )
 }

@@ -200,8 +200,7 @@ function ListView({
   }, [metaData.branchName])
 
   useOnLocationChange(goToCurrentItem)
-  // `false` for ignoring pjax:end, which could cause unexpected results of history.goBack
-  useOnPJAXDone(goToCurrentItem, false)
+  useOnPJAXDone(goToCurrentItem)
 
   const itemData = React.useMemo(
     () => ({
