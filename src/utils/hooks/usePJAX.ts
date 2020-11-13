@@ -20,6 +20,7 @@ const config: Config = {
       return path
     },
   },
+  form: 'form:not(form)', // prevent blocking form submissions
   fallback(target, reason) {
     // prevent unexpected reload
   },
