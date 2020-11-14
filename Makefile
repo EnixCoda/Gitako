@@ -12,7 +12,8 @@ test:
 	yarn test
 
 upload-for-analytics:
-	# make sure sentry can retrieve current commit on remote
+	# make sure sentry can retrieve current commit on remote, push both branch and tag
+	git push
 	git push --tags
 	yarn sentry-cli releases new "$(FULL_VERSION)"
 	yarn sentry-cli releases set-commits "$(FULL_VERSION)" --auto
