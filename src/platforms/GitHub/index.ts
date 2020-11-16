@@ -293,7 +293,7 @@ export function useGitHubAttachCopySnippetButton(copySnippetButton: boolean) {
     [copySnippetButton],
   )
   React.useEffect(attachCopySnippetButton, [copySnippetButton])
-  useOnPJAXDone(attachCopySnippetButton, true)
+  useOnPJAXDone(attachCopySnippetButton)
 }
 
 export function useGitHubAttachCopyFileButton(copyFileButton: boolean) {
@@ -305,5 +305,5 @@ export function useGitHubAttachCopyFileButton(copyFileButton: boolean) {
     [copyFileButton],
   )
   React.useEffect(attachCopyFileButton, [copyFileButton])
-  useOnPJAXDone(attachCopyFileButton, true)
+  useOnPJAXDone(attachCopyFileButton)
 }
