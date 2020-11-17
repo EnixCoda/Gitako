@@ -42,4 +42,4 @@ compress-env:
 	zip dist/source-$(FULL_VERSION).zip .env
 
 compress-icons-into-source-for-mz-review:
-	zip -r dist/source-$(FULL_VERSION).zip vscode-icons
+	zip -r dist/source-$(FULL_VERSION).zip vscode-icons/icons
