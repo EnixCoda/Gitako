@@ -37,3 +37,6 @@ release:
 
 compress-source:
 	git archive -o dist/source-$(FULL_VERSION).zip HEAD
+
+compress-icons-into-source-for-mz-review:
+	zip -r dist/source-$(FULL_VERSION).zip vscode-icons
