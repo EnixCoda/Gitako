@@ -1,22 +1,21 @@
 import * as NProgress from 'nprogress'
 import * as React from 'react'
+import { useEvent } from 'react-use'
+
+const progressBar = {
+  mount() {
+    NProgress.start()
+  },
+  unmount() {
+    NProgress.done()
+  },
+}
 
 export function useProgressBar() {
-  const [progressBar] = React.useState(() => {
-    return {
-      mount() {
-        NProgress.start()
-      },
-
-      unmount() {
-        NProgress.done()
-      },
-    }
-  })
-
   React.useEffect(() => {
     NProgress.configure({ showSpinner: false })
   }, [])
 
-  return progressBar
+  useEvent('pjax:fetch', progressBar.mount, window)
+  useEvent('pjax:unload', progressBar.unmount, window)
 }

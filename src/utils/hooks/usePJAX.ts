@@ -1,14 +1,11 @@
 import { Config, Pjax } from 'pjax-api'
 import * as React from 'react'
 import { useEvent } from 'react-use'
-import { useProgressBar } from './useProgressBar'
 
 const config: Config = {
   areas: [
     // github
     '.repository-content',
-    '[data-pjax="#js-repo-pjax-container"]',
-    '.page-content',
     // gitee
     '#git-project-content',
   ],
@@ -20,6 +17,7 @@ const config: Config = {
       return path
     },
   },
+  link: 'a:not(a)', // this helps fixing the go-back-in-history issue
   form: 'form:not(form)', // prevent blocking form submissions
   fallback(target, reason) {
     // prevent unexpected reload
@@ -36,14 +34,10 @@ export function usePJAX() {
       },
     })
   }, [])
+}
 
-  const progressBar = useProgressBar()
-  useEvent('pjax:fetch', progressBar.mount, window)
-  useEvent('pjax:unload', progressBar.unmount, window)
-
-  return React.useCallback(url => {
-    Pjax.assign(url, config)
-  }, [])
+export const loadWithPJAX = (url: string) => {
+  Pjax.assign(url, config)
 }
 
 export function useOnPJAXDone(callback: () => void, both = true) {

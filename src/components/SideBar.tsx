@@ -19,7 +19,8 @@ import * as React from 'react'
 import { useUpdateEffect } from 'react-use'
 import { cx } from 'utils/cx'
 import { parseURLSearch } from 'utils/general'
-import { useOnPJAXDone, usePJAX } from 'utils/hooks/usePJAX'
+import { loadWithPJAX, useOnPJAXDone, usePJAX } from 'utils/hooks/usePJAX'
+import { useProgressBar } from 'utils/hooks/useProgressBar'
 import * as keyHelper from 'utils/keyHelper'
 import { Icon } from './Icon'
 
@@ -94,7 +95,8 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
     props.init()
   }, [accessToken || '']) // '' prevents duplicated requests
 
-  const loadWithPJAX = usePJAX()
+  usePJAX()
+  useProgressBar()
 
   const {
     errorDueToAuth,
