@@ -25,6 +25,7 @@ import * as keyHelper from 'utils/keyHelper'
 import { Icon } from './Icon'
 
 const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
+  useRedirectedEvents(window, 'pjax:fetch', 'pjax:start', document)
   useRedirectedEvents(document, 'pjax:ready', 'pjax:end')
   const configContext = useConfigs()
   const accessToken = props.configContext.val.access_token

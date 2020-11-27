@@ -16,6 +16,6 @@ export function useProgressBar() {
     NProgress.configure({ showSpinner: false })
   }, [])
 
-  useEvent('pjax:fetch', progressBar.mount, window)
+  useEvent('pjax:start', progressBar.mount, window)
   useEvent('pjax:unload', progressBar.unmount, window)
 }
