@@ -13,7 +13,8 @@ function modify(source = '', pairs = [], loose = true) {
         throw new Error(`More than one original string found`, JSON.stringify(original))
       }
     } else {
-      if (!loose) throw new Error(`Original string not found`, JSON.stringify(original))
+      if (loose) console.log(`Skipped missing snippet`, original)
+      else throw new Error(`Original string not found`, JSON.stringify(original))
     }
   }
 
@@ -29,17 +30,19 @@ async function fixPJAXAPI(loose) {
     ],
     // Firefox
     [
-      `this.document = this.xhr.responseType === 'document' ? this.xhr.responseXML.cloneNode(true) : html_1.parse(this.xhr.responseText).extract();`,
-      `this.document = this.xhr.responseType === 'document' ? this.xhr.responseXML : html_1.parse(this.xhr.responseText).extract();`,
+      `this.document = this.xhr.responseXML.cloneNode(true);`,
+      `this.document = this.xhr.responseXML;`,
     ],
     // Chrome: modifying cross-context history state causes troubles
     // Scroll position can still be restored without this function
     [
       `
             function savePosition() {
+                var _a;
                 void window.history.replaceState({
                     ...window.history.state,
                     position: {
+                        ...(_a = window.history.state) === null || _a === void 0 ? void 0 : _a.position,
                         top: window.pageYOffset,
                         left: window.pageXOffset
                     }
