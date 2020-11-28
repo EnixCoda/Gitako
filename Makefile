@@ -34,6 +34,8 @@ release:
 	$(MAKE) compress
 	$(MAKE) rename-compressed
 	$(MAKE) compress-source
+	$(MAKE) compress-env
+	$(MAKE) compress-icons-into-source-for-mz-review
 
 compress-source:
 	git archive -o dist/source-$(FULL_VERSION).zip HEAD
