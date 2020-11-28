@@ -34,6 +34,10 @@ export function usePJAX() {
       },
     })
   }, [])
+
+  // bindings for legacy support
+  useRedirectedEvents(window, 'pjax:fetch', 'pjax:start', document)
+  useRedirectedEvents(document, 'pjax:ready', 'pjax:end')
 }
 
 export const loadWithPJAX = (url: string) => {
