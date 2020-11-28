@@ -46,6 +46,7 @@ export function Node({
       onClick={event => {
         if (
           (os === OperatingSystems.macOS && event.metaKey) ||
+          (os === OperatingSystems.Linux && event.ctrlKey) ||
           (os === OperatingSystems.Windows && event.ctrlKey)
         ) {
           // The default behavior, open in new tab

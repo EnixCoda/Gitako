@@ -16,6 +16,7 @@ export function pick<T>(source: T, keys: string[]): Partial<T> {
 export enum OperatingSystems {
   Windows = 'Windows',
   macOS = 'Macintosh',
+  Linux = 'Linux',
   others = 'unknown',
 }
 
@@ -25,6 +26,7 @@ function detectOS(): OperatingSystems {
   } = window
   if (userAgent.indexOf(OperatingSystems.Windows) !== -1) return OperatingSystems.Windows
   else if (userAgent.indexOf(OperatingSystems.macOS) !== -1) return OperatingSystems.macOS
+  else if (userAgent.indexOf(OperatingSystems.Linux) !== -1) return OperatingSystems.Linux
   return OperatingSystems.others
 }
 
