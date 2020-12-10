@@ -1,6 +1,6 @@
 @use './variables.scss' as variables;
 
-:root[data-color-mode='dark'] {
+@mixin assign {
   --gitako-auto-black: #{variables.$auto-black};
   --gitako-auto-white: #{variables.$auto-white};
   --gitako-auto-gray-0: #{variables.$auto-gray-0};
@@ -565,4 +565,15 @@
   --gitako-ansi-magenta-bright: #{variables.$ansi-magenta-bright};
   --gitako-ansi-cyan: #{variables.$ansi-cyan};
   --gitako-ansi-cyan-bright: #{variables.$ansi-cyan-bright};
+}
+
+// How to merge the selectors?
+// Is it possible to not have two copy of dark theme variables?
+@media (prefers-color-scheme: dark) {
+  :root[data-color-mode='auto'] {
+    @include assign();
+  }
+}
+:root[data-color-mode='dark'] {
+  @include assign();
 }
