@@ -88,7 +88,7 @@ export function SettingsBar(props: Props) {
       {activated && <SettingsBarContent />}
       <div className={'header-row'}>
         <Link
-          color="gray.4"
+          className={'version'}
           fontSize={14}
           href={wikiLinks.changeLog}
           target={'_blank'}

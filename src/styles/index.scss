@@ -1,0 +1,724 @@
+@import '~nprogress/nprogress.css';
+
+@import './dark/export.scss';
+@import './light/export.scss';
+
+$name: gitako;
+
+$min-screen-width: 1280px;
+$github-content-width: 1020px;
+$side-bar-base-width: $min-screen-width - $github-content-width;
+$min-width-with-gitako: $min-screen-width + $side-bar-base-width;
+
+$github-header-z-index: 32;
+$github-pull-request-float-header-z-index: 110;
+$minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-z-index) + 1;
+
+:root {
+  --gitako-width: #{$side-bar-base-width};
+}
+
+.#{$name}-ready {
+  // github
+  &.shrink-github-header {
+    .js-header-wrapper {
+      background: var(--gitako-bg-canvas-inverse);
+    }
+    .Header {
+      max-width: 1280px;
+      margin: 0 auto;
+      @media (max-width: 1020px) {
+        overflow: hidden; // prevent blank scroll area when Gitako is open and window is narrow
+      }
+      @media (min-width: 1280px) {
+        padding: 0 32px !important;
+      }
+    }
+    main {
+      // overflow: hidden;
+      // This prevents blank scroll area when Gitako is open and window is narrow.
+      // But it conflicts with the pr toolbar. Keep it here as a reminder.
+
+      & > *:first-child {
+        // repo info and nav bar
+        box-shadow: inset 0 -1px 0 var(--gitako-border-overlay); // from .UnderlineNav
+
+        & > * {
+          max-width: 1280px;
+          margin: 0 auto;
+        }
+
+        nav {
+          overflow: auto !important;
+        }
+      }
+    }
+  }
+
+  // gitee
+  &.git-project {
+    #git-header-nav {
+      position: static;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    padding-top: 0;
+  }
+}
+
+.with-gitako-spacing {
+  margin-left: var(--gitako-width);
+
+  // gitee
+  &.git-project {
+    width: auto; // shrink width
+    .site-content {
+      min-width: 1040px;
+    }
+  }
+}
+
+@media (min-width: $github-content-width) {
+  // github
+  body.env-production {
+    min-width: $github-content-width;
+  }
+}
+
+.markdown-body {
+  .clippy-wrapper {
+    position: relative;
+    width: 0;
+    height: 0;
+    top: 8px;
+    left: calc(100% - 40px);
+    z-index: 1;
+
+    .clippy {
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--gitako-border-tertiary);
+      border-radius: 4px;
+      background: var(--gitako-bg-secondary);
+      &:hover {
+        background: var(--gitako-bg-secondary);
+      }
+      &:active {
+        background: var(--gitako-bg-secondary);
+      }
+      .icon {
+        width: 100%;
+        height: 100%;
+        display: block;
+        background-image: url('~@primer/octicons-react/build/svg/clippy-16.svg?inline');
+        background-position: center;
+        background-repeat: no-repeat;
+        &.success {
+          background-image: url('~@primer/octicons-react/build/svg/check-16.svg?inline');
+        }
+        &.fail {
+          background-image: url('~@primer/octicons-react/build/svg/x-16.svg?inline');
+        }
+      }
+    }
+  }
+}
+
+.progress-pjax-loader.is-loading {
+  left: 0; /* reposition progress bar of GitHub */
+}
+
+%hidden {
+  display: none;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+@mixin flex-center {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin icon-button {
+  @include flex-center();
+  cursor: pointer;
+  padding: 0;
+}
+
+@mixin button-color {
+  border: none;
+  background: transparent;
+  &:hover {
+    background: var(--gitako-btn-hover-bg);
+  }
+  &:active {
+    background: var(--gitako-btn-focus-bg);
+  }
+}
+
+// Why does not TextInput get theme properly?
+@mixin input {
+  color: var(--gitako-text-primary);
+  background-color: var(--gitako-input-bg);
+  border-color: var(--gitako-border-primary);
+  box-shadow: var(--gitako-input-shadow);
+}
+
+.#{$name}-toggle-show-button-wrapper {
+  z-index: $minimal-z-index;
+  position: fixed;
+  top: 124px; // align with GitHub's navbar items
+  left: 0px;
+  display: inline-flex;
+  align-items: center;
+
+  .#{$name}-toggle-show-button {
+    @include icon-button;
+    background: transparent;
+    border: none;
+    padding: 0;
+    .octoface-icon {
+      @include flex-center();
+
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      border: 1px solid var(--gitako-border-tertiary);
+      background: var(--gitako-bg-tertiary);
+      color: var(--gitako-icon-primary);
+      &:active {
+        color: var(--gitako-icon-tertiary);
+      }
+      transition: all ease 0.3s;
+      font-size: 16px;
+      transform: translateX(0px);
+      &:active,
+      &:hover {
+        transform: translateX(4px);
+      }
+    }
+    .tentacle {
+      width: 40px;
+      height: 40px;
+      transition: all ease 0.4s;
+      transform: translateX(-16px);
+    }
+    &:active,
+    &:hover {
+      .tentacle {
+        transform: translateX(-12px);
+        filter: drop-shadow(0 0 2px var(--gitako-bg-backdrop));
+      }
+    }
+
+    img {
+      filter: drop-shadow(0 0 1px var(--gitako-bg-backdrop));
+      transition: all ease 0.3s;
+      width: 90%;
+      height: 90%;
+      object-fit: contain;
+    }
+  }
+
+  .error-message {
+    display: none;
+    margin-left: 4px;
+    padding: 2px 4px;
+    font-size: 12px;
+    color: var(--gitako-text-red);
+    border: 1px solid var(--gitako-border-overlay);
+    border-radius: 2px;
+    background-color: var(--gitako-bg-tertiary);
+  }
+
+  &:hover {
+    .error-message {
+      display: inline-block;
+    }
+  }
+}
+
+.#{$name}-side-bar {
+  @import '~@primer/css/base/index.scss';
+  button {
+    border-radius: 6px;
+    font-weight: 600;
+  }
+  a {
+    color: var(--gitako-text-link);
+  }
+
+  .#{$name}-position-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: $minimal-z-index;
+    display: flex;
+
+    &.hidden {
+      @extend %hidden;
+    }
+
+    .gitako-position-content {
+      width: var(--gitako-width);
+    }
+  }
+  .#{$name}-resize-handler {
+    display: flex;
+    align-items: center;
+    cursor: ew-resize;
+    user-select: none;
+    width: 0;
+    background: var(--gitako-bg-tertiary);
+    border-right: 1px solid var(--gitako-border-tertiary);
+    overflow: hidden;
+    box-sizing: content-box;
+    &:hover,
+    &:active {
+      width: 16px;
+      background: var(--gitako-bg-secondary);
+      border-left: 1px solid var(--gitako-border-tertiary);
+    }
+
+    .octicon.Grabber {
+      margin-left: -2px;
+      width: 20px;
+      font-size: 0;
+    }
+  }
+  .#{$name}-side-bar-body {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--gitako-bg-secondary);
+    border-left: 1px solid var(--gitako-border-overlay);
+    overflow: hidden;
+
+    &.hidden {
+      @extend %hidden;
+    }
+
+    .octicon {
+      transition: transform 0.3s ease;
+      color: var(--gitako-icon-tertiary);
+      width: 100%;
+      height: 100%;
+    }
+
+    .octicon-color {
+      color: var(--gitako-icon-tertiary);
+    }
+
+    .octicon-wrapper {
+      display: inline-block;
+      width: 16px;
+      min-width: 16px; // prevent shrink when sidebar is narrow
+      text-align: center;
+    }
+
+    .#{$name}-side-bar-content {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      max-height: calc(100vh - 34px); // temporary fix for layout issue occurred since Chrome v76
+      min-height: 0; // make content shrinkable
+
+      .header {
+        $button-size: 32px;
+        position: relative;
+
+        .meta-bar {
+          position: relative; // prevent overlap by outline of other elements
+          min-height: 62px; // GitHub header height if login
+          flex-shrink: 0;
+          padding: 8px 10px;
+          padding-right: $button-size + 8px * 2; // space for toggle button
+          background: var(--gitako-bg-tertiary);
+
+          .user-and-repo a {
+            color: var(--gitako-text-link);
+          }
+
+          .branch-name {
+            margin-left: 4px;
+            padding: 4px 6px; // did not align well for some reason :/
+            color: var(--gitako-branch-name-text);
+            background-color: var(--gitako-branch-name-bg);
+          }
+        }
+
+        .close-side-bar-button-position {
+          position: absolute;
+          right: 6px;
+          top: 0;
+          height: 100%;
+          display: inline-flex;
+          align-items: center;
+          .close-side-bar-button {
+            @include icon-button;
+            @include button-color;
+            width: $button-size;
+            height: $button-size;
+            border-radius: $button-size;
+
+            // feedback to click should be instant
+            &:not(:active) {
+              transition: background linear 0.3s;
+            }
+
+            .action-icon {
+              color: var(--gitako-icon-tertiary);
+              width: 20px;
+              height: 20px;
+              text-align: center;
+              .octicon {
+                width: 100%;
+                height: 100%;
+              }
+            }
+          }
+        }
+      }
+
+      .description {
+        border-top: 1px solid var(--gitako-border-overlay);
+        padding: 4px 10px;
+      }
+
+      .loading-indicator-container {
+        width: 100%;
+        height: 100%;
+        @include flex-center();
+        border-top: 1px solid var(--gitako-border-overlay);
+
+        .loading-indicator {
+          display: flex;
+          align-items: center;
+          color: var(--gitako-text-placeholder);
+
+          &-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 4px;
+
+            .octicon {
+              width: 20px;
+              height: 20px;
+              animation: pulse-rotate 1.8s infinite ease;
+            }
+          }
+        }
+      }
+
+      .file-explorer {
+        width: 100%;
+        height: 100%;
+        outline: none;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        &.freeze {
+          filter: blur(1.5px) opacity(0.6) grayscale(0.9);
+          cursor: pointer;
+
+          > * {
+            pointer-events: none;
+            user-select: none;
+          }
+        }
+
+        /* search input */
+        .search-input-wrapper {
+          .search-input {
+            width: 100%;
+            box-shadow: none; // stay low
+            border-color: var(--gitako-border-overlay);
+            border-radius: 0; // its rounded corner not match with nearby elements
+            color: var(--gitako-text-primary);
+            background: var(--gitako-bg-canvas);
+
+            &.error {
+              border-color: var(--gitako-border-danger);
+            }
+          }
+        }
+
+        .files {
+          flex: 1;
+          overflow: auto;
+          overflow-x: hidden; // prevent x-scroll bar show up while sizing
+        }
+
+        .node-item {
+          background: var(--gitako-bg-primary);
+          &.focused,
+          &:hover {
+            background: var(--gitako-bg-tertiary);
+          }
+          &:active {
+            background: var(--gitako-bg-secondary);
+          }
+
+          &.disabled {
+            .node-item {
+              pointer-events: none;
+              color: var(--gitako-text-disabled);
+            }
+          }
+          display: flex;
+          justify-content: space-between;
+          margin: 0;
+          color: var(--gitako-text-link);
+          line-height: 20px;
+          padding: 8px 10px;
+          cursor: pointer;
+          border-bottom: 1px solid var(--gitako-border-secondary);
+          white-space: nowrap;
+          transition: padding 0.3s ease; // on toggle expansion in search results
+
+          @mixin icon-size() {
+            width: 16px;
+            height: 16px;
+          }
+
+          .octicon-wrapper:first-child {
+            margin-right: 6px;
+          }
+
+          &-type-icon {
+            margin-right: 4px;
+            width: 16px;
+            // not specify height here, it'll break vertical alignment
+
+            & + .octicon-wrapper,
+            & + .node-item-icon {
+              margin-right: 6px;
+            }
+          }
+
+          &-icon {
+            @include icon-size();
+            object-fit: contain;
+            vertical-align: text-bottom;
+            box-sizing: content-box;
+
+            &.dim {
+              filter: sepia(1) hue-rotate(180deg);
+            }
+          }
+
+          // folder icon rotate when expand
+          &.expanded .octicon.ChevronRight {
+            transform: rotate(90deg);
+          }
+
+          .node-item-label {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            align-items: center;
+          }
+
+          .go-to-button {
+            white-space: nowrap;
+            background: transparent;
+            border: none;
+            padding: 0;
+          }
+          &:not(:hover) {
+            .go-to-button {
+              display: none;
+            }
+          }
+        }
+      }
+    }
+
+    .#{$name}-settings-bar {
+      z-index: 2;
+      background: var(--gitako-bg-tertiary);
+      display: flex;
+      flex-direction: column;
+      max-height: calc(100vh - 120px);
+      &-title {
+        border-top: 1px solid var(--gitako-border-secondary);
+        padding: 10px;
+        box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.2), 0 3px 4px 0 rgba(0, 0, 0, 0.14),
+          0 3px 3px -2px rgba(0, 0, 0, 0.12);
+        z-index: 1;
+      }
+      &-content {
+        padding: 10px 10px;
+        flex: 1;
+        overflow: auto;
+        position: relative;
+
+        .shadow-shelter {
+          position: absolute;
+          width: 100%;
+          height: 10px;
+          top: 0;
+          left: 0;
+          background: var(--gitako-bg-tertiary);
+          z-index: 1;
+        }
+        .settings-section {
+          &:not(:last-of-type) {
+            margin-bottom: 30px;
+          }
+
+          .field {
+            margin-bottom: 8px;
+
+            .help {
+              cursor: help;
+            }
+
+            label {
+              display: inline-block;
+              margin-bottom: 0px;
+              font-weight: 600;
+            }
+            input {
+              &:disabled {
+                cursor: not-allowed;
+              }
+            }
+            select {
+              width: 100%;
+              -moz-appearance: menulist-button;
+              // make it look like text inputs
+              height: 36px;
+              border-radius: 6px;
+              border: 1px solid var(--gitako-input-border);
+              background: var(--gitako-input-bg);
+              color: var(--gitako-text-primary);
+              box-shadow: var(--gitako-input-shadow);
+            }
+            &.field-checkbox {
+              padding-left: 20px;
+              vertical-align: middle;
+              label {
+                margin-bottom: 0;
+              }
+
+              input[type='checkbox'],
+              input[type='radio'] {
+                float: left;
+                margin: 5px 0 0 -20px;
+                vertical-align: middle;
+              }
+            }
+          }
+        }
+      }
+      .link-button {
+        cursor: pointer;
+        display: inline-block;
+        margin-bottom: 4px;
+      }
+      .hint {
+        color: var(--gitako-text-placeholder);
+      }
+      .access-token-input-control {
+        display: flex;
+        .access-token-input {
+          flex: 1;
+          @include input();
+        }
+      }
+      .toggle-shortcut-input-control {
+        display: flex;
+        .toggle-shortcut-input {
+          flex: 1;
+          @include input();
+        }
+      }
+      .header-row {
+        flex-shrink: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 2px 6px 2px 10px;
+        border-top: 1px solid var(--gitako-border-secondary);
+
+        .version {
+          color: var(--gitako-text-tertiary);
+        }
+
+        .header-right {
+          display: flex;
+          align-items: center;
+          user-select: none;
+          cursor: help; // Will this make user hover for more time to see the tooltip?
+        }
+
+        .settings-button {
+          @include icon-button();
+          @include button-color();
+          $size: 32px;
+          width: $size;
+          height: $size;
+          border-radius: $size;
+
+          .octicon-wrapper {
+            width: 18px;
+          }
+        }
+      }
+    }
+  }
+}
+
+// gitee
+.git-project {
+  // reset styles
+  .#{$name}-side-bar {
+    input[type='text'],
+    input[type='password'],
+    .ui-autocomplete-input,
+    textarea,
+    .uneditable-input {
+      padding: initial;
+      border: none;
+    }
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotateZ(0);
+  }
+  to {
+    transform: rotateZ(360deg);
+  }
+}
+
+@keyframes pulse-rotate {
+  0% {
+    transform: rotateZ(0);
+  }
+  20% {
+    transform: rotateZ(190deg);
+  }
+  30% {
+    transform: rotateZ(175deg);
+  }
+  50% {
+    transform: rotateZ(180deg);
+  }
+  70% {
+    transform: rotateZ(370deg);
+  }
+  80% {
+    transform: rotateZ(355deg);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
+}

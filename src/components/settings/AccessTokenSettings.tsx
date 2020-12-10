@@ -102,7 +102,6 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
           )}
           <div className={'access-token-input-control'}>
             <TextInput
-              backgroundColor="#fff"
               marginRight={1}
               className={'access-token-input'}
               value={accessToken}

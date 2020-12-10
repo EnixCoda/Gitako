@@ -41,7 +41,6 @@ export function SidebarSettings(props: React.PropsWithChildren<Props>) {
         <div className={'toggle-shortcut-input-control'}>
           <TextInput
             id="toggle-sidebar-shortcut"
-            backgroundColor="#fff"
             marginRight={1}
             className={'toggle-shortcut-input'}
             onFocus={() => focused.set(true)}

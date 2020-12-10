@@ -9,7 +9,7 @@ type Props = {
 export function MetaBar({ metaData: { userName, repoName, branchName, repoUrl, userUrl } }: Props) {
   return (
     <Flex flexDirection="column" justifyContent="space-between" className={'meta-bar'}>
-      <Breadcrumb>
+      <Breadcrumb className={'user-and-repo'}>
         <Breadcrumb.Item href={userUrl}>{userName}</Breadcrumb.Item>
         <Breadcrumb.Item href={repoUrl}>
           <Text fontWeight="bolder">{repoName}</Text>
@@ -19,7 +19,7 @@ export function MetaBar({ metaData: { userName, repoName, branchName, repoUrl, u
         <div className={'octicon-wrapper'}>
           <GitBranchIcon size="small" />
         </div>
-        <BranchName as="span" backgroundColor="blue.0">
+        <BranchName as="span" className={'branch-name'}>
           {branchName || '...'}
         </BranchName>
       </Flex>

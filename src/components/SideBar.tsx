@@ -23,6 +23,7 @@ import { loadWithPJAX, useOnPJAXDone, usePJAX } from 'utils/hooks/usePJAX'
 import { useProgressBar } from 'utils/hooks/useProgressBar'
 import * as keyHelper from 'utils/keyHelper'
 import { Icon } from './Icon'
+import { Theme } from './Theme'
 
 const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
   const configContext = useConfigs()
@@ -111,48 +112,50 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
     toggleShowSettings,
   } = props
   return (
-    <div className={'gitako-side-bar'}>
-      <Portal into={logoContainerElement}>
-        {!shouldShow && (
-          <ToggleShowButton error={error} onClick={error ? undefined : toggleShowSideBar} />
-        )}
-      </Portal>
-      <Resizable className={cx({ hidden: error || !shouldShow })} baseSize={baseSize}>
-        <div className={'gitako-side-bar-body'}>
-          <div className={'gitako-side-bar-content'}>
-            <div className={'header'}>
-              {metaData ? <MetaBar metaData={metaData} /> : <div />}
-              <div className={'close-side-bar-button-position'}>
-                <button className={'close-side-bar-button'} onClick={toggleShowSideBar}>
-                  <Icon className={'action-icon'} type={'x'} />
-                </button>
+    <Theme>
+      <div className={'gitako-side-bar'}>
+        <Portal into={logoContainerElement}>
+          {!shouldShow && (
+            <ToggleShowButton error={error} onClick={error ? undefined : toggleShowSideBar} />
+          )}
+        </Portal>
+        <Resizable className={cx({ hidden: error || !shouldShow })} baseSize={baseSize}>
+          <div className={'gitako-side-bar-body'}>
+            <div className={'gitako-side-bar-content'}>
+              <div className={'header'}>
+                {metaData ? <MetaBar metaData={metaData} /> : <div />}
+                <div className={'close-side-bar-button-position'}>
+                  <button className={'close-side-bar-button'} onClick={toggleShowSideBar}>
+                    <Icon className={'action-icon'} type={'x'} />
+                  </button>
+                </div>
               </div>
+              {errorDueToAuth ? (
+                <AccessDeniedError hasToken={Boolean(accessToken)} />
+              ) : (
+                metaData && (
+                  <FileExplorer
+                    toggleShowSettings={toggleShowSettings}
+                    metaData={metaData}
+                    treeRoot={treeRoot}
+                    freeze={showSettings}
+                    accessToken={accessToken}
+                    loadWithPJAX={loadWithPJAX}
+                    config={configContext.val}
+                    defer={defer}
+                  />
+                )
+              )}
             </div>
-            {errorDueToAuth ? (
-              <AccessDeniedError hasToken={Boolean(accessToken)} />
-            ) : (
-              metaData && (
-                <FileExplorer
-                  toggleShowSettings={toggleShowSettings}
-                  metaData={metaData}
-                  treeRoot={treeRoot}
-                  freeze={showSettings}
-                  accessToken={accessToken}
-                  loadWithPJAX={loadWithPJAX}
-                  config={configContext.val}
-                  defer={defer}
-                />
-              )
-            )}
+            <SettingsBar
+              defer={defer}
+              toggleShowSettings={toggleShowSettings}
+              activated={showSettings}
+            />
           </div>
-          <SettingsBar
-            defer={defer}
-            toggleShowSettings={toggleShowSettings}
-            activated={showSettings}
-          />
-        </div>
-      </Resizable>
-    </div>
+        </Resizable>
+      </div>
+    </Theme>
   )
 }
 

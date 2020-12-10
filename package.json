@@ -17,8 +17,8 @@
     "test": "NODE_ENV=test jest"
   },
   "dependencies": {
-    "@primer/components": "^20.0.0",
-    "@primer/css": "^14.4.0",
+    "@primer/components": "^22.0.2",
+    "@primer/css": "^15.2.0",
     "@primer/octicons-react": "^10.0.0",
     "@sentry/browser": "^5.12.1",
     "@types/history": "^4.7.5",
