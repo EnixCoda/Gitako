@@ -233,21 +233,36 @@ export function generateDarkTheme() {
   return theme
 }
 
+const getIsPreferDarkTheme = () => {
+  const colorMode = document.documentElement.dataset.colorMode
+  return (
+    colorMode === 'dark' ||
+    (colorMode === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+  )
+}
 // No need to watch the property as it does not change in repo pages
-function useDocumentTheme() {
-  const [theme] = React.useState(() => document.documentElement.dataset.colorMode)
-  return theme
+function usePreferDarkTheme() {
+  const [is, setIs] = React.useState(getIsPreferDarkTheme)
+  React.useEffect(() => {
+    const update = () => {
+      console.log(`updating color scheme`)
+      setIs(getIsPreferDarkTheme())
+    }
+    const match = window.matchMedia('(prefers-color-scheme: dark)')
+    match.addEventListener('change', update)
+    return () => match.removeEventListener('change', update)
+  }, [])
+  return is
 }
 
-function useWrappedTheme() {
-  const docTheme = useDocumentTheme()
-  const [wrapped] = React.useState(() => {
-    return docTheme === 'dark' ? generateDarkTheme() : theme
-  })
-  return wrapped
+function useThemeConfig() {
+  const preferDarkTheme = usePreferDarkTheme()
+  return React.useMemo(() => {
+    return preferDarkTheme ? generateDarkTheme() : theme
+  }, [preferDarkTheme])
 }
 
 export function Theme({ children }: React.PropsWithChildren<{}>) {
-  const theme = useWrappedTheme()
+  const theme = useThemeConfig()
   return <ThemeProvider theme={theme}>{children}</ThemeProvider>
 }
