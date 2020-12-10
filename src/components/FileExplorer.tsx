@@ -217,7 +217,7 @@ function ListView({
       itemKey={(index, { visibleNodes }) => visibleNodes?.nodes[index]?.path}
       itemData={itemData}
       itemCount={visibleNodes.nodes.length}
-      itemSize={36}
+      itemSize={37}
       height={height}
       width={width}
     >
