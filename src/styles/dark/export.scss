@@ -568,7 +568,7 @@
 }
 
 // How to merge the selectors?
-// Is it possible to not have two copy of dark theme variables?
+// Is it possible to not have two copies of dark theme variables?
 @media (prefers-color-scheme: dark) {
   :root[data-color-mode='auto'] {
     @include assign();

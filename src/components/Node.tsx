@@ -62,11 +62,11 @@ export function Node({
       <div className={'node-item-label'}>
         <NodeItemIcon node={node} open={expanded} loading={loading} />
         {name.includes('/') ? (
-          name.split('/').map((chunk, index) => (
-            <React.Fragment key={chunk}>
-              {index > 0 && '/'}
+          name.split('/').map((chunk, index, arr) => (
+            <span key={chunk} className={cx({ prefix: index + 1 !== arr.length })}>
               <Highlight match={regex} text={chunk} />
-            </React.Fragment>
+              {index + 1 !== arr.length && '/'}
+            </span>
           ))
         ) : (
           <Highlight match={regex} text={name} />

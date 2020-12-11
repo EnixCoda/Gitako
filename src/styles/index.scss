@@ -478,21 +478,22 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           }
 
           &.disabled {
-            .node-item {
               pointer-events: none;
               color: var(--gitako-text-disabled);
             }
-          }
           display: flex;
           justify-content: space-between;
+          align-items: center;
           margin: 0;
-          color: var(--gitako-text-link);
           line-height: 20px;
-          padding: 8px 10px;
           cursor: pointer;
           border-bottom: 1px solid var(--gitako-border-secondary);
           white-space: nowrap;
           transition: padding 0.3s ease; // on toggle expansion in search results
+
+          &:not(:hover) {
+            color: var(--gitako-text-primary);
+          }
 
           @mixin icon-size() {
             width: 16px;
@@ -536,11 +537,22 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
             align-items: center;
           }
 
+          &:not(:hover) {
+            .node-item-label .prefix {
+              color: var(--gitako-text-tertiary);
+            }
+          }
+
           .go-to-button {
+            @include icon-button();
+            @include button-color();
+            width: 28px;
+            height: 28px;
+            border-radius: 28px;
             white-space: nowrap;
-            background: transparent;
-            border: none;
-            padding: 0;
+            .octicon-wrapper {
+              margin-right: 0;
+            }
           }
           &:not(:hover) {
             .go-to-button {
