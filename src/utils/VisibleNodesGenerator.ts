@@ -290,7 +290,11 @@ class FlattenLayer extends CompressLayer {
         [rootNode],
         async node => {
           const overflowChar = node.path[path.length + 1]
-          const match = path.startsWith(node.path) && (overflowChar === '/' || !overflowChar)
+          const nextChar = path.slice(node.path.length, node.path.length + 1) 
+          const match =
+            path.startsWith(node.path) &&
+            (overflowChar === '/' || !overflowChar) &&
+            (!node.path || nextChar === '/' || !nextChar)
           if (node.path) {
             // rootNode.path === ''
             if (match) {
