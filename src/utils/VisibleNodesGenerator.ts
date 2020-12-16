@@ -287,22 +287,15 @@ class FlattenLayer extends CompressLayer {
     const rootNode = this.compressedRoot
     if (rootNode) {
       await traverse(
-        [rootNode],
+        rootNode.contents,
         async node => {
-          const overflowChar = node.path[path.length + 1]
-          const nextChar = path.slice(node.path.length, node.path.length + 1) 
-          const match =
-            path.startsWith(node.path) &&
-            (overflowChar === '/' || !overflowChar) &&
-            (!node.path || nextChar === '/' || !nextChar)
-          if (node.path) {
-            // rootNode.path === ''
-            if (match) {
-              if (node.path === path) {
-                // do not wait for expansion for the exact node as that will block "jumping from search"
-                this.$setExpand(node, true)
-              } else await this.$setExpand(node, true)
-            }
+          const overflowChar = path[node.path.length]
+          const match = path.startsWith(node.path) && (overflowChar === '/' || !overflowChar)
+          if (match) {
+            if (node.path === path) {
+              // do not wait for expansion for the exact node as that will block "jumping from search"
+              this.$setExpand(node, true)
+            } else await this.$setExpand(node, true)
           }
           return match
         },
