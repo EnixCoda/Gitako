@@ -1,5 +1,6 @@
 import { dummyPlatformForTypeSafety } from './dummyPlatformForTypeSafety'
 import { Gitee } from './Gitee'
+import { Gitea } from './Gitea'
 import { GitHub } from './GitHub'
 
 const platforms: {
@@ -7,6 +8,7 @@ const platforms: {
 } = {
   GitHub: GitHub,
   Gitee: Gitee,
+  Gitea: Gitea,
 }
 
 function resolvePlatform() {
