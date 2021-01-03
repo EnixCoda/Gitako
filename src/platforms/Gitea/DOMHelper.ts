@@ -14,7 +14,7 @@ export function isInCodePage() {
 export function getCurrentBranch() {
   const branchListSelector = '.reference'
   const branchButtonElement: HTMLElement = $(branchListSelector)
-  const branchNameElement = branchButtonElement.querySelector('.selected')
+  const branchNameElement = branchButtonElement.querySelector('.text > strong')
   if (branchNameElement) {
     return branchNameElement.textContent;
   }
