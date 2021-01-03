@@ -68,7 +68,7 @@ function getUrlForRedirect(
   // `path => path.includes('#') ? path.replace(/#/g, '%23') : '...'
   return `https://${
     window.location.host
-  }/${userName}/${repoName}/${type}/${branchName}/${path
+  }/${userName}/${repoName}/src/branch/${branchName}/${path
     .split('/')
     .map(encodeURIComponent)
     .join('/')}`
