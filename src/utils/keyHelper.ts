@@ -1,5 +1,5 @@
 const keyCodeArray = [
-  ...'1234567890abcdefghijklmnopqrstuvwxyz'.split(''),
+  ...'1234567890abcdefghijklmnopqrstuvwxyz§'.split(''),
   ..."`[]\\;',./".split(''),
   'alt',
   'shift',
