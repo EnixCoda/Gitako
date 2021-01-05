@@ -8,6 +8,8 @@ const config: Config = {
     '.repository-content',
     // gitee
     '#git-project-content',
+    // gitea
+    '.repository > .ui.container'
   ],
   update: {
     css: false,
