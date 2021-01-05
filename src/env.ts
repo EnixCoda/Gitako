@@ -8,4 +8,8 @@ export const GITEE_OAUTH = {
   clientId: process.env.GITEE_OAUTH_CLIENT_ID || '',
 }
 
+export const GITEA_OAUTH = {
+  clientId: process.env.GITEA_OAUTH_CLIENT_ID || '',
+}
+
 export const VERSION = process.env.VERSION

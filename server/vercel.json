@@ -4,6 +4,7 @@
     { "src": "/redirect/?", "dest": "/api/redirect.ts" },
     { "src": "/oauth/github/?", "dest": "/api/github.ts" },
     { "src": "/oauth/gitee/?", "dest": "/api/gitee.ts" },
+    { "src": "/oauth/gitea/?", "dest": "/api/gitea.ts" },
     { "src": "/", "dest": "/api/index.ts" }
   ]
 }

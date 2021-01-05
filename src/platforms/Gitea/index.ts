@@ -1,4 +1,4 @@
-import { platform } from 'platforms'
+import { GITEA_OAUTH } from 'env'
 import { resolveGitModules } from 'utils/gitSubmodule'
 import { sortFoldersToFront } from 'utils/treeParser'
 import * as API from './API'
@@ -76,7 +76,7 @@ function getUrlForRedirect(
 
 export const Gitea: Platform = {
   isEnterprise() {
-    return false;
+    return false
   },
   resolveMeta() {
     if (!DOMHelper.isInRepoPage()) {
@@ -106,6 +106,9 @@ export const Gitea: Platform = {
   async getTreeData(metaData, path, recursive, accessToken) {
     const { userName, repoName, branchName } = metaData
     const treeData = await API.getTreeData(userName, repoName, branchName, recursive)
+
+    // No APIs for PR files found
+    // if (pullId) {}
 
     const root = processTree(
       treeData.tree.map(item => ({
@@ -155,6 +158,12 @@ export const Gitea: Platform = {
     return API.OAuth(code)
   },
   getOAuthLink() {
-    return `https://${window.location.host}/api/v1/user/applications/oauth2`
+    const params = new URLSearchParams({
+      client_id: GITEA_OAUTH.clientId,
+      // scope: 'repo', // not supported by Gitea yet
+      redirect_uri: window.location.href,
+      response_type: 'code',
+    })
+    return `https://${window.location.host}/login/oauth/authorize?` + params.toString()
   },
 }

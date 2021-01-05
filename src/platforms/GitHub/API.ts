@@ -155,8 +155,6 @@ export async function OAuth(code: string): Promise<string | null> {
       const accessToken = body?.accessToken
       if (typeof accessToken === 'string') return accessToken
     }
-    return null
-  } catch (err) {
-    return null
-  }
+  } catch (err) {}
+  return null
 }
