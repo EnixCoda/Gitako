@@ -2,6 +2,7 @@ import { Button, Text, TextInput } from '@primer/components'
 import { wikiLinks } from 'components/settings/SettingsBar'
 import { useConfigs } from 'containers/ConfigsContext'
 import { platform } from 'platforms'
+import { Gitea } from 'platforms/Gitea'
 import { Gitee } from 'platforms/Gitee'
 import * as React from 'react'
 import { useStates } from 'utils/hooks/useStates'
@@ -82,7 +83,10 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
         </div>
       ) : (
         <div>
-          {platform === Gitee ? (
+          {platform === Gitea ? (
+            // TODO
+            <Text>Note: OAuth for Gitea is unavailable</Text>
+          ) : platform === Gitee ? (
             // disabled for Gitee as it does not support dynamic redirect_uri
             <Text>Note: OAuth for Gitee is unavailable</Text>
           ) : (
