@@ -1,6 +1,9 @@
 const keyCodeArray = [
   ...'1234567890abcdefghijklmnopqrstuvwxyz'.split(''),
-  ..."`[]\\;',./".split(''),
+  /* the key that's located left to the 1 key in Mac
+     keybords in multiple Engligh laybouts (Backquote) */
+  ...'`§'.split(''),
+  ..."[]\\;',./".split(''),
   'alt',
   'shift',
   'ctrl',
