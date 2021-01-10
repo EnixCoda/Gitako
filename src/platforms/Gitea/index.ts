@@ -1,4 +1,3 @@
-import { platform } from 'platforms'
 import { resolveGitModules } from 'utils/gitSubmodule'
 import { sortFoldersToFront } from 'utils/treeParser'
 import * as API from './API'
@@ -76,7 +75,7 @@ function getUrlForRedirect(
 
 export const Gitea: Platform = {
   isEnterprise() {
-    return false;
+    return !window.location.host.endsWith('gitea.com')
   },
   resolveMeta() {
     if (!DOMHelper.isInRepoPage()) {
