@@ -6,5 +6,5 @@ export function useOnLocationChange(
   extraDeps: React.DependencyList = [],
 ) {
   const { href, pathname, search } = useLocation()
-  React.useEffect(callback, [href, pathname, search, ...extraDeps])
+  React.useEffect(callback, [href, pathname, search, callback, ...extraDeps])
 }
