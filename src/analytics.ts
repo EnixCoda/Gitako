@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/browser'
 import { Middleware } from 'driver/connect.js'
 import { IN_PRODUCTION_MODE, VERSION } from 'env'
+import { platform } from 'platforms'
 
 const PUBLIC_KEY = 'd22ec5c9cc874539a51c78388c12e3b0'
 const PROJECT_ID = '1406497'
@@ -54,10 +55,6 @@ const sentryOptions: Sentry.BrowserOptions = {
 }
 Sentry.init(sentryOptions)
 
-export function raiseError(error: Error, extra?: any) {
-  return reportError(error, extra)
-}
-
 export const withErrorLog: Middleware = function withErrorLog(method, args) {
   return [
     async function (...args: any[]) {
@@ -71,13 +68,14 @@ export const withErrorLog: Middleware = function withErrorLog(method, args) {
   ]
 }
 
-function reportError(
+export function raiseError(
   error: Error,
   extra?: {
     [key: string]: any
   },
 ) {
-  if (!IN_PRODUCTION_MODE) {
+  if (!IN_PRODUCTION_MODE || platform.isEnterprise()) {
+    // ignore errors from enterprise to get less noise on Sentry
     console.error(error)
     console.error('Extra:\n', extra)
     return
