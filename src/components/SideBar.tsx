@@ -27,7 +27,7 @@ import { Theme } from './Theme'
 
 const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
   const configContext = useConfigs()
-  const accessToken = props.configContext.val.access_token
+  const accessToken = props.configContext.val.accessToken
   const [baseSize] = React.useState(() => configContext.val.sideBarWidth)
 
   const { shrinkGitHubHeader } = configContext.val
@@ -52,8 +52,8 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
     const { init } = props
     ;(async function () {
       if (!accessToken) {
-        const accessToken = await trySetUpAccessTokenWithCode()
-        configContext.set({ access_token: accessToken || undefined })
+        const accessToken = (await trySetUpAccessTokenWithCode()) || undefined
+        configContext.set({ accessToken })
       }
       init()
     })()

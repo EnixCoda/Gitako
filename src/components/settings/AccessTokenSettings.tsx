@@ -14,7 +14,7 @@ type Props = {}
 
 export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
   const configContext = useConfigs()
-  const hasAccessToken = Boolean(configContext.val.access_token)
+  const hasAccessToken = Boolean(configContext.val.accessToken)
   const useAccessToken = useStates('')
   const useAccessTokenHint = useStates<React.ReactNode>('')
   const focusInput = useStates(false)
@@ -25,7 +25,7 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
   React.useEffect(() => {
     // clear input when access token updates
     useAccessToken.set('')
-  }, [configContext.val.access_token])
+  }, [configContext.val.accessToken])
 
   const onInputAccessToken = React.useCallback(
     ({ currentTarget: { value } }: React.FormEvent<HTMLInputElement>) => {
@@ -44,7 +44,7 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
   const saveToken = React.useCallback(
     async (hint?: typeof useAccessTokenHint.val) => {
       if (accessToken) {
-        configContext.set({ access_token: accessToken })
+        configContext.set({ accessToken })
         useAccessToken.set('')
         useAccessTokenHint.set(
           hint || (
@@ -79,7 +79,7 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
       {hasAccessToken ? (
         <div>
           <Text as="p">Your token has been saved.</Text>
-          <Button onClick={() => configContext.set({ access_token: '' })}>Clear</Button>
+          <Button onClick={() => configContext.set({ accessToken: '' })}>Clear</Button>
         </div>
       ) : (
         <div>

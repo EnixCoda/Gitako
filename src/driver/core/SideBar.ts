@@ -64,7 +64,7 @@ export const init: BoundMethodCreator = dispatch => async () => {
     const {
       props: { configContext },
     } = dispatch.get()
-    const { access_token: accessToken } = configContext.val
+    const { accessToken } = configContext.val
 
     if (!metaData.userName || !metaData.repoName) return
     const guessDefaultBranch = 'master'
@@ -152,7 +152,7 @@ export const handleError: BoundMethodCreator<[Error]> = dispatch => async err =>
     dispatch.set({ errorDueToAuth: true })
   } else if (err.message === errors.CONNECTION_BLOCKED) {
     const { props } = dispatch.get()
-    if (props.configContext.val.access_token) {
+    if (props.configContext.val.accessToken) {
       dispatch.call(setError, `Cannot connect to ${platformName}.`)
     } else {
       dispatch.set({ errorDueToAuth: true })
@@ -181,9 +181,9 @@ export const toggleShowSideBar: BoundMethodCreator = dispatch => () => {
   }
 }
 
-export const setShouldShow: BoundMethodCreator<[
-  ConnectorState['shouldShow'],
-]> = dispatch => shouldShow => {
+export const setShouldShow: BoundMethodCreator<
+  [ConnectorState['shouldShow']]
+> = dispatch => shouldShow => {
   dispatch.set({ shouldShow }, shouldShow ? DOMHelper.focusFileExplorer : undefined)
   DOMHelper.setBodyIndent(shouldShow)
 }

@@ -3,7 +3,7 @@ import * as storageHelper from 'utils/storageHelper'
 export type Config = {
   sideBarWidth: number
   shortcut: string | undefined
-  access_token: string | undefined
+  accessToken: string | undefined
   compressSingletonFolder: boolean
   copyFileButton: boolean
   copySnippetButton: boolean
@@ -18,7 +18,7 @@ export type Config = {
 export enum configKeys {
   sideBarWidth = 'sideBarWidth',
   shortcut = 'shortcut',
-  accessToken = 'access_token',
+  accessToken = 'accessToken',
   compressSingletonFolder = 'compressSingletonFolder',
   copyFileButton = 'copyFileButton',
   copySnippetButton = 'copySnippetButton',
@@ -33,7 +33,7 @@ export enum configKeys {
 const defaultConfigs: Config = {
   sideBarWidth: 260,
   shortcut: undefined,
-  access_token: undefined,
+  accessToken: undefined,
   compressSingletonFolder: true,
   copyFileButton: true,
   copySnippetButton: true,
@@ -55,6 +55,8 @@ function applyDefaultConfigs(configs: Partial<Config>) {
   }, {} as Config)
 }
 
+type VersionedConfig<SiteConfig> = Record<string, SiteConfig> & { configVersion: string }
+
 type Storage = {
   // save root level `configVersion` for easier future migrating
   [key in 'configVersion' | string]: string
@@ -73,7 +75,7 @@ async function migrateConfig() {
     {
       version: '1.0.1',
       async migrate(version) {
-        const config: any | void = await storageHelper.get<Config | Storage>([
+        const config: any | void = await storageHelper.get<Storage>([
           'configVersion',
           'sideBarWidth',
           'shortcut',
@@ -92,7 +94,7 @@ async function migrateConfig() {
     {
       version: '1.3.4',
       async migrate(version) {
-        const config: any | void = await storageHelper.get<Config | Storage>([
+        const config: any | void = await storageHelper.get<VersionedConfig<Config> & Storage>([
           'configVersion',
           'platform_undefined', // this was a mistake :(
           'platform_GitHub',
@@ -107,6 +109,42 @@ async function migrateConfig() {
         ) {
           await storageHelper.set({
             ['platform_github.com']: config.platform_GitHub || config.platform_undefined,
+            configVersion: version,
+          })
+        }
+      },
+    },
+    {
+      version: '2.6.0',
+      async migrate(version) {
+        type LegacySiteConfig = {
+          access_token?: string
+        }
+        type MigratedSiteConfig = {
+          accessToken?: string
+        }
+
+        const config = await storageHelper.get<VersionedConfig<LegacySiteConfig> & Storage>()
+        if (config && config.configVersion < version) {
+          const { configVersion, ...restConfig } = config
+          for (const key of Object.keys(restConfig)) {
+            if (
+              typeof restConfig[key] === 'object' &&
+              restConfig[key] &&
+              'access_token' in restConfig[key]
+            ) {
+              const config: LegacySiteConfig = restConfig[key]
+              const { access_token: accessToken, ...legacy } = config
+              const migrated: MigratedSiteConfig = {
+                ...legacy,
+                accessToken,
+              }
+              await storageHelper.set({
+                [key]: migrated,
+              })
+            }
+          }
+          await storageHelper.set({
             configVersion: version,
           })
         }
@@ -129,7 +167,7 @@ const prepareConfig = new Promise(async resolve => {
 export async function get(): Promise<Config> {
   await prepareConfig
   const config = await storageHelper.get<Record<string, Config>>([platformStorageKey])
-  return applyDefaultConfigs((config && config[platformStorageKey]) || {})
+  return applyDefaultConfigs(config?.[platformStorageKey] || {})
 }
 
 export async function set(config: Config) {

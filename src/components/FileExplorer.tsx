@@ -37,7 +37,7 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
   React.useEffect(() => {
     const { setUpTree, treeRoot, metaData } = props
     setUpTree({ treeRoot, metaData, config })
-  }, [setUpTree, treeRoot, config.compressSingletonFolder, config.access_token])
+  }, [setUpTree, treeRoot, config.compressSingletonFolder, config.accessToken])
 
   React.useEffect(() => {
     if (visibleNodes?.focusedNode) focusFileExplorer()

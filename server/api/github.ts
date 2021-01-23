@@ -19,7 +19,7 @@ async function oauth(code: string) {
   })
 
   const body = await res.json()
-  const { access_token: accessToken, scope, error_description: errorDescription } = body
+  const { accessToken, scope, error_description: errorDescription } = body
   if (errorDescription) {
     throw new Error(errorDescription)
   } else if (scope !== 'repo' || !accessToken || !(typeof accessToken === 'string')) {

@@ -45,9 +45,9 @@ let visibleNodesGenerator: VisibleNodesGenerator
 
 type BoundMethodCreator<Args extends any[] = []> = MethodCreator<Props, ConnectorState, Args>
 
-export const setUpTree: BoundMethodCreator<[
-  Pick<Props, 'treeRoot' | 'metaData'> & { config: Config },
-]> = dispatch => async ({ treeRoot, metaData, config }) => {
+export const setUpTree: BoundMethodCreator<
+  [Pick<Props, 'treeRoot' | 'metaData'> & { config: Config }]
+> = dispatch => async ({ treeRoot, metaData, config }) => {
   if (!treeRoot) return
   dispatch.set({ state: 'rendering' })
 
@@ -57,7 +57,7 @@ export const setUpTree: BoundMethodCreator<[
     root: treeRoot,
     compress: compressSingletonFolder,
     async getTreeData(path) {
-      const { root } = await platform.getTreeData(metaData, path, false, config.access_token)
+      const { root } = await platform.getTreeData(metaData, path, false, config.accessToken)
       return root
     },
   })
@@ -205,12 +205,14 @@ export const setExpand: BoundMethodCreator<[TreeNode, boolean]> = dispatch => as
   dispatch.call(focusNode, node)
 }
 
-export const toggleNodeExpansion: BoundMethodCreator<[
-  TreeNode,
-  {
-    recursive?: boolean
-  },
-]> = dispatch => async (node, { recursive = false }) => {
+export const toggleNodeExpansion: BoundMethodCreator<
+  [
+    TreeNode,
+    {
+      recursive?: boolean
+    },
+  ]
+> = dispatch => async (node, { recursive = false }) => {
   visibleNodesGenerator.focusNode(node)
   await visibleNodesGenerator.toggleExpand(node, recursive)
 }
@@ -221,10 +223,9 @@ export const focusNode: BoundMethodCreator<[TreeNode | null]> = dispatch => (
   visibleNodesGenerator.focusNode(node)
 }
 
-export const onNodeClick: BoundMethodCreator<[
-  React.MouseEvent<HTMLElement, MouseEvent>,
-  TreeNode,
-]> = dispatch => (event, node) => {
+export const onNodeClick: BoundMethodCreator<
+  [React.MouseEvent<HTMLElement, MouseEvent>, TreeNode]
+> = dispatch => (event, node) => {
   const preventDefault = !(node.type === 'blob' && node.url?.includes('#'))
   if (preventDefault) event.preventDefault()
 
