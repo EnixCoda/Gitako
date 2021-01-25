@@ -96,7 +96,7 @@ export const GitHub: Platform = {
       detectedBranchName = DOMHelper.getIssueTitle()
     } else if (
       DOMHelper.isInCodePage() &&
-      URLHelper.parse().type !== 'release' // resolve sentry issue #-CK
+      !['releases', 'tags'].includes(URLHelper.parse().type || '') // resolve sentry issue #-CK
     ) {
       // not working well with non-branch blob
       // cannot handle '/' split branch name, should not use when possibly on branch page
