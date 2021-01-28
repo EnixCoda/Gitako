@@ -129,7 +129,7 @@ export function getCodeElement() {
 export function attachCopyFileBtn() {
   if (getCurrentPageType() === PAGE_TYPES.RAW_TEXT) {
     // the button group in file content header
-    const buttonGroupSelector = '.repository-content > .Box > .Box-header .BtnGroup'
+    const buttonGroupSelector = '.repository-content .Box-header .BtnGroup'
     const buttonGroups = document.querySelectorAll(buttonGroupSelector)
 
     if (buttonGroups.length === 0) {
