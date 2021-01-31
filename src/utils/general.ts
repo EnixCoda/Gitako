@@ -187,3 +187,19 @@ export function withEffect<Method extends (...args: any[]) => any>(
 export function run<T>(fn: () => T) {
   return fn()
 }
+
+export function createPromiseQueue() {
+  let promise: Promise<void>
+  return {
+    async enter() {
+      let leave: () => void
+      const current = new Promise<void>(resolve => (leave = () => resolve()))
+
+      const lastPromise = promise
+      promise = current!
+      if (lastPromise) await lastPromise
+
+      return leave!
+    },
+  }
+}

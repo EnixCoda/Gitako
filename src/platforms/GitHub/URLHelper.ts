@@ -1,6 +1,8 @@
 import { raiseError } from 'analytics'
 
-export function parse(): Pick<MetaData, 'userName' | 'repoName' | 'type'> & { path: string[] } {
+export function parse(): Partial<Pick<MetaData, 'userName' | 'repoName' | 'type'>> & {
+  path: string[]
+} {
   const { pathname } = window.location
   let [
     ,

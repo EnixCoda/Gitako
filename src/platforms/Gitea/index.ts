@@ -82,15 +82,23 @@ export const Gitea: Platform = {
       return null
     }
 
-    let detectedBranchName
+    let branchName
     if (DOMHelper.isInCodePage()) {
-      detectedBranchName = DOMHelper.getCurrentBranch() || URLHelper.parseSHA()
+      branchName = DOMHelper.getCurrentBranch() || URLHelper.parseSHA()
+    }
+
+    const { userName, repoName, type } = URLHelper.parse()
+    if (!userName || !repoName) {
+      return null
     }
 
     const metaData = {
-      ...URLHelper.parse(),
-      branchName: detectedBranchName,
-    } as MetaData
+      userName,
+      repoName,
+      type,
+      branchName,
+    }
+
     return metaData
   },
   async getMetaData(partialMetaData, accessToken) {

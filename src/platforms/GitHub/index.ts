@@ -101,10 +101,17 @@ export const GitHub: Platform = {
       branchName = DOMHelper.getCurrentBranch() || URLHelper.parseSHA()
     }
 
+    const { userName, repoName, type } = URLHelper.parse()
+    if (!userName || !repoName) {
+      return null
+    }
+
     const metaData = {
-      ...URLHelper.parse(),
+      userName,
+      repoName,
+      type,
       branchName,
-    } as MetaData
+    }
     return metaData
   },
   async getMetaData({ userName, repoName }, accessToken) {
@@ -202,14 +209,14 @@ export const GitHub: Platform = {
       })),
     )
 
-    const gitModules = root.contents?.find(item => item.name === '.gitmodules')
-    if (gitModules) {
-      if (userName && repoName && gitModules.sha) {
-        const blobData = await API.getBlobData(userName, repoName, gitModules.sha, accessToken)
+    const gitModules = root.contents?.find(
+      item => item.type === 'blob' && item.name === '.gitmodules',
+    )
+    if (gitModules?.sha) {
+      const blobData = await API.getBlobData(userName, repoName, gitModules.sha, accessToken)
 
-        if (blobData && blobData.encoding === 'base64' && blobData.content) {
-          await resolveGitModules(root, Base64.decode(blobData.content))
-        }
+      if (blobData && blobData.encoding === 'base64' && blobData.content) {
+        await resolveGitModules(root, Base64.decode(blobData.content))
       }
     }
 
