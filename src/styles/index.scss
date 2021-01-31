@@ -303,7 +303,9 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
       font-size: 0;
     }
   }
+
   .#{$name}-side-bar-body {
+    $button-size: 32px;
     width: 100%;
     height: 100%;
     display: flex;
@@ -334,6 +336,37 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
       text-align: center;
     }
 
+    .close-side-bar-button-position {
+      position: absolute;
+      right: 6px;
+      top: 6px;
+      z-index: 1; // prevent being covered by following elements
+
+      .close-side-bar-button {
+        @include icon-button;
+        @include button-color;
+        width: $button-size;
+        height: $button-size;
+        border-radius: $button-size;
+
+        // feedback to click should be instant
+        &:not(:active) {
+          transition: background linear 0.3s;
+        }
+
+        .action-icon {
+          color: var(--gitako-icon-tertiary);
+          width: 20px;
+          height: 20px;
+          text-align: center;
+          .octicon {
+            width: 100%;
+            height: 100%;
+          }
+        }
+      }
+    }
+
     .#{$name}-side-bar-content {
       display: flex;
       flex: 1;
@@ -342,7 +375,6 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
       min-height: 0; // make content shrinkable
 
       .header {
-        $button-size: 32px;
         position: relative;
 
         .meta-bar {
@@ -362,38 +394,6 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
             padding: 4px 6px; // did not align well for some reason :/
             color: var(--gitako-branch-name-text);
             background-color: var(--gitako-branch-name-bg);
-          }
-        }
-
-        .close-side-bar-button-position {
-          position: absolute;
-          right: 6px;
-          top: 0;
-          height: 100%;
-          display: inline-flex;
-          align-items: center;
-          .close-side-bar-button {
-            @include icon-button;
-            @include button-color;
-            width: $button-size;
-            height: $button-size;
-            border-radius: $button-size;
-
-            // feedback to click should be instant
-            &:not(:active) {
-              transition: background linear 0.3s;
-            }
-
-            .action-icon {
-              color: var(--gitako-icon-tertiary);
-              width: 20px;
-              height: 20px;
-              text-align: center;
-              .octicon {
-                width: 100%;
-                height: 100%;
-              }
-            }
           }
         }
       }
@@ -478,9 +478,9 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           }
 
           &.disabled {
-              pointer-events: none;
-              color: var(--gitako-text-disabled);
-            }
+            pointer-events: none;
+            color: var(--gitako-text-disabled);
+          }
           display: flex;
           justify-content: space-between;
           align-items: center;

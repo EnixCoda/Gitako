@@ -107,15 +107,13 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
         </Portal>
         <Resizable className={cx({ hidden: error || !shouldShow })} baseSize={baseSize}>
           <div className={'gitako-side-bar-body'}>
+            <div className={'close-side-bar-button-position'}>
+              <button className={'close-side-bar-button'} onClick={toggleShowSideBar}>
+                <Icon className={'action-icon'} type={'x'} />
+              </button>
+            </div>
             <div className={'gitako-side-bar-content'}>
-              <div className={'header'}>
-                {metaData ? <MetaBar metaData={metaData} /> : <div />}
-                <div className={'close-side-bar-button-position'}>
-                  <button className={'close-side-bar-button'} onClick={toggleShowSideBar}>
-                    <Icon className={'action-icon'} type={'x'} />
-                  </button>
-                </div>
-              </div>
+              <div className={'header'}>{metaData ? <MetaBar metaData={metaData} /> : <div />}</div>
               {errorDueToAuth ? (
                 <AccessDeniedError hasToken={Boolean(accessToken)} />
               ) : (
