@@ -9,18 +9,18 @@ import './content.scss'
 if (platform.resolveMeta()) {
   addMiddleware(withErrorLog)
 
-  async function init() {
-    await injectStyles(browser.extension.getURL('content.css'))
-    const SideBarElement = document.createElement('div')
-    document.body.appendChild(SideBarElement)
-    ReactDOM.render(<Gitako />, SideBarElement)
-  }
-
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init)
   } else {
     init()
   }
+}
+
+async function init() {
+  await injectStyles(browser.extension.getURL('content.css'))
+  const SideBarElement = document.createElement('div')
+  document.body.appendChild(SideBarElement)
+  ReactDOM.render(<Gitako />, SideBarElement)
 }
 
 // injects a copy of stylesheets so that other extensions(e.g. dark reader) could read

@@ -51,11 +51,9 @@ export const setUpTree: BoundMethodCreator<
   if (!treeRoot) return
   dispatch.set({ state: 'rendering' })
 
-  const { compressSingletonFolder } = config
-
   visibleNodesGenerator = new VisibleNodesGenerator({
     root: treeRoot,
-    compress: compressSingletonFolder,
+    compress: config.compressSingletonFolder,
     async getTreeData(path) {
       const { root } = await platform.getTreeData(metaData, path, false, config.accessToken)
       return root

@@ -1,6 +1,6 @@
 import { raiseError } from 'analytics'
 
-export function parse(): Partial<MetaData> & { path: string[] } {
+export function parse(): Pick<MetaData, 'userName' | 'repoName' | 'type'> & { path: string[] } {
   const { pathname } = window.location
   let [
     ,
@@ -13,12 +13,13 @@ export function parse(): Partial<MetaData> & { path: string[] } {
   return {
     userName,
     repoName,
-    branchName: undefined,
     type,
     path,
   }
 }
 
+// not working well with non-branch blob
+// cannot handle '/' split branch name, should not use when possibly in branch page
 export function parseSHA() {
   const { type, path } = parse()
   return type === 'blob' || type === 'tree' ? path[0] : undefined

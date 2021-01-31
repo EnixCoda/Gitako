@@ -30,17 +30,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
   const accessToken = props.configContext.val.accessToken
   const [baseSize] = React.useState(() => configContext.val.sideBarWidth)
 
-  const { shrinkGitHubHeader } = configContext.val
-  React.useEffect(() => {
-    if (platform === GitHub) {
-      const ele = document.body
-      if (shrinkGitHubHeader) {
-        ele.classList.add('shrink-github-header')
-      } else {
-        ele.classList.remove('shrink-github-header')
-      }
-    }
-  }, [shrinkGitHubHeader])
+  useShrinkGitHubHeader(configContext.val.shrinkGitHubHeader)
 
   const intelligentToggle = configContext.val.intelligentToggle
   React.useEffect(() => {
@@ -167,6 +157,19 @@ RawGitako.defaultProps = {
 }
 
 export const SideBar = connect(SideBarCore)(RawGitako)
+
+function useShrinkGitHubHeader(shrinkGitHubHeader: boolean) {
+  React.useEffect(() => {
+    if (platform === GitHub) {
+      const target = document.body
+      if (shrinkGitHubHeader) {
+        target.classList.add('shrink-github-header')
+      } else {
+        target.classList.remove('shrink-github-header')
+      }
+    }
+  }, [shrinkGitHubHeader])
+}
 
 function AccessDeniedError({ hasToken }: { hasToken: boolean }) {
   return <AccessDeniedDescription hasToken={hasToken} />
