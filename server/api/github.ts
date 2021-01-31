@@ -23,7 +23,8 @@ async function oauth(code: string) {
   if (errorDescription) {
     throw new Error(errorDescription)
   } else if (scope !== 'repo' || !accessToken || !(typeof accessToken === 'string')) {
-    throw new Error(`Cannot resolve response: '${JSON.stringify(res)}'`)
+    console.log(JSON.stringify(body))
+    throw new Error(`Cannot resolve response from GitHub`)
   }
   return accessToken
 }
