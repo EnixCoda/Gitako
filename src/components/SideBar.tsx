@@ -5,7 +5,6 @@ import { Portal } from 'components/Portal'
 import { Resizable } from 'components/Resizable'
 import { SettingsBar } from 'components/settings/SettingsBar'
 import { ToggleShowButton } from 'components/ToggleShowButton'
-import { useConfigs } from 'containers/ConfigsContext'
 import { connect } from 'driver/connect'
 import { SideBarCore } from 'driver/core'
 import { ConnectorState, Props } from 'driver/core/SideBar'
@@ -25,17 +24,24 @@ import { Icon } from './Icon'
 import { Theme } from './Theme'
 
 const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
-  const configContext = useConfigs()
-  const accessToken = props.configContext.val.accessToken || ''
+  const {
+    errorDueToAuth,
+    metaData,
+    treeData,
+    defer,
+    error,
+    shouldShow,
+    showSettings,
+    logoContainerElement,
+    toggleShowSideBar,
+    toggleShowSettings,
+    configContext,
+  } = props
+
+  const accessToken = configContext.val.accessToken || ''
   const [baseSize] = React.useState(() => configContext.val.sideBarWidth)
 
   useShrinkGitHubHeader(configContext.val.shrinkGitHubHeader)
-
-  const intelligentToggle = configContext.val.intelligentToggle
-  React.useEffect(() => {
-    const shouldShow = intelligentToggle === null ? platform.shouldShow() : intelligentToggle
-    props.setShouldShow(shouldShow)
-  }, [intelligentToggle, props.metaData])
 
   React.useEffect(() => {
     run(async function () {
@@ -57,46 +63,37 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
       function onKeyDown(e: KeyboardEvent) {
         const keys = keyHelper.parseEvent(e)
         if (keys === configContext.val.shortcut) {
-          props.toggleShowSideBar()
+          toggleShowSideBar()
         }
       }
       window.addEventListener('keydown', onKeyDown)
       return () => window.removeEventListener('keydown', onKeyDown)
     },
-    [props.disabled, configContext.val.shortcut],
+    [toggleShowSideBar, props.disabled, configContext.val.shortcut],
   )
+
+  const intelligentToggle = configContext.val.intelligentToggle
+  React.useEffect(() => {
+    const shouldShow = intelligentToggle === null ? platform.shouldShow() : intelligentToggle
+    props.setShouldShow(shouldShow)
+  }, [intelligentToggle, props.metaData])
 
   const updateSideBarVisibility = React.useCallback(
     function updateSideBarVisibility() {
-      if (configContext.val.intelligentToggle === null) {
+      if (intelligentToggle === null) {
         props.setShouldShow(platform.shouldShow())
       }
     },
-    [props.metaData?.branchName, configContext.val.intelligentToggle],
+    [props.metaData?.branchName, intelligentToggle],
   )
   useOnPJAXDone(updateSideBarVisibility)
 
-  const copyFileButton = configContext.val.copyFileButton
-  useGitHubAttachCopyFileButton(copyFileButton)
-
-  const copySnippetButton = configContext.val.copySnippetButton
-  useGitHubAttachCopySnippetButton(copySnippetButton)
+  useGitHubAttachCopyFileButton(configContext.val.copyFileButton)
+  useGitHubAttachCopySnippetButton(configContext.val.copySnippetButton)
 
   usePJAX()
   useProgressBar()
 
-  const {
-    errorDueToAuth,
-    metaData,
-    treeData: treeRoot,
-    defer,
-    error,
-    shouldShow,
-    showSettings,
-    logoContainerElement,
-    toggleShowSideBar,
-    toggleShowSettings,
-  } = props
   return (
     <Theme>
       <div className={'gitako-side-bar'}>
@@ -121,7 +118,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
                   <FileExplorer
                     toggleShowSettings={toggleShowSettings}
                     metaData={metaData}
-                    treeRoot={treeRoot}
+                    treeRoot={treeData}
                     freeze={showSettings}
                     accessToken={accessToken}
                     loadWithPJAX={loadWithPJAX}
