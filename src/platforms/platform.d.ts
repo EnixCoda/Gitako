@@ -1,6 +1,7 @@
 type Platform = {
   isEnterprise(): boolean
-  resolveMeta(): MetaData | null
+  // branch name might not be available when resolving from DOM and URL
+  resolveMeta(): MakeOptional<MetaData, 'branchName'> | null
   getMetaData(
     metaData: Pick<MetaData, 'userName' | 'repoName'>,
     accessToken?: string,

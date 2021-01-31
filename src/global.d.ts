@@ -24,6 +24,10 @@ type IO<T> = {
 }
 
 type Override<Original, Incoming> = Omit<Original, keyof Incoming> & Incoming
+type MakeOptional<Original, keys extends keyof Original> = Override<
+  Original,
+  Partial<Pick<Original, keys>>
+>
 
 type VoidFN<T> = (payload: T) => void
 
