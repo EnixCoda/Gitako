@@ -16,9 +16,8 @@ import {
   useGitHubAttachCopySnippetButton,
 } from 'platforms/GitHub'
 import * as React from 'react'
-import { useUpdateEffect } from 'react-use'
 import { cx } from 'utils/cx'
-import { parseURLSearch } from 'utils/general'
+import { parseURLSearch, run } from 'utils/general'
 import { loadWithPJAX, useOnPJAXDone, usePJAX } from 'utils/hooks/usePJAX'
 import { useProgressBar } from 'utils/hooks/useProgressBar'
 import * as keyHelper from 'utils/keyHelper'
@@ -27,7 +26,7 @@ import { Theme } from './Theme'
 
 const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
   const configContext = useConfigs()
-  const accessToken = props.configContext.val.accessToken
+  const accessToken = props.configContext.val.accessToken || ''
   const [baseSize] = React.useState(() => configContext.val.sideBarWidth)
 
   useShrinkGitHubHeader(configContext.val.shrinkGitHubHeader)
@@ -39,15 +38,17 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
   }, [intelligentToggle, props.metaData])
 
   React.useEffect(() => {
-    const { init } = props
-    ;(async function () {
+    run(async function () {
       if (!accessToken) {
-        const accessToken = (await trySetUpAccessTokenWithCode()) || undefined
-        configContext.set({ accessToken })
+        const accessToken = await trySetUpAccessTokenWithCode()
+        if (accessToken) configContext.set({ accessToken })
       }
-      init()
-    })()
+    })
   }, [])
+
+  React.useEffect(() => {
+    props.init()
+  }, [accessToken])
 
   React.useEffect(
     function attachKeyDown() {
@@ -80,11 +81,6 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
 
   const copySnippetButton = configContext.val.copySnippetButton
   useGitHubAttachCopySnippetButton(copySnippetButton)
-
-  // init again when setting new accessToken
-  useUpdateEffect(() => {
-    props.init()
-  }, [accessToken || '']) // '' prevents duplicated requests
 
   usePJAX()
   useProgressBar()

@@ -183,3 +183,7 @@ export function withEffect<Method extends (...args: any[]) => any>(
     return returnValue
   }
 }
+
+export function run<T>(fn: () => T) {
+  return fn()
+}
