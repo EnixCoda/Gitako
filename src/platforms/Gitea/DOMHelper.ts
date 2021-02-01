@@ -13,12 +13,11 @@ export function isInCodePage() {
 
 export function getCurrentBranch() {
   const branchListSelector = '.reference'
-  const branchButtonElement: HTMLElement = $(branchListSelector)
-  const branchNameElement = branchButtonElement.querySelector('.text > strong')
+  const branchButtonElement = $(branchListSelector)
+  const branchNameElement = branchButtonElement?.querySelector('.text > strong')
   if (branchNameElement) {
-    return branchNameElement.textContent;
+    return branchNameElement.textContent
   }
 
   raiseError(new Error('cannot get current branch'))
 }
-

@@ -31,7 +31,7 @@ export function isInCodePage() {
 }
 
 export function getIssueTitle() {
-  const title: string | undefined = $('.gh-header-title')?.textContent
+  const title = $('.gh-header-title')?.textContent
   return title?.trim().replace(/\n/g, '')
 }
 
@@ -40,7 +40,7 @@ export function getCurrentBranch(passive = false) {
     '.repository-content #branch-select-menu summary',
     '.repository-content .branch-select-menu summary',
   ].join()
-  const branchButtonElement: HTMLElement = $(selectedBranchButtonSelector)
+  const branchButtonElement = $(selectedBranchButtonSelector)
   if (branchButtonElement) {
     const branchNameSpanElement = branchButtonElement.querySelector('span')
     if (branchNameSpanElement) {

@@ -15,14 +15,11 @@ export function isInCodePage() {
 }
 
 export function getCurrentBranch() {
-  const selectedBranchButtonSelector = '#git-project-branch'
-  const branchButtonElement: HTMLElement = $(selectedBranchButtonSelector)
-  if (branchButtonElement) {
-    const branchNameSpanElement = branchButtonElement.querySelector('.text')
-    if (branchNameSpanElement) {
-      const partialBranchNameFromInnerText = branchNameSpanElement.textContent
-      if (!partialBranchNameFromInnerText?.includes('…')) return partialBranchNameFromInnerText
-    }
+  const selectedBranchButtonSelector = '#git-project-branch .text'
+  const element = $(selectedBranchButtonSelector)
+  if (element) {
+    const partialBranchNameFromInnerText = element.textContent
+    if (!partialBranchNameFromInnerText?.includes('…')) return partialBranchNameFromInnerText
   }
 
   raiseError(new Error('cannot get current branch'))
