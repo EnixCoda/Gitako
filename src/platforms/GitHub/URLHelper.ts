@@ -33,11 +33,15 @@ export function isInPullPage() {
 }
 
 function isCommitPath(path: string[]) {
-  return isCompleteCommitSHA(path[0])
+  return path[0] ? isCompleteCommitSHA(path[0]) : false
 }
 
-function isCompleteCommitSHA(sha?: string) {
-  return typeof sha === 'string' && /^[abcdef0-9]{40}$/i.test(sha)
+function isCompleteCommitSHA(sha: string) {
+  return /^[abcdef0-9]{40}$/i.test(sha)
+}
+
+function isPossiblyCommitSHA(sha: string) {
+  return /^[abcdef0-9]+$/i.test(sha)
 }
 
 export function getCurrentPath(branchName = '') {
@@ -52,22 +56,29 @@ export function getCurrentPath(branchName = '') {
       if (path[0] === 'HEAD') path.shift()
       else {
         const splitBranchName = branchName.split('/')
-        while (splitBranchName.length) {
-          if (
-            splitBranchName[0] === path[0] ||
-            // Keep consuming as their heads are same
-            (splitBranchName.length === 1 && splitBranchName[0].startsWith(path[0]))
-            // This happens when visiting URLs like /blob/{commitSHA}/path/to/file
-            // and {commitSHA} is shorter than we got from DOM
-          ) {
-            splitBranchName.shift()
-            path.shift()
-          } else {
-            raiseError(new Error(`branch name and path prefix not match`), {
-              branchName,
-              path: parse().path,
-            })
-            return []
+        if (
+          splitBranchName.length === 1 &&
+          path.length > 0 &&
+          isPossiblyCommitSHA(splitBranchName[0]) &&
+          isPossiblyCommitSHA(path[0]) &&
+          (splitBranchName[0].startsWith(path[0]) || path[0].startsWith(splitBranchName[0]))
+          // This happens when visiting URLs like /blob/{commitSHA}/path/to/file
+          // and {commitSHA} does not match the one got from DOM
+        ) {
+          splitBranchName.shift()
+          path.shift()
+        } else {
+          while (splitBranchName.length) {
+            if (splitBranchName[0] === path[0]) {
+              splitBranchName.shift()
+              path.shift()
+            } else {
+              raiseError(new Error(`branch name and path prefix not match`), {
+                branchName,
+                path: parse().path,
+              })
+              return []
+            }
           }
         }
       }
