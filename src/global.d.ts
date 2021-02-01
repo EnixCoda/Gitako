@@ -2,10 +2,7 @@ type MetaData = {
   userName: string
   repoName: string
   branchName: string
-  defaultBranchName?: string
-  repoUrl?: string
-  userUrl?: string
-  type?: 'tree' | 'blob' | 'pull' | string
+  type?: EnumString<'tree' | 'blob' | 'pull'>
 }
 
 type TreeNode = {
@@ -32,3 +29,4 @@ type MakeOptional<Original, keys extends keyof Original> = Override<
 type VoidFN<T> = (payload: T) => void
 
 type Async<T> = T | Promise<T>
+type EnumString<S extends string> = S | (string & {})

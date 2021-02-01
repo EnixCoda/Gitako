@@ -5,6 +5,18 @@ import { $ } from 'utils/DOMHelper'
 import { renderReact } from 'utils/general'
 import { CopyFileButton, copyFileButtonClassName } from './CopyFileButton'
 
+export function resolveMeta(): Partial<MetaData> {
+  const metaData = {
+    userName: $('[itemprop="author"]', e => e.textContent?.trim()),
+    repoName: $('[itemprop="name"]', e => e.textContent?.trim()),
+    branchName: getCurrentBranch(true),
+  }
+  if (!metaData.userName || !metaData.repoName) {
+    raiseError(new Error(`Cannot resolve meta from DOM`))
+  }
+  return metaData
+}
+
 export function isInRepoPage() {
   const repoHeadSelector = '.repohead' // legacy
   const authorNameSelector = '.author[itemprop="author"]'
@@ -23,7 +35,7 @@ export function getIssueTitle() {
   return title?.trim().replace(/\n/g, '')
 }
 
-export function getCurrentBranch() {
+export function getCurrentBranch(passive = false) {
   const selectedBranchButtonSelector = [
     '.repository-content #branch-select-menu summary',
     '.repository-content .branch-select-menu summary',
@@ -55,7 +67,7 @@ export function getCurrentBranch() {
     }
   }
 
-  raiseError(new Error('cannot get current branch'))
+  if (!passive) raiseError(new Error('cannot get current branch'))
 }
 
 /**

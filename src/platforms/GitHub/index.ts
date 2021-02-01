@@ -91,19 +91,23 @@ export const GitHub: Platform = {
       return null
     }
 
+    const metaFromDOM = DOMHelper.resolveMeta()
+    const metaFromURL = URLHelper.parse()
+    const userName: MetaData['userName'] | undefined = metaFromDOM.userName || metaFromURL.userName
+    const repoName: MetaData['repoName'] | undefined = metaFromDOM.repoName || metaFromURL.repoName
+    if (!userName || !repoName) {
+      return null
+    }
+
+    const { type } = metaFromURL
     let branchName
     if (URLHelper.isInPullPage()) {
       branchName = DOMHelper.getIssueTitle()
     } else if (
       DOMHelper.isInCodePage() &&
-      !['releases', 'tags'].includes(URLHelper.parse().type || '') // resolve sentry issue #-CK
+      !['releases', 'tags'].includes(type || '') // resolve sentry issue #-CK
     ) {
       branchName = DOMHelper.getCurrentBranch() || URLHelper.parseSHA()
-    }
-
-    const { userName, repoName, type } = URLHelper.parse()
-    if (!userName || !repoName) {
-      return null
     }
 
     const metaData = {
@@ -114,12 +118,14 @@ export const GitHub: Platform = {
     }
     return metaData
   },
-  async getMetaData({ userName, repoName }, accessToken) {
+  async getDefaultBranchName({ userName, repoName }, accessToken) {
     const data = await API.getRepoMeta(userName, repoName, accessToken)
+    return data.default_branch
+  },
+  resolveUrlFromMetaData({ userName, repoName }) {
     return {
-      userUrl: data?.owner?.html_url,
-      repoUrl: data?.html_url,
-      defaultBranchName: data.default_branch,
+      repoUrl: `https://${window.location.host}/${userName}/${repoName}`,
+      userUrl: `https://${window.location.host}/${userName}`,
     }
   },
   async getTreeData(metaData, path = '/', recursive, accessToken) {

@@ -72,11 +72,8 @@ export const init: BoundMethodCreator = dispatch => async () => {
     )
     getTreeData.catch(error => error) // catch it early to prevent the error being raised higher
 
-    const metaDataFromAPI = await platform.getMetaData({ userName, repoName }, accessToken)
-
     if (branchName) {
       const safeMetaData = {
-        ...metaDataFromAPI,
         userName,
         repoName,
         branchName,
@@ -86,14 +83,16 @@ export const init: BoundMethodCreator = dispatch => async () => {
         dispatch.call(handleError, error)
       })
     } else {
-      const { defaultBranchName } = metaDataFromAPI
+      const defaultBranchName = await platform.getDefaultBranchName(
+        { userName, repoName },
+        accessToken,
+      )
 
       if (!defaultBranchName) {
         throw new Error(`Failed resolving default branch name`)
       }
 
       const safeMetaData = {
-        ...metaDataFromAPI,
         userName,
         repoName,
         branchName: defaultBranchName,

@@ -2,10 +2,16 @@ type Platform = {
   isEnterprise(): boolean
   // branch name might not be available when resolving from DOM and URL
   resolveMeta(): MakeOptional<MetaData, 'branchName'> | null
-  getMetaData(
+  getDefaultBranchName(
     metaData: Pick<MetaData, 'userName' | 'repoName'>,
     accessToken?: string,
-  ): Promise<Pick<MetaData, 'userUrl' | 'repoUrl' | 'defaultBranchName'>>
+  ): Promise<string>
+  resolveUrlFromMetaData(
+    metaData: MetaData,
+  ): {
+    userUrl: string
+    repoUrl: string
+  }
   getTreeData(
     metaData: MetaData,
     path?: string,

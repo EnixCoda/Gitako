@@ -5,7 +5,8 @@ export const dummyPlatformForTypeSafety: Platform = {
   resolveMeta() {
     return null
   },
-  getMetaData: dummyPlatformMethod,
+  getDefaultBranchName: dummyPlatformMethod,
+  resolveUrlFromMetaData: dummyPlatformMethod,
   getTreeData: dummyPlatformMethod,
   shouldShow() {
     return false
