@@ -105,8 +105,8 @@ function getCurrentPageType() {
   )
 }
 
-const REPO_TYPE_PRIVATE = 'private'
-const REPO_TYPE_PUBLIC = 'public'
+const REPO_TYPE_PRIVATE = 'private' as const
+const REPO_TYPE_PUBLIC = 'public' as const
 export function getRepoPageType() {
   const headerSelector = `#js-repo-pjax-container .pagehead.repohead h1`
   return $(headerSelector, header => {

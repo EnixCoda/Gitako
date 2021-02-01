@@ -25,8 +25,8 @@ export function getCurrentBranch() {
   raiseError(new Error('cannot get current branch'))
 }
 
-const REPO_TYPE_PRIVATE = 'private'
-const REPO_TYPE_PUBLIC = 'public'
+const REPO_TYPE_PRIVATE = 'private' as const
+const REPO_TYPE_PUBLIC = 'public' as const
 export function getRepoPageType() {
   const headerSelector = `.git-project-title .icon-lock`
   return $(
