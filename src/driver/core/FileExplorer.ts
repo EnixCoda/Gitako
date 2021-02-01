@@ -40,22 +40,22 @@ function getVisibleParentNode(nodes: TreeNode[], focusedNode: TreeNode) {
   }
 }
 
-type Task = () => void
 let visibleNodesGenerator: VisibleNodesGenerator
 
 type BoundMethodCreator<Args extends any[] = []> = MethodCreator<Props, ConnectorState, Args>
 
 export const setUpTree: BoundMethodCreator<
-  [Pick<Props, 'treeRoot' | 'metaData'> & { config: Config }]
+  [
+    Required<Pick<Props, 'treeRoot' | 'metaData'>> & {
+      config: Pick<Config, 'compressSingletonFolder' | 'accessToken'>
+    },
+  ]
 > = dispatch => async ({ treeRoot, metaData, config }) => {
-  if (!treeRoot) return
   dispatch.set({ state: 'rendering' })
-
-  const { compressSingletonFolder } = config
 
   visibleNodesGenerator = new VisibleNodesGenerator({
     root: treeRoot,
-    compress: compressSingletonFolder,
+    compress: config.compressSingletonFolder,
     async getTreeData(path) {
       const { root } = await platform.getTreeData(metaData, path, false, config.accessToken)
       return root

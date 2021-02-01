@@ -49,11 +49,11 @@ export function FileTreeSettings(props: React.PropsWithChildren<Props>) {
           id="recursive-toggle-folder"
           options={recursiveToggleFolderOptions}
           onChange={v => {
-            configContext.set({
+            configContext.onChange({
               recursiveToggleFolder: v,
             })
           }}
-          value={configContext.val.recursiveToggleFolder}
+          value={configContext.value.recursiveToggleFolder}
         ></SelectInput>
       </Field>
       <Field title="Icons" id="file-tree-icons">
@@ -61,11 +61,11 @@ export function FileTreeSettings(props: React.PropsWithChildren<Props>) {
           id="file-tree-icons"
           options={iconOptions}
           onChange={v => {
-            configContext.set({
+            configContext.onChange({
               icons: v,
             })
           }}
-          value={configContext.val.icons}
+          value={configContext.value.icons}
         />
       </Field>
       <SimpleToggleField

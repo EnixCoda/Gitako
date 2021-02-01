@@ -38,7 +38,7 @@ export function Resizable({ baseSize, className, children }: React.PropsWithChil
   }, [width, size])
 
   useCSSVariable('--gitako-width', `${size}px`)
-  useDebounce(() => configContext.set({ sideBarWidth: size }), 100, [size])
+  useDebounce(() => configContext.onChange({ sideBarWidth: size }), 100, [size])
 
   const onResize = React.useCallback((size: number) => {
     // do NOT merge this with the above similar effect, side bar will jump otherwise

@@ -5,7 +5,6 @@ import { Portal } from 'components/Portal'
 import { Resizable } from 'components/Resizable'
 import { SettingsBar } from 'components/settings/SettingsBar'
 import { ToggleShowButton } from 'components/ToggleShowButton'
-import { useConfigs } from 'containers/ConfigsContext'
 import { connect } from 'driver/connect'
 import { SideBarCore } from 'driver/core'
 import { ConnectorState, Props } from 'driver/core/SideBar'
@@ -16,9 +15,8 @@ import {
   useGitHubAttachCopySnippetButton,
 } from 'platforms/GitHub'
 import * as React from 'react'
-import { useUpdateEffect } from 'react-use'
 import { cx } from 'utils/cx'
-import { parseURLSearch } from 'utils/general'
+import { parseURLSearch, run } from 'utils/general'
 import { loadWithPJAX, useOnPJAXDone, usePJAX } from 'utils/hooks/usePJAX'
 import { useProgressBar } from 'utils/hooks/useProgressBar'
 import * as keyHelper from 'utils/keyHelper'
@@ -26,83 +24,10 @@ import { Icon } from './Icon'
 import { Theme } from './Theme'
 
 const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
-  const configContext = useConfigs()
-  const accessToken = props.configContext.val.accessToken
-  const [baseSize] = React.useState(() => configContext.val.sideBarWidth)
-
-  const { shrinkGitHubHeader } = configContext.val
-  React.useEffect(() => {
-    if (platform === GitHub) {
-      const ele = document.body
-      if (shrinkGitHubHeader) {
-        ele.classList.add('shrink-github-header')
-      } else {
-        ele.classList.remove('shrink-github-header')
-      }
-    }
-  }, [shrinkGitHubHeader])
-
-  const intelligentToggle = configContext.val.intelligentToggle
-  React.useEffect(() => {
-    const shouldShow = intelligentToggle === null ? platform.shouldShow() : intelligentToggle
-    props.setShouldShow(shouldShow)
-  }, [intelligentToggle, props.metaData])
-
-  React.useEffect(() => {
-    const { init } = props
-    ;(async function () {
-      if (!accessToken) {
-        const accessToken = (await trySetUpAccessTokenWithCode()) || undefined
-        configContext.set({ accessToken })
-      }
-      init()
-    })()
-  }, [])
-
-  React.useEffect(
-    function attachKeyDown() {
-      if (props.disabled || !configContext.val.shortcut) return
-
-      function onKeyDown(e: KeyboardEvent) {
-        const keys = keyHelper.parseEvent(e)
-        if (keys === configContext.val.shortcut) {
-          props.toggleShowSideBar()
-        }
-      }
-      window.addEventListener('keydown', onKeyDown)
-      return () => window.removeEventListener('keydown', onKeyDown)
-    },
-    [props.disabled, configContext.val.shortcut],
-  )
-
-  const updateSideBarVisibility = React.useCallback(
-    function updateSideBarVisibility() {
-      if (configContext.val.intelligentToggle === null) {
-        props.setShouldShow(platform.shouldShow())
-      }
-    },
-    [props.metaData?.branchName, configContext.val.intelligentToggle],
-  )
-  useOnPJAXDone(updateSideBarVisibility)
-
-  const copyFileButton = configContext.val.copyFileButton
-  useGitHubAttachCopyFileButton(copyFileButton)
-
-  const copySnippetButton = configContext.val.copySnippetButton
-  useGitHubAttachCopySnippetButton(copySnippetButton)
-
-  // init again when setting new accessToken
-  useUpdateEffect(() => {
-    props.init()
-  }, [accessToken || '']) // '' prevents duplicated requests
-
-  usePJAX()
-  useProgressBar()
-
   const {
     errorDueToAuth,
     metaData,
-    treeData: treeRoot,
+    treeData,
     defer,
     error,
     shouldShow,
@@ -110,7 +35,65 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
     logoContainerElement,
     toggleShowSideBar,
     toggleShowSettings,
+    configContext,
   } = props
+
+  const accessToken = configContext.value.accessToken || ''
+  const [baseSize] = React.useState(() => configContext.value.sideBarWidth)
+
+  useShrinkGitHubHeader(configContext.value.shrinkGitHubHeader)
+
+  React.useEffect(() => {
+    run(async function () {
+      if (!accessToken) {
+        const accessToken = await trySetUpAccessTokenWithCode()
+        if (accessToken) configContext.onChange({ accessToken })
+      }
+    })
+  }, [])
+
+  React.useEffect(() => {
+    props.init()
+  }, [accessToken])
+
+  React.useEffect(
+    function attachKeyDown() {
+      if (props.disabled || !configContext.value.shortcut) return
+
+      function onKeyDown(e: KeyboardEvent) {
+        const keys = keyHelper.parseEvent(e)
+        if (keys === configContext.value.shortcut) {
+          toggleShowSideBar()
+        }
+      }
+      window.addEventListener('keydown', onKeyDown)
+      return () => window.removeEventListener('keydown', onKeyDown)
+    },
+    [toggleShowSideBar, props.disabled, configContext.value.shortcut],
+  )
+
+  const intelligentToggle = configContext.value.intelligentToggle
+  React.useEffect(() => {
+    const shouldShow = intelligentToggle === null ? platform.shouldShow() : intelligentToggle
+    props.setShouldShow(shouldShow)
+  }, [intelligentToggle, props.metaData])
+
+  const updateSideBarVisibility = React.useCallback(
+    function updateSideBarVisibility() {
+      if (intelligentToggle === null) {
+        props.setShouldShow(platform.shouldShow())
+      }
+    },
+    [props.metaData?.branchName, intelligentToggle],
+  )
+  useOnPJAXDone(updateSideBarVisibility)
+
+  useGitHubAttachCopyFileButton(configContext.value.copyFileButton)
+  useGitHubAttachCopySnippetButton(configContext.value.copySnippetButton)
+
+  usePJAX()
+  useProgressBar()
+
   return (
     <Theme>
       <div className={'gitako-side-bar'}>
@@ -121,15 +104,13 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
         </Portal>
         <Resizable className={cx({ hidden: error || !shouldShow })} baseSize={baseSize}>
           <div className={'gitako-side-bar-body'}>
+            <div className={'close-side-bar-button-position'}>
+              <button className={'close-side-bar-button'} onClick={toggleShowSideBar}>
+                <Icon className={'action-icon'} type={'x'} />
+              </button>
+            </div>
             <div className={'gitako-side-bar-content'}>
-              <div className={'header'}>
-                {metaData ? <MetaBar metaData={metaData} /> : <div />}
-                <div className={'close-side-bar-button-position'}>
-                  <button className={'close-side-bar-button'} onClick={toggleShowSideBar}>
-                    <Icon className={'action-icon'} type={'x'} />
-                  </button>
-                </div>
-              </div>
+              <div className={'header'}>{metaData ? <MetaBar metaData={metaData} /> : <div />}</div>
               {errorDueToAuth ? (
                 <AccessDeniedError hasToken={Boolean(accessToken)} />
               ) : (
@@ -137,11 +118,11 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
                   <FileExplorer
                     toggleShowSettings={toggleShowSettings}
                     metaData={metaData}
-                    treeRoot={treeRoot}
+                    treeRoot={treeData}
                     freeze={showSettings}
                     accessToken={accessToken}
                     loadWithPJAX={loadWithPJAX}
-                    config={configContext.val}
+                    config={configContext.value}
                     defer={defer}
                   />
                 )
@@ -167,6 +148,19 @@ RawGitako.defaultProps = {
 }
 
 export const SideBar = connect(SideBarCore)(RawGitako)
+
+function useShrinkGitHubHeader(shrinkGitHubHeader: boolean) {
+  React.useEffect(() => {
+    if (platform === GitHub) {
+      const target = document.body
+      if (shrinkGitHubHeader) {
+        target.classList.add('shrink-github-header')
+      } else {
+        target.classList.remove('shrink-github-header')
+      }
+    }
+  }, [shrinkGitHubHeader])
+}
 
 function AccessDeniedError({ hasToken }: { hasToken: boolean }) {
   return <AccessDeniedDescription hasToken={hasToken} />

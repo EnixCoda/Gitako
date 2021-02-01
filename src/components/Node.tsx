@@ -87,7 +87,7 @@ const NodeItemIcon = React.memo(function NodeItemIcon({
   loading?: boolean
 }) {
   const {
-    val: { icons },
+    value: { icons },
   } = useConfigs()
 
   const src = React.useMemo(

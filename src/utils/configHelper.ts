@@ -33,7 +33,7 @@ export enum configKeys {
 const defaultConfigs: Config = {
   sideBarWidth: 260,
   shortcut: undefined,
-  accessToken: undefined,
+  accessToken: '',
   compressSingletonFolder: true,
   copyFileButton: true,
   copySnippetButton: true,

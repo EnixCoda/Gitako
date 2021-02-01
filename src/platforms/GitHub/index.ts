@@ -91,26 +91,30 @@ export const GitHub: Platform = {
       return null
     }
 
-    let detectedBranchName
+    let branchName
     if (URLHelper.isInPullPage()) {
-      detectedBranchName = DOMHelper.getIssueTitle()
+      branchName = DOMHelper.getIssueTitle()
     } else if (
       DOMHelper.isInCodePage() &&
       !['releases', 'tags'].includes(URLHelper.parse().type || '') // resolve sentry issue #-CK
     ) {
-      // not working well with non-branch blob
-      // cannot handle '/' split branch name, should not use when possibly on branch page
-      detectedBranchName = DOMHelper.getCurrentBranch() || URLHelper.parseSHA()
+      branchName = DOMHelper.getCurrentBranch() || URLHelper.parseSHA()
+    }
+
+    const { userName, repoName, type } = URLHelper.parse()
+    if (!userName || !repoName) {
+      return null
     }
 
     const metaData = {
-      ...URLHelper.parse(),
-      branchName: detectedBranchName,
-    } as MetaData
+      userName,
+      repoName,
+      type,
+      branchName,
+    }
     return metaData
   },
-  async getMetaData(partialMetaData, accessToken) {
-    const { userName, repoName } = partialMetaData
+  async getMetaData({ userName, repoName }, accessToken) {
     const data = await API.getRepoMeta(userName, repoName, accessToken)
     return {
       userUrl: data?.owner?.html_url,
@@ -156,9 +160,9 @@ export const GitHub: Platform = {
         path: item.filename || '',
         type: 'blob',
         name: item.filename?.replace(/^.*\//, '') || '',
-        url: `https://${window.location.host}/${metaData.userName}/${
-          metaData.repoName
-        }/pull/${pullId}/files${window.location.search}#${creator(item.filename) || ''}`,
+        url: `https://${window.location.host}/${userName}/${repoName}/pull/${pullId}/files${
+          window.location.search
+        }#${creator(item.filename) || ''}`,
         sha: item.sha,
       }))
 
@@ -198,32 +202,21 @@ export const GitHub: Platform = {
         name: item.path?.replace(/^.*\//, '') || '',
         url:
           item.url && item.type && item.path
-            ? getUrlForRedirect(
-                metaData.userName,
-                metaData.repoName,
-                metaData.branchName,
-                item.type,
-                item.path,
-              )
+            ? getUrlForRedirect(userName, repoName, branchName, item.type, item.path)
             : undefined,
         contents: item.type === 'tree' ? [] : undefined,
         sha: item.sha,
       })),
     )
 
-    const gitModules = root.contents?.find(item => item.name === '.gitmodules')
-    if (gitModules) {
-      if (metaData.userName && metaData.repoName && gitModules.sha) {
-        const blobData = await API.getBlobData(
-          metaData.userName,
-          metaData.repoName,
-          gitModules.sha,
-          accessToken,
-        )
+    const gitModules = root.contents?.find(
+      item => item.type === 'blob' && item.name === '.gitmodules',
+    )
+    if (gitModules?.sha) {
+      const blobData = await API.getBlobData(userName, repoName, gitModules.sha, accessToken)
 
-        if (blobData && blobData.encoding === 'base64' && blobData.content) {
-          await resolveGitModules(root, Base64.decode(blobData.content))
-        }
+      if (blobData && blobData.encoding === 'base64' && blobData.content) {
+        await resolveGitModules(root, Base64.decode(blobData.content))
       }
     }
 
