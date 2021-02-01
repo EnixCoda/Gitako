@@ -4,7 +4,7 @@ import { VERSION } from 'env'
 import { platform } from 'platforms'
 import { GitHub } from 'platforms/GitHub'
 import * as React from 'react'
-import { useStates } from 'utils/hooks/useStates'
+import { useStateIO } from 'utils/hooks/useStateIO'
 import { SimpleField, SimpleToggleField } from '../SimpleToggleField'
 import { AccessTokenSettings } from './AccessTokenSettings'
 import { FileTreeSettings } from './FileTreeSettings'
@@ -27,8 +27,8 @@ type Props = {
 }
 
 function SettingsBarContent() {
-  const useReloadHint = useStates<React.ReactNode>('')
-  const { val: reloadHint } = useReloadHint
+  const useReloadHint = useStateIO<React.ReactNode>('')
+  const { value: reloadHint } = useReloadHint
 
   const moreFields: SimpleField[] =
     platform === GitHub

@@ -4,12 +4,7 @@ import { Config } from 'utils/configHelper'
 
 type Props = {}
 
-type PartialValSet<T> = {
-  val: T
-  set: (val: Partial<T>) => void
-}
-
-type ContextShape = PartialValSet<Config>
+type ContextShape = IO<Config, Partial<Config>>
 export type ConfigsContextShape = ContextShape
 
 export const ConfigsContext = React.createContext<ContextShape | null>(null)
@@ -19,7 +14,7 @@ export function ConfigsContextWrapper(props: React.PropsWithChildren<Props>) {
   React.useEffect(() => {
     configsHelper.get().then(setConfigs)
   }, [])
-  const set = React.useCallback(
+  const onChange = React.useCallback(
     (updatedConfigs: Partial<Config>) => {
       const mergedConfigs = { ...configs, ...updatedConfigs } as Config
       configsHelper.set(mergedConfigs)
@@ -29,7 +24,7 @@ export function ConfigsContextWrapper(props: React.PropsWithChildren<Props>) {
   )
   if (configs === null) return null
   return (
-    <ConfigsContext.Provider value={{ val: configs, set }}>
+    <ConfigsContext.Provider value={{ value: configs, onChange: onChange }}>
       {props.children}
     </ConfigsContext.Provider>
   )
@@ -37,10 +32,10 @@ export function ConfigsContextWrapper(props: React.PropsWithChildren<Props>) {
 
 export const useConfigs = useNonNullContext(ConfigsContext)
 
-function useNonNullContext<T, R extends Exclude<T, null>>(theContext: React.Context<T>): () => R {
+function useNonNullContext<T>(theContext: React.Context<T | null>): () => T {
   return () => {
     const context = React.useContext(theContext)
     if (context === null) throw new Error(`Empty context`)
-    return context as R
+    return context
   }
 }

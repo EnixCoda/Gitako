@@ -5,7 +5,7 @@ import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { Config } from 'utils/configHelper'
 import { friendlyFormatShortcut } from 'utils/general'
-import { useStates } from 'utils/hooks/useStates'
+import { useStateIO } from 'utils/hooks/useStateIO'
 import * as keyHelper from 'utils/keyHelper'
 import { Field } from './Field'
 import { SettingsSection } from './SettingsSection'
@@ -27,13 +27,13 @@ const toggleButtonContentOptions: Option<Config['toggleButtonContent']>[] = [
 
 export function SidebarSettings(props: React.PropsWithChildren<Props>) {
   const configContext = useConfigs()
-  const useToggleShowSideBarShortcut = useStates(configContext.val.shortcut)
-  const { val: toggleShowSideBarShortcut } = useToggleShowSideBarShortcut
-  const focused = useStates(false)
+  const useToggleShowSideBarShortcut = useStateIO(configContext.value.shortcut)
+  const { value: toggleShowSideBarShortcut } = useToggleShowSideBarShortcut
+  const focused = useStateIO(false)
 
   React.useEffect(() => {
-    useToggleShowSideBarShortcut.set(configContext.val.shortcut)
-  }, [configContext.val.shortcut])
+    useToggleShowSideBarShortcut.onChange(configContext.value.shortcut)
+  }, [configContext.value.shortcut])
 
   return (
     <SettingsSection title={'Sidebar'}>
@@ -43,24 +43,24 @@ export function SidebarSettings(props: React.PropsWithChildren<Props>) {
             id="toggle-sidebar-shortcut"
             marginRight={1}
             className={'toggle-shortcut-input'}
-            onFocus={() => focused.set(true)}
-            onBlur={() => focused.set(false)}
-            placeholder={focused.val ? 'Press key combination' : 'Click here to set'}
+            onFocus={() => focused.onChange(true)}
+            onBlur={() => focused.onChange(false)}
+            placeholder={focused.value ? 'Press key combination' : 'Click here to set'}
             value={friendlyFormatShortcut(toggleShowSideBarShortcut)}
             onKeyDown={React.useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
               e.preventDefault()
               e.stopPropagation()
               // Clear shortcut with backspace
               const shortcut = e.key === 'Backspace' ? '' : keyHelper.parseEvent(e)
-              useToggleShowSideBarShortcut.set(shortcut)
+              useToggleShowSideBarShortcut.onChange(shortcut)
             }, [])}
             readOnly
           />
-          {configContext.val.shortcut === toggleShowSideBarShortcut ? (
+          {configContext.value.shortcut === toggleShowSideBarShortcut ? (
             <Button
-              disabled={!configContext.val.shortcut}
+              disabled={!configContext.value.shortcut}
               onClick={() => {
-                configContext.set({ shortcut: '' })
+                configContext.onChange({ shortcut: '' })
               }}
             >
               Clear
@@ -68,9 +68,9 @@ export function SidebarSettings(props: React.PropsWithChildren<Props>) {
           ) : (
             <Button
               onClick={() => {
-                const { val: toggleShowSideBarShortcut } = useToggleShowSideBarShortcut
+                const { value: toggleShowSideBarShortcut } = useToggleShowSideBarShortcut
                 if (typeof toggleShowSideBarShortcut !== 'string') return
-                configContext.set({ shortcut: toggleShowSideBarShortcut })
+                configContext.onChange({ shortcut: toggleShowSideBarShortcut })
               }}
             >
               Save
@@ -83,11 +83,11 @@ export function SidebarSettings(props: React.PropsWithChildren<Props>) {
           id="toggle-button-content"
           options={toggleButtonContentOptions}
           onChange={v => {
-            configContext.set({
+            configContext.onChange({
               toggleButtonContent: v,
             })
           }}
-          value={configContext.val.toggleButtonContent}
+          value={configContext.value.toggleButtonContent}
         ></SelectInput>
       </Field>
       <SimpleToggleField

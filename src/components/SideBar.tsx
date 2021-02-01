@@ -38,16 +38,16 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
     configContext,
   } = props
 
-  const accessToken = configContext.val.accessToken || ''
-  const [baseSize] = React.useState(() => configContext.val.sideBarWidth)
+  const accessToken = configContext.value.accessToken || ''
+  const [baseSize] = React.useState(() => configContext.value.sideBarWidth)
 
-  useShrinkGitHubHeader(configContext.val.shrinkGitHubHeader)
+  useShrinkGitHubHeader(configContext.value.shrinkGitHubHeader)
 
   React.useEffect(() => {
     run(async function () {
       if (!accessToken) {
         const accessToken = await trySetUpAccessTokenWithCode()
-        if (accessToken) configContext.set({ accessToken })
+        if (accessToken) configContext.onChange({ accessToken })
       }
     })
   }, [])
@@ -58,21 +58,21 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
 
   React.useEffect(
     function attachKeyDown() {
-      if (props.disabled || !configContext.val.shortcut) return
+      if (props.disabled || !configContext.value.shortcut) return
 
       function onKeyDown(e: KeyboardEvent) {
         const keys = keyHelper.parseEvent(e)
-        if (keys === configContext.val.shortcut) {
+        if (keys === configContext.value.shortcut) {
           toggleShowSideBar()
         }
       }
       window.addEventListener('keydown', onKeyDown)
       return () => window.removeEventListener('keydown', onKeyDown)
     },
-    [toggleShowSideBar, props.disabled, configContext.val.shortcut],
+    [toggleShowSideBar, props.disabled, configContext.value.shortcut],
   )
 
-  const intelligentToggle = configContext.val.intelligentToggle
+  const intelligentToggle = configContext.value.intelligentToggle
   React.useEffect(() => {
     const shouldShow = intelligentToggle === null ? platform.shouldShow() : intelligentToggle
     props.setShouldShow(shouldShow)
@@ -88,8 +88,8 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
   )
   useOnPJAXDone(updateSideBarVisibility)
 
-  useGitHubAttachCopyFileButton(configContext.val.copyFileButton)
-  useGitHubAttachCopySnippetButton(configContext.val.copySnippetButton)
+  useGitHubAttachCopyFileButton(configContext.value.copyFileButton)
+  useGitHubAttachCopySnippetButton(configContext.value.copySnippetButton)
 
   usePJAX()
   useProgressBar()
@@ -122,7 +122,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
                     freeze={showSettings}
                     accessToken={accessToken}
                     loadWithPJAX={loadWithPJAX}
-                    config={configContext.val}
+                    config={configContext.value}
                     defer={defer}
                   />
                 )

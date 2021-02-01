@@ -32,7 +32,7 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
     treeRoot,
     defer,
   } = props
-  const { val: config } = useConfigs()
+  const { value: config } = useConfigs()
 
   React.useEffect(() => {
     if (treeRoot) {

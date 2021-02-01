@@ -5,7 +5,7 @@ import { platform } from 'platforms'
 import { Gitea } from 'platforms/Gitea'
 import { Gitee } from 'platforms/Gitee'
 import * as React from 'react'
-import { useStates } from 'utils/hooks/useStates'
+import { useStateIO } from 'utils/hooks/useStateIO'
 import { SettingsSection } from './SettingsSection'
 
 const ACCESS_TOKEN_REGEXP = /^[0-9a-f]+$/
@@ -14,23 +14,23 @@ type Props = {}
 
 export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
   const configContext = useConfigs()
-  const hasAccessToken = Boolean(configContext.val.accessToken)
-  const useAccessToken = useStates('')
-  const useAccessTokenHint = useStates<React.ReactNode>('')
-  const focusInput = useStates(false)
+  const hasAccessToken = Boolean(configContext.value.accessToken)
+  const useAccessToken = useStateIO('')
+  const useAccessTokenHint = useStateIO<React.ReactNode>('')
+  const focusInput = useStateIO(false)
 
-  const { val: accessTokenHint } = useAccessTokenHint
-  const { val: accessToken } = useAccessToken
+  const { value: accessTokenHint } = useAccessTokenHint
+  const { value: accessToken } = useAccessToken
 
   React.useEffect(() => {
     // clear input when access token updates
-    useAccessToken.set('')
-  }, [configContext.val.accessToken])
+    useAccessToken.onChange('')
+  }, [configContext.value.accessToken])
 
   const onInputAccessToken = React.useCallback(
     ({ currentTarget: { value } }: React.FormEvent<HTMLInputElement>) => {
-      useAccessToken.set(value)
-      useAccessTokenHint.set(
+      useAccessToken.onChange(value)
+      useAccessTokenHint.onChange(
         ACCESS_TOKEN_REGEXP.test(value) ? '' : 'Gitako does not recognize the token.',
       )
     },
@@ -42,11 +42,11 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
   }, [])
 
   const saveToken = React.useCallback(
-    async (hint?: typeof useAccessTokenHint.val) => {
+    async (hint?: typeof useAccessTokenHint.value) => {
       if (accessToken) {
-        configContext.set({ accessToken })
-        useAccessToken.set('')
-        useAccessTokenHint.set(
+        configContext.onChange({ accessToken })
+        useAccessToken.onChange('')
+        useAccessTokenHint.onChange(
           hint || (
             <span>
               <a href="#" onClick={() => window.location.reload()}>
@@ -79,7 +79,7 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
       {hasAccessToken ? (
         <div>
           <Text as="p">Your token has been saved.</Text>
-          <Button onClick={() => configContext.set({ accessToken: '' })}>Clear</Button>
+          <Button onClick={() => configContext.onChange({ accessToken: '' })}>Clear</Button>
         </div>
       ) : (
         <div>
@@ -110,8 +110,8 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
               className={'access-token-input'}
               value={accessToken}
               placeholder="Or input here manually"
-              onFocus={() => focusInput.set(true)}
-              onBlur={() => focusInput.set(false)}
+              onFocus={() => focusInput.onChange(true)}
+              onBlur={() => focusInput.onChange(false)}
               onChange={onInputAccessToken}
               onKeyPress={onPressAccessToken}
             />
@@ -121,7 +121,7 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
           </div>
         </div>
       )}
-      {accessTokenHint && !focusInput.val && <span className={'hint'}>{accessTokenHint}</span>}
+      {accessTokenHint && !focusInput.value && <span className={'hint'}>{accessTokenHint}</span>}
     </SettingsSection>
   )
 }

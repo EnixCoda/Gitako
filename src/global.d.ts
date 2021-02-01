@@ -18,9 +18,9 @@ type TreeNode = {
   accessDenied?: boolean
 }
 
-type IO<T> = {
+type IO<T, ChangeT = T> = {
   value: T
-  onChange(value: T): void
+  onChange(value: ChangeT): void
 }
 
 type Override<Original, Incoming> = Omit<Original, keyof Incoming> & Incoming

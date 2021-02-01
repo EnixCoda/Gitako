@@ -24,7 +24,7 @@ type Props = {
 export function SimpleToggleField({ field, onChange }: Props) {
   const { overwrite } = field
   const configContext = useConfigs()
-  const value = configContext.val[field.key]
+  const value = configContext.value[field.key]
   return (
     <Field
       id={field.key}
@@ -57,7 +57,7 @@ export function SimpleToggleField({ field, onChange }: Props) {
         type={'checkbox'}
         onChange={async e => {
           const enabled = e.currentTarget.checked
-          configContext.set({ [field.key]: overwrite ? overwrite.onChange(enabled) : enabled })
+          configContext.onChange({ [field.key]: overwrite ? overwrite.onChange(enabled) : enabled })
           if (onChange) onChange()
         }}
         checked={overwrite ? overwrite.value(value) : Boolean(value)}

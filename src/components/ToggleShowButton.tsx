@@ -11,7 +11,7 @@ type Props = {
 export function ToggleShowButton({ error, onClick }: Props) {
   const ref = React.useRef<HTMLDivElement>(null)
   const config = useConfigs()
-  const [distance, setDistance] = React.useState(config.val.toggleButtonVerticalDistance)
+  const [distance, setDistance] = React.useState(config.value.toggleButtonVerticalDistance)
   const { height } = useWindowSize()
   const buttonHeight = 42
   React.useEffect(() => {
@@ -28,12 +28,12 @@ export function ToggleShowButton({ error, onClick }: Props) {
 
   // updating context
   useDebounce(
-    () => config.set({ toggleButtonVerticalDistance: distance }), // too slow
+    () => config.onChange({ toggleButtonVerticalDistance: distance }), // too slow
     100,
     [distance],
   )
 
-  const toggleIconMode = config.val.toggleButtonContent
+  const toggleIconMode = config.value.toggleButtonContent
   return (
     <div ref={ref} className={'gitako-toggle-show-button-wrapper'}>
       <button

@@ -57,7 +57,7 @@ export const init: BoundMethodCreator = dispatch => async () => {
     const {
       props: { configContext },
     } = dispatch.get()
-    const { accessToken } = configContext.val
+    const { accessToken } = configContext.value
 
     const guessDefaultBranch = 'master' // when to switch to 'main'?
     let getTreeData = platform.getTreeData(
@@ -139,7 +139,7 @@ export const handleError: BoundMethodCreator<[Error]> = dispatch => async err =>
     dispatch.set({ errorDueToAuth: true })
   } else if (err.message === errors.CONNECTION_BLOCKED) {
     const { props } = dispatch.get()
-    if (props.configContext.val.accessToken) {
+    if (props.configContext.value.accessToken) {
       dispatch.call(setError, `Cannot connect to ${platformName}.`)
     } else {
       dispatch.set({ errorDueToAuth: true })
@@ -161,10 +161,10 @@ export const toggleShowSideBar: BoundMethodCreator = dispatch => () => {
   dispatch.call(setShouldShow, !shouldShow)
 
   const {
-    val: { intelligentToggle },
+    value: { intelligentToggle },
   } = configContext
   if (intelligentToggle !== null) {
-    configContext.set({ intelligentToggle: !shouldShow })
+    configContext.onChange({ intelligentToggle: !shouldShow })
   }
 }
 
