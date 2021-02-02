@@ -1,5 +1,5 @@
 import { EventHub } from './EventHub'
-import { findNode, searchKeyToRegexp, traverse, withEffect } from './general'
+import { findNode, traverse, withEffect } from './general'
 
 function search(
   root: TreeNode,
@@ -121,37 +121,25 @@ class BaseLayer {
 
 class ShakeLayer extends BaseLayer {
   shackedRoot: TreeNode | null = null
-  lastMatch: Parameters<ShakeLayer['shake']>[0] = undefined
+  lastSearchParams: SearchParams | null = null
   shakeHub = new EventHub<{ emit: TreeNode | null }>()
 
   constructor(options: Options) {
     super(options)
 
-    this.baseHub.addEventListener('emit', () => this.shake(this.lastMatch))
+    this.baseHub.addEventListener('emit', () => this.shake(this.lastSearchParams))
   }
 
   shake = withEffect(
-    (p?: {
-      match: {
-        // shape in object for better extensibility
-        searchKey: string
-      }
-      onChildMatch: (node: TreeNode) => void
-    }) => {
-      this.lastMatch = p
-      if (p) {
-        const {
-          match: { searchKey },
-          onChildMatch,
-        } = p
+    (searchParams: ShakeLayer['lastSearchParams']) => {
+      this.lastSearchParams = searchParams
 
-        const regexp = searchKeyToRegexp(searchKey)
-        if (regexp) {
-          this.shackedRoot = search(this.baseRoot, node => regexp.test(node.name), onChildMatch)
-          return
-        }
+      let root: TreeNode | null = this.baseRoot
+      if (searchParams) {
+        const { matchNode, onChildMatch } = searchParams
+        root = search(this.baseRoot, matchNode, onChildMatch)
       }
-      this.shackedRoot = this.baseRoot
+      this.shackedRoot = root
     },
     () => this.shakeHub.emit('emit', this.shackedRoot),
   )
@@ -194,6 +182,11 @@ class CompressLayer extends ShakeLayer {
     },
     () => this.compressHub.emit('emit', this.compressedRoot),
   )
+}
+
+export type SearchParams = {
+  matchNode(node: TreeNode): boolean
+  onChildMatch(node: TreeNode): void
 }
 
 class FlattenLayer extends CompressLayer {
@@ -307,18 +300,14 @@ class FlattenLayer extends CompressLayer {
     }
   }, this.generateVisibleNodes)
 
-  search = (
-    match: {
-      searchKey: string
-    } | null,
-  ) => {
+  search = (searchParams: Pick<SearchParams, 'matchNode'> | null) => {
     this.shake(
-      match
+      searchParams
         ? {
-            match,
+            matchNode: searchParams.matchNode,
             onChildMatch: node => this.$setExpand(node, true),
           }
-        : undefined,
+        : null,
     )
   }
 }
@@ -331,7 +320,7 @@ type Options = {
 
 export type VisibleNodes = {
   loading: BaseLayer['loading']
-  lastMatch: ShakeLayer['lastMatch']
+  lastMatch: ShakeLayer['lastSearchParams']
   depths: CompressLayer['depths']
   nodes: FlattenLayer['nodes']
   expandedNodes: FlattenLayer['expandedNodes']
@@ -360,7 +349,7 @@ export class VisibleNodesGenerator extends FlattenLayer {
   get visibleNodes(): VisibleNodes {
     return {
       nodes: this.nodes,
-      lastMatch: this.lastMatch,
+      lastMatch: this.lastSearchParams,
       depths: this.depths,
       expandedNodes: this.expandedNodes,
       focusedNode: this.focusedNode,
