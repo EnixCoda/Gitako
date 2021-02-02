@@ -3,7 +3,6 @@ import * as React from 'react'
 import { cx } from 'utils/cx'
 import { OperatingSystems, os } from 'utils/general'
 import { getFileIconSrc, getFolderIconSrc } from '../utils/parseIconMapCSV'
-import { Highlight } from './Highlight'
 import { Icon } from './Icon'
 
 function getIconType(node: TreeNode) {
@@ -25,8 +24,8 @@ type Props = {
   focused: boolean
   loading: boolean
   renderActions?(node: TreeNode): React.ReactNode
+  renderLabelText(node: TreeNode): React.ReactNode
   style?: React.CSSProperties
-  regex?: RegExp
 }
 export function Node({
   node,
@@ -35,11 +34,10 @@ export function Node({
   focused,
   loading,
   renderActions,
+  renderLabelText,
   style,
   onClick,
-  regex,
 }: Props) {
-  const { name, path } = node
   return (
     <a
       href={node.url}
@@ -57,20 +55,11 @@ export function Node({
       }}
       className={cx(`node-item`, { focused, disabled: node.accessDenied, expanded })}
       style={{ ...style, paddingLeft: `${10 + 20 * depth}px` }}
-      title={path}
+      title={node.path}
     >
       <div className={'node-item-label'}>
         <NodeItemIcon node={node} open={expanded} loading={loading} />
-        {name.includes('/') ? (
-          name.split('/').map((chunk, index, arr) => (
-            <span key={chunk} className={cx({ prefix: index + 1 !== arr.length })}>
-              <Highlight match={regex} text={chunk} />
-              {index + 1 !== arr.length && '/'}
-            </span>
-          ))
-        ) : (
-          <Highlight match={regex} text={name} />
-        )}
+        {renderLabelText(node)}
       </div>
       {renderActions && <div>{renderActions(node)}</div>}
     </a>

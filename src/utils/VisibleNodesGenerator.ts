@@ -324,7 +324,6 @@ type Options = {
 
 export type VisibleNodes = {
   loading: BaseLayer['loading']
-  lastMatch: ShakeLayer['lastSearchParams']
   depths: CompressLayer['depths']
   nodes: FlattenLayer['nodes']
   expandedNodes: FlattenLayer['expandedNodes']
@@ -353,7 +352,6 @@ export class VisibleNodesGenerator extends FlattenLayer {
   get visibleNodes(): VisibleNodes {
     return {
       nodes: this.nodes,
-      lastMatch: this.lastSearchParams,
       depths: this.depths,
       expandedNodes: this.expandedNodes,
       focusedNode: this.focusedNode,

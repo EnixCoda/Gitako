@@ -6,6 +6,8 @@ import { Highlight } from '../Highlight'
 
 export const regexMode: ModeShape = {
   getSearchParams(searchKey) {
+    if (!searchKey) return null
+
     const regexp = searchKeyToRegexp(searchKey)
     if (regexp) {
       const matchNode = (node: TreeNode) => regexp.test(node.name)
@@ -22,10 +24,10 @@ export const regexMode: ModeShape = {
       searchKey && isValidRegexpSource(searchKey) ? new RegExp(searchKey, 'gi') : undefined
     const { name } = node
     return name.includes('/') ? (
-      name.split('/').map((chunk, index, arr) => (
-        <span key={chunk} className={cx({ prefix: index + 1 !== arr.length })}>
+      name.split('/').map((chunk, index, chunks) => (
+        <span key={chunk} className={cx({ prefix: index + 1 !== chunks.length })}>
           <Highlight match={regex} text={chunk} />
-          {index + 1 !== arr.length && '/'}
+          {index + 1 !== chunks.length && '/'}
         </span>
       ))
     ) : (

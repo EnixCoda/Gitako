@@ -15,6 +15,7 @@ import {
   MarkdownIcon as Markdown,
   OctofaceIcon as Octoface,
   ReplyIcon as Reply,
+  SearchIcon as Search,
   XIcon as X,
 } from '@primer/octicons-react'
 import * as React from 'react'
@@ -27,6 +28,11 @@ function getSVGIconComponent(
   name: string
 } {
   switch (type) {
+    case 'search':
+      return {
+        IconComponent: Search,
+        name: 'Search',
+      }
     case 'loading':
       return {
         IconComponent: Clock,
