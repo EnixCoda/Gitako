@@ -1,3 +1,4 @@
+import { SearchMode } from 'components/searchModes'
 import * as storageHelper from 'utils/storageHelper'
 
 export type Config = {
@@ -13,9 +14,10 @@ export type Config = {
   toggleButtonContent: 'logo' | 'octoface'
   recursiveToggleFolder: 'shift' | 'alt'
   shrinkGitHubHeader: boolean
+  searchMode: SearchMode
 }
 
-export enum configKeys {
+enum configKeys {
   sideBarWidth = 'sideBarWidth',
   shortcut = 'shortcut',
   accessToken = 'accessToken',
@@ -28,6 +30,7 @@ export enum configKeys {
   toggleButtonContent = 'toggleButtonContent',
   recursiveToggleFolder = 'recursiveToggleFolder',
   shrinkGitHubHeader = 'shrinkGitHubHeader',
+  searchMode = 'searchMode',
 }
 
 const defaultConfigs: Config = {
@@ -43,13 +46,13 @@ const defaultConfigs: Config = {
   toggleButtonContent: 'logo',
   recursiveToggleFolder: 'shift',
   shrinkGitHubHeader: false,
+  searchMode: 'regex',
 }
 
 const configKeyArray = Object.values(configKeys)
 
 function applyDefaultConfigs(configs: Partial<Config>) {
-  return configKeyArray.reduce((applied, configKey) => {
-    const key = configKey as keyof Config
+  return configKeyArray.reduce((applied, key) => {
     Object.assign(applied, { [key]: key in configs ? configs[key] : defaultConfigs[key] })
     return applied
   }, {} as Config)
