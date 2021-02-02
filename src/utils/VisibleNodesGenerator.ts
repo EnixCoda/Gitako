@@ -309,6 +309,10 @@ class FlattenLayer extends CompressLayer {
           }
         : null,
     )
+    // collapse all nodes on clearing search key
+    if (!searchParams) {
+      this.expandedNodes.clear()
+    }
   }
 }
 
