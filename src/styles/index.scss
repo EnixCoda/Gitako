@@ -456,7 +456,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
             border-radius: 0; // its rounded corner not match with nearby elements
             color: var(--gitako-text-primary);
             background: var(--gitako-bg-canvas);
-            padding-right: 32px; // save space for actions
+            padding-right: 40px; // save space for actions
 
             &.error {
               border-color: var(--gitako-border-danger);

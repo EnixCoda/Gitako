@@ -28,7 +28,7 @@ export function SearchBar({ onSearch, onFocus, value }: Props) {
           error: searchMode === 'regex' && !isValidRegexpSource(value),
         })}
         aria-label="search files"
-        placeholder={`Search files (${searchMode === 'regex' ? 'use RegExp' : 'match sequence'})`}
+        placeholder={`Search files (${searchMode === 'regex' ? 'use RegExp' : 'match path'})`}
         onChange={({ target: { value } }) => onSearch(value)}
         value={value}
       />
@@ -46,7 +46,7 @@ export function SearchBar({ onSearch, onFocus, value }: Props) {
           }}
           aria-label="Toggle search mode"
         >
-          {searchMode === 'regex' ? '.*?' : 'Seq'}
+          {searchMode === 'regex' ? '.*?' : 'path'}
         </Label>
       </div>
     </div>
