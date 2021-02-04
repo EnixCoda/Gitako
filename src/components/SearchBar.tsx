@@ -1,16 +1,19 @@
-import { TextInput } from '@primer/components'
+import { Label, TextInput, TextInputProps } from '@primer/components'
 import { SearchIcon } from '@primer/octicons-react'
+import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { cx } from 'utils/cx'
 import { isValidRegexpSource } from 'utils/general'
 
 type Props = {
+  value: string
   onSearch: (searchKey: string) => void
-  onFocus: React.FocusEventHandler
-  searchKey: string
-}
+} & Required<Pick<TextInputProps, 'onFocus'>>
 
-export function SearchBar({ onSearch, onFocus, searchKey }: Props) {
+export function SearchBar({ onSearch, onFocus, value }: Props) {
+  const configs = useConfigs()
+  const { searchMode } = configs.value
+
   return (
     <div className={'search-input-wrapper'}>
       <TextInput
@@ -22,13 +25,30 @@ export function SearchBar({ onSearch, onFocus, searchKey }: Props) {
         }}
         tabIndex={0}
         className={cx('search-input', {
-          error: !isValidRegexpSource(searchKey),
+          error: searchMode === 'regex' && !isValidRegexpSource(value),
         })}
         aria-label="search files"
-        placeholder="Search files (use RegExp)"
+        placeholder={`Search files (${searchMode === 'regex' ? 'use RegExp' : 'match sequence'})`}
         onChange={({ target: { value } }) => onSearch(value)}
-        value={searchKey}
+        value={value}
       />
+      <div className={`actions`}>
+        <Label
+          className={`toggle-mode`}
+          variant="small"
+          outline
+          title="Toggle search mode"
+          onClick={() => {
+            configs.onChange({
+              searchMode: searchMode === 'regex' ? 'fuzzy' : 'regex',
+            })
+            onSearch('')
+          }}
+          aria-label="Toggle search mode"
+        >
+          {searchMode === 'regex' ? '.*?' : 'Seq'}
+        </Label>
+      </div>
     </div>
   )
 }

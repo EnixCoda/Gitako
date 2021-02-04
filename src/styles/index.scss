@@ -447,6 +447,8 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
         /* search input */
         .search-input-wrapper {
+          position: relative;
+
           .search-input {
             width: 100%;
             box-shadow: none; // stay low
@@ -454,9 +456,31 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
             border-radius: 0; // its rounded corner not match with nearby elements
             color: var(--gitako-text-primary);
             background: var(--gitako-bg-canvas);
+            padding-right: 32px; // save space for actions
 
             &.error {
               border-color: var(--gitako-border-danger);
+            }
+          }
+
+          .actions {
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            height: 100%;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0 2px;
+
+            .toggle-mode {
+              cursor: pointer;
+              &:hover {
+                background-color: var(--gitako-bg-tertiary);
+              }
+              &:active {
+                background-color: var(--gitako-bg-secondary);
+              }
             }
           }
         }
@@ -543,7 +567,8 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
             }
           }
 
-          .go-to-button {
+          .go-to-button,
+          .find-in-folder-button {
             @include icon-button();
             @include button-color();
             width: 28px;
@@ -555,7 +580,8 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
             }
           }
           &:not(:hover) {
-            .go-to-button {
+            .go-to-button,
+            .find-in-folder-button {
               display: none;
             }
           }

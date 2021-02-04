@@ -1,3 +1,4 @@
+import { searchModes } from 'components/searchModes'
 import { GetCreatedMethod, MethodCreator } from 'driver/connect'
 import { platform } from 'platforms'
 import { Config } from 'utils/configHelper'
@@ -17,12 +18,13 @@ export type Props = {
 
 export type ConnectorState = {
   state: 'pulling' | 'rendering' | 'done'
+  visibleNodesGenerator: VisibleNodesGenerator | null
   visibleNodes: VisibleNodes | null
   searchKey: string
   searched: boolean // derived state from searchKey, = !!searchKey
 
   handleKeyDown: GetCreatedMethod<typeof handleKeyDown>
-  search: GetCreatedMethod<typeof search>
+  updateSearchKey: GetCreatedMethod<typeof updateSearchKey>
   onNodeClick: GetCreatedMethod<typeof onNodeClick>
   onFocusSearchBar: GetCreatedMethod<typeof onFocusSearchBar>
   setUpTree: GetCreatedMethod<typeof setUpTree>
@@ -40,20 +42,18 @@ function getVisibleParentNode(nodes: TreeNode[], focusedNode: TreeNode) {
   }
 }
 
-let visibleNodesGenerator: VisibleNodesGenerator
-
 type BoundMethodCreator<Args extends any[] = []> = MethodCreator<Props, ConnectorState, Args>
 
 export const setUpTree: BoundMethodCreator<
   [
     Required<Pick<Props, 'treeRoot' | 'metaData'>> & {
-      config: Pick<Config, 'compressSingletonFolder' | 'accessToken'>
+      config: Pick<Config, 'compressSingletonFolder' | 'accessToken' | 'searchMode'>
     },
   ]
 > = dispatch => async ({ treeRoot, metaData, config }) => {
   dispatch.set({ state: 'rendering' })
 
-  visibleNodesGenerator = new VisibleNodesGenerator({
+  const visibleNodesGenerator = new VisibleNodesGenerator({
     root: treeRoot,
     compress: config.compressSingletonFolder,
     async getTreeData(path) {
@@ -61,7 +61,9 @@ export const setUpTree: BoundMethodCreator<
       return root
     },
   })
+  dispatch.set({ visibleNodesGenerator })
   visibleNodesGenerator.onUpdate(visibleNodes => dispatch.set({ visibleNodes }))
+
   if (platform.shouldExpandAll?.()) {
     const unsubscribe = visibleNodesGenerator.onUpdate(visibleNodes => {
       unsubscribe()
@@ -69,11 +71,11 @@ export const setUpTree: BoundMethodCreator<
         dispatch.call(toggleNodeExpansion, node, { recursive: true }),
       )
     })
-    dispatch.call(search, '')
+    visibleNodesGenerator.search(searchModes[config.searchMode].getSearchParams(''))
   } else {
     const targetPath = platform.getCurrentPath(metaData.branchName)
     if (targetPath) dispatch.call(goTo, targetPath)
-    else dispatch.call(search, '')
+    else visibleNodesGenerator.search(searchModes[config.searchMode].getSearchParams(''))
   }
 
   dispatch.set({ state: 'done' })
@@ -186,12 +188,16 @@ export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch
 
 export const onFocusSearchBar: BoundMethodCreator = dispatch => () => dispatch.call(focusNode, null)
 
-export const search: BoundMethodCreator<[string]> = dispatch => searchKey => {
+export const updateSearchKey: BoundMethodCreator<[string]> = dispatch => searchKey => {
   dispatch.set({ searchKey, searched: searchKey !== '' })
-  visibleNodesGenerator.search({ searchKey })
 }
 
 export const goTo: BoundMethodCreator<[string[]]> = dispatch => currentPath => {
+  const {
+    state: { visibleNodesGenerator },
+  } = dispatch.get()
+  if (!visibleNodesGenerator) return
+
   dispatch.set({ searchKey: '', searched: false })
   visibleNodesGenerator.search(null)
   dispatch.call(expandTo, currentPath)
@@ -201,6 +207,11 @@ export const setExpand: BoundMethodCreator<[TreeNode, boolean]> = dispatch => as
   node,
   expand = false,
 ) => {
+  const {
+    state: { visibleNodesGenerator },
+  } = dispatch.get()
+  if (!visibleNodesGenerator) return
+
   await visibleNodesGenerator.setExpand(node, expand)
   dispatch.call(focusNode, node)
 }
@@ -213,6 +224,11 @@ export const toggleNodeExpansion: BoundMethodCreator<
     },
   ]
 > = dispatch => async (node, { recursive = false }) => {
+  const {
+    state: { visibleNodesGenerator },
+  } = dispatch.get()
+  if (!visibleNodesGenerator) return
+
   visibleNodesGenerator.focusNode(node)
   await visibleNodesGenerator.toggleExpand(node, recursive)
 }
@@ -220,6 +236,11 @@ export const toggleNodeExpansion: BoundMethodCreator<
 export const focusNode: BoundMethodCreator<[TreeNode | null]> = dispatch => (
   node: TreeNode | null,
 ) => {
+  const {
+    state: { visibleNodesGenerator },
+  } = dispatch.get()
+  if (!visibleNodesGenerator) return
+
   visibleNodesGenerator.focusNode(node)
 }
 
@@ -255,6 +276,11 @@ export const onNodeClick: BoundMethodCreator<
 }
 
 export const expandTo: BoundMethodCreator<[string[]]> = dispatch => async currentPath => {
+  const {
+    state: { visibleNodesGenerator },
+  } = dispatch.get()
+  if (!visibleNodesGenerator) return
+
   const nodeExpandedTo = await visibleNodesGenerator.expandTo(currentPath.join('/'))
   if (nodeExpandedTo) {
     visibleNodesGenerator.focusNode(nodeExpandedTo)
