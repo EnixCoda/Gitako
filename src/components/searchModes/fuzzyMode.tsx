@@ -7,7 +7,8 @@ export const fuzzyMode: ModeShape = {
   getSearchParams(searchKey) {
     if (!searchKey) return null
 
-    const matchNode = (node: TreeNode) => fuzzyMatch(searchKey, node.path)
+    const searchKeyInLowerCase = searchKey.toLowerCase()
+    const matchNode = (node: TreeNode) => fuzzyMatch(searchKeyInLowerCase, node.path.toLowerCase())
     return {
       matchNode,
     }
@@ -15,21 +16,25 @@ export const fuzzyMode: ModeShape = {
   renderNodeLabelText(node, searchKey) {
     const { name, path } = node
 
-    const result: React.ReactNode[] = []
+    const indexes = fuzzyMatchIndexes(
+      searchKey.toLowerCase(),
+      path.toLowerCase(),
+      path.length - name.length,
+    )
     const chunks = name.split('/')
-    let renderedPath = path.slice(0, path.length - name.length)
-    chunks.forEach((chunk, index, chunks) => {
-      renderedPath += '/' + chunk
-      const indexes = fuzzyMatchIndexes(searchKey, renderedPath, renderedPath.length - chunk.length)
-      const regexp = new RegExp(indexes.map(i => `(?<=^.{${i}}).`).join('|'))
-      result.push(
+    let progress = 0
+    return chunks.map((chunk, index, chunks) => {
+      const chunkIndexes = indexes.filter(i => i >= progress && i < chunk.length + progress)
+      const regexp = chunkIndexes.length
+        ? new RegExp(chunkIndexes.map(i => `(?<=^.{${i - progress}}).`).join('|'), 'i')
+        : undefined
+      progress += chunk.length + 1
+      return (
         <span key={chunk} className={cx({ prefix: index + 1 !== chunks.length })}>
-          <Highlight match={regexp} text={chunk} />
-          {index + 1 !== chunks.length && '/'}
-        </span>,
+          <Highlight match={regexp} text={index + 1 === chunks.length ? chunk : chunk + '/'} />
+        </span>
       )
     })
-    return result
   },
 }
 

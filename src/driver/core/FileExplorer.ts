@@ -1,4 +1,3 @@
-import { searchModes } from 'components/searchModes'
 import { GetCreatedMethod, MethodCreator } from 'driver/connect'
 import { platform } from 'platforms'
 import { Config } from 'utils/configHelper'
@@ -47,7 +46,7 @@ type BoundMethodCreator<Args extends any[] = []> = MethodCreator<Props, Connecto
 export const setUpTree: BoundMethodCreator<
   [
     Required<Pick<Props, 'treeRoot' | 'metaData'>> & {
-      config: Pick<Config, 'compressSingletonFolder' | 'accessToken' | 'searchMode'>
+      config: Pick<Config, 'compressSingletonFolder' | 'accessToken'>
     },
   ]
 > = dispatch => async ({ treeRoot, metaData, config }) => {
@@ -71,11 +70,9 @@ export const setUpTree: BoundMethodCreator<
         dispatch.call(toggleNodeExpansion, node, { recursive: true }),
       )
     })
-    visibleNodesGenerator.search(searchModes[config.searchMode].getSearchParams(''))
   } else {
     const targetPath = platform.getCurrentPath(metaData.branchName)
     if (targetPath) dispatch.call(goTo, targetPath)
-    else visibleNodesGenerator.search(searchModes[config.searchMode].getSearchParams(''))
   }
 
   dispatch.set({ state: 'done' })
@@ -192,15 +189,17 @@ export const updateSearchKey: BoundMethodCreator<[string]> = dispatch => searchK
   dispatch.set({ searchKey, searched: searchKey !== '' })
 }
 
-export const goTo: BoundMethodCreator<[string[]]> = dispatch => currentPath => {
+export const goTo: BoundMethodCreator<[string[]]> = dispatch => path => {
   const {
     state: { visibleNodesGenerator },
   } = dispatch.get()
   if (!visibleNodesGenerator) return
 
-  dispatch.set({ searchKey: '', searched: false })
+  dispatch.call(updateSearchKey, '')
   visibleNodesGenerator.search(null)
-  dispatch.call(expandTo, currentPath)
+  visibleNodesGenerator.onNextUpdate(() => {
+    dispatch.call(expandTo, path)
+  })
 }
 
 export const setExpand: BoundMethodCreator<[TreeNode, boolean]> = dispatch => async (

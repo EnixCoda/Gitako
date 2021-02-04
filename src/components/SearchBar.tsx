@@ -42,7 +42,7 @@ export function SearchBar({ onSearch, onFocus, value }: Props) {
             configs.onChange({
               searchMode: searchMode === 'regex' ? 'fuzzy' : 'regex',
             })
-            onSearch('')
+            onSearch(value)
           }}
           aria-label="Toggle search mode"
         >

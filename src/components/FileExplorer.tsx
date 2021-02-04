@@ -49,11 +49,15 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
     value: { accessToken, compressSingletonFolder, searchMode },
   } = useConfigs()
 
-  React.useEffect(() => {
-    if (visibleNodesGenerator) {
-      visibleNodesGenerator.search(searchModes[searchMode].getSearchParams(searchKey))
-    }
-  }, [visibleNodesGenerator, searchKey, searchMode])
+  const onSearch = React.useCallback(
+    (searchKey: string) => {
+      updateSearchKey(searchKey)
+      if (visibleNodesGenerator) {
+        visibleNodesGenerator.search(searchModes[searchMode].getSearchParams(searchKey))
+      }
+    },
+    [updateSearchKey, visibleNodesGenerator, searchMode],
+  )
 
   React.useEffect(() => {
     if (treeRoot) {
@@ -63,7 +67,6 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
         config: {
           compressSingletonFolder,
           accessToken,
-          searchMode,
         },
       })
     }
@@ -95,7 +98,7 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
           onClick={e => {
             e.stopPropagation()
             e.preventDefault()
-            updateSearchKey(node.path + '/')
+            onSearch(node.path + '/')
           }}
         >
           <Icon type="search" />
@@ -109,7 +112,7 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
     return renders.length
       ? node => renders.map((render, i) => <React.Fragment key={i}>{render(node)}</React.Fragment>)
       : undefined
-  }, [goTo, updateSearchKey, searched, searchMode])
+  }, [goTo, onSearch, searched, searchMode])
 
   const renderLabelText = React.useCallback(
     node => searchModes[searchMode].renderNodeLabelText(node, searchKey),
@@ -147,11 +150,7 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
         visibleNodes &&
         renderNodeContext && (
           <>
-            <SearchBar
-              value={searchKey}
-              onSearch={value => updateSearchKey(value)}
-              onFocus={onFocusSearchBar}
-            />
+            <SearchBar value={searchKey} onSearch={onSearch} onFocus={onFocusSearchBar} />
             {searched && visibleNodes.nodes.length === 0 && (
               <>
                 <Text marginTop={6} textAlign="center" color="text.gray">

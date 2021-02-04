@@ -120,7 +120,7 @@ class BaseLayer {
 }
 
 class ShakeLayer extends BaseLayer {
-  shackedRoot: TreeNode | null = null
+  shackedRoot: TreeNode | null = this.baseRoot
   lastSearchParams: SearchParams | null = null
   shakeHub = new EventHub<{ emit: TreeNode | null }>()
 
@@ -134,7 +134,7 @@ class ShakeLayer extends BaseLayer {
     (searchParams: ShakeLayer['lastSearchParams']) => {
       this.lastSearchParams = searchParams
 
-      let root: TreeNode | null = this.baseRoot
+      let root: ShakeLayer['shackedRoot'] = this.baseRoot
       if (searchParams) {
         const { matchNode, onChildMatch } = searchParams
         root = search(this.baseRoot, matchNode, onChildMatch)
@@ -339,10 +339,20 @@ export class VisibleNodesGenerator extends FlattenLayer {
 
     this.flattenHub.addEventListener('emit', () => this.update())
     this.baseHub.addEventListener('loadingChange', () => this.update())
+
+    this.search(null)
   }
 
   onUpdate(callback: (visibleNodes: VisibleNodes) => void) {
     return this.hub.addEventListener('emit', callback)
+  }
+
+  onNextUpdate(callback: (visibleNodes: VisibleNodes) => void) {
+    const oneTimeSubscription = (visibleNodes: VisibleNodes) => {
+      callback(visibleNodes)
+      this.hub.removeEventListener('emit', oneTimeSubscription)
+    }
+    return this.hub.addEventListener('emit', oneTimeSubscription)
   }
 
   update() {
