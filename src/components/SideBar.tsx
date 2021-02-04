@@ -21,6 +21,7 @@ import { loadWithPJAX, useOnPJAXDone, usePJAX } from 'utils/hooks/usePJAX'
 import { useProgressBar } from 'utils/hooks/useProgressBar'
 import * as keyHelper from 'utils/keyHelper'
 import { Icon } from './Icon'
+import { LoadingIndicator } from './LoadingIndicator'
 import { Theme } from './Theme'
 
 const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
@@ -110,9 +111,15 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
               </button>
             </div>
             <div className={'gitako-side-bar-content'}>
-              <div className={'header'}>{metaData ? <MetaBar metaData={metaData} /> : <div />}</div>
+              {metaData ? (
+                <div className={'header'}>
+                  <MetaBar metaData={metaData} />
+                </div>
+              ) : (
+                <LoadingIndicator text={'Fetching repo meta...'} />
+              )}
               {errorDueToAuth ? (
-                <AccessDeniedError hasToken={Boolean(accessToken)} />
+                <AccessDeniedDescription hasToken={Boolean(accessToken)} />
               ) : (
                 metaData && (
                   <FileExplorer
@@ -160,10 +167,6 @@ function useShrinkGitHubHeader(shrinkGitHubHeader: boolean) {
       }
     }
   }, [shrinkGitHubHeader])
-}
-
-function AccessDeniedError({ hasToken }: { hasToken: boolean }) {
-  return <AccessDeniedDescription hasToken={hasToken} />
 }
 
 async function trySetUpAccessTokenWithCode() {
