@@ -306,6 +306,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
   .#{$name}-side-bar-body {
     $button-size: 32px;
+    position: relative;
     width: 100%;
     height: 100%;
     display: flex;
