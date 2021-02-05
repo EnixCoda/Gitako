@@ -1,13 +1,14 @@
-import { Label, TextInput, TextInputProps } from '@primer/components'
+import { TextInput, TextInputProps } from '@primer/components'
 import { SearchIcon } from '@primer/octicons-react'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { cx } from 'utils/cx'
 import { isValidRegexpSource } from 'utils/general'
+import { SearchMode } from './searchModes'
 
 type Props = {
   value: string
-  onSearch: (searchKey: string) => void
+  onSearch: (searchKey: string, searchMode: SearchMode) => void
 } & Required<Pick<TextInputProps, 'onFocus'>>
 
 export function SearchBar({ onSearch, onFocus, value }: Props) {
@@ -29,25 +30,24 @@ export function SearchBar({ onSearch, onFocus, value }: Props) {
         })}
         aria-label="search files"
         placeholder={`Search files (${searchMode === 'regex' ? 'use RegExp' : 'match path'})`}
-        onChange={({ target: { value } }) => onSearch(value)}
+        onChange={({ target: { value } }) => onSearch(value, searchMode)}
         value={value}
       />
       <div className={`actions`}>
-        <Label
+        <button
           className={`toggle-mode`}
-          variant="small"
-          outline
           title="Toggle search mode"
           onClick={() => {
+            const newMode = searchMode === 'regex' ? 'fuzzy' : 'regex'
             configs.onChange({
-              searchMode: searchMode === 'regex' ? 'fuzzy' : 'regex',
+              searchMode: newMode,
             })
-            onSearch(value)
+            onSearch(value, newMode)
           }}
           aria-label="Toggle search mode"
         >
-          {searchMode === 'regex' ? '.*?' : 'path'}
-        </Label>
+          {searchMode === 'regex' ? '.*' : 'path'}
+        </button>
       </div>
     </div>
   )

@@ -15,7 +15,7 @@ import { useOnLocationChange } from 'utils/hooks/useOnLocationChange'
 import { useOnPJAXDone } from 'utils/hooks/usePJAX'
 import { VisibleNodes } from 'utils/VisibleNodesGenerator'
 import { Icon } from './Icon'
-import { searchModes } from './searchModes'
+import { SearchMode, searchModes } from './searchModes'
 import { SizeObserver } from './SizeObserver'
 
 type renderNodeContext = {
@@ -50,13 +50,13 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
   } = useConfigs()
 
   const onSearch = React.useCallback(
-    (searchKey: string) => {
+    (searchKey: string, searchMode: SearchMode) => {
       updateSearchKey(searchKey)
       if (visibleNodesGenerator) {
         visibleNodesGenerator.search(searchModes[searchMode].getSearchParams(searchKey))
       }
     },
-    [updateSearchKey, visibleNodesGenerator, searchMode],
+    [updateSearchKey, visibleNodesGenerator],
   )
 
   React.useEffect(() => {
@@ -98,7 +98,7 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
           onClick={e => {
             e.stopPropagation()
             e.preventDefault()
-            onSearch(node.path + '/')
+            onSearch(node.path + '/', searchMode)
           }}
         >
           <Icon type="search" />

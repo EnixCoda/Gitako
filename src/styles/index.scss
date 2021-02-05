@@ -471,15 +471,26 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
             display: flex;
             justify-content: flex-end;
             align-items: center;
-            padding: 0 2px;
+            padding: 0 4px;
 
             .toggle-mode {
-              cursor: pointer;
+              margin: 0;
+              padding: 2px 4px;
+              min-width: 32px;
+              border: 1px solid var(--gitako-border-secondary);
+              border-radius: 8px;
+              background: var(--gitako-bg-primary);
+              color: var(--gitako-text-secondary);
+              font-size: 12px;
+              font-weight: 500;
+              line-height: 1;
+              outline: none;
+              &:focus,
               &:hover {
-                background-color: var(--gitako-bg-tertiary);
+                background: var(--gitako-bg-secondary);
               }
               &:active {
-                background-color: var(--gitako-bg-secondary);
+                background: var(--gitako-bg-tertiary);
               }
             }
           }

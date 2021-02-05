@@ -46,7 +46,7 @@ const defaultConfigs: Config = {
   toggleButtonContent: 'logo',
   recursiveToggleFolder: 'shift',
   shrinkGitHubHeader: false,
-  searchMode: 'regex',
+  searchMode: 'fuzzy',
 }
 
 const configKeyArray = Object.values(configKeys)
