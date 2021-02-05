@@ -9,11 +9,7 @@ import { connect } from 'driver/connect'
 import { SideBarCore } from 'driver/core'
 import { ConnectorState, Props } from 'driver/core/SideBar'
 import { platform } from 'platforms'
-import {
-  GitHub,
-  useGitHubAttachCopyFileButton,
-  useGitHubAttachCopySnippetButton,
-} from 'platforms/GitHub'
+import { useGitHubAttachCopyFileButton, useGitHubAttachCopySnippetButton } from 'platforms/GitHub'
 import * as React from 'react'
 import { cx } from 'utils/cx'
 import { parseURLSearch, run } from 'utils/general'
@@ -41,8 +37,6 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
 
   const accessToken = configContext.value.accessToken || ''
   const [baseSize] = React.useState(() => configContext.value.sideBarWidth)
-
-  useShrinkGitHubHeader(configContext.value.shrinkGitHubHeader)
 
   React.useEffect(() => {
     run(async function () {
@@ -155,19 +149,6 @@ RawGitako.defaultProps = {
 }
 
 export const SideBar = connect(SideBarCore)(RawGitako)
-
-function useShrinkGitHubHeader(shrinkGitHubHeader: boolean) {
-  React.useEffect(() => {
-    if (platform === GitHub) {
-      const target = document.body
-      if (shrinkGitHubHeader) {
-        target.classList.add('shrink-github-header')
-      } else {
-        target.classList.remove('shrink-github-header')
-      }
-    }
-  }, [shrinkGitHubHeader])
-}
 
 async function trySetUpAccessTokenWithCode() {
   const search = parseURLSearch()

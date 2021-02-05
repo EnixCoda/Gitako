@@ -13,7 +13,6 @@ export type Config = {
   toggleButtonVerticalDistance: number
   toggleButtonContent: 'logo' | 'octoface'
   recursiveToggleFolder: 'shift' | 'alt'
-  shrinkGitHubHeader: boolean
   searchMode: SearchMode
 }
 
@@ -29,7 +28,6 @@ enum configKeys {
   toggleButtonVerticalDistance = 'toggleButtonVerticalDistance',
   toggleButtonContent = 'toggleButtonContent',
   recursiveToggleFolder = 'recursiveToggleFolder',
-  shrinkGitHubHeader = 'shrinkGitHubHeader',
   searchMode = 'searchMode',
 }
 
@@ -45,7 +43,6 @@ const defaultConfigs: Config = {
   toggleButtonVerticalDistance: 124, // align with GitHub's navbar items
   toggleButtonContent: 'logo',
   recursiveToggleFolder: 'shift',
-  shrinkGitHubHeader: false,
   searchMode: 'fuzzy',
 }
 

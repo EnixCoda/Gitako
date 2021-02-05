@@ -45,10 +45,6 @@ function SettingsBarContent() {
             wikiLink: wikiLinks.copySnippet,
             tooltip: `Read more in Gitako's Wiki`,
           },
-          {
-            key: 'shrinkGitHubHeader',
-            label: 'Shrink GitHub header(experimental)',
-          },
         ]
       : []
 
