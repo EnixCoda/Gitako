@@ -147,12 +147,16 @@ export function searchKeyToRegexp(searchKey: string) {
   if (!searchKey) return null
 
   try {
-    const flags = /[A-Z]/.test(searchKey) ? '' : 'i'
+    const flags = hasUpperCase(searchKey) ? '' : 'i'
     // case-sensitive when searchKey contains uppercase char
     return new RegExp(searchKey, flags)
   } catch (err) {
     return null // matching nothing if failed transforming regexp
   }
+}
+
+export function hasUpperCase(input: string) {
+  return /[A-Z]/.test(input)
 }
 
 export async function renderReact(element: ReactElement) {

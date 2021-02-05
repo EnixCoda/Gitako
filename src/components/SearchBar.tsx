@@ -29,7 +29,7 @@ export function SearchBar({ onSearch, onFocus, value }: Props) {
           error: searchMode === 'regex' && !isValidRegexpSource(value),
         })}
         aria-label="search files"
-        placeholder={`Search files (${searchMode === 'regex' ? 'use RegExp' : 'match path'})`}
+        placeholder={`Search files`}
         onChange={({ target: { value } }) => onSearch(value, searchMode)}
         value={value}
       />

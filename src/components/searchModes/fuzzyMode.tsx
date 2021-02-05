@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { cx } from 'utils/cx'
+import { hasUpperCase } from 'utils/general'
 import { ModeShape } from '.'
 import { Highlight } from '../Highlight'
 
@@ -7,8 +8,8 @@ export const fuzzyMode: ModeShape = {
   getSearchParams(searchKey) {
     if (!searchKey) return null
 
-    const searchKeyInLowerCase = searchKey.toLowerCase()
-    const matchNode = (node: TreeNode) => fuzzyMatch(searchKeyInLowerCase, node.path.toLowerCase())
+    const matchNode = (node: TreeNode) =>
+      fuzzyMatch(searchKey, hasUpperCase(searchKey) ? node.path : node.path.toLowerCase())
     return {
       matchNode,
     }
@@ -26,7 +27,7 @@ export const fuzzyMode: ModeShape = {
     return chunks.map((chunk, index, chunks) => {
       const chunkIndexes = indexes.filter(i => i >= progress && i < chunk.length + progress)
       const regexp = chunkIndexes.length
-        ? new RegExp(chunkIndexes.map(i => `(?<=^.{${i - progress}}).`).join('|'), 'i')
+        ? new RegExp(chunkIndexes.map(i => `(?<=^.{${i - progress}}).`).join('|'))
         : undefined
       progress += chunk.length + 1
       return (
