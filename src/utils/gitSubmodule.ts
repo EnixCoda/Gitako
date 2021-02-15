@@ -4,7 +4,7 @@ import { findNode } from 'utils/general'
 const subModuleURLRegex = {
   HTTP: /^https?:\/\/.*?$/,
   HTTPGit: /^https:.*?\.git$/,
-  git: /^git@.*?:(.*?)\.git$/,
+  git: /^git@.*?:(.*?)\/(.*?)\.git$/,
 }
 
 function transformModuleGitURL(node: TreeNode, URL: string) {
