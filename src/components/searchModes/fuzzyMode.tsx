@@ -2,7 +2,6 @@ import * as React from 'react'
 import { cx } from 'utils/cx'
 import { hasUpperCase } from 'utils/general'
 import { ModeShape } from '.'
-import { Highlight } from '../Highlight'
 
 export const fuzzyMode: ModeShape = {
   getSearchParams(searchKey) {
@@ -26,13 +25,13 @@ export const fuzzyMode: ModeShape = {
     let progress = 0
     return chunks.map((chunk, index, chunks) => {
       const chunkIndexes = indexes.filter(i => i >= progress && i < chunk.length + progress)
-      const regexp = chunkIndexes.length
-        ? new RegExp(chunkIndexes.map(i => `(?<=^.{${i - progress}}).`).join('|'))
-        : undefined
+
+      const $indexes = chunkIndexes.length ? chunkIndexes.map(i => i - progress) : undefined
+
       progress += chunk.length + 1
       return (
         <span key={chunk} className={cx({ prefix: index + 1 !== chunks.length })}>
-          <Highlight match={regexp} text={index + 1 === chunks.length ? chunk : chunk + '/'} />
+          <Highlight match={$indexes} text={index + 1 === chunks.length ? chunk : chunk + '/'} />
         </span>
       )
     })
@@ -60,4 +59,20 @@ function fuzzyMatchIndexes(input: string, sample: string, shift: number = 0) {
     j++
   }
   return indexes
+}
+
+function Highlight(props: { text: string; match?: number[] }) {
+  const { text, match } = props
+
+  if (!match?.length) return <>{text}</>
+
+  return (
+    <>
+      {text
+        .split('')
+        .map((char, i) =>
+          match.includes(i) ? <mark key={i}>{char}</mark> : <span key={i}>{char}</span>,
+        )}
+    </>
+  )
 }
