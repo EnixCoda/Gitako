@@ -8,6 +8,10 @@ build:
 	rm -rf dist
 	yarn build
 
+safari:
+	rm -rf Safari/Gitako/Gitako\ Extension/Resources/*
+	cd dist && cp -r . ../Safari/Gitako/Gitako\ Extension/Resources
+
 test:
 	yarn test
 
@@ -45,3 +49,5 @@ compress-env:
 
 compress-icons-into-source-for-mz-review:
 	zip -r dist/source-$(FULL_VERSION).zip vscode-icons/icons
+
+.PHONY: safari

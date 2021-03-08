@@ -1,0 +1,531 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		D24E2F0E25F51A12000E12CC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24E2F0D25F51A12000E12CC /* AppDelegate.swift */; };
+		D24E2F1125F51A12000E12CC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D24E2F0F25F51A12000E12CC /* Main.storyboard */; };
+		D24E2F1325F51A12000E12CC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24E2F1225F51A12000E12CC /* ViewController.swift */; };
+		D24E2F1525F51A12000E12CC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D24E2F1425F51A12000E12CC /* Assets.xcassets */; };
+		D24E2F1C25F51A13000E12CC /* Gitako Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = D24E2F1B25F51A13000E12CC /* Gitako Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D24E2F2125F51A13000E12CC /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D24E2F2025F51A13000E12CC /* Cocoa.framework */; };
+		D24E2F2425F51A13000E12CC /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24E2F2325F51A13000E12CC /* SafariWebExtensionHandler.swift */; };
+		D24E2F2B25F51A13000E12CC /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = D24E2F2A25F51A13000E12CC /* manifest.json */; };
+		D24E2F2D25F51A13000E12CC /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = D24E2F2C25F51A13000E12CC /* background.js */; };
+		D24E2F2F25F51A13000E12CC /* content.js in Resources */ = {isa = PBXBuildFile; fileRef = D24E2F2E25F51A13000E12CC /* content.js */; };
+		D24E2F4A25F52669000E12CC /* content.css in Resources */ = {isa = PBXBuildFile; fileRef = D24E2F4525F52669000E12CC /* content.css */; };
+		D24E2F4B25F52669000E12CC /* browser-polyfill.js in Resources */ = {isa = PBXBuildFile; fileRef = D24E2F4625F52669000E12CC /* browser-polyfill.js */; };
+		D24E2F4C25F52669000E12CC /* firefox-shim.js in Resources */ = {isa = PBXBuildFile; fileRef = D24E2F4825F52669000E12CC /* firefox-shim.js */; };
+		D24E2F4D25F52669000E12CC /* icons in Resources */ = {isa = PBXBuildFile; fileRef = D24E2F4925F52669000E12CC /* icons */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D24E2F1D25F51A13000E12CC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D24E2F0125F51A12000E12CC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D24E2F1A25F51A13000E12CC;
+			remoteInfo = "Gitako Extension";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D24E2F3D25F51A13000E12CC /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				D24E2F1C25F51A13000E12CC /* Gitako Extension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		D24E2F0925F51A12000E12CC /* Gitako.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Gitako.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D24E2F0C25F51A12000E12CC /* Gitako.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Gitako.entitlements; sourceTree = "<group>"; };
+		D24E2F0D25F51A12000E12CC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		D24E2F1025F51A12000E12CC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		D24E2F1225F51A12000E12CC /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		D24E2F1425F51A12000E12CC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D24E2F1625F51A12000E12CC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D24E2F1B25F51A13000E12CC /* Gitako Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Gitako Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D24E2F2025F51A13000E12CC /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		D24E2F2325F51A13000E12CC /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
+		D24E2F2A25F51A13000E12CC /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = manifest.json; sourceTree = "<group>"; };
+		D24E2F2C25F51A13000E12CC /* background.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = background.js; sourceTree = "<group>"; };
+		D24E2F2E25F51A13000E12CC /* content.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = content.js; sourceTree = "<group>"; };
+		D24E2F3625F51A13000E12CC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D24E2F3725F51A13000E12CC /* Gitako_Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Gitako_Extension.entitlements; sourceTree = "<group>"; };
+		D24E2F4325F52669000E12CC /* content.css.map */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = content.css.map; sourceTree = "<group>"; };
+		D24E2F4425F52669000E12CC /* content.js.map */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = content.js.map; sourceTree = "<group>"; };
+		D24E2F4525F52669000E12CC /* content.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = content.css; sourceTree = "<group>"; };
+		D24E2F4625F52669000E12CC /* browser-polyfill.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "browser-polyfill.js"; sourceTree = "<group>"; };
+		D24E2F4725F52669000E12CC /* background.js.map */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = background.js.map; sourceTree = "<group>"; };
+		D24E2F4825F52669000E12CC /* firefox-shim.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "firefox-shim.js"; sourceTree = "<group>"; };
+		D24E2F4925F52669000E12CC /* icons */ = {isa = PBXFileReference; lastKnownFileType = folder; path = icons; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D24E2F0625F51A12000E12CC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D24E2F1825F51A13000E12CC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D24E2F2125F51A13000E12CC /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		D24E2F0025F51A12000E12CC = {
+			isa = PBXGroup;
+			children = (
+				D24E2F0B25F51A12000E12CC /* Gitako */,
+				D24E2F2225F51A13000E12CC /* Gitako Extension */,
+				D24E2F1F25F51A13000E12CC /* Frameworks */,
+				D24E2F0A25F51A12000E12CC /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D24E2F0A25F51A12000E12CC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D24E2F0925F51A12000E12CC /* Gitako.app */,
+				D24E2F1B25F51A13000E12CC /* Gitako Extension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D24E2F0B25F51A12000E12CC /* Gitako */ = {
+			isa = PBXGroup;
+			children = (
+				D24E2F0C25F51A12000E12CC /* Gitako.entitlements */,
+				D24E2F0D25F51A12000E12CC /* AppDelegate.swift */,
+				D24E2F0F25F51A12000E12CC /* Main.storyboard */,
+				D24E2F1225F51A12000E12CC /* ViewController.swift */,
+				D24E2F1425F51A12000E12CC /* Assets.xcassets */,
+				D24E2F1625F51A12000E12CC /* Info.plist */,
+			);
+			path = Gitako;
+			sourceTree = "<group>";
+		};
+		D24E2F1F25F51A13000E12CC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D24E2F2025F51A13000E12CC /* Cocoa.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D24E2F2225F51A13000E12CC /* Gitako Extension */ = {
+			isa = PBXGroup;
+			children = (
+				D24E2F2325F51A13000E12CC /* SafariWebExtensionHandler.swift */,
+				D24E2F3625F51A13000E12CC /* Info.plist */,
+				D24E2F3725F51A13000E12CC /* Gitako_Extension.entitlements */,
+				D24E2F2525F51A13000E12CC /* Resources */,
+			);
+			path = "Gitako Extension";
+			sourceTree = "<group>";
+		};
+		D24E2F2525F51A13000E12CC /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				D24E2F4725F52669000E12CC /* background.js.map */,
+				D24E2F4625F52669000E12CC /* browser-polyfill.js */,
+				D24E2F4525F52669000E12CC /* content.css */,
+				D24E2F4325F52669000E12CC /* content.css.map */,
+				D24E2F4425F52669000E12CC /* content.js.map */,
+				D24E2F4825F52669000E12CC /* firefox-shim.js */,
+				D24E2F4925F52669000E12CC /* icons */,
+				D24E2F2A25F51A13000E12CC /* manifest.json */,
+				D24E2F2C25F51A13000E12CC /* background.js */,
+				D24E2F2E25F51A13000E12CC /* content.js */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		D24E2F0825F51A12000E12CC /* Gitako */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D24E2F3E25F51A13000E12CC /* Build configuration list for PBXNativeTarget "Gitako" */;
+			buildPhases = (
+				D24E2F0525F51A12000E12CC /* Sources */,
+				D24E2F0625F51A12000E12CC /* Frameworks */,
+				D24E2F0725F51A12000E12CC /* Resources */,
+				D24E2F3D25F51A13000E12CC /* Embed App Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D24E2F1E25F51A13000E12CC /* PBXTargetDependency */,
+			);
+			name = Gitako;
+			productName = Gitako;
+			productReference = D24E2F0925F51A12000E12CC /* Gitako.app */;
+			productType = "com.apple.product-type.application";
+		};
+		D24E2F1A25F51A13000E12CC /* Gitako Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D24E2F3A25F51A13000E12CC /* Build configuration list for PBXNativeTarget "Gitako Extension" */;
+			buildPhases = (
+				D24E2F1725F51A13000E12CC /* Sources */,
+				D24E2F1825F51A13000E12CC /* Frameworks */,
+				D24E2F1925F51A13000E12CC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Gitako Extension";
+			productName = "Gitako Extension";
+			productReference = D24E2F1B25F51A13000E12CC /* Gitako Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D24E2F0125F51A12000E12CC /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1240;
+				LastUpgradeCheck = 1240;
+				TargetAttributes = {
+					D24E2F0825F51A12000E12CC = {
+						CreatedOnToolsVersion = 12.4;
+					};
+					D24E2F1A25F51A13000E12CC = {
+						CreatedOnToolsVersion = 12.4;
+					};
+				};
+			};
+			buildConfigurationList = D24E2F0425F51A12000E12CC /* Build configuration list for PBXProject "Gitako" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = D24E2F0025F51A12000E12CC;
+			productRefGroup = D24E2F0A25F51A12000E12CC /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D24E2F0825F51A12000E12CC /* Gitako */,
+				D24E2F1A25F51A13000E12CC /* Gitako Extension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D24E2F0725F51A12000E12CC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D24E2F1525F51A12000E12CC /* Assets.xcassets in Resources */,
+				D24E2F1125F51A12000E12CC /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D24E2F1925F51A13000E12CC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D24E2F4B25F52669000E12CC /* browser-polyfill.js in Resources */,
+				D24E2F4A25F52669000E12CC /* content.css in Resources */,
+				D24E2F2D25F51A13000E12CC /* background.js in Resources */,
+				D24E2F2B25F51A13000E12CC /* manifest.json in Resources */,
+				D24E2F4C25F52669000E12CC /* firefox-shim.js in Resources */,
+				D24E2F4D25F52669000E12CC /* icons in Resources */,
+				D24E2F2F25F51A13000E12CC /* content.js in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D24E2F0525F51A12000E12CC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D24E2F1325F51A12000E12CC /* ViewController.swift in Sources */,
+				D24E2F0E25F51A12000E12CC /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D24E2F1725F51A13000E12CC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D24E2F2425F51A13000E12CC /* SafariWebExtensionHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D24E2F1E25F51A13000E12CC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D24E2F1A25F51A13000E12CC /* Gitako Extension */;
+			targetProxy = D24E2F1D25F51A13000E12CC /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		D24E2F0F25F51A12000E12CC /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D24E2F1025F51A12000E12CC /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		D24E2F3825F51A13000E12CC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		D24E2F3925F51A13000E12CC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		D24E2F3B25F51A13000E12CC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "Gitako Extension/Gitako_Extension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = "Gitako Extension/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				PRODUCT_BUNDLE_IDENTIFIER = enixcoda.Gitako.Extension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D24E2F3C25F51A13000E12CC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "Gitako Extension/Gitako_Extension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = "Gitako Extension/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				PRODUCT_BUNDLE_IDENTIFIER = enixcoda.Gitako.Extension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		D24E2F3F25F51A13000E12CC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Gitako/Gitako.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Gitako/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				PRODUCT_BUNDLE_IDENTIFIER = enixcoda.Gitako;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D24E2F4025F51A13000E12CC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Gitako/Gitako.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Gitako/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				PRODUCT_BUNDLE_IDENTIFIER = enixcoda.Gitako;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D24E2F0425F51A12000E12CC /* Build configuration list for PBXProject "Gitako" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D24E2F3825F51A13000E12CC /* Debug */,
+				D24E2F3925F51A13000E12CC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D24E2F3A25F51A13000E12CC /* Build configuration list for PBXNativeTarget "Gitako Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D24E2F3B25F51A13000E12CC /* Debug */,
+				D24E2F3C25F51A13000E12CC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D24E2F3E25F51A13000E12CC /* Build configuration list for PBXNativeTarget "Gitako" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D24E2F3F25F51A13000E12CC /* Debug */,
+				D24E2F4025F51A13000E12CC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D24E2F0125F51A12000E12CC /* Project object */;
+}
