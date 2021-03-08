@@ -145,10 +145,6 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
   display: none;
 }
 
-.invisible {
-  visibility: hidden;
-}
-
 @mixin flex-center {
   display: inline-flex;
   justify-content: center;
