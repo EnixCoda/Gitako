@@ -9,7 +9,11 @@
 }
 
 // Following rules are organized according to common variables to reduce output CSS size
-:root, // default
+:root {
+  // default, e.g. when not login
+  @include setVariables(light.$variables);
+}
+
 :root {
   &[data-color-mode='light'][data-light-theme='light'],
   &[data-color-mode='dark'][data-dark-theme='light'] {
