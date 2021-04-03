@@ -1,0 +1,29 @@
+@use './light/variables.scss' as light;
+@use './dark/variables.scss' as dark;
+
+@mixin setVariables($variables) {
+  @each $name, $value in $variables {
+    --gitako-#{$name}: #{$value};
+  }
+}
+
+:root, // default
+:root[data-color-mode='light'] {
+  @include setVariables(light.$variables);
+}
+
+:root[data-color-mode='dark'][data-dark-theme='dark'] {
+  @include setVariables(dark.$variables);
+}
+
+@media (prefers-color-scheme: light) {
+  :root[data-color-mode='auto'][data-light-theme='light'] {
+    @include setVariables(light.$variables);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-color-mode='auto'][data-dark-theme='dark'] {
+    @include setVariables(dark.$variables);
+  }
+}
