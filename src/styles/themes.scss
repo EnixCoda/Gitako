@@ -1,5 +1,6 @@
 @use './light/variables.scss' as light;
 @use './dark/variables.scss' as dark;
+@use './darkDimmed/variables.scss' as darkDimmed;
 
 @mixin setVariables($variables) {
   @each $name, $value in $variables {
@@ -7,23 +8,35 @@
   }
 }
 
-:root, // default
-:root[data-color-mode='light'] {
-  @include setVariables(light.$variables);
+@mixin bindTheme($name) {
+  &[data-#{$name}-theme='light'] {
+    @include setVariables(light.$variables);
+  }
+  &[data-#{$name}-theme='dark'] {
+    @include setVariables(dark.$variables);
+  }
+  &[data-#{$name}-theme='dark_dimmed'] {
+    @include setVariables(darkDimmed.$variables);
+  }
 }
 
-:root[data-color-mode='dark'][data-dark-theme='dark'] {
-  @include setVariables(dark.$variables);
+:root, // default
+:root[data-color-mode='light'] {
+  @include bindTheme('light');
+}
+
+:root[data-color-mode='dark'] {
+  @include bindTheme('dark');
 }
 
 @media (prefers-color-scheme: light) {
-  :root[data-color-mode='auto'][data-light-theme='light'] {
-    @include setVariables(light.$variables);
+  :root[data-color-mode='auto'] {
+    @include bindTheme('light');
   }
 }
 
 @media (prefers-color-scheme: dark) {
-  :root[data-color-mode='auto'][data-dark-theme='dark'] {
-    @include setVariables(dark.$variables);
+  :root[data-color-mode='auto'] {
+    @include bindTheme('dark');
   }
 }
