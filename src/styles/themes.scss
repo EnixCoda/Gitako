@@ -8,35 +8,53 @@
   }
 }
 
-@mixin bindTheme($name) {
-  &[data-#{$name}-theme='light'] {
+// Following rules are organized according to common variables to reduce output CSS size
+:root, // default
+:root {
+  &[data-color-mode='light'][data-light-theme='light'],
+  &[data-color-mode='dark'][data-dark-theme='light'] {
     @include setVariables(light.$variables);
   }
-  &[data-#{$name}-theme='dark'] {
+
+  &[data-color-mode='light'][data-light-theme='dark'],
+  &[data-color-mode='dark'][data-dark-theme='dark'] {
     @include setVariables(dark.$variables);
   }
-  &[data-#{$name}-theme='dark_dimmed'] {
+
+  &[data-color-mode='light'][data-light-theme='dark_dimmed'],
+  &[data-color-mode='dark'][data-dark-theme='dark_dimmed'] {
     @include setVariables(darkDimmed.$variables);
   }
 }
 
-:root, // default
-:root[data-color-mode='light'] {
-  @include bindTheme('light');
-}
-
-:root[data-color-mode='dark'] {
-  @include bindTheme('dark');
-}
-
 @media (prefers-color-scheme: light) {
   :root[data-color-mode='auto'] {
-    @include bindTheme('light');
+    &[data-light-theme='light'] {
+      @include setVariables(light.$variables);
+    }
+
+    &[data-light-theme='dark'] {
+      @include setVariables(dark.$variables);
+    }
+
+    &[data-light-theme='dark_dimmed'] {
+      @include setVariables(darkDimmed.$variables);
+    }
   }
 }
 
 @media (prefers-color-scheme: dark) {
   :root[data-color-mode='auto'] {
-    @include bindTheme('dark');
+    &[data-dark-theme='light'] {
+      @include setVariables(light.$variables);
+    }
+
+    &[data-dark-theme='dark'] {
+      @include setVariables(dark.$variables);
+    }
+
+    &[data-dark-theme='dark_dimmed'] {
+      @include setVariables(darkDimmed.$variables);
+    }
   }
 }
