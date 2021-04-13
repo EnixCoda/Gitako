@@ -139,6 +139,13 @@ export function getCodeElement() {
  * click these buttons will copy file content to clipboard
  */
 export function attachCopyFileBtn() {
+  const removeButtons = () => {
+    const buttons = document.querySelectorAll(`.${copyFileButtonClassName}`)
+    buttons.forEach(button => {
+      button.parentElement?.removeChild(button)
+    })
+  }
+
   if (getCurrentPageType() === PAGE_TYPES.RAW_TEXT) {
     // the button group in file content header
     const buttonGroupSelector = '.repository-content .Box-header .BtnGroup'
@@ -147,6 +154,8 @@ export function attachCopyFileBtn() {
     if (buttonGroups.length === 0) {
       raiseError(new Error(`No button groups found`))
     }
+
+    removeButtons() // prevent duplicated buttons
 
     buttonGroups.forEach(async buttonGroup => {
       if (!buttonGroup.lastElementChild) return
@@ -158,12 +167,7 @@ export function attachCopyFileBtn() {
   }
 
   // return callback so that disabling after redirecting from file page to non-page works properly
-  return () => {
-    const buttons = document.querySelectorAll(`.${copyFileButtonClassName}`)
-    buttons.forEach(button => {
-      button.parentElement?.removeChild(button)
-    })
-  }
+  return removeButtons
 }
 
 export function attachCopySnippet() {
