@@ -68,18 +68,27 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
   )
 
   const intelligentToggle = configContext.value.intelligentToggle
+  // Hide sidebar when error due to auth but token is set  #128
+  const hideSidebarOnInvalidToken: boolean =
+    intelligentToggle === null && Boolean(errorDueToAuth && accessToken)
   React.useEffect(() => {
-    const shouldShow = intelligentToggle === null ? platform.shouldShow() : intelligentToggle
-    props.setShouldShow(shouldShow)
-  }, [intelligentToggle, props.metaData])
+    if (hideSidebarOnInvalidToken) {
+      props.setShouldShow(false)
+    } else {
+      const shouldShow = intelligentToggle === null ? platform.shouldShow() : intelligentToggle
+      props.setShouldShow(shouldShow)
+    }
+  }, [intelligentToggle, hideSidebarOnInvalidToken, props.metaData])
 
   const updateSideBarVisibility = React.useCallback(
     function updateSideBarVisibility() {
-      if (intelligentToggle === null) {
+      if (hideSidebarOnInvalidToken) {
+        props.setShouldShow(false)
+      } else if (intelligentToggle === null) {
         props.setShouldShow(platform.shouldShow())
       }
     },
-    [props.metaData?.branchName, intelligentToggle],
+    [props.metaData?.branchName, intelligentToggle, hideSidebarOnInvalidToken],
   )
   useOnPJAXDone(updateSideBarVisibility)
 
