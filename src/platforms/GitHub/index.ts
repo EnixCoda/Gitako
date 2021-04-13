@@ -118,6 +118,11 @@ export const GitHub: Platform = {
     }
     return metaData
   },
+  resolvePageScope() {
+    if (URLHelper.parse().type === 'releases') return 'releases'
+    if (URLHelper.isInPullPage()) return 'pull'
+    return 'general'
+  },
   async getDefaultBranchName({ userName, repoName }, accessToken) {
     const data = await API.getRepoMeta(userName, repoName, accessToken)
     return data.default_branch

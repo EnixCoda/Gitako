@@ -15,6 +15,7 @@ import { cx } from 'utils/cx'
 import { parseURLSearch, run } from 'utils/general'
 import { loadWithPJAX, useOnPJAXDone, usePJAX } from 'utils/hooks/usePJAX'
 import { useProgressBar } from 'utils/hooks/useProgressBar'
+import { useStateIO } from 'utils/hooks/useStateIO'
 import * as keyHelper from 'utils/keyHelper'
 import { Icon } from './Icon'
 import { LoadingIndicator } from './LoadingIndicator'
@@ -47,9 +48,14 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
     })
   }, [])
 
+  /**
+   * Catch unexpected PJAX, force trigger init on scope change.
+   */
+  const pageScope = useStateIO(platform.resolvePageScope?.())
+  useOnPJAXDone(() => pageScope.onChange(platform.resolvePageScope?.()))
   React.useEffect(() => {
     props.init()
-  }, [accessToken])
+  }, [accessToken, pageScope.value])
 
   React.useEffect(
     function attachKeyDown() {

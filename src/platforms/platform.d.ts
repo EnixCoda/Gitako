@@ -2,6 +2,7 @@ type Platform = {
   isEnterprise(): boolean
   // branch name might not be available when resolving from DOM and URL
   resolveMeta(): MakeOptional<MetaData, 'branchName'> | null
+  resolvePageScope?(): string
   getDefaultBranchName(
     metaData: Pick<MetaData, 'userName' | 'repoName'>,
     accessToken?: string,
