@@ -120,7 +120,8 @@ export const GitHub: Platform = {
   },
   resolvePageScope() {
     if (URLHelper.parse().type === 'releases') return 'releases'
-    if (URLHelper.isInPullPage()) return 'pull'
+    const pullId = URLHelper.isInPullPage()
+    if (pullId) return `pull-${pullId}`
     return 'general'
   },
   async getDefaultBranchName({ userName, repoName }, accessToken) {
