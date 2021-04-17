@@ -6,7 +6,7 @@ import * as React from 'react'
 export function AccessDeniedDescription({ hasToken }: { hasToken: boolean }) {
   return (
     <div className={'description'}>
-      <h5>Access Denied</h5>
+      <h2>Access Denied</h2>
       {hasToken ? (
         <>
           <p>

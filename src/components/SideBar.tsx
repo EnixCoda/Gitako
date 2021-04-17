@@ -120,17 +120,13 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
               </button>
             </div>
             <div className={'gitako-side-bar-content'}>
-              {metaData ? (
-                <div className={'header'}>
-                  <MetaBar metaData={metaData} />
-                </div>
-              ) : (
-                <LoadingIndicator text={'Fetching repo meta...'} />
-              )}
               {errorDueToAuth ? (
                 <AccessDeniedDescription hasToken={Boolean(accessToken)} />
-              ) : (
-                metaData && (
+              ) : metaData ? (
+                <>
+                  <div className={'header'}>
+                    <MetaBar metaData={metaData} />
+                  </div>
                   <FileExplorer
                     toggleShowSettings={toggleShowSettings}
                     metaData={metaData}
@@ -141,7 +137,9 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
                     config={configContext.value}
                     defer={defer}
                   />
-                )
+                </>
+              ) : (
+                <LoadingIndicator text={'Fetching repo meta...'} />
               )}
             </div>
             <SettingsBar
