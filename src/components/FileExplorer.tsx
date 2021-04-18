@@ -138,14 +138,7 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
       onClick={freeze ? toggleShowSettings : undefined}
     >
       {state !== 'done' ? (
-        <LoadingIndicator
-          text={
-            {
-              pulling: 'Fetching File List...',
-              rendering: 'Rendering File List...',
-            }[state]
-          }
-        />
+        <LoadingIndicator text={'Rendering File List...'} />
       ) : (
         visibleNodes &&
         renderNodeContext && (
@@ -183,7 +176,7 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
 
 RawFileExplorer.defaultProps = {
   freeze: false,
-  state: 'pulling',
+  state: 'rendering',
   searchKey: '',
   visibleNodes: null,
 }

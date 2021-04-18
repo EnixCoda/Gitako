@@ -15,16 +15,13 @@ export type ConnectorState = {
   shouldShow: boolean
   // whether show settings pane
   showSettings: boolean
-  // whether failed loading the repo due to it is private
-  errorDueToAuth: boolean
   // meta data for the repository
   metaData?: MetaData
   // file tree data
   treeData?: TreeNode
+  status: 'loading-meta' | 'loading-tree' | 'idle' | 'error-due-to-auth' | 'disabled'
   logoContainerElement: Element | null
   defer?: boolean
-  disabled: boolean
-  initializingPromise: Promise<void> | null
 } & {
   init: GetCreatedMethod<typeof init>
   setShouldShow: GetCreatedMethod<typeof setShouldShow>
@@ -40,16 +37,16 @@ export const init: BoundMethodCreator = dispatch => async () => {
   const leave = await promiseQueue.enter()
 
   try {
+    dispatch.set({ status: 'loading-meta' })
     const metaData = platform.resolveMeta()
     if (!metaData) {
-      dispatch.set({ disabled: true })
+      dispatch.set({ status: 'disabled' })
       return
     }
     const { userName, repoName, branchName } = metaData
 
     DOMHelper.markGitakoReadyState(true)
     dispatch.set({
-      errorDueToAuth: false,
       showSettings: false,
       logoContainerElement: DOMHelper.insertLogoMountPoint(),
     })
@@ -116,8 +113,9 @@ export const init: BoundMethodCreator = dispatch => async () => {
       }
     }
 
+    dispatch.set({ status: 'loading-tree' })
     const { root: treeData, defer } = await getTreeData
-    dispatch.set({ treeData, defer })
+    dispatch.set({ status: 'idle', treeData, defer })
   } catch (err) {
     dispatch.call(handleError, err)
   }
@@ -135,13 +133,13 @@ export const handleError: BoundMethodCreator<[Error]> = dispatch => async err =>
     err.message === errors.BAD_CREDENTIALS ||
     err.message === errors.API_RATE_LIMIT
   ) {
-    dispatch.set({ errorDueToAuth: true })
+    dispatch.set({ status: 'error-due-to-auth' })
   } else if (err.message === errors.CONNECTION_BLOCKED) {
     const { props } = dispatch.get()
     if (props.configContext.value.accessToken) {
       dispatch.call(setError, `Cannot connect to ${platformName}.`)
     } else {
-      dispatch.set({ errorDueToAuth: true })
+      dispatch.set({ status: 'error-due-to-auth' })
     }
   } else if (err.message === errors.SERVER_FAULT) {
     dispatch.call(setError, `${platformName} server went down.`)

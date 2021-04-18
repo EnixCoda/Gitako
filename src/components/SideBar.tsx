@@ -23,9 +23,9 @@ import { Theme } from './Theme'
 
 const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
   const {
-    errorDueToAuth,
     metaData,
     treeData,
+    status,
     defer,
     error,
     shouldShow,
@@ -59,7 +59,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
 
   React.useEffect(
     function attachKeyDown() {
-      if (props.disabled || !configContext.value.shortcut) return
+      if (status === 'disabled' || !configContext.value.shortcut) return
 
       function onKeyDown(e: KeyboardEvent) {
         const keys = keyHelper.parseEvent(e)
@@ -70,13 +70,13 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
       window.addEventListener('keydown', onKeyDown)
       return () => window.removeEventListener('keydown', onKeyDown)
     },
-    [toggleShowSideBar, props.disabled, configContext.value.shortcut],
+    [toggleShowSideBar, status === 'disabled', configContext.value.shortcut],
   )
 
   const intelligentToggle = configContext.value.intelligentToggle
   // Hide sidebar when error due to auth but token is set  #128
   const hideSidebarOnInvalidToken: boolean =
-    intelligentToggle === null && Boolean(errorDueToAuth && accessToken)
+    intelligentToggle === null && Boolean(status === 'error-due-to-auth' && accessToken)
   React.useEffect(() => {
     if (hideSidebarOnInvalidToken) {
       props.setShouldShow(false)
@@ -120,27 +120,34 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
               </button>
             </div>
             <div className={'gitako-side-bar-content'}>
-              {errorDueToAuth ? (
-                <AccessDeniedDescription hasToken={Boolean(accessToken)} />
-              ) : metaData ? (
-                <>
-                  <div className={'header'}>
-                    <MetaBar metaData={metaData} />
-                  </div>
-                  <FileExplorer
-                    toggleShowSettings={toggleShowSettings}
-                    metaData={metaData}
-                    treeRoot={treeData}
-                    freeze={showSettings}
-                    accessToken={accessToken}
-                    loadWithPJAX={loadWithPJAX}
-                    config={configContext.value}
-                    defer={defer}
-                  />
-                </>
-              ) : (
-                <LoadingIndicator text={'Fetching repo meta...'} />
-              )}
+              {(() => {
+                switch (status) {
+                  case 'loading-meta':
+                    return <LoadingIndicator text={'Fetching repo meta...'} />
+                  case 'loading-tree':
+                    return <LoadingIndicator text={'Fetching File List...'} />
+                  case 'idle':
+                    return metaData ? (
+                      <>
+                        <div className={'header'}>
+                          <MetaBar metaData={metaData} />
+                        </div>
+                        <FileExplorer
+                          toggleShowSettings={toggleShowSettings}
+                          metaData={metaData}
+                          treeRoot={treeData}
+                          freeze={showSettings}
+                          accessToken={accessToken}
+                          loadWithPJAX={loadWithPJAX}
+                          config={configContext.value}
+                          defer={defer}
+                        />
+                      </>
+                    ) : null
+                  case 'error-due-to-auth':
+                    return <AccessDeniedDescription hasToken={Boolean(accessToken)} />
+                }
+              })()}
             </div>
             <SettingsBar
               defer={defer}
@@ -157,8 +164,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
 RawGitako.defaultProps = {
   shouldShow: false,
   showSettings: false,
-  errorDueToAuth: false,
-  disabled: false,
+  status: 'loading-meta',
 }
 
 export const SideBar = connect(SideBarCore)(RawGitako)

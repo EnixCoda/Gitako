@@ -16,7 +16,7 @@ export type Props = {
 }
 
 export type ConnectorState = {
-  state: 'pulling' | 'rendering' | 'done'
+  state: 'rendering' | 'done'
   visibleNodesGenerator: VisibleNodesGenerator | null
   visibleNodes: VisibleNodes | null
   searchKey: string
