@@ -8,7 +8,7 @@ export type Config = {
   compressSingletonFolder: boolean
   copyFileButton: boolean
   copySnippetButton: boolean
-  intelligentToggle: boolean | null // `null` stands for intelligent, boolean for sidebar open status
+  intelligentToggle: boolean | null // `null` stands for intelligent, boolean for sidebar open state
   icons: 'rich' | 'dim' | 'native'
   toggleButtonVerticalDistance: number
   toggleButtonContent: 'logo' | 'octoface'

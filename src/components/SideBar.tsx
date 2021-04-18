@@ -25,7 +25,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
   const {
     metaData,
     treeData,
-    status,
+    state,
     defer,
     error,
     shouldShow,
@@ -59,7 +59,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
 
   React.useEffect(
     function attachKeyDown() {
-      if (status === 'disabled' || !configContext.value.shortcut) return
+      if (state === 'disabled' || !configContext.value.shortcut) return
 
       function onKeyDown(e: KeyboardEvent) {
         const keys = keyHelper.parseEvent(e)
@@ -70,13 +70,13 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
       window.addEventListener('keydown', onKeyDown)
       return () => window.removeEventListener('keydown', onKeyDown)
     },
-    [toggleShowSideBar, status === 'disabled', configContext.value.shortcut],
+    [toggleShowSideBar, state === 'disabled', configContext.value.shortcut],
   )
 
   const intelligentToggle = configContext.value.intelligentToggle
   // Hide sidebar when error due to auth but token is set  #128
   const hideSidebarOnInvalidToken: boolean =
-    intelligentToggle === null && Boolean(status === 'error-due-to-auth' && accessToken)
+    intelligentToggle === null && Boolean(state === 'error-due-to-auth' && accessToken)
   React.useEffect(() => {
     if (hideSidebarOnInvalidToken) {
       props.setShouldShow(false)
@@ -121,7 +121,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
             </div>
             <div className={'gitako-side-bar-content'}>
               {(() => {
-                switch (status) {
+                switch (state) {
                   case 'loading-meta':
                     return <LoadingIndicator text={'Fetching repo meta...'} />
                   case 'loading-tree':
@@ -164,7 +164,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
 RawGitako.defaultProps = {
   shouldShow: false,
   showSettings: false,
-  status: 'loading-meta',
+  state: 'loading-meta',
 }
 
 export const SideBar = connect(SideBarCore)(RawGitako)

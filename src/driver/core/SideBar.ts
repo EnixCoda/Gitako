@@ -19,7 +19,7 @@ export type ConnectorState = {
   metaData?: MetaData
   // file tree data
   treeData?: TreeNode
-  status: 'loading-meta' | 'loading-tree' | 'idle' | 'error-due-to-auth' | 'disabled'
+  state: 'loading-meta' | 'loading-tree' | 'idle' | 'error-due-to-auth' | 'disabled'
   logoContainerElement: Element | null
   defer?: boolean
 } & {
@@ -37,10 +37,10 @@ export const init: BoundMethodCreator = dispatch => async () => {
   const leave = await promiseQueue.enter()
 
   try {
-    dispatch.set({ status: 'loading-meta' })
+    dispatch.set({ state: 'loading-meta' })
     const metaData = platform.resolveMeta()
     if (!metaData) {
-      dispatch.set({ status: 'disabled' })
+      dispatch.set({ state: 'disabled' })
       return
     }
     const { userName, repoName, branchName } = metaData
@@ -113,9 +113,9 @@ export const init: BoundMethodCreator = dispatch => async () => {
       }
     }
 
-    dispatch.set({ status: 'loading-tree' })
+    dispatch.set({ state: 'loading-tree' })
     const { root: treeData, defer } = await getTreeData
-    dispatch.set({ status: 'idle', treeData, defer })
+    dispatch.set({ state: 'idle', treeData, defer })
   } catch (err) {
     dispatch.call(handleError, err)
   }
@@ -133,13 +133,13 @@ export const handleError: BoundMethodCreator<[Error]> = dispatch => async err =>
     err.message === errors.BAD_CREDENTIALS ||
     err.message === errors.API_RATE_LIMIT
   ) {
-    dispatch.set({ status: 'error-due-to-auth' })
+    dispatch.set({ state: 'error-due-to-auth' })
   } else if (err.message === errors.CONNECTION_BLOCKED) {
     const { props } = dispatch.get()
     if (props.configContext.value.accessToken) {
       dispatch.call(setError, `Cannot connect to ${platformName}.`)
     } else {
-      dispatch.set({ status: 'error-due-to-auth' })
+      dispatch.set({ state: 'error-due-to-auth' })
     }
   } else if (err.message === errors.SERVER_FAULT) {
     dispatch.call(setError, `${platformName} server went down.`)
