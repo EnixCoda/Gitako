@@ -35,7 +35,12 @@ declare namespace GitHubAPI {
     changed_files: number
   }
 
+  type PullComment = {
+    path: string
+  }
+
   type PullTreeData = PullTreeItem[]
+  type PullComments = PullComment[]
 
   type MetaData = {
     name: string

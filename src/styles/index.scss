@@ -503,6 +503,14 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           &.focused,
           &:hover {
             background: var(--gitako-bg-tertiary);
+
+            .node-item-comment {
+              background: var(--gitako-bg-tertiary);
+              background: -moz-linear-gradient(left, transparent 0%, var(--gitako-bg-tertiary) 15%, var(--gitako-bg-tertiary) 100%);
+              background: -webkit-linear-gradient(left, transparent 0%, var(--gitako-bg-tertiary) 15%, var(--gitako-bg-tertiary) 100%);
+              background: linear-gradient(to right, transparent 0% ,var(--gitako-bg-tertiary) 15%, var(--gitako-bg-tertiary) 100%);
+              filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#161b22', endColorstr='#161b22', GradientType=1);
+            }
           }
           &:active {
             background: var(--gitako-bg-secondary);
@@ -572,6 +580,21 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
             .node-item-label .prefix {
               color: var(--gitako-text-tertiary);
             }
+          }
+
+          .node-item-comment {
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 36px;
+            line-height: 37px;
+            padding: 0 10px;
+            color: var(--gitako-auto-gray-5);
+            background: var(--gitako-bg-primary);
+            background: -moz-linear-gradient(left, transparent 0%, var(--gitako-bg-primary) 15%, var(--gitako-bg-primary) 100%);
+            background: -webkit-linear-gradient(left, transparent 0%, var(--gitako-bg-primary) 15%, var(--gitako-bg-primary) 100%);
+            background: linear-gradient(to right, transparent 0%, var(--gitako-bg-primary) 15%, var(--gitako-bg-primary) 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#000d1117', endColorstr='#0d1117', GradientType=1);
           }
 
           .go-to-button,
