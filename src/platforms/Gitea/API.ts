@@ -57,14 +57,14 @@ async function request(
   }
 }
 
-export const API_ENDPOINT = `${window.location.host}/api/v1`
+export const API_ENDPOINT = `${window.location.protocol}//${window.location.host}/api/v1`
 
 export async function getRepoMeta(
   userName: string,
   repoName: string,
   accessToken?: string,
 ): Promise<GiteaAPI.MetaData> {
-  const url = `https://${API_ENDPOINT}/repos/${userName}/${repoName}`
+  const url = `${API_ENDPOINT}/repos/${userName}/${repoName}`
   return await request(url, { accessToken })
 }
 
@@ -78,7 +78,7 @@ export async function getTreeData(
   const search = new URLSearchParams()
   if (recursive) search.set('recursive', '1')
   const url =
-    `https://${API_ENDPOINT}/repos/${userName}/${repoName}/git/trees/${branchName}?` + search
+    `${API_ENDPOINT}/repos/${userName}/${repoName}/git/trees/${branchName}?` + search
   return await request(url, { accessToken })
 }
 
@@ -88,7 +88,7 @@ export async function getBlobData(
   sha: string,
   accessToken?: string,
 ): Promise<GitHubAPI.BlobData> {
-  const url = `https://${API_ENDPOINT}/repos/${userName}/${repoName}/git/blobs/${sha}`
+  const url = `${API_ENDPOINT}/repos/${userName}/${repoName}/git/blobs/${sha}`
   return await request(url, { accessToken })
 }
 
