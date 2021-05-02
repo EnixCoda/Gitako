@@ -16,9 +16,11 @@ describe(`in Gitako project page`, () => {
     await waitForLegacyPJAXRedirect()
 
     page.goBack()
+    await waitForLegacyPJAXRedirect()
     await sleep(1000)
 
     page.goBack()
+    await waitForLegacyPJAXRedirect()
     await sleep(1000)
 
     expect(
