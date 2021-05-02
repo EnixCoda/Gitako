@@ -1,3 +1,4 @@
+import { raiseError } from 'analytics'
 import { GITHUB_OAUTH } from 'env'
 import { Base64 } from 'js-base64'
 import { platform } from 'platforms'
@@ -82,6 +83,40 @@ export function isEnterprise() {
   return !window.location.host.endsWith('github.com')
 }
 
+function getBranchName() {
+  const pathFromDOM = DOMHelper.getPath()
+  const pathAndBranchFromURL = URLHelper.parse().path.filter(Boolean).join('/')
+  if (pathAndBranchFromURL.endsWith(pathFromDOM)) {
+    return pathAndBranchFromURL
+      .slice(0, pathAndBranchFromURL.length - pathFromDOM.length)
+      .replace(/\/$/, '')
+  }
+  raiseError(new Error(`Parsed path not end with path from DOM`))
+}
+
+function resolvePageScope(defaultBranchName?: string) {
+  const parsed = URLHelper.parse()
+  switch (parsed.type) {
+    // case undefined:
+    //   return `branch-${defaultBranchName}`
+    case 'blob':
+    case 'tree': {
+      // handle URLs like {user}/{repo}/tree/{sha|branch}, issue#131
+      const branchName = getBranchName()
+      if (branchName && branchName !== defaultBranchName) return `branch-${branchName}`
+      break
+    }
+    case 'tags':
+      return 'tags'
+    case 'releases':
+      return 'releases'
+    case 'pull':
+      const pullId = URLHelper.isInPullPage()
+      if (pullId) return `pull-${pullId}`
+  }
+  return 'general'
+}
+
 const pathSHAMap = new Map<string, string>()
 
 export const GitHub: Platform = {
@@ -115,15 +150,11 @@ export const GitHub: Platform = {
       repoName,
       type,
       branchName,
+      defaultBranchName: type ? undefined : branchName,
     }
     return metaData
   },
-  resolvePageScope() {
-    if (URLHelper.parse().type === 'releases') return 'releases'
-    const pullId = URLHelper.isInPullPage()
-    if (pullId) return `pull-${pullId}`
-    return 'general'
-  },
+  resolvePageScope,
   async getDefaultBranchName({ userName, repoName }, accessToken) {
     const data = await API.getRepoMeta(userName, repoName, accessToken)
     return data.default_branch

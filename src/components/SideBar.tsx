@@ -52,7 +52,12 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
    * Catch unexpected PJAX, force trigger init on scope change.
    */
   const pageScope = useStateIO(platform.resolvePageScope?.())
-  useOnPJAXDone(() => pageScope.onChange(platform.resolvePageScope?.()))
+  useOnPJAXDone(
+    React.useCallback(
+      () => pageScope.onChange(platform.resolvePageScope?.(metaData?.defaultBranchName)),
+      [metaData?.defaultBranchName],
+    ),
+  )
   React.useEffect(() => {
     props.init()
   }, [accessToken, pageScope.value])

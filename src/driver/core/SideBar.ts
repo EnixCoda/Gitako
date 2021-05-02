@@ -43,7 +43,7 @@ export const init: BoundMethodCreator = dispatch => async () => {
       dispatch.set({ state: 'disabled' })
       return
     }
-    const { userName, repoName, branchName } = metaData
+    const { userName, repoName, branchName, defaultBranchName } = metaData
 
     DOMHelper.markGitakoReadyState(true)
     dispatch.set({
@@ -70,10 +70,11 @@ export const init: BoundMethodCreator = dispatch => async () => {
     getTreeData.catch(error => error) // catch it early to prevent the error being raised higher
 
     if (branchName) {
-      const safeMetaData = {
+      const safeMetaData: MetaData = {
         userName,
         repoName,
         branchName,
+        defaultBranchName,
       }
       dispatch.set({ metaData: safeMetaData })
       getTreeData.catch(error => {
@@ -89,10 +90,11 @@ export const init: BoundMethodCreator = dispatch => async () => {
         throw new Error(`Failed resolving default branch name`)
       }
 
-      const safeMetaData = {
+      const safeMetaData: MetaData = {
         userName,
         repoName,
         branchName: defaultBranchName,
+        defaultBranchName,
       }
       dispatch.set({ metaData: safeMetaData })
 

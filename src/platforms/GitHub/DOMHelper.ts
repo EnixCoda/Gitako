@@ -232,3 +232,23 @@ export function attachCopySnippet() {
     )
   })
 }
+
+export function getPath() {
+  const folderPathElementSelector = '.file-navigation .position-relative' // available when in path like '/tree/...'
+  const blobPathElementSelector = '#blob-path' // available when in path like '/blob/...'
+  const pathElement =
+    document.querySelector(blobPathElementSelector) ||
+    document.querySelector(folderPathElementSelector)?.nextElementSibling
+  if (!pathElement || !pathElement.querySelector('.js-repo-root')) {
+    raiseError(new Error(`Path element not found`))
+    return ''
+  }
+  const path = ((pathElement as HTMLDivElement).innerText || '')
+    .replace(/ \/ Jump to $/, '')
+    .trim()
+    .split('/')
+    .filter(Boolean)
+    .slice(1) // the first is the repo's name
+    .join('/')
+  return path
+}

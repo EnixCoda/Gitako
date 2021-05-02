@@ -2,6 +2,7 @@ type MetaData = {
   userName: string
   repoName: string
   branchName: string
+  defaultBranchName?: string
   type?: EnumString<'tree' | 'blob' | 'pull'>
 }
 
