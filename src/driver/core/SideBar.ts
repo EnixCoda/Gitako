@@ -43,7 +43,7 @@ export const init: BoundMethodCreator = dispatch => async () => {
       dispatch.set({ state: 'disabled' })
       return
     }
-    const { userName, repoName, branchName, defaultBranchName } = metaData
+    const { userName, repoName, branchName } = metaData
 
     DOMHelper.markGitakoReadyState(true)
     dispatch.set({
@@ -69,50 +69,39 @@ export const init: BoundMethodCreator = dispatch => async () => {
     )
     getTreeData.catch(error => error) // catch it early to prevent the error being raised higher
 
+    const defaultBranchName = await platform.getDefaultBranchName(
+      { userName, repoName },
+      accessToken,
+    )
+    if (!defaultBranchName) {
+      throw new Error(`Failed resolving default branch name`)
+    }
+
+    const safeMetaData: MetaData = {
+      userName,
+      repoName,
+      branchName: branchName || defaultBranchName,
+      defaultBranchName,
+    }
+    dispatch.set({ metaData: safeMetaData })
     if (branchName) {
-      const safeMetaData: MetaData = {
-        userName,
-        repoName,
-        branchName,
-        defaultBranchName,
-      }
-      dispatch.set({ metaData: safeMetaData })
       getTreeData.catch(error => {
         dispatch.call(handleError, error)
       })
-    } else {
-      const defaultBranchName = await platform.getDefaultBranchName(
-        { userName, repoName },
+    } else if (defaultBranchName !== guessDefaultBranch && metaData.type !== 'pull') {
+      // Accessing repository's non-homepage(no branch name in URL, nor in DOM)
+      // We predicted its default branch to be 'master' and sent aggressive request
+      // Throw that request due to the repo do not use {defaultBranchName} as default branch
+      getTreeData = platform.getTreeData(
+        {
+          branchName: defaultBranchName,
+          userName,
+          repoName,
+        },
+        '/',
+        true,
         accessToken,
       )
-
-      if (!defaultBranchName) {
-        throw new Error(`Failed resolving default branch name`)
-      }
-
-      const safeMetaData: MetaData = {
-        userName,
-        repoName,
-        branchName: defaultBranchName,
-        defaultBranchName,
-      }
-      dispatch.set({ metaData: safeMetaData })
-
-      if (defaultBranchName !== guessDefaultBranch && metaData.type !== 'pull') {
-        // Accessing repository's non-homepage(no branch name in URL, nor in DOM)
-        // We predicted its default branch to be 'master' and sent aggressive request
-        // Throw that request due to the repo do not use {defaultBranchName} as default branch
-        getTreeData = platform.getTreeData(
-          {
-            branchName: defaultBranchName,
-            userName,
-            repoName,
-          },
-          '/',
-          true,
-          accessToken,
-        )
-      }
     }
 
     dispatch.set({ state: 'loading-tree' })

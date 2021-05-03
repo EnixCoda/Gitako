@@ -1,4 +1,3 @@
-import { raiseError } from 'analytics'
 import { GITHUB_OAUTH } from 'env'
 import { Base64 } from 'js-base64'
 import { platform } from 'platforms'
@@ -83,26 +82,13 @@ export function isEnterprise() {
   return !window.location.host.endsWith('github.com')
 }
 
-function getBranchName() {
-  const pathFromDOM = DOMHelper.getPath()
-  const pathAndBranchFromURL = URLHelper.parse().path.filter(Boolean).join('/')
-  if (pathAndBranchFromURL.endsWith(pathFromDOM)) {
-    return pathAndBranchFromURL
-      .slice(0, pathAndBranchFromURL.length - pathFromDOM.length)
-      .replace(/\/$/, '')
-  }
-  raiseError(new Error(`Parsed path not end with path from DOM`))
-}
-
 function resolvePageScope(defaultBranchName?: string) {
   const parsed = URLHelper.parse()
   switch (parsed.type) {
-    // case undefined:
-    //   return `branch-${defaultBranchName}`
     case 'blob':
     case 'tree': {
-      // handle URLs like {user}/{repo}/tree/{sha|branch}, issue#131
-      const branchName = getBranchName()
+      // handle URLs like {user}/{repo}/{'tree'|'blob'}/{sha|branch}, issue #131
+      const branchName = DOMHelper.getCurrentBranch()
       if (branchName && branchName !== defaultBranchName) return `branch-${branchName}`
       break
     }
@@ -150,7 +136,6 @@ export const GitHub: Platform = {
       repoName,
       type,
       branchName,
-      defaultBranchName: type ? undefined : branchName,
     }
     return metaData
   },
