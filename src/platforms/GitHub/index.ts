@@ -281,33 +281,6 @@ async function createPullFileResolver(userName: string, repoName: string, pullId
   }
 }
 
-function findMissingFolders(nodes: TreeNode[]) {
-  const folders = new Set<string>()
-  const foundFolders = new Set<string>()
-  for (const node of nodes) {
-    let path = node.path
-    if (node.type === 'tree') foundFolders.add(path)
-    else {
-      while (true) {
-        // 'a/b' -> 'a'
-        // 'a' -> ''
-        path = path.substring(0, path.lastIndexOf('/'))
-        if (path === '') break
-        folders.add(path)
-      }
-    }
-  }
-
-  const missingFolders: string[] = []
-  for (const folder of folders) {
-    if (!foundFolders.has(folder)) {
-      missingFolders.push(folder)
-    }
-  }
-
-  return missingFolders
-}
-
 export function useGitHubAttachCopySnippetButton(copySnippetButton: boolean) {
   const attachCopySnippetButton = React.useCallback(
     function attachCopySnippetButton() {

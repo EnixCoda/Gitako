@@ -125,7 +125,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
               </button>
             </div>
             <div className={'gitako-side-bar-content'}>
-              {(() => {
+              {run(() => {
                 switch (state) {
                   case 'loading-meta':
                     return <LoadingIndicator text={'Fetching repo meta...'} />
@@ -152,7 +152,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
                   case 'error-due-to-auth':
                     return <AccessDeniedDescription hasToken={Boolean(accessToken)} />
                 }
-              })()}
+              })}
             </div>
             <SettingsBar
               defer={defer}
