@@ -1,3 +1,4 @@
+import { SideBarStateContextShape } from 'components/SideBarState'
 import { GetCreatedMethod, MethodCreator } from 'driver/connect'
 import { platform } from 'platforms'
 import { Config } from 'utils/configHelper'
@@ -5,22 +6,19 @@ import * as DOMHelper from 'utils/DOMHelper'
 import { VisibleNodes, VisibleNodesGenerator } from 'utils/VisibleNodesGenerator'
 
 export type Props = {
-  treeRoot?: TreeNode
   metaData: MetaData
   freeze: boolean
   accessToken: string | undefined
-  toggleShowSettings: React.MouseEventHandler
   config: Config
   loadWithPJAX(url: string): void
-  defer?: boolean
 }
 
 export type ConnectorState = {
-  state: 'rendering' | 'done'
   visibleNodesGenerator: VisibleNodesGenerator | null
   visibleNodes: VisibleNodes | null
   searchKey: string
   searched: boolean // derived state from searchKey, = !!searchKey
+  defer: boolean
 
   handleKeyDown: GetCreatedMethod<typeof handleKeyDown>
   updateSearchKey: GetCreatedMethod<typeof updateSearchKey>
@@ -45,12 +43,27 @@ type BoundMethodCreator<Args extends any[] = []> = MethodCreator<Props, Connecto
 
 export const setUpTree: BoundMethodCreator<
   [
-    Required<Pick<Props, 'treeRoot' | 'metaData'>> & {
-      config: Pick<Config, 'compressSingletonFolder' | 'accessToken'>
-    },
+    { stateContext: SideBarStateContextShape } & Required<Pick<Props, 'metaData'>> & {
+        config: Pick<Config, 'compressSingletonFolder' | 'accessToken'>
+      },
   ]
-> = dispatch => async ({ treeRoot, metaData, config }) => {
-  dispatch.set({ state: 'rendering' })
+> = dispatch => async ({ stateContext, metaData, config }) => {
+  const { userName, repoName, branchName } = metaData
+
+  stateContext.onChange('tree-loading')
+  const { root: treeRoot, defer = false } = await platform.getTreeData(
+    {
+      branchName: branchName,
+      userName,
+      repoName,
+    },
+    '/',
+    true,
+    config.accessToken,
+  )
+
+  stateContext.onChange('tree-rendering')
+  dispatch.set({ defer })
 
   const visibleNodesGenerator = new VisibleNodesGenerator({
     root: treeRoot,
@@ -75,7 +88,7 @@ export const setUpTree: BoundMethodCreator<
     if (targetPath) dispatch.call(goTo, targetPath)
   }
 
-  dispatch.set({ state: 'done' })
+  stateContext.onChange('tree-rendered')
 }
 
 export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch => event => {

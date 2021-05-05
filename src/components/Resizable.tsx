@@ -5,7 +5,7 @@ import { useDebounce, useWindowSize } from 'react-use'
 import { cx } from 'utils/cx'
 import { setResizingState } from 'utils/DOMHelper'
 import * as features from 'utils/features'
-import { useCSSVariable } from './useCSSVariable'
+import { useCSSVariable } from 'utils/hooks/useCSSVariable'
 
 export type Size = number
 type Props = {

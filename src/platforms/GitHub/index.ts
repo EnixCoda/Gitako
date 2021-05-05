@@ -107,7 +107,7 @@ const pathSHAMap = new Map<string, string>()
 
 export const GitHub: Platform = {
   isEnterprise,
-  resolveMeta() {
+  resolvePartialMetaData() {
     if (!DOMHelper.isInRepoPage()) {
       return null
     }
@@ -139,10 +139,8 @@ export const GitHub: Platform = {
     }
     return metaData
   },
-  resolvePageScope,
   async getDefaultBranchName({ userName, repoName }, accessToken) {
-    const data = await API.getRepoMeta(userName, repoName, accessToken)
-    return data.default_branch
+    return (await API.getRepoMeta(userName, repoName, accessToken)).default_branch
   },
   resolveUrlFromMetaData({ userName, repoName }) {
     return {
@@ -257,7 +255,11 @@ export const GitHub: Platform = {
     return Boolean(URLHelper.isInPullPage())
   },
   getCurrentPath(branchName) {
-    return URLHelper.getCurrentPath(branchName)
+    if (URLHelper.parse().path.length) {
+      return DOMHelper.getPath()
+    } else {
+      return []
+    }
   },
   setOAuth(code) {
     return API.OAuth(code)

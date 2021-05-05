@@ -13,7 +13,7 @@ const platforms: {
 
 function resolvePlatform() {
   for (const platform of Object.values(platforms)) {
-    if (platform.resolveMeta()) return platform
+    if (platform.resolvePartialMetaData()) return platform
   }
   return dummyPlatformForTypeSafety
 }

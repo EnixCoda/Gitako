@@ -5,6 +5,7 @@ import { Portal } from 'components/Portal'
 import { Resizable } from 'components/Resizable'
 import { SettingsBar } from 'components/settings/SettingsBar'
 import { ToggleShowButton } from 'components/ToggleShowButton'
+import { useConfigs } from 'containers/ConfigsContext'
 import { connect } from 'driver/connect'
 import { SideBarCore } from 'driver/core'
 import { ConnectorState, Props } from 'driver/core/SideBar'
@@ -12,32 +13,45 @@ import { platform } from 'platforms'
 import { useGitHubAttachCopyFileButton, useGitHubAttachCopySnippetButton } from 'platforms/GitHub'
 import * as React from 'react'
 import { cx } from 'utils/cx'
+import * as DOMHelper from 'utils/DOMHelper'
 import { parseURLSearch, run } from 'utils/general'
+import { useLoadedContext } from 'utils/hooks/useLoadedContext'
 import { loadWithPJAX, useOnPJAXDone, usePJAX } from 'utils/hooks/usePJAX'
 import { useProgressBar } from 'utils/hooks/useProgressBar'
 import { useStateIO } from 'utils/hooks/useStateIO'
 import * as keyHelper from 'utils/keyHelper'
 import { Icon } from './Icon'
 import { LoadingIndicator } from './LoadingIndicator'
+import { SideBarStateContext } from './SideBarState'
 import { Theme } from './Theme'
 
-const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
-  const {
-    metaData,
-    treeData,
-    state,
-    defer,
-    error,
-    shouldShow,
-    showSettings,
-    logoContainerElement,
-    toggleShowSideBar,
-    toggleShowSettings,
-    configContext,
-  } = props
+const RawSideBar: React.FC<Props & ConnectorState> = function RawGitako(props) {
+  const { metaData, error, shouldShow, toggleShowSideBar } = props
+
+  const state = useLoadedContext(SideBarStateContext).value
+  const configContext = useConfigs()
 
   const accessToken = configContext.value.accessToken || ''
   const [baseSize] = React.useState(() => configContext.value.sideBarWidth)
+
+  const $showSettings = useStateIO(false)
+  const showSettings = $showSettings.value
+  const toggleShowSettings = React.useCallback(function toggleShowSettings() {
+    $showSettings.onChange(show => !show)
+  }, [])
+
+  const $logoContainerElement = useStateIO<HTMLElement | null>(null)
+
+  const hasMetaData = state !== 'disabled'
+  React.useEffect(() => {
+    if (hasMetaData) {
+      DOMHelper.markGitakoReadyState(true)
+      $showSettings.onChange(false)
+      $logoContainerElement.onChange(DOMHelper.insertLogoMountPoint())
+    } else {
+      DOMHelper.markGitakoReadyState(false)
+    }
+  }, [hasMetaData])
 
   React.useEffect(() => {
     run(async function () {
@@ -47,20 +61,6 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
       }
     })
   }, [])
-
-  /**
-   * Catch unexpected PJAX, force trigger init on scope change.
-   */
-  const pageScope = useStateIO(platform.resolvePageScope?.())
-  useOnPJAXDone(
-    React.useCallback(
-      () => pageScope.onChange(platform.resolvePageScope?.(metaData?.defaultBranchName)),
-      [metaData?.defaultBranchName],
-    ),
-  )
-  React.useEffect(() => {
-    props.init()
-  }, [accessToken, pageScope.value])
 
   React.useEffect(
     function attachKeyDown() {
@@ -89,7 +89,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
       const shouldShow = intelligentToggle === null ? platform.shouldShow() : intelligentToggle
       props.setShouldShow(shouldShow)
     }
-  }, [intelligentToggle, hideSidebarOnInvalidToken, props.metaData])
+  }, [intelligentToggle, hideSidebarOnInvalidToken, metaData])
 
   const updateSideBarVisibility = React.useCallback(
     function updateSideBarVisibility() {
@@ -99,7 +99,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
         props.setShouldShow(platform.shouldShow())
       }
     },
-    [props.metaData?.branchName, intelligentToggle, hideSidebarOnInvalidToken],
+    [metaData?.branchName, intelligentToggle, hideSidebarOnInvalidToken],
   )
   useOnPJAXDone(updateSideBarVisibility)
 
@@ -112,7 +112,7 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
   return (
     <Theme>
       <div className={'gitako-side-bar'}>
-        <Portal into={logoContainerElement}>
+        <Portal into={$logoContainerElement.value}>
           {!shouldShow && (
             <ToggleShowButton error={error} onClick={error ? undefined : toggleShowSideBar} />
           )}
@@ -124,41 +124,37 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
                 <Icon className={'action-icon'} type={'x'} />
               </button>
             </div>
-            <div className={'gitako-side-bar-content'}>
+            <div
+              className={'gitako-side-bar-content'}
+              onClick={showSettings ? toggleShowSettings : undefined}
+            >
               {run(() => {
                 switch (state) {
-                  case 'loading-meta':
+                  case 'disabled':
+                    return null
+                  case 'meta-loading':
                     return <LoadingIndicator text={'Fetching repo meta...'} />
-                  case 'loading-tree':
-                    return <LoadingIndicator text={'Fetching File List...'} />
-                  case 'idle':
+                  case 'error-due-to-auth':
+                    return <AccessDeniedDescription hasToken={Boolean(accessToken)} />
+                  default:
                     return metaData ? (
                       <>
                         <div className={'header'}>
                           <MetaBar metaData={metaData} />
                         </div>
                         <FileExplorer
-                          toggleShowSettings={toggleShowSettings}
                           metaData={metaData}
-                          treeRoot={treeData}
                           freeze={showSettings}
                           accessToken={accessToken}
                           loadWithPJAX={loadWithPJAX}
                           config={configContext.value}
-                          defer={defer}
                         />
                       </>
                     ) : null
-                  case 'error-due-to-auth':
-                    return <AccessDeniedDescription hasToken={Boolean(accessToken)} />
                 }
               })}
             </div>
-            <SettingsBar
-              defer={defer}
-              toggleShowSettings={toggleShowSettings}
-              activated={showSettings}
-            />
+            <SettingsBar toggleShowSettings={toggleShowSettings} activated={showSettings} />
           </div>
         </Resizable>
       </div>
@@ -166,13 +162,11 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
   )
 }
 
-RawGitako.defaultProps = {
+RawSideBar.defaultProps = {
   shouldShow: false,
-  showSettings: false,
-  state: 'loading-meta',
 }
 
-export const SideBar = connect(SideBarCore)(RawGitako)
+export const SideBar = connect(SideBarCore)(RawSideBar)
 
 async function trySetUpAccessTokenWithCode() {
   const search = parseURLSearch()

@@ -6,7 +6,7 @@ import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import './content.scss'
 
-if (platform.resolveMeta()) {
+if (platform.resolvePartialMetaData()) {
   addMiddleware(withErrorLog)
 
   if (document.readyState === 'loading') {
