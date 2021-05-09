@@ -15,12 +15,14 @@ import * as React from 'react'
 import { cx } from 'utils/cx'
 import * as DOMHelper from 'utils/DOMHelper'
 import { parseURLSearch, run } from 'utils/general'
+import { useCatchNetworkError } from 'utils/hooks/useCatchNetworkError'
 import { useLoadedContext } from 'utils/hooks/useLoadedContext'
 import { loadWithPJAX, useOnPJAXDone, usePJAX } from 'utils/hooks/usePJAX'
 import { useProgressBar } from 'utils/hooks/useProgressBar'
 import { useStateIO } from 'utils/hooks/useStateIO'
 import * as keyHelper from 'utils/keyHelper'
 import { Icon } from './Icon'
+import { IIFC } from './IIFC'
 import { LoadingIndicator } from './LoadingIndicator'
 import { SideBarStateContext } from './SideBarState'
 import { Theme } from './Theme'
@@ -142,13 +144,18 @@ const RawSideBar: React.FC<Props & ConnectorState> = function RawGitako(props) {
                         <div className={'header'}>
                           <MetaBar metaData={metaData} />
                         </div>
-                        <FileExplorer
-                          metaData={metaData}
-                          freeze={showSettings}
-                          accessToken={accessToken}
-                          loadWithPJAX={loadWithPJAX}
-                          config={configContext.value}
-                        />
+                        <IIFC>
+                          {() => (
+                            <FileExplorer
+                              metaData={metaData}
+                              freeze={showSettings}
+                              accessToken={accessToken}
+                              loadWithPJAX={loadWithPJAX}
+                              config={configContext.value}
+                              catchNetworkErrors={useCatchNetworkError()}
+                            />
+                          )}
+                        </IIFC>
                       </>
                     ) : null
                 }

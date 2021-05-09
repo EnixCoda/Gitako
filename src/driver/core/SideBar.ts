@@ -1,7 +1,6 @@
 import { SideBarStateContextShape } from 'components/SideBarState'
 import { ConfigsContextShape } from 'containers/ConfigsContext'
 import { GetCreatedMethod, MethodCreator } from 'driver/connect'
-import { errors, platformName } from 'platforms'
 import * as DOMHelper from 'utils/DOMHelper'
 
 export type Props = {
@@ -22,36 +21,6 @@ export type ConnectorState = {
 }
 
 type BoundMethodCreator<Args extends any[] = []> = MethodCreator<Props, ConnectorState, Args>
-
-export const handleError: BoundMethodCreator<[Error]> = dispatch => async err => {
-  const {
-    props: { stateContext },
-  } = dispatch.get()
-  if (err.message === errors.EMPTY_PROJECT) {
-    dispatch.call(setError, 'This project seems to be empty.')
-  } else if (err.message === errors.BLOCKED_PROJECT) {
-    dispatch.call(setError, 'Access to the project is blocked.')
-  } else if (
-    err.message === errors.NOT_FOUND ||
-    err.message === errors.BAD_CREDENTIALS ||
-    err.message === errors.API_RATE_LIMIT
-  ) {
-    stateContext.onChange('error-due-to-auth')
-  } else if (err.message === errors.CONNECTION_BLOCKED) {
-    const { props } = dispatch.get()
-    if (props.configContext.value.accessToken) {
-      dispatch.call(setError, `Cannot connect to ${platformName}.`)
-    } else {
-      stateContext.onChange('error-due-to-auth')
-    }
-  } else if (err.message === errors.SERVER_FAULT) {
-    dispatch.call(setError, `${platformName} server went down.`)
-  } else {
-    DOMHelper.markGitakoReadyState(false)
-    dispatch.call(setError, 'Some thing went wrong.')
-    throw err
-  }
-}
 
 export const toggleShowSideBar: BoundMethodCreator = dispatch => () => {
   const {

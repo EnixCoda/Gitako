@@ -1,11 +1,11 @@
 import { useConfigs } from 'containers/ConfigsContext'
 import { platform } from 'platforms'
 import * as React from 'react'
-import { run } from 'utils/general'
 import { useEffectOnSerializableUpdates } from 'utils/hooks/useEffectOnSerializableUpdates'
 import { useLoadedContext } from 'utils/hooks/useLoadedContext'
 import { useOnPJAXDone } from 'utils/hooks/usePJAX'
 import { useStateIO } from 'utils/hooks/useStateIO'
+import { useCatchNetworkError } from '../utils/hooks/useCatchNetworkError'
 import { SideBarStateContext } from './SideBarState'
 
 export const RepoContext = React.createContext<MetaData | null>(null)
@@ -55,8 +55,9 @@ function useBranchName(): MetaData['branchName'] | null {
 function useDefaultBranch(partialMetaData: PartialMetaData | null) {
   const { accessToken } = useConfigs().value
   const $defaultBranch = useStateIO<string | null>(null)
+  const catchNetworkError = useCatchNetworkError()
   React.useEffect(() => {
-    run(async () => {
+    catchNetworkError(async () => {
       if (!partialMetaData) return
 
       const defaultBranch = await platform.getDefaultBranchName(partialMetaData, accessToken)

@@ -11,6 +11,7 @@ export type Props = {
   accessToken: string | undefined
   config: Config
   loadWithPJAX(url: string): void
+  catchNetworkErrors: <T>(fn: () => T) => T | undefined
 }
 
 export type ConnectorState = {
@@ -47,48 +48,54 @@ export const setUpTree: BoundMethodCreator<
         config: Pick<Config, 'compressSingletonFolder' | 'accessToken'>
       },
   ]
-> = dispatch => async ({ stateContext, metaData, config }) => {
-  const { userName, repoName, branchName } = metaData
+> = dispatch => ({ stateContext, metaData, config }) => {
+  const {
+    props: { catchNetworkErrors },
+  } = dispatch.get()
 
-  stateContext.onChange('tree-loading')
-  const { root: treeRoot, defer = false } = await platform.getTreeData(
-    {
-      branchName: branchName,
-      userName,
-      repoName,
-    },
-    '/',
-    true,
-    config.accessToken,
-  )
+  catchNetworkErrors(async () => {
+    const { userName, repoName, branchName } = metaData
 
-  stateContext.onChange('tree-rendering')
-  dispatch.set({ defer })
+    stateContext.onChange('tree-loading')
+    const { root: treeRoot, defer = false } = await platform.getTreeData(
+      {
+        branchName: branchName,
+        userName,
+        repoName,
+      },
+      '/',
+      true,
+      config.accessToken,
+    )
 
-  const visibleNodesGenerator = new VisibleNodesGenerator({
-    root: treeRoot,
-    compress: config.compressSingletonFolder,
-    async getTreeData(path) {
-      const { root } = await platform.getTreeData(metaData, path, false, config.accessToken)
-      return root
-    },
-  })
-  dispatch.set({ visibleNodesGenerator })
-  visibleNodesGenerator.onUpdate(visibleNodes => dispatch.set({ visibleNodes }))
+    stateContext.onChange('tree-rendering')
+    dispatch.set({ defer })
 
-  if (platform.shouldExpandAll?.()) {
-    const unsubscribe = visibleNodesGenerator.onUpdate(visibleNodes => {
-      unsubscribe()
-      visibleNodes.nodes.forEach(node =>
-        dispatch.call(toggleNodeExpansion, node, { recursive: true }),
-      )
+    const visibleNodesGenerator = new VisibleNodesGenerator({
+      root: treeRoot,
+      compress: config.compressSingletonFolder,
+      async getTreeData(path) {
+        const { root } = await platform.getTreeData(metaData, path, false, config.accessToken)
+        return root
+      },
     })
-  } else {
-    const targetPath = platform.getCurrentPath(metaData.branchName)
-    if (targetPath) dispatch.call(goTo, targetPath)
-  }
+    dispatch.set({ visibleNodesGenerator })
+    visibleNodesGenerator.onUpdate(visibleNodes => dispatch.set({ visibleNodes }))
 
-  stateContext.onChange('tree-rendered')
+    if (platform.shouldExpandAll?.()) {
+      const unsubscribe = visibleNodesGenerator.onUpdate(visibleNodes => {
+        unsubscribe()
+        visibleNodes.nodes.forEach(node =>
+          dispatch.call(toggleNodeExpansion, node, { recursive: true }),
+        )
+      })
+    } else {
+      const targetPath = platform.getCurrentPath(metaData.branchName)
+      if (targetPath) dispatch.call(goTo, targetPath)
+    }
+
+    stateContext.onChange('tree-rendered')
+  })
 }
 
 export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch => event => {
