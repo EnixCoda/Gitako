@@ -1,6 +1,7 @@
 import { useConfigs } from 'containers/ConfigsContext'
 import { platform } from 'platforms'
 import * as React from 'react'
+import { parseURLSearch, run } from 'utils/general'
 import { useEffectOnSerializableUpdates } from 'utils/hooks/useEffectOnSerializableUpdates'
 import { useLoadedContext } from 'utils/hooks/useLoadedContext'
 import { useOnPJAXDone } from 'utils/hooks/usePJAX'
@@ -14,8 +15,13 @@ export function RepoContextWrapper({ children }: React.PropsWithChildren<{}>) {
   const partialMetaData = usePartialMetaData()
   const defaultBranch = useDefaultBranch(partialMetaData)
   const metaData = useMetaData(partialMetaData, defaultBranch)
+  const fetchingAccessToken = useSetAccessToken()
 
-  return <RepoContext.Provider value={metaData}>{metaData && children}</RepoContext.Provider>
+  return (
+    <RepoContext.Provider value={metaData}>
+      {metaData && !fetchingAccessToken && children}
+    </RepoContext.Provider>
+  )
 }
 
 function resolvePartialMetaData() {
@@ -96,4 +102,39 @@ function useMetaData(
     $state.onChange('meta-loaded')
   }, [partialMetaData, branchName, defaultBranchName])
   return $metaData.value
+}
+
+function useSetAccessToken() {
+  const $running = useStateIO(() => Boolean(getCodeSearchParam()))
+  const configContext = useConfigs()
+  const { accessToken } = configContext.value
+  React.useEffect(() => {
+    run(async function () {
+      const code = getCodeSearchParam()
+      if (code && !accessToken) {
+        const accessToken = await getAccessTokenWithCode(code)
+        if (accessToken) configContext.onChange({ accessToken })
+      }
+      $running.onChange(false)
+    })
+  }, [])
+
+  return $running.value
+}
+
+function getCodeSearchParam() {
+  return parseURLSearch().get('code')
+}
+
+async function getAccessTokenWithCode(code: string) {
+  const accessToken = await platform.setOAuth(code)
+  if (!accessToken) alert(`Gitako: The OAuth token may have expired, please try again.`)
+  const search = parseURLSearch()
+  search.delete('code')
+  window.history.replaceState(
+    {},
+    'removed search param',
+    window.location.pathname.replace(window.location.search, search.toString()),
+  )
+  return accessToken
 }

@@ -5,7 +5,7 @@ import { useDebounce, useWindowSize } from 'react-use'
 import { Icon } from './Icon'
 
 type Props = {
-  error?: string
+  error?: string | null
 } & Pick<React.HTMLAttributes<HTMLButtonElement>, 'onClick'>
 
 export function ToggleShowButton({ error, onClick }: Props) {
