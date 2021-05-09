@@ -11,7 +11,7 @@ export type Props = {
   accessToken: string | undefined
   config: Config
   loadWithPJAX(url: string): void
-  catchNetworkErrors: <T>(fn: () => T) => T | undefined
+  catchNetworkErrors: <T>(fn: () => T) => Promise<T | undefined>
 }
 
 export type ConnectorState = {
