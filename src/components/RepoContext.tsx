@@ -12,10 +12,17 @@ export const RepoContext = React.createContext<MetaData | null>(null)
 
 export function RepoContextWrapper({ children }: React.PropsWithChildren<{}>) {
   const partialMetaData = usePartialMetaData()
+  const $state = useLoadedContext(SideBarStateContext)
+
+  React.useEffect(() => {
+    if (!partialMetaData) {
+      $state.onChange('disabled')
+    }
+  }, [partialMetaData])
   const defaultBranch = useDefaultBranch(partialMetaData)
   const metaData = useMetaData(partialMetaData, defaultBranch)
 
-  return <RepoContext.Provider value={metaData}>{metaData && children}</RepoContext.Provider>
+  return <RepoContext.Provider value={metaData}>{children}</RepoContext.Provider>
 }
 
 function resolvePartialMetaData() {
@@ -54,11 +61,13 @@ function useBranchName(): MetaData['branchName'] | null {
 
 function useDefaultBranch(partialMetaData: PartialMetaData | null) {
   const { accessToken } = useConfigs().value
+  const $state = useLoadedContext(SideBarStateContext)
   const $defaultBranch = useStateIO<string | null>(null)
   const catchNetworkError = useCatchNetworkError()
   React.useEffect(() => {
     catchNetworkError(async () => {
       if (!partialMetaData) return
+      $state.onChange('meta-loading')
 
       const defaultBranch = await platform.getDefaultBranchName(partialMetaData, accessToken)
       $defaultBranch.onChange(defaultBranch)
@@ -75,12 +84,6 @@ function useMetaData(
   const $metaData = useStateIO<MetaData | null>(null)
   const branchName = useBranchName()
   React.useEffect(() => {
-    if (!partialMetaData) {
-      $state.onChange('disabled')
-    } else if (!defaultBranchName) {
-      $state.onChange('meta-loading')
-    }
-
     if (partialMetaData && defaultBranchName) {
       const { userName, repoName } = partialMetaData
       const safeMetaData: MetaData = {
@@ -90,10 +93,10 @@ function useMetaData(
         defaultBranchName,
       }
       $metaData.onChange(safeMetaData)
+      $state.onChange('meta-loaded')
     } else {
       $metaData.onChange(null)
     }
-    $state.onChange('meta-loaded')
   }, [partialMetaData, branchName, defaultBranchName])
   return $metaData.value
 }

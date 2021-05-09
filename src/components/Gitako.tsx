@@ -22,7 +22,7 @@ export function Gitako() {
                     <SideBar
                       configContext={useConfigs()}
                       stateContext={useLoadedContext(SideBarStateContext)}
-                      metaData={useLoadedContext(RepoContext)}
+                      metaData={React.useContext(RepoContext)}
                     />
                   )}
                 </IIFC>
