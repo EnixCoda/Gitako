@@ -2,6 +2,7 @@ import iconSrc from 'assets/icons/Gitako.png'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
+import { cx } from 'utils/cx'
 import { Icon } from './Icon'
 
 type Props = {
@@ -37,7 +38,9 @@ export function ToggleShowButton({ error, onClick }: Props) {
   return (
     <div ref={ref} className={'gitako-toggle-show-button-wrapper'}>
       <button
-        className={'gitako-toggle-show-button'}
+        className={cx('gitako-toggle-show-button', {
+          error,
+        })}
         onClick={onClick}
         draggable
         onDragStart={event => {

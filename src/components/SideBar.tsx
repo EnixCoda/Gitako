@@ -59,10 +59,10 @@ export function SideBar(props: {
 
   const $shouldShow = useStateIO(false)
   const shouldShow = $shouldShow.value
-  const setShouldShow = React.useCallback((shouldShow: boolean) => {
-    $shouldShow.onChange(shouldShow)
+  React.useEffect(() => {
     DOMHelper.setBodyIndent(shouldShow)
-  }, [])
+  }, [shouldShow])
+
   React.useEffect(() => {
     if (shouldShow) {
       DOMHelper.focusFileExplorer() // TODO: verify if it works
@@ -70,16 +70,15 @@ export function SideBar(props: {
   }, [shouldShow])
   const toggleShowSideBar = React.useCallback(() => {
     $shouldShow.onChange(shouldShow => {
-      DOMHelper.setBodyIndent(!shouldShow)
+      const {
+        value: { intelligentToggle },
+      } = configContext
+      if (intelligentToggle !== null) {
+        configContext.onChange({ intelligentToggle: !shouldShow })
+      }
+
       return !shouldShow
     })
-
-    const {
-      value: { intelligentToggle },
-    } = configContext
-    if (intelligentToggle !== null) {
-      configContext.onChange({ intelligentToggle: !shouldShow })
-    }
   }, [])
   useToggleSideBarWithKeyboard(state, configContext, toggleShowSideBar)
 
@@ -89,10 +88,10 @@ export function SideBar(props: {
     intelligentToggle === null && Boolean(state === 'error-due-to-auth' && accessToken)
   React.useEffect(() => {
     if (hideSidebarOnInvalidToken) {
-      setShouldShow(false)
+      $shouldShow.onChange(false)
     } else {
       const shouldShow = intelligentToggle === null ? platform.shouldShow() : intelligentToggle
-      setShouldShow(shouldShow)
+      $shouldShow.onChange(shouldShow)
     }
   }, [intelligentToggle, hideSidebarOnInvalidToken, metaData])
 
@@ -106,9 +105,9 @@ export function SideBar(props: {
   const updateSideBarVisibility = React.useCallback(
     function updateSideBarVisibility() {
       if (hideSidebarOnInvalidToken) {
-        setShouldShow(false)
+        $shouldShow.onChange(false)
       } else if (intelligentToggle === null) {
-        setShouldShow(platform.shouldShow())
+        $shouldShow.onChange(platform.shouldShow())
       }
     },
     [metaData?.branchName, intelligentToggle, hideSidebarOnInvalidToken],
@@ -147,7 +146,7 @@ export function SideBar(props: {
                   case 'meta-loading':
                     return <LoadingIndicator text={'Fetching repo meta...'} />
                   case 'error-due-to-auth':
-                    return <AccessDeniedDescription hasToken={Boolean(accessToken)} />
+                    return <AccessDeniedDescription />
                   default:
                     return metaData ? (
                       <>

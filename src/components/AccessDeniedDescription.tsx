@@ -1,9 +1,13 @@
+import { useConfigs } from 'containers/ConfigsContext'
 import { GITHUB_OAUTH } from 'env'
 import { platform } from 'platforms'
 import { GitHub } from 'platforms/GitHub'
 import * as React from 'react'
 
-export function AccessDeniedDescription({ hasToken }: { hasToken: boolean }) {
+export function AccessDeniedDescription() {
+  const configContext = useConfigs()
+  const hasToken = Boolean(configContext.value.accessToken)
+
   return (
     <div className={'description'}>
       <h2>Access Denied</h2>

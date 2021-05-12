@@ -188,6 +188,11 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     background: transparent;
     border: none;
     padding: 0;
+
+    &.error {
+      cursor: not-allowed;
+    }
+
     .octoface-icon {
       @include flex-center();
 
