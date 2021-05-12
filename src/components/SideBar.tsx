@@ -139,6 +139,8 @@ export function SideBar() {
                 switch (state) {
                   case 'disabled':
                     return null
+                  case 'getting-access-token':
+                    return <LoadingIndicator text={'Getting access token...'} />
                   case 'meta-loading':
                     return <LoadingIndicator text={'Fetching repo meta...'} />
                   case 'error-due-to-auth':

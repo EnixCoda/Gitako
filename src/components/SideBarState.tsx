@@ -3,6 +3,8 @@ import { useStateIO } from 'utils/hooks/useStateIO'
 
 export type SideBarState =
   | 'disabled'
+  | 'getting-access-token'
+  | 'after-getting-access-token' // mid-state for a smoother state switch out of 'getting-access-token'
   | 'meta-loading'
   | 'meta-loaded'
   | 'tree-loading'

@@ -12,13 +12,6 @@ export const RepoContext = React.createContext<MetaData | null>(null)
 
 export function RepoContextWrapper({ children }: React.PropsWithChildren<{}>) {
   const partialMetaData = usePartialMetaData()
-  const $state = useLoadedContext(SideBarStateContext)
-
-  React.useEffect(() => {
-    if (!partialMetaData) {
-      $state.onChange('disabled')
-    }
-  }, [partialMetaData])
   const defaultBranch = useDefaultBranch(partialMetaData)
   const metaData = useMetaData(partialMetaData, defaultBranch)
 
@@ -40,15 +33,26 @@ function resolvePartialMetaData() {
 }
 
 function usePartialMetaData(): PartialMetaData | null {
+  const $state = useLoadedContext(SideBarStateContext)
+  const isGettingAccessToken = $state.value === 'getting-access-token' // will be false after getting access token and trigger meta-resolve progress
   // sync along URL and DOM
-  const $partialMetaData = useStateIO(resolvePartialMetaData)
+  const $partialMetaData = useStateIO(isGettingAccessToken ? null : resolvePartialMetaData)
   const $committedPartialMetaData = useStateIO($partialMetaData.value)
-  useOnPJAXDone(() => $partialMetaData.onChange(resolvePartialMetaData()))
+  const setPartialMetaData = () => $partialMetaData.onChange(resolvePartialMetaData())
+  React.useEffect(() => {
+    if (!isGettingAccessToken) setPartialMetaData()
+  }, [isGettingAccessToken])
+  useOnPJAXDone(setPartialMetaData)
   useEffectOnSerializableUpdates(
     $partialMetaData.value,
     JSON.stringify,
     $committedPartialMetaData.onChange,
   )
+  React.useEffect(() => {
+    if (!$partialMetaData.value && !isGettingAccessToken) {
+      $state.onChange('disabled')
+    }
+  }, [$partialMetaData.value])
   return $committedPartialMetaData.value
 }
 

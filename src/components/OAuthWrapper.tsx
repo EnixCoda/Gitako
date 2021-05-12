@@ -2,17 +2,27 @@ import { useConfigs } from 'containers/ConfigsContext'
 import { platform } from 'platforms'
 import * as React from 'react'
 import { parseURLSearch, run } from 'utils/general'
+import { useLoadedContext } from 'utils/hooks/useLoadedContext'
 import { useStateIO } from 'utils/hooks/useStateIO'
+import { SideBarStateContext } from './SideBarState'
 
 /**
  * Setup access token before sending other requests
  */
 export function OAuthWrapper({ children }: React.PropsWithChildren<{}>) {
-  const running = useSetAccessToken()
-  return running ? null : <>{children}</>
+  const running = useGetAccessToken()
+  const $state = useLoadedContext(SideBarStateContext)
+
+  React.useEffect(() => {
+    $state.onChange(running ? 'getting-access-token' : 'after-getting-access-token')
+  }, [running])
+
+  // block children rendering on the first render if setting token
+  if (running && $state.value !== 'getting-access-token') return null
+  return <>{children}</>
 }
 
-function useSetAccessToken() {
+function useGetAccessToken() {
   const $block = useStateIO(() => Boolean(getCodeSearchParam()))
   const configContext = useConfigs()
   const { accessToken } = configContext.value
