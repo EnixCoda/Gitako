@@ -399,8 +399,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
         }
       }
 
-      .description {
-        border-top: 1px solid var(--gitako-border-overlay);
+      .description-area {
         padding: 4px 10px;
       }
 

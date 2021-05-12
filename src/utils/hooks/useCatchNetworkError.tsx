@@ -35,7 +35,7 @@ export function useCatchNetworkError() {
           errorContext.onChange(`${platformName} server went down.`)
         } else {
           stateContext.onChange('disabled')
-          errorContext.onChange('Some thing went wrong.')
+          errorContext.onChange('Something unexpected happened.')
           throw err
         }
       }

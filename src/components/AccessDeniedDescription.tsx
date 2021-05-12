@@ -9,7 +9,7 @@ export function AccessDeniedDescription() {
   const hasToken = Boolean(configContext.value.accessToken)
 
   return (
-    <div className={'description'}>
+    <div className={'description-area'}>
       <h2>Access Denied</h2>
       {hasToken ? (
         <>

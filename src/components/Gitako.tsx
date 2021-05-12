@@ -1,13 +1,11 @@
-import { IIFC } from 'components/IIFC'
 import { SideBar } from 'components/SideBar'
-import { ConfigsContextWrapper, useConfigs } from 'containers/ConfigsContext'
+import { ConfigsContextWrapper } from 'containers/ConfigsContext'
 import * as React from 'react'
-import { useLoadedContext } from 'utils/hooks/useLoadedContext'
 import { ErrorBoundary } from './ErrorBoundary'
 import { StateBarErrorContextWrapper } from './ErrorContext'
 import { OAuthWrapper } from './OAuthWrapper'
-import { RepoContext, RepoContextWrapper } from './RepoContext'
-import { SideBarStateContext, StateBarStateContextWrapper } from './SideBarState'
+import { RepoContextWrapper } from './RepoContext'
+import { StateBarStateContextWrapper } from './SideBarState'
 
 export function Gitako() {
   return (
@@ -17,15 +15,7 @@ export function Gitako() {
           <StateBarErrorContextWrapper>
             <OAuthWrapper>
               <RepoContextWrapper>
-                <IIFC>
-                  {() => (
-                    <SideBar
-                      configContext={useConfigs()}
-                      stateContext={useLoadedContext(SideBarStateContext)}
-                      metaData={React.useContext(RepoContext)}
-                    />
-                  )}
-                </IIFC>
+                <SideBar />
               </RepoContextWrapper>
             </OAuthWrapper>
           </StateBarErrorContextWrapper>

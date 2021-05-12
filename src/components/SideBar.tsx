@@ -22,16 +22,12 @@ import { SideBarErrorContext } from './ErrorContext'
 import { Icon } from './Icon'
 import { IIFC } from './IIFC'
 import { LoadingIndicator } from './LoadingIndicator'
-import { SideBarState, SideBarStateContext, SideBarStateContextShape } from './SideBarState'
+import { RepoContext } from './RepoContext'
+import { SideBarState, SideBarStateContext } from './SideBarState'
 import { Theme } from './Theme'
 
-export function SideBar(props: {
-  metaData: MetaData | null
-  configContext: ConfigsContextShape
-  stateContext: SideBarStateContextShape
-}) {
-  const { metaData } = props
-
+export function SideBar() {
+  const metaData = React.useContext(RepoContext)
   const state = useLoadedContext(SideBarStateContext).value
   const configContext = useConfigs()
 
@@ -46,7 +42,7 @@ export function SideBar(props: {
 
   const $logoContainerElement = useStateIO<HTMLElement | null>(null)
 
-  const hasMetaData = state !== 'disabled'
+  const hasMetaData = state !== 'disabled' // will be true since retrieving data, cannot use Boolean(metaData)
   React.useEffect(() => {
     if (hasMetaData) {
       DOMHelper.markGitakoReadyState(true)
@@ -183,9 +179,10 @@ function useToggleSideBarWithKeyboard(
   configContext: ConfigsContextShape,
   toggleShowSideBar: () => void,
 ) {
+  const isDisabled = state === 'disabled'
   React.useEffect(
     function attachKeyDown() {
-      if (state === 'disabled' || !configContext.value.shortcut) return
+      if (isDisabled || !configContext.value.shortcut) return
 
       function onKeyDown(e: KeyboardEvent) {
         const keys = keyHelper.parseEvent(e)
@@ -196,6 +193,6 @@ function useToggleSideBarWithKeyboard(
       window.addEventListener('keydown', onKeyDown)
       return () => window.removeEventListener('keydown', onKeyDown)
     },
-    [toggleShowSideBar, state === 'disabled', configContext.value.shortcut],
+    [toggleShowSideBar, isDisabled, configContext.value.shortcut],
   )
 }
