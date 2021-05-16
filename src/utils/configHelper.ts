@@ -159,7 +159,7 @@ async function migrateConfig() {
 
 // do NOT use platform name
 const platformStorageKey = `platform_` + window.location.host.toLowerCase()
-const prepareConfig = new Promise(async resolve => {
+const prepareConfig = new Promise<void>(async resolve => {
   await migrateConfig()
   resolve()
 })

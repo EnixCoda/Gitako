@@ -7,6 +7,7 @@
     "strict": true,
     "lib": ["dom", "es2017.object", "es2016", "ES2020.String"],
     "baseUrl": "src",
+    "allowSyntheticDefaultImports": true,
     "outDir": "dist"
   },
   "include": ["src"]

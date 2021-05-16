@@ -26,7 +26,7 @@ async function init() {
 // injects a copy of stylesheets so that other extensions(e.g. dark reader) could read
 // resolves when style is loaded to prevent render without proper styles
 async function injectStyles(url: string) {
-  return new Promise(resolve => {
+  return new Promise<void>(resolve => {
     const linkElement = document.createElement('link')
     linkElement.setAttribute('rel', 'stylesheet')
     linkElement.setAttribute('href', url)
