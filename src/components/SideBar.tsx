@@ -5,7 +5,7 @@ import { Portal } from 'components/Portal'
 import { Resizable } from 'components/Resizable'
 import { SettingsBar } from 'components/settings/SettingsBar'
 import { ToggleShowButton } from 'components/ToggleShowButton'
-import { ConfigsContextShape, useConfigs } from 'containers/ConfigsContext'
+import { useConfigs } from 'containers/ConfigsContext'
 import { platform } from 'platforms'
 import { useGitHubAttachCopyFileButton, useGitHubAttachCopySnippetButton } from 'platforms/GitHub'
 import * as React from 'react'
@@ -17,13 +17,13 @@ import { useLoadedContext } from 'utils/hooks/useLoadedContext'
 import { loadWithPJAX, useOnPJAXDone, usePJAX } from 'utils/hooks/usePJAX'
 import { useProgressBar } from 'utils/hooks/useProgressBar'
 import { useStateIO } from 'utils/hooks/useStateIO'
-import * as keyHelper from 'utils/keyHelper'
+import { useToggleSideBarWithKeyboard } from '../utils/hooks/useToggleSideBarWithKeyboard'
 import { SideBarErrorContext } from './ErrorContext'
 import { Icon } from './Icon'
 import { IIFC } from './IIFC'
 import { LoadingIndicator } from './LoadingIndicator'
 import { RepoContext } from './RepoContext'
-import { SideBarState, SideBarStateContext } from './SideBarState'
+import { SideBarStateContext } from './SideBarState'
 import { Theme } from './Theme'
 
 export function SideBar() {
@@ -173,28 +173,5 @@ export function SideBar() {
         </Resizable>
       </div>
     </Theme>
-  )
-}
-
-function useToggleSideBarWithKeyboard(
-  state: SideBarState,
-  configContext: ConfigsContextShape,
-  toggleShowSideBar: () => void,
-) {
-  const isDisabled = state === 'disabled'
-  React.useEffect(
-    function attachKeyDown() {
-      if (isDisabled || !configContext.value.shortcut) return
-
-      function onKeyDown(e: KeyboardEvent) {
-        const keys = keyHelper.parseEvent(e)
-        if (keys === configContext.value.shortcut) {
-          toggleShowSideBar()
-        }
-      }
-      window.addEventListener('keydown', onKeyDown)
-      return () => window.removeEventListener('keydown', onKeyDown)
-    },
-    [toggleShowSideBar, isDisabled, configContext.value.shortcut],
   )
 }
