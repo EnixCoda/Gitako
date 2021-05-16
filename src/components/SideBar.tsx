@@ -36,9 +36,7 @@ export function SideBar() {
 
   const $showSettings = useStateIO(false)
   const showSettings = $showSettings.value
-  const toggleShowSettings = React.useCallback(function toggleShowSettings() {
-    $showSettings.onChange(show => !show)
-  }, [])
+  const toggleShowSettings = React.useCallback(() => $showSettings.onChange(show => !show), [])
 
   const $logoContainerElement = useStateIO<HTMLElement | null>(null)
 
@@ -57,58 +55,34 @@ export function SideBar() {
   const shouldShow = $shouldShow.value
   React.useEffect(() => {
     DOMHelper.setBodyIndent(shouldShow)
-  }, [shouldShow])
-
-  React.useEffect(() => {
     if (shouldShow) {
       DOMHelper.focusFileExplorer() // TODO: verify if it works
     }
   }, [shouldShow])
-  const toggleShowSideBar = React.useCallback(() => {
-    $shouldShow.onChange(shouldShow => {
-      const {
-        value: { intelligentToggle },
-      } = configContext
-      if (intelligentToggle !== null) {
-        configContext.onChange({ intelligentToggle: !shouldShow })
-      }
-
-      return !shouldShow
-    })
-  }, [])
-  useToggleSideBarWithKeyboard(state, configContext, toggleShowSideBar)
 
   const intelligentToggle = configContext.value.intelligentToggle
-  // Hide sidebar when error due to auth but token is set  #128
-  const hideSidebarOnInvalidToken: boolean =
-    intelligentToggle === null && Boolean(state === 'error-due-to-auth' && accessToken)
+
+  // Save expand state on toggle if auto expand if not on
   React.useEffect(() => {
-    if (hideSidebarOnInvalidToken) {
-      $shouldShow.onChange(false)
-    } else {
-      const shouldShow = intelligentToggle === null ? platform.shouldShow() : intelligentToggle
-      $shouldShow.onChange(shouldShow)
+    if (intelligentToggle !== null) {
+      configContext.onChange({ intelligentToggle: shouldShow })
     }
-  }, [intelligentToggle, hideSidebarOnInvalidToken, metaData])
+  }, [shouldShow, intelligentToggle])
 
   const error = useLoadedContext(SideBarErrorContext).value
+  // Lock shouldShow on error
   React.useEffect(() => {
-    if (error) {
+    if (error && shouldShow) {
       $shouldShow.onChange(false)
     }
-  }, [error])
+  }, [error, shouldShow])
 
-  const updateSideBarVisibility = React.useCallback(
-    function updateSideBarVisibility() {
-      if (hideSidebarOnInvalidToken) {
-        $shouldShow.onChange(false)
-      } else if (intelligentToggle === null) {
-        $shouldShow.onChange(platform.shouldShow())
-      }
-    },
-    [metaData?.branchName, intelligentToggle, hideSidebarOnInvalidToken],
-  )
-  useOnPJAXDone(updateSideBarVisibility)
+  const toggleShowSideBar = React.useCallback(() => {
+    if (!error) $shouldShow.onChange(show => !show)
+  }, [error])
+  useToggleSideBarWithKeyboard(state, configContext, toggleShowSideBar)
+
+  useSetShouldShowOnPJAXDone(intelligentToggle, $shouldShow.onChange)
 
   useGitHubAttachCopyFileButton(configContext.value.copyFileButton)
   useGitHubAttachCopySnippetButton(configContext.value.copySnippetButton)
@@ -116,13 +90,20 @@ export function SideBar() {
   usePJAX()
   useProgressBar()
 
+  // Hide sidebar when error due to auth but token is set  #128
+  const hideSidebarOnInvalidToken: boolean =
+    intelligentToggle === null && Boolean(state === 'error-due-to-auth' && accessToken)
+  React.useEffect(() => {
+    if (hideSidebarOnInvalidToken) {
+      $shouldShow.onChange(false)
+    }
+  }, [hideSidebarOnInvalidToken])
+
   return (
     <Theme>
       <div className={'gitako-side-bar'}>
         <Portal into={$logoContainerElement.value}>
-          {!shouldShow && (
-            <ToggleShowButton error={error} onClick={error ? undefined : toggleShowSideBar} />
-          )}
+          {!shouldShow && <ToggleShowButton error={error} onClick={toggleShowSideBar} />}
         </Portal>
         <Resizable className={cx({ hidden: error || !shouldShow })} baseSize={baseSize}>
           <div className={'gitako-side-bar-body'}>
@@ -173,5 +154,21 @@ export function SideBar() {
         </Resizable>
       </div>
     </Theme>
+  )
+}
+
+function useSetShouldShowOnPJAXDone(
+  intelligentToggle: boolean | null,
+  set: (value: boolean) => void,
+) {
+  useOnPJAXDone(
+    React.useCallback(
+      function updateSideBarVisibility() {
+        if (intelligentToggle === null) {
+          set(platform.shouldShow())
+        }
+      },
+      [intelligentToggle],
+    ),
   )
 }
