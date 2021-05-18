@@ -14,6 +14,7 @@ export type Config = {
   toggleButtonContent: 'logo' | 'octoface'
   recursiveToggleFolder: 'shift' | 'alt'
   searchMode: SearchMode
+  commentToggle: boolean
 }
 
 enum configKeys {
@@ -29,6 +30,7 @@ enum configKeys {
   toggleButtonContent = 'toggleButtonContent',
   recursiveToggleFolder = 'recursiveToggleFolder',
   searchMode = 'searchMode',
+  commentToggle = 'commentToggle',
 }
 
 const defaultConfigs: Config = {
@@ -44,6 +46,7 @@ const defaultConfigs: Config = {
   toggleButtonContent: 'logo',
   recursiveToggleFolder: 'shift',
   searchMode: 'fuzzy',
+  commentToggle: true,
 }
 
 const configKeyArray = Object.values(configKeys)
@@ -85,6 +88,7 @@ async function migrateConfig() {
           'copySnippetButton',
           'intelligentToggle',
           'icons',
+          'commentToggle',
         ])
         if (config && (!('configVersion' in config) || config.configVersion < version)) {
           await storageHelper.set({ platform_GitHub: config, configVersion: version })

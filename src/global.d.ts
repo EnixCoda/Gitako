@@ -14,6 +14,7 @@ type TreeNode = {
   url?: string
   sha?: string
   accessDenied?: boolean
+  comments: number
 }
 
 type IO<T, ChangeT = T> = {
