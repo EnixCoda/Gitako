@@ -46,7 +46,7 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
     searched,
   } = props
   const {
-    value: { accessToken, compressSingletonFolder, searchMode },
+    value: { accessToken, compressSingletonFolder, searchMode, commentToggle },
   } = useConfigs()
 
   const onSearch = React.useCallback(
@@ -104,18 +104,26 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
           <Icon type="search" />
         </button>
       ) : undefined
+    const renderFileCommentAmounts = (node: TreeNode): React.ReactNode =>
+      node.comments !== undefined &&
+      node.comments > 0 && (
+        <span className={'node-item-comment'}>
+          <Icon type={'comment'} /> {node.comments}
+        </span>
+      )
 
     const renders: ((node: TreeNode) => React.ReactNode)[] = []
+    if (commentToggle) renders.push(renderFileCommentAmounts)
     if (searchMode === 'fuzzy') renders.push(renderFindInFolderButton)
     if (searched) renders.push(renderGoToButton)
 
     return renders.length
       ? node => renders.map((render, i) => <React.Fragment key={i}>{render(node)}</React.Fragment>)
       : undefined
-  }, [goTo, onSearch, searched, searchMode])
+  }, [goTo, onSearch, searched, searchMode, commentToggle])
 
   const renderLabelText = React.useCallback(
-    node => searchModes[searchMode].renderNodeLabelText(node, searchKey),
+    (node: TreeNode) => searchModes[searchMode].renderNodeLabelText(node, searchKey),
     [searchKey, searchMode],
   )
 

@@ -2,6 +2,7 @@ import {
   ChevronDownIcon as ChevronDown,
   ChevronRightIcon as ChevronRight,
   ClockIcon as Clock,
+  CommentIcon as Comment,
   FileCodeIcon as FileCode,
   FileIcon as File,
   FileMediaIcon as FileMedia,
@@ -28,6 +29,11 @@ function getSVGIconComponent(
   name: string
 } {
   switch (type) {
+    case 'comment':
+      return {
+        IconComponent: Comment,
+        name: 'Comment',
+      }
     case 'search':
       return {
         IconComponent: Search,
