@@ -37,6 +37,13 @@ declare namespace GitHubAPI {
 
   type PullComment = {
     path: string
+    pull_request_review_id: number
+    id: number
+    node_id: string
+    diff_hunk: string
+    body: string
+    html_url: string
+    author_association: string
   }
 
   type PullTreeData = PullTreeItem[]

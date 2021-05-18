@@ -38,10 +38,6 @@ export function Node({
   style,
   onClick,
 }: Props) {
-  const {
-    value: { commentToggle },
-  } = useConfigs()
-
   return (
     <a
       href={node.url}
@@ -64,7 +60,6 @@ export function Node({
       <div className={'node-item-label'}>
         <NodeItemIcon node={node} open={expanded} loading={loading} />
         {renderLabelText(node)}
-        {(commentToggle && !!node.comments) && <span className={'node-item-comment'}>💬 {node.comments}</span>}
       </div>
       {renderActions && <div>{renderActions(node)}</div>}
     </a>
