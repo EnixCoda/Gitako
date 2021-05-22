@@ -264,7 +264,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     color: var(--gitako-text-link);
   }
 
-  .#{$name}-position-wrapper {
+  .#{$name}-side-bar-body-wrapper {
     position: fixed;
     top: 0;
     left: 0;
@@ -276,7 +276,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
       @extend %hidden;
     }
 
-    .gitako-position-content {
+    .gitako-side-bar-body-wrapper-content {
       width: var(--gitako-width);
     }
   }

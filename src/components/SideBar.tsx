@@ -2,8 +2,8 @@ import { AccessDeniedDescription } from 'components/AccessDeniedDescription'
 import { FileExplorer } from 'components/FileExplorer'
 import { MetaBar } from 'components/MetaBar'
 import { Portal } from 'components/Portal'
-import { Resizable } from 'components/Resizable'
 import { SettingsBar } from 'components/settings/SettingsBar'
+import { SideBarBodyWrapper } from 'components/SideBarBodyWrapper'
 import { ToggleShowButton } from 'components/ToggleShowButton'
 import { useConfigs } from 'containers/ConfigsContext'
 import { platform } from 'platforms'
@@ -105,7 +105,7 @@ export function SideBar() {
         <Portal into={$logoContainerElement.value}>
           {!shouldShow && <ToggleShowButton error={error} onClick={toggleShowSideBar} />}
         </Portal>
-        <Resizable className={cx({ hidden: error || !shouldShow })} baseSize={baseSize}>
+        <SideBarBodyWrapper className={cx({ hidden: error || !shouldShow })} baseSize={baseSize}>
           <div className={'gitako-side-bar-body'}>
             <div className={'close-side-bar-button-position'}>
               <button className={'close-side-bar-button'} onClick={toggleShowSideBar}>
@@ -151,7 +151,7 @@ export function SideBar() {
             </div>
             <SettingsBar toggleShowSettings={toggleShowSettings} activated={showSettings} />
           </div>
-        </Resizable>
+        </SideBarBodyWrapper>
       </div>
     </Theme>
   )

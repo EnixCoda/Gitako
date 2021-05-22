@@ -16,7 +16,11 @@ type Props = {
 const MINIMAL_CONTENT_VIEWPORT_WIDTH = 100
 const MINIMAL_WIDTH = 240
 
-export function Resizable({ baseSize, className, children }: React.PropsWithChildren<Props>) {
+export function SideBarBodyWrapper({
+  baseSize,
+  className,
+  children,
+}: React.PropsWithChildren<Props>) {
   const [size, setSize] = React.useState(baseSize)
   const configContext = useConfigs()
 
@@ -48,8 +52,8 @@ export function Resizable({ baseSize, className, children }: React.PropsWithChil
     else setSize(size)
   }, [])
   return (
-    <div className={cx('gitako-position-wrapper', className)}>
-      <div className={'gitako-position-content'}>{children}</div>
+    <div className={cx('gitako-side-bar-body-wrapper', className)}>
+      <div className={'gitako-side-bar-body-wrapper-content'}>{children}</div>
       {features.resize && <HorizontalResizeHandler onResize={onResize} size={size} />}
     </div>
   )

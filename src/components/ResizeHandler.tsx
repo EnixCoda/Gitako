@@ -1,6 +1,6 @@
 import { Icon } from 'components/Icon'
 import * as React from 'react'
-import { Size } from './Resizable'
+import { Size } from './SideBarBodyWrapper'
 
 type Props = {
   size: Size
