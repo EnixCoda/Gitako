@@ -29,7 +29,7 @@ function SettingsBarContent() {
   const useReloadHint = useStateIO<React.ReactNode>('')
   const { value: reloadHint } = useReloadHint
 
-  const moreFields: SimpleField[] =
+  const moreFields: SimpleField<'copyFileButton' | 'copySnippetButton'>[] =
     platform === GitHub
       ? [
           {

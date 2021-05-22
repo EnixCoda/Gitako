@@ -3,25 +3,25 @@ import * as React from 'react'
 import { Config } from 'utils/configHelper'
 import { Field } from './settings/Field'
 
-export type SimpleField = {
-  key: keyof Config
+export type SimpleField<Key extends keyof Config> = {
+  key: Key
   label: string
   wikiLink?: string
   tooltip?: string
   description?: string
   overwrite?: {
-    value: <T>(value: T) => boolean
-    onChange: (checked: boolean) => any
+    value: (value: Config[Key]) => boolean
+    onChange: (checked: boolean) => Config[Key]
   }
 }
 
-type Props = {
-  field: SimpleField
+type Props<Key extends keyof Config> = {
+  field: SimpleField<Key>
 
   onChange?(): void
 }
 
-export function SimpleToggleField({ field, onChange }: Props) {
+export function SimpleToggleField<Key extends keyof Config>({ field, onChange }: Props<Key>) {
   const { overwrite } = field
   const configContext = useConfigs()
   const value = configContext.value[field.key]
