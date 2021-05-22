@@ -92,6 +92,16 @@ export function SidebarSettings(props: React.PropsWithChildren<Props>) {
       </Field>
       <SimpleToggleField
         field={{
+          key: 'sidebarToggleMode',
+          label: 'Dock sidebar on expand',
+          overwrite: {
+            value: enabled => enabled === 'persistent',
+            onChange: checked => (checked ? 'persistent' : 'float'),
+          },
+        }}
+      />
+      <SimpleToggleField
+        field={{
           key: 'intelligentToggle',
           label: 'Auto expand',
           tooltip:

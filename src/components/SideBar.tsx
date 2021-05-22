@@ -51,14 +51,15 @@ export function SideBar() {
     }
   }, [hasMetaData])
 
+  const sidebarToggleMode = configContext.value.sidebarToggleMode
   const $shouldShow = useStateIO(false)
   const shouldShow = $shouldShow.value
   React.useEffect(() => {
-    DOMHelper.setBodyIndent(shouldShow)
+    DOMHelper.setBodyIndent(shouldShow && sidebarToggleMode === 'persistent')
     if (shouldShow) {
       DOMHelper.focusFileExplorer() // TODO: verify if it works
     }
-  }, [shouldShow])
+  }, [shouldShow, sidebarToggleMode])
 
   const intelligentToggle = configContext.value.intelligentToggle
 
@@ -105,7 +106,12 @@ export function SideBar() {
         <Portal into={$logoContainerElement.value}>
           {!shouldShow && <ToggleShowButton error={error} onClick={toggleShowSideBar} />}
         </Portal>
-        <SideBarBodyWrapper className={cx({ hidden: error || !shouldShow })} baseSize={baseSize}>
+        <SideBarBodyWrapper
+          className={cx(`toggle-mode-${sidebarToggleMode}`, {
+            hidden: error || !shouldShow,
+          })}
+          baseSize={baseSize}
+        >
           <div className={'gitako-side-bar-body'}>
             <div className={'close-side-bar-button-position'}>
               <button className={'close-side-bar-button'} onClick={toggleShowSideBar}>

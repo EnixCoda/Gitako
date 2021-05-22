@@ -14,6 +14,7 @@ export type Config = {
   toggleButtonContent: 'logo' | 'octoface'
   recursiveToggleFolder: 'shift' | 'alt'
   searchMode: SearchMode
+  sidebarToggleMode: 'persistent' | 'float'
 }
 
 enum configKeys {
@@ -29,6 +30,7 @@ enum configKeys {
   toggleButtonContent = 'toggleButtonContent',
   recursiveToggleFolder = 'recursiveToggleFolder',
   searchMode = 'searchMode',
+  sidebarToggleMode = 'sidebarToggleMode',
 }
 
 const defaultConfigs: Config = {
@@ -44,6 +46,7 @@ const defaultConfigs: Config = {
   toggleButtonContent: 'logo',
   recursiveToggleFolder: 'shift',
   searchMode: 'fuzzy',
+  sidebarToggleMode: 'float',
 }
 
 const configKeyArray = Object.values(configKeys)

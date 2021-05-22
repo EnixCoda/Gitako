@@ -272,8 +272,18 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     z-index: $minimal-z-index;
     display: flex;
 
-    &.hidden {
-      @extend %hidden;
+    &.toggle-mode-persistent {
+      &.hidden {
+        @extend %hidden;
+      }
+    }
+
+    &.toggle-mode-float {
+      left: 0%;
+      transition: all 0.3s ease;
+      &.hidden {
+        left: -100%;
+      }
     }
 
     .gitako-side-bar-body-wrapper-content {
@@ -314,10 +324,6 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     background: var(--gitako-bg-secondary);
     border-left: 1px solid var(--gitako-border-overlay);
     overflow: hidden;
-
-    &.hidden {
-      @extend %hidden;
-    }
 
     .octicon {
       transition: transform 0.3s ease;
