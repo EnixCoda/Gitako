@@ -16,9 +16,9 @@ import { useLoadedContext } from 'utils/hooks/useLoadedContext'
 import { useOnLocationChange } from 'utils/hooks/useOnLocationChange'
 import { useOnPJAXDone } from 'utils/hooks/usePJAX'
 import { VisibleNodes } from 'utils/VisibleNodesGenerator'
+import { SideBarStateContext } from '../containers/SideBarState'
 import { Icon } from './Icon'
 import { SearchMode, searchModes } from './searchModes'
-import { SideBarStateContext } from './SideBarState'
 import { SizeObserver } from './SizeObserver'
 
 type renderNodeContext = {

@@ -1,4 +1,4 @@
-import { SideBarStateContextShape } from 'components/SideBarState'
+import { SideBarStateContextShape } from 'containers/SideBarState'
 import { GetCreatedMethod, MethodCreator } from 'driver/connect'
 import { platform } from 'platforms'
 import { Config } from 'utils/config/helper'

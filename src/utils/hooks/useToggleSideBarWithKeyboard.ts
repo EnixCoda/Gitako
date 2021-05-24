@@ -1,7 +1,7 @@
 import { ConfigsContextShape } from 'containers/ConfigsContext'
 import * as React from 'react'
 import * as keyHelper from 'utils/keyHelper'
-import { SideBarState } from '../../components/SideBarState'
+import { SideBarState } from '../../containers/SideBarState'
 
 export function useToggleSideBarWithKeyboard(
   state: SideBarState,

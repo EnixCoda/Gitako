@@ -17,14 +17,14 @@ import { useLoadedContext } from 'utils/hooks/useLoadedContext'
 import { loadWithPJAX, useOnPJAXDone, usePJAX } from 'utils/hooks/usePJAX'
 import { useProgressBar } from 'utils/hooks/useProgressBar'
 import { useStateIO } from 'utils/hooks/useStateIO'
+import { SideBarErrorContext } from '../containers/ErrorContext'
+import { RepoContext } from '../containers/RepoContext'
+import { SideBarStateContext } from '../containers/SideBarState'
+import { Theme } from '../containers/Theme'
 import { useToggleSideBarWithKeyboard } from '../utils/hooks/useToggleSideBarWithKeyboard'
-import { SideBarErrorContext } from './ErrorContext'
 import { Icon } from './Icon'
 import { IIFC } from './IIFC'
 import { LoadingIndicator } from './LoadingIndicator'
-import { RepoContext } from './RepoContext'
-import { SideBarStateContext } from './SideBarState'
-import { Theme } from './Theme'
 
 export function SideBar() {
   const metaData = React.useContext(RepoContext)

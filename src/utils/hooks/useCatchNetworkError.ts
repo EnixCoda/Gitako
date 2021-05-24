@@ -2,8 +2,8 @@ import { useConfigs } from 'containers/ConfigsContext'
 import { errors, platformName } from 'platforms'
 import { useCallback } from 'react'
 import { useLoadedContext } from 'utils/hooks/useLoadedContext'
-import { SideBarErrorContext } from '../../components/ErrorContext'
-import { SideBarStateContext } from '../../components/SideBarState'
+import { SideBarErrorContext } from '../../containers/ErrorContext'
+import { SideBarStateContext } from '../../containers/SideBarState'
 
 export function useCatchNetworkError() {
   const { accessToken } = useConfigs().value
