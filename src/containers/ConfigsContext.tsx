@@ -1,6 +1,5 @@
 import * as React from 'react'
-import * as configsHelper from 'utils/configHelper'
-import { Config } from 'utils/configHelper'
+import { Config, configHelper } from 'utils/config/helper'
 
 type Props = {}
 
@@ -12,12 +11,12 @@ export const ConfigsContext = React.createContext<ContextShape | null>(null)
 export function ConfigsContextWrapper(props: React.PropsWithChildren<Props>) {
   const [configs, setConfigs] = React.useState<Config | null>(null)
   React.useEffect(() => {
-    configsHelper.get().then(setConfigs)
+    configHelper.get().then(setConfigs)
   }, [])
   const onChange = React.useCallback(
     (updatedConfigs: Partial<Config>) => {
       const mergedConfigs = { ...configs, ...updatedConfigs } as Config
-      configsHelper.set(mergedConfigs)
+      configHelper.set(mergedConfigs)
       setConfigs(mergedConfigs)
     },
     [configs, setConfigs],

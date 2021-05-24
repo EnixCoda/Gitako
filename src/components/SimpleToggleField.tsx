@@ -1,6 +1,6 @@
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
-import { Config } from 'utils/configHelper'
+import { Config } from 'utils/config/helper'
 import { Field } from './settings/Field'
 
 export type SimpleField<Key extends keyof Config> = {

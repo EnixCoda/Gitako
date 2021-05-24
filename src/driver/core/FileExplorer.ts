@@ -1,7 +1,7 @@
 import { SideBarStateContextShape } from 'components/SideBarState'
 import { GetCreatedMethod, MethodCreator } from 'driver/connect'
 import { platform } from 'platforms'
-import { Config } from 'utils/configHelper'
+import { Config } from 'utils/config/helper'
 import * as DOMHelper from 'utils/DOMHelper'
 import { VisibleNodes, VisibleNodesGenerator } from 'utils/VisibleNodesGenerator'
 
