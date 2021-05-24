@@ -104,13 +104,21 @@ export function SideBar() {
     <Theme>
       <div className={'gitako-side-bar'}>
         <Portal into={$logoContainerElement.value}>
-          {!shouldShow && <ToggleShowButton error={error} onClick={toggleShowSideBar} />}
+          <ToggleShowButton
+            error={error}
+            className={cx({
+              hidden: shouldShow,
+            })}
+            onHover={sidebarToggleMode === 'float' ? () => $shouldShow.onChange(true) : undefined}
+            onClick={toggleShowSideBar}
+          />
         </Portal>
         <SideBarBodyWrapper
           className={cx(`toggle-mode-${sidebarToggleMode}`, {
             collapsed: error || !shouldShow,
           })}
           baseSize={baseSize}
+          onLeave={() => $shouldShow.onChange(false)}
         >
           <div className={'gitako-side-bar-body'}>
             <div className={'close-side-bar-button-position'}>

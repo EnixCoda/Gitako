@@ -11,6 +11,7 @@ export type Size = number
 type Props = {
   baseSize: Size
   className?: string
+  onLeave?: React.HTMLAttributes<HTMLElement>['onMouseLeave']
 }
 
 const MINIMAL_CONTENT_VIEWPORT_WIDTH = 100
@@ -20,9 +21,11 @@ export function SideBarBodyWrapper({
   baseSize,
   className,
   children,
+  onLeave,
 }: React.PropsWithChildren<Props>) {
   const [size, setSize] = React.useState(baseSize)
   const configContext = useConfigs()
+  const blockLeaveRef = React.useRef(false)
 
   React.useEffect(() => {
     setSize(baseSize)
@@ -51,10 +54,27 @@ export function SideBarBodyWrapper({
     else if (size < MINIMAL_WIDTH) setSize(MINIMAL_WIDTH)
     else setSize(size)
   }, [])
+
+  const onMouseLeave = React.useCallback(
+    e => {
+      if (blockLeaveRef.current) return
+      onLeave?.(e)
+    },
+    [onLeave],
+  )
+
   return (
-    <div className={cx('gitako-side-bar-body-wrapper', className)}>
+    <div className={cx('gitako-side-bar-body-wrapper', className)} onMouseLeave={onMouseLeave}>
       <div className={'gitako-side-bar-body-wrapper-content'}>{children}</div>
-      {features.resize && <HorizontalResizeHandler onResize={onResize} size={size} />}
+      {features.resize && (
+        <HorizontalResizeHandler
+          onResize={onResize}
+          onResizeStateChange={state => {
+            blockLeaveRef.current = state === 'resizing'
+          }}
+          size={size}
+        />
+      )}
     </div>
   )
 }

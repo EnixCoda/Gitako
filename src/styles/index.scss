@@ -182,12 +182,19 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
   left: 0px;
   display: inline-flex;
   align-items: center;
+  transition: left 0.25s linear;
+
+  &.hidden {
+    left: -40px;
+  }
 
   .#{$name}-toggle-show-button {
     @include icon-button;
     background: transparent;
     border: none;
     padding: 0;
+    position: relative;
+    left: -8px;
 
     &.error {
       cursor: not-allowed;
@@ -198,6 +205,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
       width: 32px;
       height: 32px;
+      padding: 4px;
       border-radius: 6px;
       border: 1px solid var(--gitako-border-tertiary);
       background: var(--gitako-bg-tertiary);
@@ -207,32 +215,26 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
       }
       transition: all ease 0.3s;
       font-size: 16px;
-      transform: translateX(0px);
+      transform: translateX(8px);
       &:active,
       &:hover {
-        transform: translateX(4px);
+        transform: translateX(12px);
       }
     }
     .tentacle {
       width: 40px;
       height: 40px;
+      object-fit: contain;
       transition: all ease 0.4s;
-      transform: translateX(-16px);
+      transform: translateX(-8px);
+      filter: drop-shadow(0 0 1px var(--gitako-bg-backdrop));
     }
     &:active,
     &:hover {
       .tentacle {
-        transform: translateX(-12px);
+        transform: translateX(-4px);
         filter: drop-shadow(0 0 2px var(--gitako-bg-backdrop));
       }
-    }
-
-    img {
-      filter: drop-shadow(0 0 1px var(--gitako-bg-backdrop));
-      transition: all ease 0.3s;
-      width: 90%;
-      height: 90%;
-      object-fit: contain;
     }
   }
 
