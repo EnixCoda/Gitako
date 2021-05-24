@@ -264,6 +264,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     color: var(--gitako-text-link);
   }
 
+  $resizeHandlerWidth: 1px;
   .#{$name}-side-bar-body-wrapper {
     position: fixed;
     top: 0;
@@ -273,16 +274,16 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     display: flex;
 
     &.toggle-mode-persistent {
-      &.hidden {
+      &.collapsed {
         @extend %hidden;
       }
     }
 
     &.toggle-mode-float {
-      left: 0%;
-      transition: all 0.3s ease;
-      &.hidden {
-        left: -100%;
+      left: 0;
+      transition: all 0.25s cubic-bezier(0.55, 0.06, 0.68, 0.19); // values from Chrome devtools
+      &.collapsed {
+        left: calc(0px - #{$resizeHandlerWidth} - var(--gitako-width));
       }
     }
 
@@ -297,7 +298,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     user-select: none;
     width: 0;
     background: var(--gitako-bg-tertiary);
-    border-right: 1px solid var(--gitako-border-tertiary);
+    border-right: $resizeHandlerWidth solid var(--gitako-border-tertiary);
     overflow: hidden;
     box-sizing: content-box;
     &:hover,

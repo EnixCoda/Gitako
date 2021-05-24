@@ -108,7 +108,7 @@ export function SideBar() {
         </Portal>
         <SideBarBodyWrapper
           className={cx(`toggle-mode-${sidebarToggleMode}`, {
-            hidden: error || !shouldShow,
+            collapsed: error || !shouldShow,
           })}
           baseSize={baseSize}
         >
