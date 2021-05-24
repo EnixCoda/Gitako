@@ -2,27 +2,26 @@ import { storageHelper } from 'utils/storageHelper'
 import { Migration, onConfigOutdated } from '.'
 
 export const migration: Migration = {
-  version: '2.6.0',
+  version: '3.0.0',
   async migrate(version) {
+    // disable copy snippet button for github.com
     type ConfigBeforeMigrate = {
-      access_token?: string
+      copySnippetButton: boolean
     }
     type ConfigAfterMigrate = {
-      accessToken?: string
+      copySnippetButton: boolean
     }
 
     onConfigOutdated(version, async configs => {
-      for (const key of Object.keys(configs)) {
-        if (
-          typeof configs[key] === 'object' &&
-          configs[key] !== null &&
-          'access_token' in configs[key]
-        ) {
-          const configBeforeMigrate: ConfigBeforeMigrate = configs[key]
-          const { access_token: accessToken, ...rest } = configBeforeMigrate
+      const key = 'platform_github.com'
+      const config = configs[key]
+      if (typeof config === 'object' && config !== null && 'copySnippetButton' in config) {
+        const configBeforeMigrate: ConfigBeforeMigrate = config
+        const { copySnippetButton, ...rest } = configBeforeMigrate
+        if (copySnippetButton) {
           const configAfterMigrate: ConfigAfterMigrate = {
             ...rest,
-            accessToken,
+            copySnippetButton: false,
           }
           await storageHelper.set({
             [key]: configAfterMigrate,
