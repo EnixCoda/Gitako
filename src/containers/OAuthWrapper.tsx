@@ -59,7 +59,7 @@ async function getAccessTokenWithCode(code: string) {
   window.history.replaceState(
     {},
     'removed search param',
-    window.location.pathname.replace(window.location.search, search.toString()),
+    window.location.pathname.replace(window.location.search, '?' + search.toString()),
   )
   return accessToken
 }
