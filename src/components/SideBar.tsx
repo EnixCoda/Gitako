@@ -118,7 +118,7 @@ export function SideBar() {
             collapsed: error || !shouldShow,
           })}
           baseSize={baseSize}
-          onLeave={() => $shouldShow.onChange(false)}
+          onLeave={sidebarToggleMode === 'float' ? () => $shouldShow.onChange(false) : undefined}
         >
           <div className={'gitako-side-bar-body'}>
             <div className={'close-side-bar-button-position'}>
