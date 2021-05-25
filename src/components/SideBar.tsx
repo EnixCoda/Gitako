@@ -55,7 +55,12 @@ export function SideBar() {
   const $shouldShow = useStateIO(false)
   const shouldShow = $shouldShow.value
   React.useEffect(() => {
-    DOMHelper.setBodyIndent(shouldShow && sidebarToggleMode === 'persistent')
+    if (sidebarToggleMode === 'persistent') {
+      DOMHelper.setBodyIndent(shouldShow)
+    } else {
+      DOMHelper.setBodyIndent(false)
+    }
+
     if (shouldShow) {
       DOMHelper.focusFileExplorer() // TODO: verify if it works
     }
@@ -76,14 +81,21 @@ export function SideBar() {
     if (error && shouldShow) {
       $shouldShow.onChange(false)
     }
-  }, [error, shouldShow])
+  }, [error])
+
+  const setShowSideBar = React.useCallback(
+    (show: typeof $shouldShow.value) => {
+      if (!error) $shouldShow.onChange(show)
+    },
+    [error],
+  )
 
   const toggleShowSideBar = React.useCallback(() => {
     if (!error) $shouldShow.onChange(show => !show)
   }, [error])
   useToggleSideBarWithKeyboard(state, configContext, toggleShowSideBar)
 
-  useSetShouldShowOnPJAXDone(intelligentToggle, $shouldShow.onChange)
+  useSetShouldShowOnPJAXDone(setShowSideBar)
 
   useGitHubAttachCopyFileButton(configContext.value.copyFileButton)
   useGitHubAttachCopySnippetButton(configContext.value.copySnippetButton)
@@ -96,7 +108,7 @@ export function SideBar() {
     intelligentToggle === null && Boolean(state === 'error-due-to-auth' && accessToken)
   React.useEffect(() => {
     if (hideSidebarOnInvalidToken) {
-      $shouldShow.onChange(false)
+      setShowSideBar(false)
     }
   }, [hideSidebarOnInvalidToken])
 
@@ -109,7 +121,7 @@ export function SideBar() {
             className={cx({
               hidden: shouldShow,
             })}
-            onHover={sidebarToggleMode === 'float' ? () => $shouldShow.onChange(true) : undefined}
+            onHover={sidebarToggleMode === 'float' ? () => setShowSideBar(true) : undefined}
             onClick={toggleShowSideBar}
           />
         </Portal>
@@ -118,7 +130,7 @@ export function SideBar() {
             collapsed: error || !shouldShow,
           })}
           baseSize={baseSize}
-          onLeave={sidebarToggleMode === 'float' ? () => $shouldShow.onChange(false) : undefined}
+          onLeave={sidebarToggleMode === 'float' ? () => setShowSideBar(false) : undefined}
         >
           <div className={'gitako-side-bar-body'}>
             <div className={'close-side-bar-button-position'}>
@@ -171,18 +183,16 @@ export function SideBar() {
   )
 }
 
-function useSetShouldShowOnPJAXDone(
-  intelligentToggle: boolean | null,
-  set: (value: boolean) => void,
-) {
+function useSetShouldShowOnPJAXDone(setShouldShow: (value: boolean) => void) {
+  const { intelligentToggle, sidebarToggleMode } = useConfigs().value
   useOnPJAXDone(
     React.useCallback(
       function updateSideBarVisibility() {
-        if (intelligentToggle === null) {
-          set(platform.shouldShow())
+        if (intelligentToggle === null && sidebarToggleMode === 'persistent') {
+          setShouldShow(platform.shouldShow())
         }
       },
-      [intelligentToggle],
+      [intelligentToggle, sidebarToggleMode],
     ),
   )
 }

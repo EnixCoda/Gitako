@@ -1,4 +1,5 @@
 import {
+  expandFloatModeSidebar,
   expectToFind,
   expectToNotFind,
   patientClick,
@@ -12,7 +13,9 @@ describe(`in Gitako project page`, () => {
 
   it('should work with PJAX', async () => {
     await sleep(3000)
-    await patientClick(page, selectFileTreeItem('.babelrc'))
+
+    await expandFloatModeSidebar()
+    await patientClick(selectFileTreeItem('.babelrc'))
     await waitForPJAXAPIRedirect()
 
     // The selector for file content

@@ -1,5 +1,3 @@
-import { Page } from 'puppeteer'
-
 export async function expectToFind(selector: string) {
   await expect(page.waitForSelector(selector)).resolves.not.toBeNull()
 }
@@ -82,7 +80,26 @@ export function selectFileTreeItem(path: string): string {
   return `.gitako-side-bar .files a[title="${path}"]`
 }
 
-export async function patientClick(page: Page, selector: string) {
+export async function patientClick(selector: string) {
   await page.waitForSelector(selector)
   await page.click(selector)
+}
+
+export async function expandFloatModeSidebar() {
+  const rect = await (await page.$('.gitako-toggle-show-button'))?.evaluate(button => {
+    const { x, y, width, height } = button.getBoundingClientRect()
+    // pass required properties to avoid serialization issues
+    return { x, y, width, height }
+  })
+  if (rect) {
+    await page.mouse.move(rect.x + rect.width / 2, rect.y + rect.height / 2)
+    await sleep(500)
+  }
+}
+
+export async function collapseFloatModeSidebar() {
+  await page.mouse.move(600, 600, {
+    steps: 100,
+  })
+  await sleep(500)
 }

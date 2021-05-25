@@ -23,7 +23,7 @@ export function ConfigsContextWrapper(props: React.PropsWithChildren<Props>) {
   )
   if (configs === null) return null
   return (
-    <ConfigsContext.Provider value={{ value: configs, onChange: onChange }}>
+    <ConfigsContext.Provider value={{ value: configs, onChange }}>
       {props.children}
     </ConfigsContext.Provider>
   )
