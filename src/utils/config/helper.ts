@@ -1,4 +1,5 @@
 import { SearchMode } from 'components/searchModes'
+import { platform, platformName } from 'platforms'
 import { storageHelper } from 'utils/storageHelper'
 import { migrateConfig } from './migrations'
 
@@ -40,7 +41,7 @@ const defaultConfigs: Config = {
   accessToken: '',
   compressSingletonFolder: true,
   copyFileButton: true,
-  copySnippetButton: true,
+  copySnippetButton: !(platformName === 'GitHub' && !platform.isEnterprise()), // false when on github.com
   intelligentToggle: null,
   icons: 'rich',
   toggleButtonVerticalDistance: 124, // align with GitHub's navbar items

@@ -1,11 +1,9 @@
 import { dummyPlatformForTypeSafety } from './dummyPlatformForTypeSafety'
-import { Gitee } from './Gitee'
 import { Gitea } from './Gitea'
+import { Gitee } from './Gitee'
 import { GitHub } from './GitHub'
 
-const platforms: {
-  [name: string]: Platform
-} = {
+const platforms = {
   GitHub: GitHub,
   Gitee: Gitee,
   Gitea: Gitea,
