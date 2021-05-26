@@ -104,10 +104,12 @@ export function SidebarSettings(props: React.PropsWithChildren<Props>) {
         field={{
           key: 'intelligentToggle',
           label: 'Auto expand',
+          disabled: configContext.value.sidebarToggleMode === 'float',
           tooltip:
-            'Gitako will expand when exploring source files, pull requests, etc. And collapse otherwise.',
+            'Gitako will expand when exploring source files, pull requests, etc. And collapse otherwise. Will be disabled when "Dock sidebar on expand" is disabled.',
           overwrite: {
-            value: enabled => enabled === null,
+            value: enabled =>
+              configContext.value.sidebarToggleMode === 'float' ? false : enabled === null,
             onChange: checked => (checked ? null : true),
           },
         }}

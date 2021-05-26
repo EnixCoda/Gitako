@@ -9,6 +9,7 @@ export type SimpleField<Key extends keyof Config> = {
   wikiLink?: string
   tooltip?: string
   description?: string
+  disabled?: boolean
   overwrite?: {
     value: (value: Config[Key]) => boolean
     onChange: (checked: boolean) => Config[Key]
@@ -54,6 +55,7 @@ export function SimpleToggleField<Key extends keyof Config>({ field, onChange }:
       <input
         id={field.key}
         name={field.key}
+        disabled={field.disabled}
         type={'checkbox'}
         onChange={async e => {
           const enabled = e.currentTarget.checked
