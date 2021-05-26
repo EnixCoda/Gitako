@@ -52,6 +52,7 @@ const sentryOptions: Sentry.BrowserOptions = {
     }
     return breadcrumb
   },
+  autoSessionTracking: false, // this avoids the request when calling `init`
 }
 Sentry.init(sentryOptions)
 
