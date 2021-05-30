@@ -5,13 +5,20 @@ import { Size } from './SideBarBodyWrapper'
 type Props = {
   size: Size
   onResize(size: Size): void
+  onResetSize?(): void
   onResizeStateChange?(state: ResizeState): void
   style?: React.CSSProperties
 }
 
 type ResizeState = 'idle' | 'resizing'
 
-export function HorizontalResizeHandler({ onResize, onResizeStateChange, size, style }: Props) {
+export function HorizontalResizeHandler({
+  onResize,
+  onResetSize,
+  onResizeStateChange,
+  size,
+  style,
+}: Props) {
   const pointerDown = React.useRef(false)
   const startX = React.useRef(0)
   const baseSize = React.useRef(size)
@@ -51,7 +58,12 @@ export function HorizontalResizeHandler({ onResize, onResizeStateChange, size, s
   }, [])
 
   return (
-    <div className={'gitako-resize-handler'} onMouseDown={onPointerDown} style={style}>
+    <div
+      className={'gitako-resize-handler'}
+      onMouseDown={onPointerDown}
+      onDoubleClick={onResetSize}
+      style={style}
+    >
       <Icon type={'grabber'} className={'grabber-icon'} size={20} />
     </div>
   )

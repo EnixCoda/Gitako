@@ -2,6 +2,7 @@ import { HorizontalResizeHandler } from 'components/ResizeHandler'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
+import { defaultConfigs } from 'utils/config/helper'
 import { cx } from 'utils/cx'
 import { setResizingState } from 'utils/DOMHelper'
 import * as features from 'utils/features'
@@ -69,6 +70,7 @@ export function SideBarBodyWrapper({
       {features.resize && (
         <HorizontalResizeHandler
           onResize={onResize}
+          onResetSize={() => setSize(defaultConfigs.sideBarWidth)}
           onResizeStateChange={state => {
             blockLeaveRef.current = state === 'resizing'
           }}

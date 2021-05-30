@@ -35,7 +35,7 @@ enum configKeys {
   sidebarToggleMode = 'sidebarToggleMode',
 }
 
-const defaultConfigs: Config = {
+export const defaultConfigs: Config = {
   sideBarWidth: 260,
   shortcut: undefined,
   accessToken: '',
