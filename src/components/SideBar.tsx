@@ -134,8 +134,27 @@ export function SideBar() {
         >
           <div className={'gitako-side-bar-body'}>
             <div className={'close-side-bar-button-position'}>
-              <button className={'close-side-bar-button'} onClick={toggleShowSideBar}>
-                <Icon className={'action-icon'} type={'x'} />
+              {sidebarToggleMode === 'persistent' && (
+                <button
+                  title={'Collapse sidebar'}
+                  className={'close-side-bar-button'}
+                  onClick={toggleShowSideBar}
+                >
+                  <Icon className={'action-icon'} type={'tab'} />
+                </button>
+              )}
+              <button
+                title={'Toggle sidebar dock mode between float and persistent'}
+                className={cx('close-side-bar-button', {
+                  active: sidebarToggleMode === 'persistent',
+                })}
+                onClick={() =>
+                  configContext.onChange({
+                    sidebarToggleMode: sidebarToggleMode === 'float' ? 'persistent' : 'float',
+                  })
+                }
+              >
+                <Icon className={'action-icon'} type={'pin'} />
               </button>
             </div>
             <div

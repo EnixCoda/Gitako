@@ -13,8 +13,10 @@ import {
   IconProps,
   MarkdownIcon as Markdown,
   OctofaceIcon as Octoface,
+  PinIcon as Pin,
   ReplyIcon as Reply,
   SearchIcon as Search,
+  TabIcon as Tab,
   XIcon as X,
 } from '@primer/octicons-react'
 import * as React from 'react'
@@ -37,6 +39,8 @@ const iconToComponentMap = {
   FileMedia,
   FileCode,
   File,
+  Pin,
+  Tab,
 }
 
 const defaultIcon = 'File'
@@ -50,6 +54,8 @@ const typeToIconComponentMap: {
   grabber: 'Grabber',
   octoface: 'Octoface',
   x: 'X',
+  pin: 'Pin',
+  tab: 'Tab',
   gear: 'Gear',
   folder: 'ChevronRight',
   'chevron-down': 'ChevronDown',

@@ -92,21 +92,14 @@ export function SidebarSettings(props: React.PropsWithChildren<Props>) {
       </Field>
       <SimpleToggleField
         field={{
-          key: 'sidebarToggleMode',
-          label: 'Dock sidebar on expand',
-          overwrite: {
-            value: enabled => enabled === 'persistent',
-            onChange: checked => (checked ? 'persistent' : 'float'),
-          },
-        }}
-      />
-      <SimpleToggleField
-        field={{
           key: 'intelligentToggle',
           label: 'Auto expand',
           disabled: configContext.value.sidebarToggleMode === 'float',
-          tooltip:
-            'Gitako will expand when exploring source files, pull requests, etc. And collapse otherwise. Will be disabled when "Dock sidebar on expand" is disabled.',
+          tooltip: `Gitako will expand when exploring source files, pull requests, etc. And collapse otherwise.${
+            configContext.value.sidebarToggleMode === 'float'
+              ? '\nNow disabled as sidebar is in float mode.'
+              : ''
+          }`,
           overwrite: {
             value: enabled =>
               configContext.value.sidebarToggleMode === 'float' ? false : enabled === null,

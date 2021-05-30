@@ -364,6 +364,10 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           transition: background linear 0.3s;
         }
 
+        &.active .octicon {
+          color: var(--gitako-icon-primary);
+        }
+
         .action-icon {
           color: var(--gitako-icon-tertiary);
           width: 20px;
@@ -373,7 +377,15 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
             width: 100%;
             height: 100%;
           }
+          .Pin,
+          .Tab {
+            transform: rotateY(180deg);
+          }
         }
+      }
+
+      .close-side-bar-button + .close-side-bar-button {
+        margin-left: 4px;
       }
     }
 
@@ -392,7 +404,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           min-height: 62px; // GitHub header height if login
           flex-shrink: 0;
           padding: 8px 10px;
-          padding-right: $button-size + 8px * 2; // space for toggle button
+          padding-right: $button-size * 2 + 8px; // space for toggle buttons
           background: var(--gitako-bg-tertiary);
 
           .user-and-repo a {
