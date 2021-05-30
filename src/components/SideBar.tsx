@@ -52,7 +52,8 @@ export function SideBar() {
   }, [hasMetaData])
 
   const sidebarToggleMode = configContext.value.sidebarToggleMode
-  const $shouldShow = useStateIO(false)
+  const intelligentToggle = configContext.value.intelligentToggle
+  const $shouldShow = useStateIO(intelligentToggle === null ? false : intelligentToggle)
   const shouldShow = $shouldShow.value
   React.useEffect(() => {
     if (sidebarToggleMode === 'persistent') {
@@ -65,8 +66,6 @@ export function SideBar() {
       DOMHelper.focusFileExplorer() // TODO: verify if it works
     }
   }, [shouldShow, sidebarToggleMode])
-
-  const intelligentToggle = configContext.value.intelligentToggle
 
   // Save expand state on toggle if auto expand if not on
   React.useEffect(() => {
@@ -204,14 +203,13 @@ export function SideBar() {
 
 function useSetShouldShowOnPJAXDone(setShouldShow: (value: boolean) => void) {
   const { intelligentToggle, sidebarToggleMode } = useConfigs().value
-  useOnPJAXDone(
-    React.useCallback(
-      function updateSideBarVisibility() {
-        if (intelligentToggle === null && sidebarToggleMode === 'persistent') {
-          setShouldShow(platform.shouldShow())
-        }
-      },
-      [intelligentToggle, sidebarToggleMode],
-    ),
-  )
+  const updateSideBarVisibility = React.useCallback(() => {
+    if (intelligentToggle === null && sidebarToggleMode === 'persistent') {
+      setShouldShow(platform.shouldShow())
+    }
+  }, [intelligentToggle, sidebarToggleMode])
+  React.useEffect(() => {
+    updateSideBarVisibility()
+  }, [updateSideBarVisibility])
+  useOnPJAXDone(updateSideBarVisibility)
 }
