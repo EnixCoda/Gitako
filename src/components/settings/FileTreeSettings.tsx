@@ -54,7 +54,7 @@ export function FileTreeSettings(props: React.PropsWithChildren<Props>) {
             })
           }}
           value={configContext.value.recursiveToggleFolder}
-        ></SelectInput>
+        />
       </Field>
       <Field title="Icons" id="file-tree-icons">
         <SelectInput<Config['icons']>

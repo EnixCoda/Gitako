@@ -88,7 +88,7 @@ export function SidebarSettings(props: React.PropsWithChildren<Props>) {
             })
           }}
           value={configContext.value.toggleButtonContent}
-        ></SelectInput>
+        />
       </Field>
       <SimpleToggleField
         field={{
