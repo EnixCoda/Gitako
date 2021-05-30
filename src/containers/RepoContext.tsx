@@ -87,13 +87,14 @@ function useMetaData(
   const $state = useLoadedContext(SideBarStateContext)
   const $metaData = useStateIO<MetaData | null>(null)
   const branchName = useBranchName()
+  const theBranch = branchName && branchName !== defaultBranchName ? branchName : defaultBranchName
   React.useEffect(() => {
-    if (partialMetaData && defaultBranchName) {
+    if (partialMetaData && defaultBranchName && theBranch) {
       const { userName, repoName } = partialMetaData
       const safeMetaData: MetaData = {
         userName,
         repoName,
-        branchName: branchName || defaultBranchName,
+        branchName: theBranch,
         defaultBranchName,
       }
       $metaData.onChange(safeMetaData)
@@ -101,6 +102,6 @@ function useMetaData(
     } else {
       $metaData.onChange(null)
     }
-  }, [partialMetaData, branchName, defaultBranchName])
+  }, [partialMetaData, defaultBranchName, theBranch])
   return $metaData.value
 }
