@@ -160,9 +160,10 @@ export const GitHub: Platform = {
         GITHUB_API_RESPONSE_LENGTH_LIMIT / GITHUB_API_PAGED_RESPONSE_LENGTH_LIMIT,
       )
       let page = 1
-      const [pullData, treeData] = await Promise.all([
+      const [pullData, treeData, commentData] = await Promise.all([
         API.getPullData(userName, repoName, pullId, accessToken),
         API.getPullTreeData(userName, repoName, pullId, page, accessToken),
+        API.getPullComments(userName, repoName, pullId, accessToken),
       ])
 
       const count = pullData.changed_files
@@ -190,6 +191,7 @@ export const GitHub: Platform = {
           window.location.search
         }#${creator(item.filename) || ''}`,
         sha: item.sha,
+        comments: commentData?.filter(comment => item.filename === comment.path).length,
       }))
 
       const root = processTree(nodes)

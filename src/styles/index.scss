@@ -524,6 +524,12 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
         .node-item {
           background: var(--gitako-bg-primary);
+          &:hover {
+            text-decoration: initial; // revert underline from .gitako-side-bar a:hover
+            .node-item-label {
+              text-decoration: underline; // apply underline like .gitako-side-bar a:hover
+            }
+          }
           &.focused,
           &:hover {
             background: var(--gitako-bg-tertiary);
@@ -595,6 +601,15 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           &:not(:hover) {
             .node-item-label .prefix {
               color: var(--gitako-text-tertiary);
+            }
+          }
+
+          .node-item-comment {
+            padding: 0 4px;
+            color: var(--gitako-text-tertiary);
+
+            .octicon-wrapper {
+              margin: 0; // make it closer to the comment amount label
             }
           }
 

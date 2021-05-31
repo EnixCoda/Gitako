@@ -17,6 +17,7 @@ export type Config = {
   recursiveToggleFolder: 'shift' | 'alt'
   searchMode: SearchMode
   sidebarToggleMode: 'persistent' | 'float'
+  commentToggle: boolean
 }
 
 enum configKeys {
@@ -33,6 +34,7 @@ enum configKeys {
   recursiveToggleFolder = 'recursiveToggleFolder',
   searchMode = 'searchMode',
   sidebarToggleMode = 'sidebarToggleMode',
+  commentToggle = 'commentToggle',
 }
 
 export const defaultConfigs: Config = {
@@ -49,6 +51,7 @@ export const defaultConfigs: Config = {
   recursiveToggleFolder: 'shift',
   searchMode: 'fuzzy',
   sidebarToggleMode: 'float',
+  commentToggle: true,
 }
 
 const configKeyArray = Object.values(configKeys)

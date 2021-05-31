@@ -107,6 +107,14 @@ export function SidebarSettings(props: React.PropsWithChildren<Props>) {
           },
         }}
       />
+      <SimpleToggleField
+        field={{
+          key: 'commentToggle',
+          label: 'Toggle comments',
+          tooltip:
+            'Show number of comments next to file names.',
+        }}
+      />
     </SettingsSection>
   )
 }

@@ -2,6 +2,7 @@ import {
   ChevronDownIcon as ChevronDown,
   ChevronRightIcon as ChevronRight,
   ClockIcon as Clock,
+  CommentIcon as Comment,
   FileCodeIcon as FileCode,
   FileIcon as File,
   FileMediaIcon as FileMedia,
@@ -25,6 +26,7 @@ import { cx } from 'utils/cx'
 const iconToComponentMap = {
   Search,
   Clock,
+  Comment,
   Hourglass,
   Submodule,
   Grabber,
@@ -53,6 +55,7 @@ const typeToIconComponentMap: {
   submodule: 'Submodule',
   grabber: 'Grabber',
   octoface: 'Octoface',
+  comment: 'Comment',
   x: 'X',
   pin: 'Pin',
   tab: 'Tab',
