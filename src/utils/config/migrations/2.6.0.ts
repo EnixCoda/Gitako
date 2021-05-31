@@ -11,7 +11,7 @@ export const migration: Migration = {
       accessToken?: string
     }
 
-    onConfigOutdated(version, async configs => {
+    await onConfigOutdated(version, async configs => {
       for (const key of Object.keys(configs)) {
         if (
           typeof configs[key] === 'object' &&

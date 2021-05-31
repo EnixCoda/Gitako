@@ -26,7 +26,7 @@ export async function onConfigOutdated<T extends { [key: string]: any }>(
 
   if (config && config.configVersion < configVersion) {
     const { configVersion, ...restConfig } = config
-    runIfOutdated(restConfig as T)
+    await runIfOutdated(restConfig as T)
     await storageHelper.set({ configVersion })
   }
 }

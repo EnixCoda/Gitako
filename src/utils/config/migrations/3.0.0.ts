@@ -12,7 +12,7 @@ export const migration: Migration = {
       copySnippetButton: boolean
     }
 
-    onConfigOutdated(version, async configs => {
+    await onConfigOutdated(version, async configs => {
       const key = 'platform_github.com'
       const config = configs[key]
       if (typeof config === 'object' && config !== null && 'copySnippetButton' in config) {
