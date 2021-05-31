@@ -14,7 +14,9 @@
     "postinstall": "rm -rf node_modules/@types/react-native && node scripts/fix-pjax-api",
     "build": "VERSION=v$(node scripts/get-version.js) NODE_ENV=production webpack",
     "roll": "make release",
-    "test": "NODE_ENV=test jest"
+    "test": "yarn run test:parallel && yarn run test:non-parallel",
+    "test:parallel": "NODE_ENV=test jest",
+    "test:non-parallel": "NODE_ENV=test jest --config jest.non.parallel.config.js"
   },
   "dependencies": {
     "@primer/components": "^22.0.2",
