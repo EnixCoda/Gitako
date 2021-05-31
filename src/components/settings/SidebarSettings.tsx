@@ -3,7 +3,7 @@ import { Option, SelectInput } from 'components/SelectInput'
 import { SimpleToggleField } from 'components/SimpleToggleField'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
-import { Config } from 'utils/configHelper'
+import { Config } from 'utils/config/helper'
 import { friendlyFormatShortcut } from 'utils/general'
 import { useStateIO } from 'utils/hooks/useStateIO'
 import * as keyHelper from 'utils/keyHelper'
@@ -88,16 +88,21 @@ export function SidebarSettings(props: React.PropsWithChildren<Props>) {
             })
           }}
           value={configContext.value.toggleButtonContent}
-        ></SelectInput>
+        />
       </Field>
       <SimpleToggleField
         field={{
           key: 'intelligentToggle',
           label: 'Auto expand',
-          tooltip:
-            'Gitako will expand when exploring source files, pull requests, etc. And collapse otherwise.',
+          disabled: configContext.value.sidebarToggleMode === 'float',
+          tooltip: `Gitako will expand when exploring source files, pull requests, etc. And collapse otherwise.${
+            configContext.value.sidebarToggleMode === 'float'
+              ? '\nNow disabled as sidebar is in float mode.'
+              : ''
+          }`,
           overwrite: {
-            value: enabled => enabled === null,
+            value: enabled =>
+              configContext.value.sidebarToggleMode === 'float' ? false : enabled === null,
             onChange: checked => (checked ? null : true),
           },
         }}

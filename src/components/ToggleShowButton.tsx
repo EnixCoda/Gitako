@@ -2,13 +2,16 @@ import iconSrc from 'assets/icons/Gitako.png'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
+import { cx } from 'utils/cx'
 import { Icon } from './Icon'
 
 type Props = {
-  error?: string
+  error?: string | null
+  className?: React.HTMLAttributes<HTMLButtonElement>['className']
+  onHover?: React.HTMLAttributes<HTMLButtonElement>['onMouseEnter']
 } & Pick<React.HTMLAttributes<HTMLButtonElement>, 'onClick'>
 
-export function ToggleShowButton({ error, onClick }: Props) {
+export function ToggleShowButton({ error, className, onClick, onHover }: Props) {
   const ref = React.useRef<HTMLDivElement>(null)
   const config = useConfigs()
   const [distance, setDistance] = React.useState(config.value.toggleButtonVerticalDistance)
@@ -35,10 +38,13 @@ export function ToggleShowButton({ error, onClick }: Props) {
 
   const toggleIconMode = config.value.toggleButtonContent
   return (
-    <div ref={ref} className={'gitako-toggle-show-button-wrapper'}>
+    <div ref={ref} className={cx('gitako-toggle-show-button-wrapper', className)}>
       <button
-        className={'gitako-toggle-show-button'}
+        className={cx('gitako-toggle-show-button', {
+          error,
+        })}
         onClick={onClick}
+        onMouseEnter={onHover}
         draggable
         onDragStart={event => {
           hideDragPreview(event)

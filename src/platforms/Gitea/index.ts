@@ -77,7 +77,7 @@ export const Gitea: Platform = {
   isEnterprise() {
     return !window.location.host.endsWith('gitea.com')
   },
-  resolveMeta() {
+  resolvePartialMetaData() {
     if (!DOMHelper.isInRepoPage()) {
       return null
     }

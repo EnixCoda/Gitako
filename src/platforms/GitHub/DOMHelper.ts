@@ -239,9 +239,8 @@ export function getPath() {
   const pathElement =
     document.querySelector(blobPathElementSelector) ||
     document.querySelector(folderPathElementSelector)?.nextElementSibling
-  if (!pathElement || !pathElement.querySelector('.js-repo-root')) {
-    raiseError(new Error(`Path element not found`))
-    return ''
+  if (!pathElement?.querySelector('.js-repo-root')) {
+    return []
   }
   const path = ((pathElement as HTMLDivElement).innerText || '')
     .replace(/ \/ Jump to $/, '')
@@ -249,6 +248,5 @@ export function getPath() {
     .split('/')
     .filter(Boolean)
     .slice(1) // the first is the repo's name
-    .join('/')
   return path
 }

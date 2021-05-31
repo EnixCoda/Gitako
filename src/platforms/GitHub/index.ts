@@ -1,4 +1,3 @@
-import { raiseError } from 'analytics'
 import { GITHUB_OAUTH } from 'env'
 import { Base64 } from 'js-base64'
 import { platform } from 'platforms'
@@ -83,26 +82,13 @@ export function isEnterprise() {
   return !window.location.host.endsWith('github.com')
 }
 
-function getBranchName() {
-  const pathFromDOM = DOMHelper.getPath()
-  const pathAndBranchFromURL = URLHelper.parse().path.filter(Boolean).join('/')
-  if (pathAndBranchFromURL.endsWith(pathFromDOM)) {
-    return pathAndBranchFromURL
-      .slice(0, pathAndBranchFromURL.length - pathFromDOM.length)
-      .replace(/\/$/, '')
-  }
-  raiseError(new Error(`Parsed path not end with path from DOM`))
-}
-
 function resolvePageScope(defaultBranchName?: string) {
   const parsed = URLHelper.parse()
   switch (parsed.type) {
-    // case undefined:
-    //   return `branch-${defaultBranchName}`
     case 'blob':
     case 'tree': {
-      // handle URLs like {user}/{repo}/tree/{sha|branch}, issue#131
-      const branchName = getBranchName()
+      // handle URLs like {user}/{repo}/{'tree'|'blob'}/{sha|branch}, issue #131
+      const branchName = DOMHelper.getCurrentBranch()
       if (branchName && branchName !== defaultBranchName) return `branch-${branchName}`
       break
     }
@@ -121,7 +107,7 @@ const pathSHAMap = new Map<string, string>()
 
 export const GitHub: Platform = {
   isEnterprise,
-  resolveMeta() {
+  resolvePartialMetaData() {
     if (!DOMHelper.isInRepoPage()) {
       return null
     }
@@ -150,14 +136,11 @@ export const GitHub: Platform = {
       repoName,
       type,
       branchName,
-      defaultBranchName: type ? undefined : branchName,
     }
     return metaData
   },
-  resolvePageScope,
   async getDefaultBranchName({ userName, repoName }, accessToken) {
-    const data = await API.getRepoMeta(userName, repoName, accessToken)
-    return data.default_branch
+    return (await API.getRepoMeta(userName, repoName, accessToken)).default_branch
   },
   resolveUrlFromMetaData({ userName, repoName }) {
     return {
@@ -274,7 +257,11 @@ export const GitHub: Platform = {
     return Boolean(URLHelper.isInPullPage())
   },
   getCurrentPath(branchName) {
-    return URLHelper.getCurrentPath(branchName)
+    if (URLHelper.parse().path.length) {
+      return DOMHelper.getPath()
+    } else {
+      return []
+    }
   },
   setOAuth(code) {
     return API.OAuth(code)
@@ -296,33 +283,6 @@ async function createPullFileResolver(userName: string, repoName: string, pullId
     const id = doc.querySelector(`*[data-path^="${path}"]`)?.parentElement?.id
     return id
   }
-}
-
-function findMissingFolders(nodes: TreeNode[]) {
-  const folders = new Set<string>()
-  const foundFolders = new Set<string>()
-  for (const node of nodes) {
-    let path = node.path
-    if (node.type === 'tree') foundFolders.add(path)
-    else {
-      while (true) {
-        // 'a/b' -> 'a'
-        // 'a' -> ''
-        path = path.substring(0, path.lastIndexOf('/'))
-        if (path === '') break
-        folders.add(path)
-      }
-    }
-  }
-
-  const missingFolders: string[] = []
-  for (const folder of folders) {
-    if (!foundFolders.has(folder)) {
-      missingFolders.push(folder)
-    }
-  }
-
-  return missingFolders
 }
 
 export function useGitHubAttachCopySnippetButton(copySnippetButton: boolean) {

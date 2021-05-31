@@ -105,23 +105,8 @@ export function setStyleSheetMedia(style: HTMLStyleElement, media: string) {
   style.setAttribute('media', media)
 }
 
-export function parseURLSearch(search: string = window.location.search) {
-  const parsed: any = {}
-  if (search.startsWith('?')) {
-    const pairs = search
-      .slice(1)
-      .split('&')
-      .map(rawPair => rawPair.split('=').map(raw => decodeURIComponent(raw))) // [key, value?][]
-    pairs.forEach(([key, value]) => {
-      if (Object.prototype.hasOwnProperty.call(parsed, key)) {
-        if (Array.isArray(parsed[key])) parsed[key].push(value)
-        else parsed[key] = [parsed[key], value]
-      } else {
-        parsed[key] = value
-      }
-    })
-  }
-  return parsed
+export function parseURLSearch(search = window.location.search) {
+  return new URLSearchParams(search)
 }
 
 export async function JSONRequest(url: string, data: any, extra: RequestInit = { method: 'post' }) {

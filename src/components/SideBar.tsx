@@ -2,106 +2,99 @@ import { AccessDeniedDescription } from 'components/AccessDeniedDescription'
 import { FileExplorer } from 'components/FileExplorer'
 import { MetaBar } from 'components/MetaBar'
 import { Portal } from 'components/Portal'
-import { Resizable } from 'components/Resizable'
 import { SettingsBar } from 'components/settings/SettingsBar'
+import { SideBarBodyWrapper } from 'components/SideBarBodyWrapper'
 import { ToggleShowButton } from 'components/ToggleShowButton'
-import { connect } from 'driver/connect'
-import { SideBarCore } from 'driver/core'
-import { ConnectorState, Props } from 'driver/core/SideBar'
+import { useConfigs } from 'containers/ConfigsContext'
 import { platform } from 'platforms'
 import { useGitHubAttachCopyFileButton, useGitHubAttachCopySnippetButton } from 'platforms/GitHub'
 import * as React from 'react'
 import { cx } from 'utils/cx'
-import { parseURLSearch, run } from 'utils/general'
+import * as DOMHelper from 'utils/DOMHelper'
+import { run } from 'utils/general'
+import { useCatchNetworkError } from 'utils/hooks/useCatchNetworkError'
+import { useLoadedContext } from 'utils/hooks/useLoadedContext'
 import { loadWithPJAX, useOnPJAXDone, usePJAX } from 'utils/hooks/usePJAX'
 import { useProgressBar } from 'utils/hooks/useProgressBar'
 import { useStateIO } from 'utils/hooks/useStateIO'
-import * as keyHelper from 'utils/keyHelper'
+import { SideBarErrorContext } from '../containers/ErrorContext'
+import { RepoContext } from '../containers/RepoContext'
+import { SideBarStateContext } from '../containers/SideBarState'
+import { Theme } from '../containers/Theme'
+import { useToggleSideBarWithKeyboard } from '../utils/hooks/useToggleSideBarWithKeyboard'
 import { Icon } from './Icon'
+import { IIFC } from './IIFC'
 import { LoadingIndicator } from './LoadingIndicator'
-import { Theme } from './Theme'
 
-const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
-  const {
-    metaData,
-    treeData,
-    state,
-    defer,
-    error,
-    shouldShow,
-    showSettings,
-    logoContainerElement,
-    toggleShowSideBar,
-    toggleShowSettings,
-    configContext,
-  } = props
+export function SideBar() {
+  const metaData = React.useContext(RepoContext)
+  const state = useLoadedContext(SideBarStateContext).value
+  const configContext = useConfigs()
 
   const accessToken = configContext.value.accessToken || ''
   const [baseSize] = React.useState(() => configContext.value.sideBarWidth)
 
+  const $showSettings = useStateIO(false)
+  const showSettings = $showSettings.value
+  const toggleShowSettings = React.useCallback(() => $showSettings.onChange(show => !show), [])
+
+  const $logoContainerElement = useStateIO<HTMLElement | null>(null)
+
+  const hasMetaData = state !== 'disabled' // will be true since retrieving data, cannot use Boolean(metaData)
   React.useEffect(() => {
-    run(async function () {
-      if (!accessToken) {
-        const accessToken = await trySetUpAccessTokenWithCode()
-        if (accessToken) configContext.onChange({ accessToken })
-      }
-    })
-  }, [])
-
-  /**
-   * Catch unexpected PJAX, force trigger init on scope change.
-   */
-  const pageScope = useStateIO(platform.resolvePageScope?.())
-  useOnPJAXDone(
-    React.useCallback(
-      () => pageScope.onChange(platform.resolvePageScope?.(metaData?.defaultBranchName)),
-      [metaData?.defaultBranchName],
-    ),
-  )
-  React.useEffect(() => {
-    props.init()
-  }, [accessToken, pageScope.value])
-
-  React.useEffect(
-    function attachKeyDown() {
-      if (state === 'disabled' || !configContext.value.shortcut) return
-
-      function onKeyDown(e: KeyboardEvent) {
-        const keys = keyHelper.parseEvent(e)
-        if (keys === configContext.value.shortcut) {
-          toggleShowSideBar()
-        }
-      }
-      window.addEventListener('keydown', onKeyDown)
-      return () => window.removeEventListener('keydown', onKeyDown)
-    },
-    [toggleShowSideBar, state === 'disabled', configContext.value.shortcut],
-  )
-
-  const intelligentToggle = configContext.value.intelligentToggle
-  // Hide sidebar when error due to auth but token is set  #128
-  const hideSidebarOnInvalidToken: boolean =
-    intelligentToggle === null && Boolean(state === 'error-due-to-auth' && accessToken)
-  React.useEffect(() => {
-    if (hideSidebarOnInvalidToken) {
-      props.setShouldShow(false)
+    if (hasMetaData) {
+      DOMHelper.markGitakoReadyState(true)
+      $showSettings.onChange(false)
+      $logoContainerElement.onChange(DOMHelper.insertLogoMountPoint())
     } else {
-      const shouldShow = intelligentToggle === null ? platform.shouldShow() : intelligentToggle
-      props.setShouldShow(shouldShow)
+      DOMHelper.markGitakoReadyState(false)
     }
-  }, [intelligentToggle, hideSidebarOnInvalidToken, props.metaData])
+  }, [hasMetaData])
 
-  const updateSideBarVisibility = React.useCallback(
-    function updateSideBarVisibility() {
-      if (hideSidebarOnInvalidToken) {
-        props.setShouldShow(false)
-      } else if (intelligentToggle === null) {
-        props.setShouldShow(platform.shouldShow())
-      }
+  const sidebarToggleMode = configContext.value.sidebarToggleMode
+  const intelligentToggle = configContext.value.intelligentToggle
+  const $shouldShow = useStateIO(intelligentToggle === null ? false : intelligentToggle)
+  const shouldShow = $shouldShow.value
+  React.useEffect(() => {
+    if (sidebarToggleMode === 'persistent') {
+      DOMHelper.setBodyIndent(shouldShow)
+    } else {
+      DOMHelper.setBodyIndent(false)
+    }
+
+    if (shouldShow) {
+      DOMHelper.focusFileExplorer() // TODO: verify if it works
+    }
+  }, [shouldShow, sidebarToggleMode])
+
+  // Save expand state on toggle if auto expand if not on
+  React.useEffect(() => {
+    if (intelligentToggle !== null) {
+      configContext.onChange({ intelligentToggle: shouldShow })
+    }
+  }, [shouldShow, intelligentToggle])
+
+  const error = useLoadedContext(SideBarErrorContext).value
+  // Lock shouldShow on error
+  React.useEffect(() => {
+    if (error && shouldShow) {
+      $shouldShow.onChange(false)
+    }
+  }, [error])
+
+  const setShowSideBar = React.useCallback(
+    (show: typeof $shouldShow.value) => {
+      if (!error) $shouldShow.onChange(show)
     },
-    [props.metaData?.branchName, intelligentToggle, hideSidebarOnInvalidToken],
+    [error],
   )
-  useOnPJAXDone(updateSideBarVisibility)
+
+  const toggleShowSideBar = React.useCallback(() => {
+    if (!error) $shouldShow.onChange(show => !show)
+  }, [error])
+  useToggleSideBarWithKeyboard(state, configContext, toggleShowSideBar)
+
+  useSetShouldShowOnPJAXDone(setShowSideBar)
 
   useGitHubAttachCopyFileButton(configContext.value.copyFileButton)
   useGitHubAttachCopySnippetButton(configContext.value.copySnippetButton)
@@ -109,81 +102,114 @@ const RawGitako: React.FC<Props & ConnectorState> = function RawGitako(props) {
   usePJAX()
   useProgressBar()
 
+  // Hide sidebar when error due to auth but token is set  #128
+  const hideSidebarOnInvalidToken: boolean =
+    intelligentToggle === null && Boolean(state === 'error-due-to-auth' && accessToken)
+  React.useEffect(() => {
+    if (hideSidebarOnInvalidToken) {
+      setShowSideBar(false)
+    }
+  }, [hideSidebarOnInvalidToken])
+
   return (
     <Theme>
       <div className={'gitako-side-bar'}>
-        <Portal into={logoContainerElement}>
-          {!shouldShow && (
-            <ToggleShowButton error={error} onClick={error ? undefined : toggleShowSideBar} />
-          )}
+        <Portal into={$logoContainerElement.value}>
+          <ToggleShowButton
+            error={error}
+            className={cx({
+              hidden: shouldShow,
+            })}
+            onHover={sidebarToggleMode === 'float' ? () => setShowSideBar(true) : undefined}
+            onClick={toggleShowSideBar}
+          />
         </Portal>
-        <Resizable className={cx({ hidden: error || !shouldShow })} baseSize={baseSize}>
+        <SideBarBodyWrapper
+          className={cx(`toggle-mode-${sidebarToggleMode}`, {
+            collapsed: error || !shouldShow,
+          })}
+          baseSize={baseSize}
+          onLeave={sidebarToggleMode === 'float' ? () => setShowSideBar(false) : undefined}
+        >
           <div className={'gitako-side-bar-body'}>
             <div className={'close-side-bar-button-position'}>
-              <button className={'close-side-bar-button'} onClick={toggleShowSideBar}>
-                <Icon className={'action-icon'} type={'x'} />
+              {sidebarToggleMode === 'persistent' && (
+                <button
+                  title={'Collapse sidebar'}
+                  className={'close-side-bar-button'}
+                  onClick={toggleShowSideBar}
+                >
+                  <Icon className={'action-icon'} type={'tab'} />
+                </button>
+              )}
+              <button
+                title={'Toggle sidebar dock mode between float and persistent'}
+                className={cx('close-side-bar-button', {
+                  active: sidebarToggleMode === 'persistent',
+                })}
+                onClick={() =>
+                  configContext.onChange({
+                    sidebarToggleMode: sidebarToggleMode === 'float' ? 'persistent' : 'float',
+                  })
+                }
+              >
+                <Icon className={'action-icon'} type={'pin'} />
               </button>
             </div>
-            <div className={'gitako-side-bar-content'}>
-              {(() => {
+            <div
+              className={'gitako-side-bar-content'}
+              onClick={showSettings ? toggleShowSettings : undefined}
+            >
+              {run(() => {
                 switch (state) {
-                  case 'loading-meta':
+                  case 'disabled':
+                    return null
+                  case 'getting-access-token':
+                    return <LoadingIndicator text={'Getting access token...'} />
+                  case 'meta-loading':
                     return <LoadingIndicator text={'Fetching repo meta...'} />
-                  case 'loading-tree':
-                    return <LoadingIndicator text={'Fetching File List...'} />
-                  case 'idle':
+                  case 'error-due-to-auth':
+                    return <AccessDeniedDescription />
+                  default:
                     return metaData ? (
                       <>
                         <div className={'header'}>
                           <MetaBar metaData={metaData} />
                         </div>
-                        <FileExplorer
-                          toggleShowSettings={toggleShowSettings}
-                          metaData={metaData}
-                          treeRoot={treeData}
-                          freeze={showSettings}
-                          accessToken={accessToken}
-                          loadWithPJAX={loadWithPJAX}
-                          config={configContext.value}
-                          defer={defer}
-                        />
+                        <IIFC>
+                          {() => (
+                            <FileExplorer
+                              metaData={metaData}
+                              freeze={showSettings}
+                              accessToken={accessToken}
+                              loadWithPJAX={loadWithPJAX}
+                              config={configContext.value}
+                              catchNetworkErrors={useCatchNetworkError()}
+                            />
+                          )}
+                        </IIFC>
                       </>
                     ) : null
-                  case 'error-due-to-auth':
-                    return <AccessDeniedDescription hasToken={Boolean(accessToken)} />
                 }
-              })()}
+              })}
             </div>
-            <SettingsBar
-              defer={defer}
-              toggleShowSettings={toggleShowSettings}
-              activated={showSettings}
-            />
+            <SettingsBar toggleShowSettings={toggleShowSettings} activated={showSettings} />
           </div>
-        </Resizable>
+        </SideBarBodyWrapper>
       </div>
     </Theme>
   )
 }
 
-RawGitako.defaultProps = {
-  shouldShow: false,
-  showSettings: false,
-  state: 'loading-meta',
-}
-
-export const SideBar = connect(SideBarCore)(RawGitako)
-
-async function trySetUpAccessTokenWithCode() {
-  const search = parseURLSearch()
-  if ('code' in search) {
-    const accessToken = await platform.setOAuth(search.code)
-    if (!accessToken) alert(`Gitako: The OAuth token has expired, please try again.`)
-    window.history.replaceState(
-      {},
-      'removed search param',
-      window.location.pathname.replace(window.location.search, ''),
-    )
-    return accessToken
-  }
+function useSetShouldShowOnPJAXDone(setShouldShow: (value: boolean) => void) {
+  const { intelligentToggle, sidebarToggleMode } = useConfigs().value
+  const updateSideBarVisibility = React.useCallback(() => {
+    if (intelligentToggle === null && sidebarToggleMode === 'persistent') {
+      setShouldShow(platform.shouldShow())
+    }
+  }, [intelligentToggle, sidebarToggleMode])
+  React.useEffect(() => {
+    updateSideBarVisibility()
+  }, [updateSideBarVisibility])
+  useOnPJAXDone(updateSideBarVisibility)
 }

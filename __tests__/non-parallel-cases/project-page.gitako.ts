@@ -1,10 +1,16 @@
-import { expectToFind, expectToNotFind, scroll, selectFileTreeItem } from '../utils'
+import {
+  expandFloatModeSidebar,
+  expectToFind,
+  expectToNotFind,
+  scroll,
+  selectFileTreeItem,
+} from '../utils'
 
 describe(`in Gitako project page`, () => {
   beforeAll(() => page.goto('https://github.com/EnixCoda/Gitako'))
 
   it('should render Gitako', async () => {
-    await expectToFind('.gitako-side-bar .gitako-position-wrapper')
+    await expectToFind('.gitako-side-bar .gitako-side-bar-body-wrapper')
   })
 
   it('should render file list', async () => {
@@ -12,6 +18,8 @@ describe(`in Gitako project page`, () => {
   })
 
   it('should render while scroll', async () => {
+    await expandFloatModeSidebar()
+
     const filesEle = await page.waitForSelector('.gitako-side-bar .files')
     // node of tsconfig.json should NOT be rendered before scroll down
     await expectToNotFind(selectFileTreeItem('tsconfig.json'))

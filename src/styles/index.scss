@@ -182,17 +182,30 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
   left: 0px;
   display: inline-flex;
   align-items: center;
+  transition: left 0.25s linear;
+
+  &.hidden {
+    left: -40px;
+  }
 
   .#{$name}-toggle-show-button {
     @include icon-button;
     background: transparent;
     border: none;
     padding: 0;
+    position: relative;
+    left: -8px;
+
+    &.error {
+      cursor: not-allowed;
+    }
+
     .octoface-icon {
       @include flex-center();
 
       width: 32px;
       height: 32px;
+      padding: 4px;
       border-radius: 6px;
       border: 1px solid var(--gitako-border-tertiary);
       background: var(--gitako-bg-tertiary);
@@ -202,32 +215,26 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
       }
       transition: all ease 0.3s;
       font-size: 16px;
-      transform: translateX(0px);
+      transform: translateX(8px);
       &:active,
       &:hover {
-        transform: translateX(4px);
+        transform: translateX(12px);
       }
     }
     .tentacle {
       width: 40px;
       height: 40px;
+      object-fit: contain;
       transition: all ease 0.4s;
-      transform: translateX(-16px);
+      transform: translateX(-8px);
+      filter: drop-shadow(0 0 1px var(--gitako-bg-backdrop));
     }
     &:active,
     &:hover {
       .tentacle {
-        transform: translateX(-12px);
+        transform: translateX(-4px);
         filter: drop-shadow(0 0 2px var(--gitako-bg-backdrop));
       }
-    }
-
-    img {
-      filter: drop-shadow(0 0 1px var(--gitako-bg-backdrop));
-      transition: all ease 0.3s;
-      width: 90%;
-      height: 90%;
-      object-fit: contain;
     }
   }
 
@@ -259,7 +266,8 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     color: var(--gitako-text-link);
   }
 
-  .#{$name}-position-wrapper {
+  $resizeHandlerWidth: 1px;
+  .#{$name}-side-bar-body-wrapper {
     position: fixed;
     top: 0;
     left: 0;
@@ -267,11 +275,21 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     z-index: $minimal-z-index;
     display: flex;
 
-    &.hidden {
-      @extend %hidden;
+    &.toggle-mode-persistent {
+      &.collapsed {
+        @extend %hidden;
+      }
     }
 
-    .gitako-position-content {
+    &.toggle-mode-float {
+      left: 0;
+      transition: all 0.25s cubic-bezier(0.55, 0.06, 0.68, 0.19); // values from Chrome devtools
+      &.collapsed {
+        left: calc(0px - #{$resizeHandlerWidth} - var(--gitako-width));
+      }
+    }
+
+    .gitako-side-bar-body-wrapper-content {
       width: var(--gitako-width);
     }
   }
@@ -282,7 +300,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     user-select: none;
     width: 0;
     background: var(--gitako-bg-tertiary);
-    border-right: 1px solid var(--gitako-border-tertiary);
+    border-right: $resizeHandlerWidth solid var(--gitako-border-tertiary);
     overflow: hidden;
     box-sizing: content-box;
     &:hover,
@@ -309,10 +327,6 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     background: var(--gitako-bg-secondary);
     border-left: 1px solid var(--gitako-border-overlay);
     overflow: hidden;
-
-    &.hidden {
-      @extend %hidden;
-    }
 
     .octicon {
       transition: transform 0.3s ease;
@@ -350,6 +364,10 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           transition: background linear 0.3s;
         }
 
+        &.active .octicon {
+          color: var(--gitako-icon-primary);
+        }
+
         .action-icon {
           color: var(--gitako-icon-tertiary);
           width: 20px;
@@ -359,7 +377,15 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
             width: 100%;
             height: 100%;
           }
+          .Pin,
+          .Tab {
+            transform: rotateY(180deg);
+          }
         }
+      }
+
+      .close-side-bar-button + .close-side-bar-button {
+        margin-left: 4px;
       }
     }
 
@@ -367,7 +393,6 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
       display: flex;
       flex: 1;
       flex-direction: column;
-      max-height: calc(100vh - 34px); // temporary fix for layout issue occurred since Chrome v76
       min-height: 0; // make content shrinkable
 
       .header {
@@ -378,7 +403,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           min-height: 62px; // GitHub header height if login
           flex-shrink: 0;
           padding: 8px 10px;
-          padding-right: $button-size + 8px * 2; // space for toggle button
+          padding-right: $button-size * 2 + 8px; // space for toggle buttons
           background: var(--gitako-bg-tertiary);
 
           .user-and-repo a {
@@ -394,8 +419,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
         }
       }
 
-      .description {
-        border-top: 1px solid var(--gitako-border-overlay);
+      .description-area {
         padding: 4px 10px;
       }
 

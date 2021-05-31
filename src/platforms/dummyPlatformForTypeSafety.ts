@@ -2,7 +2,7 @@ export const dummyPlatformForTypeSafety: Platform = {
   isEnterprise() {
     return false
   },
-  resolveMeta() {
+  resolvePartialMetaData() {
     return null
   },
   getDefaultBranchName: dummyPlatformMethod,

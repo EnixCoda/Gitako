@@ -73,7 +73,7 @@ export const Gitee: Platform = {
   isEnterprise() {
     return !window.location.host.endsWith('gitee.com')
   },
-  resolveMeta() {
+  resolvePartialMetaData() {
     if (!DOMHelper.isInRepoPage()) {
       return null
     }

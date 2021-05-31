@@ -2,7 +2,7 @@ import { wikiLinks } from 'components/settings/SettingsBar'
 import { SimpleToggleField } from 'components/SimpleToggleField'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
-import { Config } from 'utils/configHelper'
+import { Config } from 'utils/config/helper'
 import { Option, SelectInput } from '../SelectInput'
 import { Field } from './Field'
 import { SettingsSection } from './SettingsSection'
@@ -54,7 +54,7 @@ export function FileTreeSettings(props: React.PropsWithChildren<Props>) {
             })
           }}
           value={configContext.value.recursiveToggleFolder}
-        ></SelectInput>
+        />
       </Field>
       <Field title="Icons" id="file-tree-icons">
         <SelectInput<Config['icons']>

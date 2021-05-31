@@ -1,20 +1,20 @@
 type Platform = {
   isEnterprise(): boolean
   // branch name might not be available when resolving from DOM and URL
-  resolveMeta(): MakeOptional<MetaData, 'branchName'> | null
-  resolvePageScope?(branchName?: string): string
+  resolvePartialMetaData(): PartialMetaData | null
+  // resolveMetaData(metaData: PartialMetaData, accessToken?: string): Async<MetaData>
   getDefaultBranchName(
     metaData: Pick<MetaData, 'userName' | 'repoName'>,
     accessToken?: string,
   ): Promise<string>
   resolveUrlFromMetaData(
-    metaData: MetaData,
+    metaData: Pick<MetaData, 'userName' | 'repoName'>,
   ): {
     userUrl: string
     repoUrl: string
   }
   getTreeData(
-    metaData: MetaData,
+    metaData: Pick<MetaData, 'userName' | 'repoName' | 'branchName'>,
     path?: string,
     recursive?: boolean,
     accessToken?: string,
