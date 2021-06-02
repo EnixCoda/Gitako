@@ -76,6 +76,13 @@ export function FileTreeSettings(props: React.PropsWithChildren<Props>) {
           tooltip: 'Merge folders and their only child folder to make UI more compact.',
         }}
       />
+      <SimpleToggleField
+        field={{
+          key: 'commentToggle',
+          label: 'Show PR file comments',
+          tooltip: 'Show number of comments next to file names in Pull Requests.',
+        }}
+      />
     </SettingsSection>
   )
 }
