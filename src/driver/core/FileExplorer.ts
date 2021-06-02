@@ -3,6 +3,7 @@ import { GetCreatedMethod, MethodCreator } from 'driver/connect'
 import { platform } from 'platforms'
 import { Config } from 'utils/config/helper'
 import * as DOMHelper from 'utils/DOMHelper'
+import { OperatingSystems, os } from 'utils/general'
 import { VisibleNodes, VisibleNodesGenerator } from 'utils/VisibleNodesGenerator'
 
 export type Props = {
@@ -132,6 +133,10 @@ export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch
         break
 
       case 'ArrowLeft':
+        if (wouldBlockHistoryNavigation(event)) {
+          muteEvent = false
+          break
+        }
         if (expandedNodes.has(focusedNode.path)) {
           dispatch.call(toggleNodeExpansion, focusedNode, { recursive: event.altKey })
         } else {
@@ -145,6 +150,10 @@ export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch
 
       // consider the two keys as 'confirm' key
       case 'ArrowRight':
+        if (wouldBlockHistoryNavigation(event)) {
+          muteEvent = false
+          break
+        }
         // expand node or focus on first content node or redirect to file page
         if (focusedNode.type === 'tree') {
           if (expandedNodes.has(focusedNode.path)) {
@@ -304,4 +313,9 @@ export const expandTo: BoundMethodCreator<[string[]]> = dispatch => async curren
   if (nodeExpandedTo) {
     visibleNodesGenerator.focusNode(nodeExpandedTo)
   }
+}
+
+function wouldBlockHistoryNavigation(event: React.KeyboardEvent) {
+  // Alt + left/right is usually history navigation shortcut on OS other than macOS
+  return os !== OperatingSystems.macOS && event.altKey
 }
