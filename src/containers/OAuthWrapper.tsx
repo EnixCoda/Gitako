@@ -13,15 +13,8 @@ export function OAuthWrapper({ children }: React.PropsWithChildren<{}>) {
   const running = useGetAccessToken()
   const $state = useLoadedContext(SideBarStateContext)
 
-  const firstRenderRef = React.useRef(true)
   React.useEffect(() => {
-    if (running) {
-      $state.onChange('getting-access-token')
-    } else if (firstRenderRef.current) {
-      firstRenderRef.current = false
-    } else {
-      $state.onChange('after-getting-access-token')
-    }
+    $state.onChange(running ? 'getting-access-token' : 'after-getting-access-token')
   }, [running])
 
   // block children rendering on the first render if setting token
