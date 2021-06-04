@@ -605,6 +605,8 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           }
 
           .node-item-comment {
+            display: inline-block;
+            width: 48px;
             padding: 0 4px;
             color: var(--gitako-text-tertiary);
 

@@ -109,7 +109,7 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
       node.comments !== undefined &&
       node.comments > 0 && (
         <span className={'node-item-comment'}>
-          <Icon type={'comment'} /> {node.comments}
+          <Icon type={'comment'} /> {node.comments > 9 ? '9+' : node.comments}
         </span>
       )
 

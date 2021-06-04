@@ -70,9 +70,7 @@ function getUrlForRedirect(
   // Modern browsers have great support for handling unsafe URL,
   // It may be possible to sanitize path with
   // `path => path.includes('#') ? path.replace(/#/g, '%23') : '...'
-  return `https://${
-    window.location.host
-  }/${userName}/${repoName}/${type}/${branchName}/${path
+  return `https://${window.location.host}/${userName}/${repoName}/${type}/${branchName}/${path
     .split('/')
     .map(encodeURIComponent)
     .join('/')}`
