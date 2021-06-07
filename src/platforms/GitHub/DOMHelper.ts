@@ -244,8 +244,8 @@ export function getPath() {
     return []
   }
   const path = ((pathElement as HTMLDivElement).textContent || '')
-    .trim()
-    .replace(/ \/ Jump to $/, '')
+    .replace(/\n/g, '')
+    .replace(/\/\s+Jump to.*/m, '')
     .trim()
     .split('/')
     .filter(Boolean)
