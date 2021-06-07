@@ -18,6 +18,7 @@ export type Config = {
   searchMode: SearchMode
   sidebarToggleMode: 'persistent' | 'float'
   commentToggle: boolean
+  codeFolding: boolean
 }
 
 enum configKeys {
@@ -35,6 +36,7 @@ enum configKeys {
   searchMode = 'searchMode',
   sidebarToggleMode = 'sidebarToggleMode',
   commentToggle = 'commentToggle',
+  codeFolding = 'codeFolding',
 }
 
 export const defaultConfigs: Config = {
@@ -52,6 +54,7 @@ export const defaultConfigs: Config = {
   searchMode: 'fuzzy',
   sidebarToggleMode: 'float',
   commentToggle: true,
+  codeFolding: true,
 }
 
 const configKeyArray = Object.values(configKeys)
