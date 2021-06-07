@@ -83,6 +83,13 @@ export function FileTreeSettings(props: React.PropsWithChildren<Props>) {
           tooltip: 'Show number of comments next to file names in Pull Requests.',
         }}
       />
+      <SimpleToggleField
+        field={{
+          key: 'compactFileTree',
+          label: 'Compact file tree layout',
+          tooltip: 'View file tree structures more effectively.',
+        }}
+      />
     </SettingsSection>
   )
 }

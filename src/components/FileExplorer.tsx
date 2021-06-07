@@ -261,13 +261,15 @@ function ListView({ width, height, metaData, expandTo, renderNodeContext }: List
   useOnLocationChange(goToCurrentItem)
   useOnPJAXDone(goToCurrentItem)
 
+  const { compactFileTree } = useConfigs().value
+
   return (
     <FixedSizeList
       ref={listRef}
       itemKey={(index, { visibleNodes }) => visibleNodes?.nodes[index]?.path}
       itemData={renderNodeContext}
       itemCount={visibleNodes.nodes.length}
-      itemSize={37}
+      itemSize={compactFileTree ? 24 : 37}
       height={height}
       width={width}
     >
