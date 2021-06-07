@@ -1,7 +1,7 @@
 import { platform } from 'platforms'
 import { useCallback, useEffect } from 'react'
 import { useOnPJAXDone } from 'utils/hooks/usePJAX'
-import { GitHub } from '.'
+import { GitHub } from '..'
 
 const theCSSClassMark = 'gitako-code-fold-attached'
 const theCSSClassMarkWhenDisabled = 'gitako-code-fold-attached-disabled'

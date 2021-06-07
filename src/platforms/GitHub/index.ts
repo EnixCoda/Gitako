@@ -1,14 +1,15 @@
+import { useConfigs } from 'containers/ConfigsContext'
 import { GITHUB_OAUTH } from 'env'
 import { Base64 } from 'js-base64'
-import { platform } from 'platforms'
-import * as React from 'react'
 import { resolveGitModules } from 'utils/gitSubmodule'
-import { useOnPJAXDone } from 'utils/hooks/usePJAX'
 import { sortFoldersToFront } from 'utils/treeParser'
 import * as API from './API'
 import * as DOMHelper from './DOMHelper'
+import { useGitHubAttachCopyFileButton } from './hooks/useGitHubAttachCopyFileButton'
+import { useGitHubAttachCopySnippetButton } from './hooks/useGitHubAttachCopySnippetButton'
+import { useGitHubCodeFold } from './hooks/useGitHubCodeFold'
 import * as URLHelper from './URLHelper'
-export { useGitHubCodeFold } from './useGitHubCodeFold'
+export { useGitHubCodeFold } from './hooks/useGitHubCodeFold'
 
 function processTree(tree: TreeNode[]): TreeNode {
   // nodes are created from items and put onto tree
@@ -273,6 +274,12 @@ export const GitHub: Platform = {
     })
     return `https://github.com/login/oauth/authorize?` + params.toString()
   },
+  usePlatformHooks() {
+    const { copyFileButton, copySnippetButton, codeFolding } = useConfigs().value
+    useGitHubAttachCopyFileButton(copyFileButton)
+    useGitHubAttachCopySnippetButton(copySnippetButton)
+    useGitHubCodeFold(codeFolding)
+  },
 }
 
 async function createPullFileResolver(userName: string, repoName: string, pullId: string) {
@@ -282,28 +289,4 @@ async function createPullFileResolver(userName: string, repoName: string, pullId
     const id = doc.querySelector(`*[data-path^="${path}"]`)?.parentElement?.id
     return id
   }
-}
-
-export function useGitHubAttachCopySnippetButton(copySnippetButton: boolean) {
-  const attachCopySnippetButton = React.useCallback(
-    function attachCopySnippetButton() {
-      if (platform !== GitHub) return
-      if (copySnippetButton) return DOMHelper.attachCopySnippet() || undefined // for the sake of react effect
-    },
-    [copySnippetButton],
-  )
-  React.useEffect(attachCopySnippetButton, [copySnippetButton])
-  useOnPJAXDone(attachCopySnippetButton)
-}
-
-export function useGitHubAttachCopyFileButton(copyFileButton: boolean) {
-  const attachCopyFileButton = React.useCallback(
-    function attachCopyFileButton() {
-      if (platform !== GitHub) return
-      if (copyFileButton) return DOMHelper.attachCopyFileBtn() || undefined // for the sake of react effect
-    },
-    [copyFileButton],
-  )
-  React.useEffect(attachCopyFileButton, [copyFileButton])
-  useOnPJAXDone(attachCopyFileButton)
 }

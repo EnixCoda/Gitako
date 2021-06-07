@@ -7,11 +7,6 @@ import { SideBarBodyWrapper } from 'components/SideBarBodyWrapper'
 import { ToggleShowButton } from 'components/ToggleShowButton'
 import { useConfigs } from 'containers/ConfigsContext'
 import { platform } from 'platforms'
-import {
-  useGitHubAttachCopyFileButton,
-  useGitHubAttachCopySnippetButton,
-  useGitHubCodeFold,
-} from 'platforms/GitHub'
 import * as React from 'react'
 import { cx } from 'utils/cx'
 import * as DOMHelper from 'utils/DOMHelper'
@@ -100,9 +95,7 @@ export function SideBar() {
 
   useSetShouldShowOnPJAXDone(setShowSideBar)
 
-  useGitHubAttachCopyFileButton(configContext.value.copyFileButton)
-  useGitHubAttachCopySnippetButton(configContext.value.copySnippetButton)
-  useGitHubCodeFold(configContext.value.codeFolding)
+  platform.usePlatformHooks?.()
 
   usePJAX()
   useProgressBar()

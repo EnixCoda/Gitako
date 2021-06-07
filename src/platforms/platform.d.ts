@@ -7,9 +7,7 @@ type Platform = {
     metaData: Pick<MetaData, 'userName' | 'repoName'>,
     accessToken?: string,
   ): Promise<string>
-  resolveUrlFromMetaData(
-    metaData: Pick<MetaData, 'userName' | 'repoName'>,
-  ): {
+  resolveUrlFromMetaData(metaData: Pick<MetaData, 'userName' | 'repoName'>): {
     userUrl: string
     repoUrl: string
   }
@@ -24,4 +22,5 @@ type Platform = {
   getCurrentPath(branchName: string): string[] | null
   setOAuth(code: string): Promise<string | null>
   getOAuthLink(): string
+  usePlatformHooks?(): void
 }
