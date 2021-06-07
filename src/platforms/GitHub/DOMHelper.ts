@@ -44,8 +44,9 @@ export function getCurrentBranch(passive = false) {
   if (branchButtonElement) {
     const branchNameSpanElement = branchButtonElement.querySelector('span')
     if (branchNameSpanElement) {
-      const partialBranchNameFromInnerText = branchNameSpanElement.innerText
-      if (!partialBranchNameFromInnerText.includes('…')) return partialBranchNameFromInnerText
+      const partialBranchNameFromInnerText = branchNameSpanElement.textContent || ''
+      if (partialBranchNameFromInnerText && !partialBranchNameFromInnerText.includes('…'))
+        return partialBranchNameFromInnerText
     }
     const defaultTitle = 'Switch branches or tags'
     const title = branchButtonElement.title.trim()
@@ -242,7 +243,8 @@ export function getPath() {
   if (!pathElement?.querySelector('.js-repo-root')) {
     return []
   }
-  const path = ((pathElement as HTMLDivElement).innerText || '')
+  const path = ((pathElement as HTMLDivElement).textContent || '')
+    .trim()
     .replace(/ \/ Jump to $/, '')
     .trim()
     .split('/')
