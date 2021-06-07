@@ -35,7 +35,7 @@ export function SearchBar({ onSearch, onFocus, value }: Props) {
       />
       <div className={`actions`}>
         <button
-          className={`toggle-mode`}
+          className={`toggle-search-mode`}
           title="Toggle search mode"
           onClick={() => {
             const newMode = searchMode === 'regex' ? 'fuzzy' : 'regex'

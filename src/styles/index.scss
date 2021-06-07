@@ -15,6 +15,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
 @mixin interactive-background($default, $hover, $active) {
   background-color: $default;
+  &:focus,
   &:hover {
     background-color: $hover;
   }
@@ -79,6 +80,8 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
       }
     }
   }
+
+  // code folding start
   .blob-wrapper table .blob-num {
     position: relative; // for positioning
     min-width: 60px;
@@ -148,6 +151,46 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
       display: none;
     }
   }
+  // code folding end
+
+  // clippy button
+  .markdown-body {
+    .clippy-wrapper {
+      position: relative;
+      width: 0;
+      height: 0;
+      top: 8px;
+      left: calc(100% - 40px);
+      z-index: 1;
+
+      .clippy {
+        width: 32px;
+        height: 32px;
+        border: 1px solid var(--gitako-border-tertiary);
+        border-radius: 4px;
+
+        @include interactive-background(
+          var(--gitako-btn-bg),
+          var(--gitako-btn-hover-bg),
+          var(--gitako-btn-focus-bg)
+        );
+        .icon {
+          width: 100%;
+          height: 100%;
+          display: block;
+          background-image: url('~@primer/octicons-react/build/svg/clippy-16.svg?inline');
+          background-position: center;
+          background-repeat: no-repeat;
+          &.success {
+            background-image: url('~@primer/octicons-react/build/svg/check-16.svg?inline');
+          }
+          &.fail {
+            background-image: url('~@primer/octicons-react/build/svg/x-16.svg?inline');
+          }
+        }
+      }
+    }
+  }
 
   // gitee
   &.git-project {
@@ -192,45 +235,6 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
   }
 }
 
-.markdown-body {
-  .clippy-wrapper {
-    position: relative;
-    width: 0;
-    height: 0;
-    top: 8px;
-    left: calc(100% - 40px);
-    z-index: 1;
-
-    .clippy {
-      width: 32px;
-      height: 32px;
-      border: 1px solid var(--gitako-border-tertiary);
-      border-radius: 4px;
-      background: var(--gitako-bg-secondary);
-      &:hover {
-        background: var(--gitako-bg-secondary);
-      }
-      &:active {
-        background: var(--gitako-bg-secondary);
-      }
-      .icon {
-        width: 100%;
-        height: 100%;
-        display: block;
-        background-image: url('~@primer/octicons-react/build/svg/clippy-16.svg?inline');
-        background-position: center;
-        background-repeat: no-repeat;
-        &.success {
-          background-image: url('~@primer/octicons-react/build/svg/check-16.svg?inline');
-        }
-        &.fail {
-          background-image: url('~@primer/octicons-react/build/svg/x-16.svg?inline');
-        }
-      }
-    }
-  }
-}
-
 .progress-pjax-loader.is-loading {
   left: 0; /* reposition progress bar of GitHub */
 }
@@ -249,17 +253,13 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
   @include flex-center();
   cursor: pointer;
   padding: 0;
-}
-
-@mixin button-color {
   border: none;
-  background: transparent;
-  &:hover {
-    background: var(--gitako-btn-hover-bg);
-  }
-  &:active {
-    background: var(--gitako-btn-focus-bg);
-  }
+
+  @include interactive-background(
+    transparent,
+    var(--gitako-btn-hover-bg),
+    var(--gitako-btn-focus-bg)
+  );
 }
 
 // Why does not TextInput get theme properly?
@@ -449,7 +449,6 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
       .close-side-bar-button {
         @include icon-button;
-        @include button-color;
         width: $button-size;
         height: $button-size;
         border-radius: $button-size;
@@ -588,25 +587,23 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
             align-items: center;
             padding: 0 4px;
 
-            .toggle-mode {
+            .toggle-search-mode {
               margin: 0;
               padding: 2px 4px;
               min-width: 32px;
               border: 1px solid var(--gitako-border-secondary);
               border-radius: 8px;
-              background: var(--gitako-bg-primary);
               color: var(--gitako-text-secondary);
               font-size: 12px;
               font-weight: 500;
               line-height: 1;
               outline: none;
-              &:focus,
-              &:hover {
-                background: var(--gitako-bg-secondary);
-              }
-              &:active {
-                background: var(--gitako-bg-tertiary);
-              }
+
+              @include interactive-background(
+                var(--gitako-bg-primary),
+                var(--gitako-bg-secondary),
+                var(--gitako-bg-tertiary)
+              );
             }
           }
         }
@@ -618,20 +615,22 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
         }
 
         .node-item {
-          background: var(--gitako-bg-primary);
           &:hover {
             text-decoration: initial; // revert underline from .gitako-side-bar a:hover
             .node-item-label {
               text-decoration: underline; // apply underline like .gitako-side-bar a:hover
             }
           }
-          &.focused,
-          &:hover {
+
+          &.focused {
             background: var(--gitako-bg-tertiary);
           }
-          &:active {
-            background: var(--gitako-bg-secondary);
-          }
+
+          @include interactive-background(
+            var(--gitako-bg-primary),
+            var(--gitako-bg-secondary),
+            var(--gitako-bg-tertiary)
+          );
 
           &.disabled {
             pointer-events: none;
@@ -713,7 +712,6 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           .go-to-button,
           .find-in-folder-button {
             @include icon-button();
-            @include button-color();
             width: 28px;
             height: 28px;
             border-radius: 28px;
@@ -853,7 +851,6 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
         .settings-button {
           @include icon-button();
-          @include button-color();
           $size: 32px;
           width: $size;
           height: $size;
