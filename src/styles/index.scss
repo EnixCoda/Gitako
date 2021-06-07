@@ -13,6 +13,32 @@ $github-header-z-index: 32;
 $github-pull-request-float-header-z-index: 110;
 $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-z-index) + 1;
 
+@mixin interactive-background($default, $hover, $active) {
+  background-color: $default;
+  &:hover {
+    background-color: $hover;
+  }
+  &:active {
+    background-color: $active;
+  }
+}
+
+@mixin interactive-background-on-before($default, $hover, $active) {
+  &::before {
+    background-color: $default;
+  }
+  &:hover {
+    &::before {
+      background-color: $hover;
+    }
+  }
+  &:active {
+    &::before {
+      background-color: $active;
+    }
+  }
+}
+
 :root {
   --gitako-width: #{$side-bar-base-width};
 }
@@ -51,6 +77,75 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           overflow: auto !important;
         }
       }
+    }
+  }
+  .blob-wrapper table .blob-num {
+    position: relative; // for positioning
+    min-width: 60px;
+    padding-right: 20px;
+  }
+
+  // cancel code fold if not wrapped with .gitako-code-fold-mark
+  .gitako-code-fold-handler {
+    display: none;
+  }
+  .gitako-code-fold-hidden {
+    display: table-cell;
+  }
+
+  .gitako-code-fold-attached {
+    tr {
+      .gitako-code-fold-handler {
+        display: initial;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        &::before {
+          content: '';
+          display: block;
+          width: 10px;
+          height: 20px;
+          cursor: pointer;
+          user-select: none;
+          transition: 0.25s ease;
+          -webkit-mask-image: url('~@primer/octicons/build/svg/chevron-down.svg?inline');
+          mask-image: url('~@primer/octicons/build/svg/chevron-down.svg?inline');
+          -webkit-mask-size: contain;
+          mask-size: contain;
+          -webkit-mask-position: center;
+          mask-position: center;
+        }
+
+        @include interactive-background-on-before(
+          var(--gitako-icon-tertiary),
+          var(--gitako-icon-primary),
+          var(--gitako-icon-secondary)
+        );
+      }
+
+      &.active {
+        .gitako-code-fold-handler {
+          &::before {
+            transform: rotate(-90deg);
+          }
+
+          @include interactive-background-on-before(
+            var(--gitako-icon-secondary),
+            var(--gitako-icon-tertiary),
+            var(--gitako-icon-primary)
+          );
+        }
+      }
+    }
+
+    .gitako-code-fold-hidden {
+      display: none;
     }
   }
 

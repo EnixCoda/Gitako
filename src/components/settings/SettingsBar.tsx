@@ -15,6 +15,7 @@ const WIKI_HOME_LINK = 'https://github.com/EnixCoda/Gitako/wiki'
 export const wikiLinks = {
   compressSingletonFolder: `${WIKI_HOME_LINK}/Compress-Singleton-Folder`,
   changeLog: `${WIKI_HOME_LINK}/Change-Log`,
+  codeFolding: `${WIKI_HOME_LINK}/Code-folding`,
   copyFileButton: `${WIKI_HOME_LINK}/Copy-file-and-snippet`,
   copySnippet: `${WIKI_HOME_LINK}/Copy-file-and-snippet`,
   createAccessToken: `${WIKI_HOME_LINK}/Access-token-for-Gitako`,
@@ -29,18 +30,24 @@ function SettingsBarContent() {
   const useReloadHint = useStateIO<React.ReactNode>('')
   const { value: reloadHint } = useReloadHint
 
-  const moreFields: SimpleField<'copyFileButton' | 'copySnippetButton'>[] =
+  const moreFields: SimpleField<'copyFileButton' | 'copySnippetButton'|'codeFolding'>[] =
     platform === GitHub
       ? [
           {
+            key: 'codeFolding',
+            label: 'Fold source code button',
+            wikiLink: wikiLinks.codeFolding,
+            tooltip: `Read more in Gitako's Wiki`,
+          },
+          {
             key: 'copyFileButton',
-            label: 'Copy file shortcut',
+            label: 'Copy file button',
             wikiLink: wikiLinks.copyFileButton,
             tooltip: `Read more in Gitako's Wiki`,
           },
           {
             key: 'copySnippetButton',
-            label: 'Copy snippet shortcut',
+            label: 'Copy snippet button',
             wikiLink: wikiLinks.copySnippet,
             tooltip: `Read more in Gitako's Wiki`,
           },

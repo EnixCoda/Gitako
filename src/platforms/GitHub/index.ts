@@ -8,6 +8,7 @@ import { sortFoldersToFront } from 'utils/treeParser'
 import * as API from './API'
 import * as DOMHelper from './DOMHelper'
 import * as URLHelper from './URLHelper'
+export { useGitHubCodeFold } from './useGitHubCodeFold'
 
 function processTree(tree: TreeNode[]): TreeNode {
   // nodes are created from items and put onto tree
