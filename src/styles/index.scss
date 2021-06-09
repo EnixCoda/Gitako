@@ -13,18 +13,20 @@ $github-header-z-index: 32;
 $github-pull-request-float-header-z-index: 110;
 $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-z-index) + 1;
 
-@mixin interactive-background($default, $hover, $active) {
+@mixin interactive-background($default, $hover, $active, $focus: $hover) {
   background-color: $default;
-  &:focus,
   &:hover {
     background-color: $hover;
+  }
+  &:focus {
+    background-color: $focus;
   }
   &:active {
     background-color: $active;
   }
 }
 
-@mixin interactive-background-on-before($default, $hover, $active) {
+@mixin interactive-background-on-before($default, $hover, $active, $focus: $hover) {
   &::before {
     background-color: $default;
   }
@@ -36,6 +38,11 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
   &:active {
     &::before {
       background-color: $active;
+    }
+  }
+  &:hover {
+    &::before {
+      background-color: $hover;
     }
   }
 }
@@ -627,7 +634,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           }
 
           @include interactive-background(
-            var(--gitako-bg-primary),
+            var(--gitako-auto-white),
             var(--gitako-bg-secondary),
             var(--gitako-bg-tertiary)
           );
