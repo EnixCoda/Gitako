@@ -649,9 +649,17 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           margin: 0;
           line-height: 20px;
           cursor: pointer;
-          border-bottom: 1px solid var(--gitako-border-secondary);
           white-space: nowrap;
           transition: padding 0.3s ease; // on toggle expansion in search results
+
+          border-bottom: 1px solid var(--gitako-border-secondary);
+          &.compact {
+            border-bottom: none;
+            &.focused {
+              border-top: 1px solid var(--gitako-border-secondary);
+              border-bottom: 1px solid var(--gitako-border-secondary);
+            }
+          }
 
           &:not(:hover) {
             color: var(--gitako-text-primary);

@@ -19,6 +19,7 @@ export type Config = {
   sidebarToggleMode: 'persistent' | 'float'
   commentToggle: boolean
   codeFolding: boolean
+  compactFileTree: boolean
 }
 
 enum configKeys {
@@ -37,6 +38,7 @@ enum configKeys {
   sidebarToggleMode = 'sidebarToggleMode',
   commentToggle = 'commentToggle',
   codeFolding = 'codeFolding',
+  compactFileTree = 'compactFileTree',
 }
 
 export const defaultConfigs: Config = {
@@ -55,6 +57,7 @@ export const defaultConfigs: Config = {
   sidebarToggleMode: 'float',
   commentToggle: true,
   codeFolding: true,
+  compactFileTree: false,
 }
 
 const configKeyArray = Object.values(configKeys)
