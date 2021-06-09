@@ -718,28 +718,43 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
             }
           }
 
-          .node-item-comment {
-            display: inline-block;
-            width: 48px;
-            padding: 0 4px;
-            color: var(--gitako-text-tertiary);
+          .actions {
+            z-index: 1; // prevent being covered by next .node-item
+            padding-right: 8px;
 
-            .octicon-wrapper {
-              margin: 0; // make it closer to the comment amount label
+            .node-item-comment {
+              display: inline-block;
+              width: 48px;
+              padding: 0 4px;
+              color: var(--gitako-text-tertiary);
+
+              .octicon-wrapper {
+                margin: 0; // make it closer to the comment amount label
+              }
+            }
+
+            .go-to-button,
+            .find-in-folder-button {
+              @include icon-button();
+              width: 28px;
+              height: 28px;
+              border-radius: 28px;
+              white-space: nowrap;
+              .octicon-wrapper {
+                margin-right: 0;
+              }
             }
           }
 
-          .go-to-button,
-          .find-in-folder-button {
-            @include icon-button();
-            width: 28px;
-            height: 28px;
-            border-radius: 28px;
-            white-space: nowrap;
-            .octicon-wrapper {
-              margin-right: 0;
+          &.compact {
+            .go-to-button,
+            .find-in-folder-button {
+              border-radius: 4px;
+              width: 20px;
+              height: 20px;
             }
           }
+
           &:not(:hover) {
             .go-to-button,
             .find-in-folder-button {

@@ -62,7 +62,7 @@ export function Node({
         <NodeItemIcon node={node} open={expanded} loading={loading} />
         {renderLabelText(node)}
       </div>
-      {renderActions && <div>{renderActions(node)}</div>}
+      {renderActions && <div className={'actions'}>{renderActions(node)}</div>}
     </a>
   )
 }
