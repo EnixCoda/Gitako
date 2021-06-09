@@ -256,17 +256,18 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
   align-items: center;
 }
 
-@mixin icon-button {
+@mixin icon-button(
+  $default: transparent,
+  $hover: var(--gitako-btn-hover-bg),
+  $active: var(--gitako-btn-focus-bg),
+  $focus: $hover
+) {
   @include flex-center();
   cursor: pointer;
   padding: 0;
   border: none;
 
-  @include interactive-background(
-    transparent,
-    var(--gitako-btn-hover-bg),
-    var(--gitako-btn-focus-bg)
-  );
+  @include interactive-background($default, $hover, $active, $focus);
 }
 
 // Why does not TextInput get theme properly?
@@ -291,7 +292,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
   }
 
   .#{$name}-toggle-show-button {
-    @include icon-button;
+    @include icon-button(transparent, transparent, transparent);
     background: transparent;
     border: none;
     padding: 0;
@@ -630,7 +631,11 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           }
 
           &.focused {
-            background: var(--gitako-bg-tertiary);
+            @include interactive-background(
+              var(--gitako-bg-tertiary),
+              var(--gitako-bg-secondary),
+              var(--gitako-bg-overlay)
+            );
           }
 
           @include interactive-background(
