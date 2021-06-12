@@ -130,50 +130,51 @@ export function SideBar() {
           onLeave={sidebarToggleMode === 'float' ? () => setShowSideBar(false) : undefined}
         >
           <div className={'gitako-side-bar-body'}>
-            <div className={'close-side-bar-button-position'}>
-              {sidebarToggleMode === 'persistent' && (
-                <button
-                  title={'Collapse sidebar'}
-                  className={'close-side-bar-button'}
-                  onClick={toggleShowSideBar}
-                >
-                  <Icon className={'action-icon'} type={'tab'} />
-                </button>
-              )}
-              <button
-                title={'Toggle sidebar dock mode between float and persistent'}
-                className={cx('close-side-bar-button', {
-                  active: sidebarToggleMode === 'persistent',
-                })}
-                onClick={() =>
-                  configContext.onChange({
-                    sidebarToggleMode: sidebarToggleMode === 'float' ? 'persistent' : 'float',
-                  })
-                }
-              >
-                <Icon className={'action-icon'} type={'pin'} />
-              </button>
-            </div>
             <div
               className={'gitako-side-bar-content'}
               onClick={showSettings ? toggleShowSettings : undefined}
             >
+              <div className={'header'}>
+                <div className={'close-side-bar-button-position'}>
+                  {sidebarToggleMode === 'persistent' && (
+                    <button
+                      title={'Collapse sidebar'}
+                      className={'close-side-bar-button'}
+                      onClick={toggleShowSideBar}
+                    >
+                      <Icon className={'action-icon'} type={'tab'} />
+                    </button>
+                  )}
+                  <button
+                    title={'Toggle sidebar dock mode between float and persistent'}
+                    className={cx('close-side-bar-button', {
+                      active: sidebarToggleMode === 'persistent',
+                    })}
+                    onClick={() =>
+                      configContext.onChange({
+                        sidebarToggleMode: sidebarToggleMode === 'float' ? 'persistent' : 'float',
+                      })
+                    }
+                  >
+                    <Icon className={'action-icon'} type={'pin'} />
+                  </button>
+                </div>
+                {metaData && <MetaBar metaData={metaData} />}
+              </div>
               {run(() => {
                 switch (state) {
                   case 'disabled':
                     return null
                   case 'getting-access-token':
                     return <LoadingIndicator text={'Getting access token...'} />
+                  case 'after-getting-access-token':
                   case 'meta-loading':
                     return <LoadingIndicator text={'Fetching repo meta...'} />
                   case 'error-due-to-auth':
                     return <AccessDeniedDescription />
                   default:
-                    return metaData ? (
-                      <>
-                        <div className={'header'}>
-                          <MetaBar metaData={metaData} />
-                        </div>
+                    return (
+                      metaData && (
                         <IIFC>
                           {() => (
                             <FileExplorer
@@ -186,8 +187,8 @@ export function SideBar() {
                             />
                           )}
                         </IIFC>
-                      </>
-                    ) : null
+                      )
+                    )
                 }
               })}
             </div>

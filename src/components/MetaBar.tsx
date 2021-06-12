@@ -11,14 +11,14 @@ export function MetaBar({ metaData }: Props) {
   const { userName, repoName, branchName } = metaData
   const { repoUrl, userUrl } = platform.resolveUrlFromMetaData(metaData)
   return (
-    <Flex flexDirection="column" justifyContent="space-between" className={'meta-bar'}>
+    <>
       <Breadcrumb className={'user-and-repo'}>
         <Breadcrumb.Item href={userUrl}>{userName}</Breadcrumb.Item>
         <Breadcrumb.Item href={repoUrl}>
           <Text fontWeight="bolder">{repoName}</Text>
         </Breadcrumb.Item>
       </Breadcrumb>
-      <Flex flexWrap="nowrap">
+      <Flex paddingTop={1} flexWrap="nowrap" alignItems="flex-start">
         <div className={'octicon-wrapper'}>
           <GitBranchIcon size="small" />
         </div>
@@ -26,6 +26,6 @@ export function MetaBar({ metaData }: Props) {
           {branchName || '...'}
         </BranchName>
       </Flex>
-    </Flex>
+    </>
   )
 }
