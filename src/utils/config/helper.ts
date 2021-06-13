@@ -41,13 +41,16 @@ enum configKeys {
   compactFileTree = 'compactFileTree',
 }
 
+// do NOT use platform name
+const platformStorageKey = `platform_` + window.location.host.toLowerCase()
+
 export const defaultConfigs: Config = {
   sideBarWidth: 260,
   shortcut: undefined,
   accessToken: '',
   compressSingletonFolder: true,
   copyFileButton: true,
-  copySnippetButton: !(platformName === 'GitHub' && !platform.isEnterprise()), // false when on github.com
+  copySnippetButton: platformStorageKey !== 'platform_github.com', // false when on github.com
   intelligentToggle: null,
   icons: 'rich',
   toggleButtonVerticalDistance: 124, // align with GitHub's navbar items
@@ -71,8 +74,6 @@ function applyDefaultConfigs(configs: Partial<Config>) {
 
 export type VersionedConfig<SiteConfig> = Record<string, SiteConfig> & { configVersion: string }
 
-// do NOT use platform name
-const platformStorageKey = `platform_` + window.location.host.toLowerCase()
 const prepareConfig = new Promise<void>(async resolve => {
   await migrateConfig()
   resolve()
