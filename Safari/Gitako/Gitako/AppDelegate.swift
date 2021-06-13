@@ -1,3 +1,10 @@
+//
+//  AppDelegate.swift
+//  Gitako
+//
+//  Created by Enix on 13/6/2021.
+//
+
 import Cocoa
 
 @main

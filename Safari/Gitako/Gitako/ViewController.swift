@@ -1,3 +1,10 @@
+//
+//  ViewController.swift
+//  Gitako
+//
+//  Created by Enix on 13/6/2021.
+//
+
 import Cocoa
 import SafariServices.SFSafariApplication
 import SafariServices.SFSafariExtensionManager
@@ -8,7 +15,7 @@ let extensionBundleIdentifier = "enixcoda.Gitako.Extension"
 class ViewController: NSViewController {
 
     @IBOutlet var appNameLabel: NSTextField!
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.appNameLabel.stringValue = appName
@@ -27,7 +34,7 @@ class ViewController: NSViewController {
             }
         }
     }
-
+    
     @IBAction func openSafariExtensionPreferences(_ sender: AnyObject?) {
         SFSafariApplication.showPreferencesForExtension(withIdentifier: extensionBundleIdentifier) { error in
             guard error == nil else {

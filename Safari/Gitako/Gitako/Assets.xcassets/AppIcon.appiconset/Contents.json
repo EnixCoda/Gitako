@@ -16,11 +16,13 @@
       "size" : "32x32"
     },
     {
+      "filename" : "Gitako-64.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "32x32"
     },
     {
+      "filename" : "Gitako-128.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "128x128"
@@ -31,6 +33,7 @@
       "size" : "128x128"
     },
     {
+      "filename" : "Gitako-256.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "256x256"
