@@ -1,26 +1,26 @@
+import { SideBarStateContextShape } from 'containers/SideBarState'
 import { GetCreatedMethod, MethodCreator } from 'driver/connect'
 import { platform } from 'platforms'
-import { Config } from 'utils/configHelper'
+import { Config } from 'utils/config/helper'
 import * as DOMHelper from 'utils/DOMHelper'
+import { OperatingSystems, os } from 'utils/general'
 import { VisibleNodes, VisibleNodesGenerator } from 'utils/VisibleNodesGenerator'
 
 export type Props = {
-  treeRoot?: TreeNode
   metaData: MetaData
   freeze: boolean
   accessToken: string | undefined
-  toggleShowSettings: React.MouseEventHandler
   config: Config
   loadWithPJAX(url: string): void
-  defer?: boolean
+  catchNetworkErrors: <T>(fn: () => T) => Promise<T | undefined>
 }
 
 export type ConnectorState = {
-  state: 'pulling' | 'rendering' | 'done'
   visibleNodesGenerator: VisibleNodesGenerator | null
   visibleNodes: VisibleNodes | null
   searchKey: string
   searched: boolean // derived state from searchKey, = !!searchKey
+  defer: boolean
 
   handleKeyDown: GetCreatedMethod<typeof handleKeyDown>
   updateSearchKey: GetCreatedMethod<typeof updateSearchKey>
@@ -45,37 +45,58 @@ type BoundMethodCreator<Args extends any[] = []> = MethodCreator<Props, Connecto
 
 export const setUpTree: BoundMethodCreator<
   [
-    Required<Pick<Props, 'treeRoot' | 'metaData'>> & {
-      config: Pick<Config, 'compressSingletonFolder' | 'accessToken'>
-    },
+    { stateContext: SideBarStateContextShape } & Required<Pick<Props, 'metaData'>> & {
+        config: Pick<Config, 'compressSingletonFolder' | 'accessToken'>
+      },
   ]
-> = dispatch => async ({ treeRoot, metaData, config }) => {
-  dispatch.set({ state: 'rendering' })
+> = dispatch => ({ stateContext, metaData, config }) => {
+  const {
+    props: { catchNetworkErrors },
+  } = dispatch.get()
 
-  const visibleNodesGenerator = new VisibleNodesGenerator({
-    root: treeRoot,
-    compress: config.compressSingletonFolder,
-    async getTreeData(path) {
-      const { root } = await platform.getTreeData(metaData, path, false, config.accessToken)
-      return root
-    },
-  })
-  dispatch.set({ visibleNodesGenerator })
-  visibleNodesGenerator.onUpdate(visibleNodes => dispatch.set({ visibleNodes }))
+  catchNetworkErrors(async () => {
+    const { userName, repoName, branchName } = metaData
 
-  if (platform.shouldExpandAll?.()) {
-    const unsubscribe = visibleNodesGenerator.onUpdate(visibleNodes => {
-      unsubscribe()
-      visibleNodes.nodes.forEach(node =>
-        dispatch.call(toggleNodeExpansion, node, { recursive: true }),
-      )
+    stateContext.onChange('tree-loading')
+    const { root: treeRoot, defer = false } = await platform.getTreeData(
+      {
+        branchName: branchName,
+        userName,
+        repoName,
+      },
+      '/',
+      true,
+      config.accessToken,
+    )
+
+    stateContext.onChange('tree-rendering')
+    dispatch.set({ defer })
+
+    const visibleNodesGenerator = new VisibleNodesGenerator({
+      root: treeRoot,
+      compress: config.compressSingletonFolder,
+      async getTreeData(path) {
+        const { root } = await platform.getTreeData(metaData, path, false, config.accessToken)
+        return root
+      },
     })
-  } else {
-    const targetPath = platform.getCurrentPath(metaData.branchName)
-    if (targetPath) dispatch.call(goTo, targetPath)
-  }
+    dispatch.set({ visibleNodesGenerator })
+    visibleNodesGenerator.onUpdate(visibleNodes => dispatch.set({ visibleNodes }))
 
-  dispatch.set({ state: 'done' })
+    if (platform.shouldExpandAll?.()) {
+      const unsubscribe = visibleNodesGenerator.onUpdate(visibleNodes => {
+        unsubscribe()
+        visibleNodes.nodes.forEach(node =>
+          dispatch.call(toggleNodeExpansion, node, { recursive: true }),
+        )
+      })
+    } else {
+      const targetPath = platform.getCurrentPath(metaData.branchName)
+      if (targetPath) dispatch.call(goTo, targetPath)
+    }
+
+    stateContext.onChange('tree-rendered')
+  })
 }
 
 export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch => event => {
@@ -112,6 +133,10 @@ export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch
         break
 
       case 'ArrowLeft':
+        if (wouldBlockHistoryNavigation(event)) {
+          muteEvent = false
+          break
+        }
         if (expandedNodes.has(focusedNode.path)) {
           dispatch.call(toggleNodeExpansion, focusedNode, { recursive: event.altKey })
         } else {
@@ -125,6 +150,10 @@ export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch
 
       // consider the two keys as 'confirm' key
       case 'ArrowRight':
+        if (wouldBlockHistoryNavigation(event)) {
+          muteEvent = false
+          break
+        }
         // expand node or focus on first content node or redirect to file page
         if (focusedNode.type === 'tree') {
           if (expandedNodes.has(focusedNode.path)) {
@@ -284,4 +313,9 @@ export const expandTo: BoundMethodCreator<[string[]]> = dispatch => async curren
   if (nodeExpandedTo) {
     visibleNodesGenerator.focusNode(nodeExpandedTo)
   }
+}
+
+function wouldBlockHistoryNavigation(event: React.KeyboardEvent) {
+  // Alt + left/right is usually history navigation shortcut on OS other than macOS
+  return os !== OperatingSystems.macOS && event.altKey
 }

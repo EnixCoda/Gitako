@@ -2,7 +2,7 @@ import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { cx } from 'utils/cx'
 import { OperatingSystems, os } from 'utils/general'
-import { getFileIconSrc, getFolderIconSrc } from '../utils/parseIconMapCSV'
+import { getFileIconSrc, getFolderIconSrc } from 'utils/parseIconMapCSV'
 import { Icon } from './Icon'
 
 function getIconType(node: TreeNode) {
@@ -38,6 +38,7 @@ export function Node({
   style,
   onClick,
 }: Props) {
+  const { compactFileTree: compact } = useConfigs().value
   return (
     <a
       href={node.url}
@@ -53,15 +54,15 @@ export function Node({
 
         onClick(event, node)
       }}
-      className={cx(`node-item`, { focused, disabled: node.accessDenied, expanded })}
-      style={{ ...style, paddingLeft: `${10 + 20 * depth}px` }}
+      className={cx(`node-item`, { focused, disabled: node.accessDenied, expanded, compact })}
+      style={{ ...style, paddingLeft: `${10 + (compact ? 10 : 20) * depth}px` }}
       title={node.path}
     >
       <div className={'node-item-label'}>
         <NodeItemIcon node={node} open={expanded} loading={loading} />
         {renderLabelText(node)}
       </div>
-      {renderActions && <div>{renderActions(node)}</div>}
+      {renderActions && <div className={'actions'}>{renderActions(node)}</div>}
     </a>
   )
 }

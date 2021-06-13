@@ -1,4 +1,4 @@
-import { Label, Link } from '@primer/components'
+import { Link } from '@primer/components'
 import { Icon } from 'components/Icon'
 import { VERSION } from 'env'
 import { platform } from 'platforms'
@@ -15,13 +15,13 @@ const WIKI_HOME_LINK = 'https://github.com/EnixCoda/Gitako/wiki'
 export const wikiLinks = {
   compressSingletonFolder: `${WIKI_HOME_LINK}/Compress-Singleton-Folder`,
   changeLog: `${WIKI_HOME_LINK}/Change-Log`,
+  codeFolding: `${WIKI_HOME_LINK}/Code-folding`,
   copyFileButton: `${WIKI_HOME_LINK}/Copy-file-and-snippet`,
   copySnippet: `${WIKI_HOME_LINK}/Copy-file-and-snippet`,
   createAccessToken: `${WIKI_HOME_LINK}/Access-token-for-Gitako`,
 }
 
 type Props = {
-  defer?: boolean
   activated: boolean
   toggleShowSettings: () => void
 }
@@ -30,18 +30,24 @@ function SettingsBarContent() {
   const useReloadHint = useStateIO<React.ReactNode>('')
   const { value: reloadHint } = useReloadHint
 
-  const moreFields: SimpleField[] =
+  const moreFields: SimpleField<'copyFileButton' | 'copySnippetButton'|'codeFolding'>[] =
     platform === GitHub
       ? [
           {
+            key: 'codeFolding',
+            label: 'Fold source code button',
+            wikiLink: wikiLinks.codeFolding,
+            tooltip: `Read more in Gitako's Wiki`,
+          },
+          {
             key: 'copyFileButton',
-            label: 'Copy file shortcut',
+            label: 'Copy file button',
             wikiLink: wikiLinks.copyFileButton,
             tooltip: `Read more in Gitako's Wiki`,
           },
           {
             key: 'copySnippetButton',
-            label: 'Copy snippet shortcut',
+            label: 'Copy snippet button',
             wikiLink: wikiLinks.copySnippet,
             tooltip: `Read more in Gitako's Wiki`,
           },
@@ -78,7 +84,7 @@ function SettingsBarContent() {
 }
 
 export function SettingsBar(props: Props) {
-  const { defer, toggleShowSettings, activated } = props
+  const { toggleShowSettings, activated } = props
   return (
     <div className={'gitako-settings-bar'}>
       {activated && <SettingsBarContent />}
@@ -93,15 +99,6 @@ export function SettingsBar(props: Props) {
           {VERSION}
         </Link>
         <div className={'header-right'}>
-          {defer && (
-            <Label
-              title="File tree data is loaded on demand. And search results are limited."
-              bg="yellow.5"
-              color="gray.6"
-            >
-              Lazy Mode
-            </Label>
-          )}
           <button className={'settings-button'} onClick={toggleShowSettings}>
             {activated ? (
               <Icon type={'chevron-down'} className={'hide-settings-icon'} />

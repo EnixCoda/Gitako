@@ -1,11 +1,9 @@
 import { dummyPlatformForTypeSafety } from './dummyPlatformForTypeSafety'
-import { Gitee } from './Gitee'
 import { Gitea } from './Gitea'
+import { Gitee } from './Gitee'
 import { GitHub } from './GitHub'
 
-const platforms: {
-  [name: string]: Platform
-} = {
+const platforms = {
   GitHub: GitHub,
   Gitee: Gitee,
   Gitea: Gitea,
@@ -13,7 +11,7 @@ const platforms: {
 
 function resolvePlatform() {
   for (const platform of Object.values(platforms)) {
-    if (platform.resolveMeta()) return platform
+    if (platform.resolvePartialMetaData()) return platform
   }
   return dummyPlatformForTypeSafety
 }

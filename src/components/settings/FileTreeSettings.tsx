@@ -2,7 +2,7 @@ import { wikiLinks } from 'components/settings/SettingsBar'
 import { SimpleToggleField } from 'components/SimpleToggleField'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
-import { Config } from 'utils/configHelper'
+import { Config } from 'utils/config/helper'
 import { Option, SelectInput } from '../SelectInput'
 import { Field } from './Field'
 import { SettingsSection } from './SettingsSection'
@@ -54,7 +54,7 @@ export function FileTreeSettings(props: React.PropsWithChildren<Props>) {
             })
           }}
           value={configContext.value.recursiveToggleFolder}
-        ></SelectInput>
+        />
       </Field>
       <Field title="Icons" id="file-tree-icons">
         <SelectInput<Config['icons']>
@@ -74,6 +74,20 @@ export function FileTreeSettings(props: React.PropsWithChildren<Props>) {
           label: 'Compress singleton folder',
           wikiLink: wikiLinks.compressSingletonFolder,
           tooltip: 'Merge folders and their only child folder to make UI more compact.',
+        }}
+      />
+      <SimpleToggleField
+        field={{
+          key: 'commentToggle',
+          label: 'Show PR file comments',
+          tooltip: 'Show number of comments next to file names in Pull Requests.',
+        }}
+      />
+      <SimpleToggleField
+        field={{
+          key: 'compactFileTree',
+          label: 'Compact file tree layout',
+          tooltip: 'View file tree structures more effectively.',
         }}
       />
     </SettingsSection>

@@ -1,564 +1,566 @@
-$auto-black: #1b1f23;
-$auto-white: #fff;
-$auto-gray-0: #fafbfc;
-$auto-gray-1: #f6f8fa;
-$auto-gray-2: #e1e4e8;
-$auto-gray-3: #d1d5da;
-$auto-gray-4: #959da5;
-$auto-gray-5: #6a737d;
-$auto-gray-6: #586069;
-$auto-gray-7: #444d56;
-$auto-gray-8: #2f363d;
-$auto-gray-9: #24292e;
-$auto-blue-0: #f1f8ff;
-$auto-blue-1: #dbedff;
-$auto-blue-2: #c8e1ff;
-$auto-blue-3: #79b8ff;
-$auto-blue-4: #2188ff;
-$auto-blue-5: #0366d6;
-$auto-blue-6: #005cc5;
-$auto-blue-7: #044289;
-$auto-blue-8: #032f62;
-$auto-blue-9: #05264c;
-$auto-green-0: #f0fff4;
-$auto-green-1: #dcffe4;
-$auto-green-2: #bef5cb;
-$auto-green-3: #85e89d;
-$auto-green-4: #34d058;
-$auto-green-5: #28a745;
-$auto-green-6: #22863a;
-$auto-green-7: #176f2c;
-$auto-green-8: #165c26;
-$auto-green-9: #144620;
-$auto-yellow-0: #fffdef;
-$auto-yellow-1: #fffbdd;
-$auto-yellow-2: #fff5b1;
-$auto-yellow-3: #ffea7f;
-$auto-yellow-4: #ffdf5d;
-$auto-yellow-5: #ffd33d;
-$auto-yellow-6: #f9c513;
-$auto-yellow-7: #dbab09;
-$auto-yellow-8: #b08800;
-$auto-yellow-9: #735c0f;
-$auto-orange-0: #fff8f2;
-$auto-orange-1: #ffebda;
-$auto-orange-2: #ffd1ac;
-$auto-orange-3: #ffab70;
-$auto-orange-4: #fb8532;
-$auto-orange-5: #f66a0a;
-$auto-orange-6: #e36209;
-$auto-orange-7: #d15704;
-$auto-orange-8: #c24e00;
-$auto-orange-9: #a04100;
-$auto-red-0: #ffeef0;
-$auto-red-1: #ffdce0;
-$auto-red-2: #fdaeb7;
-$auto-red-3: #f97583;
-$auto-red-4: #ea4a5a;
-$auto-red-5: #d73a49;
-$auto-red-6: #cb2431;
-$auto-red-7: #b31d28;
-$auto-red-8: #9e1c23;
-$auto-red-9: #86181d;
-$auto-purple-0: #f5f0ff;
-$auto-purple-1: #e6dcfd;
-$auto-purple-2: #d1bcf9;
-$auto-purple-3: #b392f0;
-$auto-purple-4: #8a63d2;
-$auto-purple-5: #6f42c1;
-$auto-purple-6: #5a32a3;
-$auto-purple-7: #4c2889;
-$auto-purple-8: #3a1d6e;
-$auto-purple-9: #29134e;
-$auto-pink-0: #ffeef8;
-$auto-pink-1: #fedbf0;
-$auto-pink-2: #f9b3dd;
-$auto-pink-3: #f692ce;
-$auto-pink-4: #ec6cb9;
-$auto-pink-5: #ea4aaa;
-$auto-pink-6: #d03592;
-$auto-pink-7: #b93a86;
-$auto-pink-8: #99306f;
-$auto-pink-9: #6d224f;
-$text-primary: #24292e;
-$text-secondary: #586069;
-$text-tertiary: #6a737d;
-$text-placeholder: #6a737d;
-$text-disabled: #6a737d;
-$text-inverse: #fff;
-$text-link: #0366d6;
-$text-danger: #cb2431;
-$text-success: #22863a;
-$text-warning: #b08800;
-$text-white: #fff;
-$icon-primary: #24292e;
-$icon-secondary: #586069;
-$icon-tertiary: #959da5;
-$icon-info: #0366d6;
-$icon-danger: #d73a49;
-$icon-success: #22863a;
-$icon-warning: #b08800;
-$border-primary: #e1e4e8;
-$border-secondary: #eaecef;
-$border-tertiary: #d1d5da;
-$border-overlay: #e1e4e8;
-$border-inverse: #fff;
-$border-info: #0366d6;
-$border-danger: #d73a49;
-$border-success: #34d058;
-$border-warning: #f9c513;
-$bg-canvas: #fff;
-$bg-canvas-mobile: #fff;
-$bg-canvas-inverse: #24292e;
-$bg-canvas-inset: #f6f8fa;
-$bg-primary: #fff;
-$bg-secondary: #fafbfc;
-$bg-tertiary: #f6f8fa;
-$bg-overlay: #fff;
-$bg-backdrop: #1b1f2380;
-$bg-info: #f1f8ff;
-$bg-info-inverse: #0366d6;
-$bg-danger: #ffeef0;
-$bg-danger-inverse: #d73a49;
-$bg-success: #dcffe4;
-$bg-success-inverse: #28a745;
-$bg-warning: #fff5b1;
-$bg-warning-inverse: #ffd33d;
-$shadow-small: 0 1px 0 #1b1f230a;
-$shadow-medium: 0 3px 6px #959da526;
-$shadow-large: 0 8px 24px #959da533;
-$shadow-extra-large: 0 12px 48px #959da54d;
-$shadow-highlight: inset 0 1px 0 #ffffff40;
-$shadow-inset: inset 0 1px 0 #e1e4e833;
-$state-hover-primary-bg: #0366d6;
-$state-hover-primary-border: #0366d6;
-$state-hover-primary-text: #fff;
-$state-hover-primary-icon: #fff;
-$state-hover-secondary-bg: #f6f8fa;
-$state-hover-secondary-border: #f6f8fa;
-$state-selected-primary-bg: #0366d6;
-$state-selected-primary-border: #0366d6;
-$state-selected-primary-text: #fff;
-$state-selected-primary-icon: #fff;
-$state-focus-border: #0366d6;
-$state-focus-shadow: 0 0 0 3px #0366d64d;
-$fade-fg-10: #1b1f231a;
-$fade-fg-15: #1b1f2326;
-$fade-fg-30: #1b1f234d;
-$fade-fg-50: #1b1f2380;
-$fade-fg-70: #1b1f23b3;
-$fade-fg-85: #1b1f23d9;
-$fade-black-10: #1b1f231a;
-$fade-black-15: #1b1f2326;
-$fade-black-30: #1b1f234d;
-$fade-black-50: #1b1f2380;
-$fade-black-70: #1b1f23b3;
-$fade-black-85: #1b1f23d9;
-$fade-white-10: #ffffff1a;
-$fade-white-15: #ffffff26;
-$fade-white-30: #ffffff4d;
-$fade-white-50: #ffffff80;
-$fade-white-70: #ffffffb3;
-$fade-white-85: #ffffffd9;
-$alert-info-text: #24292e;
-$alert-info-icon: #04428999;
-$alert-info-bg: #dbedff;
-$alert-info-border: #04428933;
-$alert-warn-text: #24292e;
-$alert-warn-icon: #b08800;
-$alert-warn-bg: #fffbdd;
-$alert-warn-border: #b0880033;
-$alert-error-text: #24292e;
-$alert-error-icon: #9e1c2399;
-$alert-error-bg: #ffe3e6;
-$alert-error-border: #9e1c2333;
-$alert-success-text: #24292e;
-$alert-success-icon: #176f2ccc;
-$alert-success-bg: #dcffe4;
-$alert-success-border: #176f2c33;
-$autocomplete-shadow: 0 3px 6px #959da526;
-$autocomplete-row-border: #eaecef;
-$blankslate-icon: #a3aab1;
-$btn-text: #24292e;
-$btn-bg: #fafbfc;
-$btn-border: #1b1f2326;
-$btn-shadow: 0 1px 0 #1b1f230a;
-$btn-inset-shadow: inset 0 1px 0 #ffffff40;
-$btn-hover-bg: #f3f4f6;
-$btn-hover-border: #1b1f2326;
-$btn-selected-bg: #edeff2;
-$btn-focus-bg: #fafbfc;
-$btn-focus-border: #1b1f2326;
-$btn-focus-shadow: 0 0 0 3px #0366d64d;
-$btn-shadow-active: inset 0 0.15em 0.3em #1b1f2326;
-$btn-shadow-input-focus: 0 0 0 0.2em #0366d64d;
-$btn-primary-text: #fff;
-$btn-primary-bg: #2ea44f;
-$btn-primary-border: #1b1f2326;
-$btn-primary-shadow: 0 1px 0 #1b1f231a;
-$btn-primary-inset-shadow: inset 0 1px 0 #ffffff08;
-$btn-primary-hover-bg: #2c974b;
-$btn-primary-hover-border: #1b1f2326;
-$btn-primary-selected-bg: #2a8f47;
-$btn-primary-selected-shadow: inset 0 1px 0 #14462033;
-$btn-primary-disabled-text: #fffc;
-$btn-primary-disabled-bg: #94d3a2;
-$btn-primary-disabled-border: #1b1f231a;
-$btn-primary-focus-bg: #2ea44f;
-$btn-primary-focus-border: #1b1f2326;
-$btn-primary-focus-shadow: 0 0 0 3px #2ea44f66;
-$btn-primary-icon: #fffc;
-$btn-primary-counter-bg: #fff3;
-$btn-outline-text: #0366d6;
-$btn-outline-hover-text: #fff;
-$btn-outline-hover-bg: #0366d6;
-$btn-outline-hover-border: #1b1f2326;
-$btn-outline-hover-shadow: 0 1px 0 #1b1f231a;
-$btn-outline-hover-inset-shadow: inset 0 1px 0 #ffffff08;
-$btn-outline-hover-counter-bg: #fff3;
-$btn-outline-selected-text: #fff;
-$btn-outline-selected-bg: #035fc7;
-$btn-outline-selected-border: #1b1f2326;
-$btn-outline-selected-shadow: inset 0 1px 0 #05264c33;
-$btn-outline-disabled-text: #0366d680;
-$btn-outline-disabled-bg: #fafbfc;
-$btn-outline-disabled-counter-bg: #0366d60d;
-$btn-outline-focus-border: #1b1f2326;
-$btn-outline-focus-shadow: 0 0 0 3px #005cc566;
-$btn-outline-counter-bg: #0366d61a;
-$btn-danger-text: #d73a49;
-$btn-danger-hover-text: #fff;
-$btn-danger-hover-bg: #cb2431;
-$btn-danger-hover-border: #1b1f2326;
-$btn-danger-hover-shadow: 0 1px 0 #1b1f231a;
-$btn-danger-hover-inset-shadow: inset 0 1px 0 #ffffff08;
-$btn-danger-hover-counter-bg: #fff3;
-$btn-danger-selected-text: #fff;
-$btn-danger-selected-bg: #d42d3d;
-$btn-danger-selected-border: #1b1f2326;
-$btn-danger-selected-shadow: inset 0 1px 0 #86181d33;
-$btn-danger-disabled-text: #d73a4980;
-$btn-danger-disabled-bg: #fafbfc;
-$btn-danger-disabled-counter-bg: #d73a490d;
-$btn-danger-focus-border: #1b1f2326;
-$btn-danger-focus-shadow: 0 0 0 3px #cb243166;
-$btn-danger-counter-bg: #d73a491a;
-$btn-counter-bg: #1b1f2314;
-$counter-text: #24292e;
-$counter-bg: #d1d5da80;
-$counter-primary-text: #fff;
-$counter-primary-bg: #6a737d;
-$counter-secondary-text: #6a737d;
-$dropdown-shadow: 0 8px 24px #959da533;
-$label-border: #e1e4e8;
-$label-primary-text: #24292e;
-$label-primary-border: #6a737d;
-$label-secondary-text: #586069;
-$label-secondary-border: #e1e4e8;
-$label-info-text: #0366d6;
-$label-info-border: #0366d6;
-$label-success-text: #22863a;
-$label-success-border: #28a745;
-$label-warning-text: #735c0f;
-$label-warning-border: #b08800;
-$label-danger-text: #d73a49;
-$label-danger-border: #cb2431;
-$label-orange-text: #c24e00;
-$label-orange-border: #f66a0a;
-$input-bg: #fff;
-$input-contrast-bg: #fafbfc;
-$input-border: #e1e4e8;
-$input-shadow: inset 0 1px 2px #1b1f2313;
-$input-disabled-bg: #fff;
-$input-disabled-border: #e1e4e8;
-$input-warning-border: #f9c513;
-$input-error-border: #cb2431;
-$input-tooltip-success-text: #144620;
-$input-tooltip-success-bg: #dcffe4;
-$input-tooltip-success-border: #34d058;
-$input-tooltip-warning-text: #735c0f;
-$input-tooltip-warning-bg: #fff5b1;
-$input-tooltip-warning-border: #f9c513;
-$input-tooltip-error-text: #86181d;
-$input-tooltip-error-bg: #ffeef0;
-$input-tooltip-error-border: #f97583;
-$avatar-bg: #fff;
-$avatar-border: #0000;
-$avatar-stack-fade: #d1d5da;
-$avatar-stack-fade-more: #e1e4e8;
-$avatar-child-shadow: -2px -2px 0 #fffc;
-$toast-text: #24292e;
-$toast-bg: #fff;
-$toast-border: #e1e4e8;
-$toast-shadow: 0 8px 24px #959da533;
-$toast-icon: #fff;
-$toast-icon-bg: #0366d6;
-$toast-icon-border: #0000;
-$toast-success-text: #24292e;
-$toast-success-border: #e1e4e8;
-$toast-success-icon: #fff;
-$toast-success-icon-bg: #28a745;
-$toast-success-icon-border: #0000;
-$toast-warning-text: #24292e;
-$toast-warning-border: #e1e4e8;
-$toast-warning-icon: #24292e;
-$toast-warning-icon-bg: #ffd33d;
-$toast-warning-icon-border: #0000;
-$toast-danger-text: #24292e;
-$toast-danger-border: #e1e4e8;
-$toast-danger-icon: #fff;
-$toast-danger-icon-bg: #d73a49;
-$toast-danger-icon-border: #0000;
-$toast-loading-text: #24292e;
-$toast-loading-border: #e1e4e8;
-$toast-loading-icon: #fff;
-$toast-loading-icon-bg: #586069;
-$toast-loading-icon-border: #0000;
-$timeline-text: #444d56;
-$timeline-badge-bg: #e1e4e8;
-$timeline-target-badge-border: #2188ff;
-$timeline-target-badge-shadow: #c8e1ff;
-$select-menu-border-secondary: #eaecef;
-$select-menu-shadow: 0 0 18px #1b1f2366;
-$select-menu-backdrop-bg: #1b1f2380;
-$select-menu-backdrop-border: #0000;
-$select-menu-tap-highlight: #d1d5da80;
-$select-menu-tap-focus-bg: #dbedff;
-$box-blue-border: #c8e1ff;
-$box-row-yellow-bg: #fffbdd;
-$box-row-blue-bg: #f1f8ff;
-$box-header-blue-bg: #f1f8ff;
-$box-header-blue-border: #c8e1ff;
-$box-border-info: #0366d633;
-$box-bg-info: #f1f8ff;
-$box-border-warning: #ffd33d66;
-$box-bg-warning: #fffdef;
-$branch-name-text: #1b1f2399;
-$branch-name-icon: #a8bbd0;
-$branch-name-bg: #eaf5ff;
-$branch-name-link-text: #0366d6;
-$branch-name-link-icon: #a8bbd0;
-$branch-name-link-bg: #eaf5ff;
-$markdown-code-bg: #1b1f230d;
-$markdown-frame-border: #dfe2e5;
-$markdown-blockquote-border: #dfe2e5;
-$markdown-table-border: #dfe2e5;
-$markdown-table-tr-border: #c6cbd1;
-$menu-heading-text: #24292e;
-$menu-border-active: #f9826c;
-$menu-bg-active: #0000;
-$sidenav-selected-bg: #fff;
-$sidenav-border-active: #f9826c;
-$header-text: #ffffffb3;
-$header-bg: #24292e;
-$header-logo: #fff;
-$filter-item-bar-bg: #eff3f6;
-$hidden-text-expander-bg: #dfe2e5;
-$hidden-text-expander-bg-hover: #c6cbd1;
-$drag-and-drop-border: #c3c8cf;
-$upload-enabled-border: #dfe2e5;
-$upload-enabled-border-focused: #4a9eff;
-$previewable-comment-form-border: #c3c8cf;
-$underlinenav-border: #d1d5da00;
-$underlinenav-border-hover: #d1d5da;
-$underlinenav-border-active: #f9826c;
-$underlinenav-text: #24292e;
-$underlinenav-text-hover: #24292e;
-$underlinenav-text-active: #24292e;
-$underlinenav-icon: #959da5;
-$underlinenav-icon-hover: #959da5;
-$underlinenav-icon-active: #24292e;
-$underlinenav-counter-text: #24292e;
-$verified-badge-text: #22863a;
-$verified-badge-bg: #fff;
-$verified-badge-border: #e1e4e8;
-$social-count-bg: #fff;
-$tooltip-text: #fff;
-$tooltip-bg: #24292e;
-$header-search-bg: #24292e;
-$header-search-border: #444d56;
-$search-keyword-hl: #fffbdd;
-$diffstat-neutral-bg: #d1d5da;
-$diffstat-neutral-border: #d1d5da;
-$diffstat-deletion-bg: #d73a49;
-$diffstat-deletion-border: #d73a49;
-$diffstat-addition-bg: #28a745;
-$diffstat-addition-border: #28a745;
-$files-explorer-icon: #79b8ff;
-$hl-author-bg: #f1f8ff;
-$hl-author-border: #c8e1ff;
-$logo-subdued: #d1d5da;
-$discussion-border: #a2cbac;
-$discussion-bg-success: #28a745;
-$actions-workflow-table-sticky-bg: #fffffff2;
-$repo-language-color-border: #1b1f231a;
-$code-selection-bg: #c8e1ff;
-$blob-line-highlight-bg: #fffbdd;
-$blob-line-highlight-border: #0000;
-$diff-addition-text: #22863a;
-$diff-addition-bg: #e6ffed;
-$diff-addition-border: #34d058;
-$diff-deletion-text: #cb2431;
-$diff-deletion-bg: #ffeef0;
-$diff-deletion-border: #d73a49;
-$diff-change-text: #b08800;
-$diff-change-bg: #fff5b1;
-$diff-change-border: #f9c513;
-$diff-blob-num-text: #1b1f234d;
-$diff-blob-num-hover-text: #1b1f2399;
-$diff-blob-addition-num-text: #1b1f234d;
-$diff-blob-addition-num-hover-text: #1b1f2399;
-$diff-blob-addition-num-bg: #cdffd8;
-$diff-blob-addition-line-bg: #e6ffed;
-$diff-blob-addition-word-bg: #acf2bd;
-$diff-blob-deletion-num-text: #1b1f234d;
-$diff-blob-deletion-num-hover-text: #1b1f2399;
-$diff-blob-deletion-num-bg: #ffdce0;
-$diff-blob-deletion-line-bg: #ffeef0;
-$diff-blob-deletion-word-bg: #fdb8c0;
-$diff-blob-hunk-text: #1b1f23b3;
-$diff-blob-hunk-num-bg: #dbedff;
-$diff-blob-hunk-line-bg: #f1f8ff;
-$diff-blob-empty-block-bg: #fafbfc;
-$diff-blob-selected-line-highlight-bg: #ffdf5d33;
-$diff-blob-selected-line-highlight-border: #ffd33d;
-$diff-blob-selected-line-highlight-mix-blend-mode: multiply;
-$diff-blob-expander-icon: #586069;
-$diff-blob-expander-hover-icon: #fff;
-$diff-blob-expander-hover-bg: #0366d6;
-$diff-blob-comment-button-icon: #fff;
-$diff-blob-comment-button-bg: #0366d6;
-$diff-blob-comment-button-gradient-bg: #0372ef;
-$global-nav-logo: #fff;
-$global-nav-bg: #24292e;
-$global-nav-text: #fff;
-$global-nav-icon: #fff;
-$global-nav-input-bg: #fafbfc;
-$global-nav-input-border: #fafbfc;
-$global-nav-input-icon: #d1d5da;
-$global-nav-input-placeholder: #959da5;
-$calendar-graph-day-bg: #ebedf0;
-$calendar-graph-day-border: #1b1f230f;
-$calendar-graph-day-l1-bg: #9be9a8;
-$calendar-graph-day-l2-bg: #40c463;
-$calendar-graph-day-l3-bg: #30a14e;
-$calendar-graph-day-l4-bg: #216e39;
-$calendar-graph-day-l4-border: #1b1f230f;
-$calendar-graph-day-l3-border: #1b1f230f;
-$calendar-graph-day-l2-border: #1b1f230f;
-$calendar-graph-day-l1-border: #1b1f230f;
-$footer-invertocat-octicon: #d1d5da;
-$footer-invertocat-octicon-hover: #6a737d;
-$pr-state-draft-text: #fff;
-$pr-state-draft-bg: #6a737d;
-$pr-state-draft-border: #0000;
-$pr-state-open-text: #fff;
-$pr-state-open-bg: #28a745;
-$pr-state-open-border: #0000;
-$pr-state-merged-text: #fff;
-$pr-state-merged-bg: #6f42c1;
-$pr-state-merged-border: #0000;
-$pr-state-closed-text: #fff;
-$pr-state-closed-bg: #d73a49;
-$pr-state-closed-border: #0000;
-$topic-tag-text: #0366d6;
-$topic-tag-bg: #f1f8ff;
-$topic-tag-hover-bg: #def;
-$topic-tag-active-bg: #e7f3ff;
-$merge-box-success-icon-bg: #28a745;
-$merge-box-success-icon-text: #fff;
-$merge-box-success-icon-border: #0000;
-$merge-box-success-indicator-bg: #28a745;
-$merge-box-success-indicator-border: #0000;
-$merge-box-merged-icon-bg: #6f42c1;
-$merge-box-merged-icon-text: #fff;
-$merge-box-merged-icon-border: #0000;
-$merge-box-merged-box-border: #6f42c1;
-$merge-box-neutral-icon-bg: #6a737d;
-$merge-box-neutral-icon-text: #fff;
-$merge-box-neutral-icon-border: #0000;
-$merge-box-neutral-indicator-bg: #6a737d;
-$merge-box-neutral-indicator-border: #0000;
-$merge-box-warning-icon-bg: #dbab09;
-$merge-box-warning-icon-text: #fff;
-$merge-box-warning-icon-border: #0000;
-$merge-box-warning-box-border: #ffd33d;
-$merge-box-warning-merge-highlight: #0000;
-$merge-box-error-icon-bg: #d73a49;
-$merge-box-error-icon-text: #fff;
-$merge-box-error-icon-border: #0000;
-$merge-box-error-indicator-bg: #d73a49;
-$merge-box-error-indicator-border: #0000;
-$project-card-bg: #fff;
-$project-header-bg: #24292e;
-$project-sidebar-bg: #fff;
-$project-gradient-in: #fff;
-$project-gradient-out: #fff0;
-$marketing-icon-primary: #2188ff;
-$marketing-icon-secondary: #79b8ff;
-$prettylights-syntax-comment: #6a737d;
-$prettylights-syntax-constant: #005cc5;
-$prettylights-syntax-entity: #6f42c1;
-$prettylights-syntax-storage-modifier-import: #24292e;
-$prettylights-syntax-entity-tag: #22863a;
-$prettylights-syntax-keyword: #d73a49;
-$prettylights-syntax-string: #032f62;
-$prettylights-syntax-variable: #e36209;
-$prettylights-syntax-brackethighlighter-unmatched: #b31d28;
-$prettylights-syntax-invalid-illegal-text: #fafbfc;
-$prettylights-syntax-invalid-illegal-bg: #b31d28;
-$prettylights-syntax-carriage-return-text: #fafbfc;
-$prettylights-syntax-carriage-return-bg: #d73a49;
-$prettylights-syntax-string-regexp: #22863a;
-$prettylights-syntax-markup-list: #735c0f;
-$prettylights-syntax-markup-heading: #005cc5;
-$prettylights-syntax-markup-italic: #24292e;
-$prettylights-syntax-markup-bold: #24292e;
-$prettylights-syntax-markup-deleted-text: #b31d28;
-$prettylights-syntax-markup-deleted-bg: #ffeef0;
-$prettylights-syntax-markup-inserted-text: #22863a;
-$prettylights-syntax-markup-inserted-bg: #f0fff4;
-$prettylights-syntax-markup-changed-text: #e36209;
-$prettylights-syntax-markup-changed-bg: #ffebda;
-$prettylights-syntax-markup-ignored-text: #f6f8fa;
-$prettylights-syntax-markup-ignored-bg: #005cc5;
-$prettylights-syntax-meta-diff-range: #6f42c1;
-$prettylights-syntax-brackethighlighter-angle: #586069;
-$prettylights-syntax-sublimelinter-gutter-mark: #959da5;
-$prettylights-syntax-constant-other-reference-link: #032f62;
-$codemirror-text: #24292e;
-$codemirror-bg: #fff;
-$codemirror-gutters-bg: #fff;
-$codemirror-guttermarker-text: #fff;
-$codemirror-guttermarker-subtle-text: #d1d5da;
-$codemirror-linenumber-text: #959da5;
-$codemirror-cursor: #24292e;
-$codemirror-selection-bg: #c8e1ff;
-$codemirror-activeline-bg: #fafbfc;
-$codemirror-matchingbracket-text: #24292e;
-$codemirror-lines-bg: #fff;
-$codemirror-syntax-comment: #6a737d;
-$codemirror-syntax-constant: #005cc5;
-$codemirror-syntax-entity: #6f42c1;
-$codemirror-syntax-keyword: #d73a49;
-$codemirror-syntax-storage: #d73a49;
-$codemirror-syntax-string: #032f62;
-$codemirror-syntax-support: #005cc5;
-$codemirror-syntax-variable: #e36209;
-$ansi-black: #24292e;
-$ansi-black-bright: #2f363d;
-$ansi-white: #e1e4e8;
-$ansi-white-bright: #e1e4e8;
-$ansi-gray: #959da5;
-$ansi-red: #f97583;
-$ansi-red-bright: #fdaeb7;
-$ansi-green: #85e89d;
-$ansi-green-bright: #bef5cb;
-$ansi-yellow: #ffea7f;
-$ansi-yellow-bright: #fff5b1;
-$ansi-blue: #79b8ff;
-$ansi-blue-bright: #c8e1ff;
-$ansi-magenta: #b392f0;
-$ansi-magenta-bright: #d1bcf9;
-$ansi-cyan: #76e3ea;
-$ansi-cyan-bright: #b3f0ff;
+$variables: (
+  'auto-black': '#1b1f23',
+  'auto-white': '#fff',
+  'auto-gray-0': '#fafbfc',
+  'auto-gray-1': '#f6f8fa',
+  'auto-gray-2': '#e1e4e8',
+  'auto-gray-3': '#d1d5da',
+  'auto-gray-4': '#959da5',
+  'auto-gray-5': '#6a737d',
+  'auto-gray-6': '#586069',
+  'auto-gray-7': '#444d56',
+  'auto-gray-8': '#2f363d',
+  'auto-gray-9': '#24292e',
+  'auto-blue-0': '#f1f8ff',
+  'auto-blue-1': '#dbedff',
+  'auto-blue-2': '#c8e1ff',
+  'auto-blue-3': '#79b8ff',
+  'auto-blue-4': '#2188ff',
+  'auto-blue-5': '#0366d6',
+  'auto-blue-6': '#005cc5',
+  'auto-blue-7': '#044289',
+  'auto-blue-8': '#032f62',
+  'auto-blue-9': '#05264c',
+  'auto-green-0': '#f0fff4',
+  'auto-green-1': '#dcffe4',
+  'auto-green-2': '#bef5cb',
+  'auto-green-3': '#85e89d',
+  'auto-green-4': '#34d058',
+  'auto-green-5': '#28a745',
+  'auto-green-6': '#22863a',
+  'auto-green-7': '#176f2c',
+  'auto-green-8': '#165c26',
+  'auto-green-9': '#144620',
+  'auto-yellow-0': '#fffdef',
+  'auto-yellow-1': '#fffbdd',
+  'auto-yellow-2': '#fff5b1',
+  'auto-yellow-3': '#ffea7f',
+  'auto-yellow-4': '#ffdf5d',
+  'auto-yellow-5': '#ffd33d',
+  'auto-yellow-6': '#f9c513',
+  'auto-yellow-7': '#dbab09',
+  'auto-yellow-8': '#b08800',
+  'auto-yellow-9': '#735c0f',
+  'auto-orange-0': '#fff8f2',
+  'auto-orange-1': '#ffebda',
+  'auto-orange-2': '#ffd1ac',
+  'auto-orange-3': '#ffab70',
+  'auto-orange-4': '#fb8532',
+  'auto-orange-5': '#f66a0a',
+  'auto-orange-6': '#e36209',
+  'auto-orange-7': '#d15704',
+  'auto-orange-8': '#c24e00',
+  'auto-orange-9': '#a04100',
+  'auto-red-0': '#ffeef0',
+  'auto-red-1': '#ffdce0',
+  'auto-red-2': '#fdaeb7',
+  'auto-red-3': '#f97583',
+  'auto-red-4': '#ea4a5a',
+  'auto-red-5': '#d73a49',
+  'auto-red-6': '#cb2431',
+  'auto-red-7': '#b31d28',
+  'auto-red-8': '#9e1c23',
+  'auto-red-9': '#86181d',
+  'auto-purple-0': '#f5f0ff',
+  'auto-purple-1': '#e6dcfd',
+  'auto-purple-2': '#d1bcf9',
+  'auto-purple-3': '#b392f0',
+  'auto-purple-4': '#8a63d2',
+  'auto-purple-5': '#6f42c1',
+  'auto-purple-6': '#5a32a3',
+  'auto-purple-7': '#4c2889',
+  'auto-purple-8': '#3a1d6e',
+  'auto-purple-9': '#29134e',
+  'auto-pink-0': '#ffeef8',
+  'auto-pink-1': '#fedbf0',
+  'auto-pink-2': '#f9b3dd',
+  'auto-pink-3': '#f692ce',
+  'auto-pink-4': '#ec6cb9',
+  'auto-pink-5': '#ea4aaa',
+  'auto-pink-6': '#d03592',
+  'auto-pink-7': '#b93a86',
+  'auto-pink-8': '#99306f',
+  'auto-pink-9': '#6d224f',
+  'text-primary': '#24292e',
+  'text-secondary': '#586069',
+  'text-tertiary': '#6a737d',
+  'text-placeholder': '#6a737d',
+  'text-disabled': '#6a737d',
+  'text-inverse': '#fff',
+  'text-link': '#0366d6',
+  'text-danger': '#cb2431',
+  'text-success': '#22863a',
+  'text-warning': '#b08800',
+  'text-white': '#fff',
+  'icon-primary': '#24292e',
+  'icon-secondary': '#586069',
+  'icon-tertiary': '#959da5',
+  'icon-info': '#0366d6',
+  'icon-danger': '#d73a49',
+  'icon-success': '#22863a',
+  'icon-warning': '#b08800',
+  'border-primary': '#e1e4e8',
+  'border-secondary': '#eaecef',
+  'border-tertiary': '#d1d5da',
+  'border-overlay': '#e1e4e8',
+  'border-inverse': '#fff',
+  'border-info': '#0366d6',
+  'border-danger': '#d73a49',
+  'border-success': '#34d058',
+  'border-warning': '#f9c513',
+  'bg-canvas': '#fff',
+  'bg-canvas-mobile': '#fff',
+  'bg-canvas-inverse': '#24292e',
+  'bg-canvas-inset': '#f6f8fa',
+  'bg-primary': '#fff',
+  'bg-secondary': '#fafbfc',
+  'bg-tertiary': '#f6f8fa',
+  'bg-overlay': '#fff',
+  'bg-backdrop': '#1b1f2380',
+  'bg-info': '#f1f8ff',
+  'bg-info-inverse': '#0366d6',
+  'bg-danger': '#ffeef0',
+  'bg-danger-inverse': '#d73a49',
+  'bg-success': '#dcffe4',
+  'bg-success-inverse': '#28a745',
+  'bg-warning': '#fff5b1',
+  'bg-warning-inverse': '#ffd33d',
+  'shadow-small': '0 1px 0 #1b1f230a',
+  'shadow-medium': '0 3px 6px #959da526',
+  'shadow-large': '0 8px 24px #959da533',
+  'shadow-extra-large': '0 12px 48px #959da54d',
+  'shadow-highlight': 'inset 0 1px 0 #ffffff40',
+  'shadow-inset': 'inset 0 1px 0 #e1e4e833',
+  'state-hover-primary-bg': '#0366d6',
+  'state-hover-primary-border': '#0366d6',
+  'state-hover-primary-text': '#fff',
+  'state-hover-primary-icon': '#fff',
+  'state-hover-secondary-bg': '#f6f8fa',
+  'state-hover-secondary-border': '#f6f8fa',
+  'state-selected-primary-bg': '#0366d6',
+  'state-selected-primary-border': '#0366d6',
+  'state-selected-primary-text': '#fff',
+  'state-selected-primary-icon': '#fff',
+  'state-focus-border': '#0366d6',
+  'state-focus-shadow': '0 0 0 3px #0366d64d',
+  'fade-fg-10': '#1b1f231a',
+  'fade-fg-15': '#1b1f2326',
+  'fade-fg-30': '#1b1f234d',
+  'fade-fg-50': '#1b1f2380',
+  'fade-fg-70': '#1b1f23b3',
+  'fade-fg-85': '#1b1f23d9',
+  'fade-black-10': '#1b1f231a',
+  'fade-black-15': '#1b1f2326',
+  'fade-black-30': '#1b1f234d',
+  'fade-black-50': '#1b1f2380',
+  'fade-black-70': '#1b1f23b3',
+  'fade-black-85': '#1b1f23d9',
+  'fade-white-10': '#ffffff1a',
+  'fade-white-15': '#ffffff26',
+  'fade-white-30': '#ffffff4d',
+  'fade-white-50': '#ffffff80',
+  'fade-white-70': '#ffffffb3',
+  'fade-white-85': '#ffffffd9',
+  'alert-info-text': '#24292e',
+  'alert-info-icon': '#04428999',
+  'alert-info-bg': '#dbedff',
+  'alert-info-border': '#04428933',
+  'alert-warn-text': '#24292e',
+  'alert-warn-icon': '#b08800',
+  'alert-warn-bg': '#fffbdd',
+  'alert-warn-border': '#b0880033',
+  'alert-error-text': '#24292e',
+  'alert-error-icon': '#9e1c2399',
+  'alert-error-bg': '#ffe3e6',
+  'alert-error-border': '#9e1c2333',
+  'alert-success-text': '#24292e',
+  'alert-success-icon': '#176f2ccc',
+  'alert-success-bg': '#dcffe4',
+  'alert-success-border': '#176f2c33',
+  'autocomplete-shadow': '0 3px 6px #959da526',
+  'autocomplete-row-border': '#eaecef',
+  'blankslate-icon': '#a3aab1',
+  'btn-text': '#24292e',
+  'btn-bg': '#fafbfc',
+  'btn-border': '#1b1f2326',
+  'btn-shadow': '0 1px 0 #1b1f230a',
+  'btn-inset-shadow': 'inset 0 1px 0 #ffffff40',
+  'btn-hover-bg': '#f3f4f6',
+  'btn-hover-border': '#1b1f2326',
+  'btn-selected-bg': '#edeff2',
+  'btn-focus-bg': '#fafbfc',
+  'btn-focus-border': '#1b1f2326',
+  'btn-focus-shadow': '0 0 0 3px #0366d64d',
+  'btn-shadow-active': 'inset 0 0.15em 0.3em #1b1f2326',
+  'btn-shadow-input-focus': '0 0 0 0.2em #0366d64d',
+  'btn-primary-text': '#fff',
+  'btn-primary-bg': '#2ea44f',
+  'btn-primary-border': '#1b1f2326',
+  'btn-primary-shadow': '0 1px 0 #1b1f231a',
+  'btn-primary-inset-shadow': 'inset 0 1px 0 #ffffff08',
+  'btn-primary-hover-bg': '#2c974b',
+  'btn-primary-hover-border': '#1b1f2326',
+  'btn-primary-selected-bg': '#2a8f47',
+  'btn-primary-selected-shadow': 'inset 0 1px 0 #14462033',
+  'btn-primary-disabled-text': '#fffc',
+  'btn-primary-disabled-bg': '#94d3a2',
+  'btn-primary-disabled-border': '#1b1f231a',
+  'btn-primary-focus-bg': '#2ea44f',
+  'btn-primary-focus-border': '#1b1f2326',
+  'btn-primary-focus-shadow': '0 0 0 3px #2ea44f66',
+  'btn-primary-icon': '#fffc',
+  'btn-primary-counter-bg': '#fff3',
+  'btn-outline-text': '#0366d6',
+  'btn-outline-hover-text': '#fff',
+  'btn-outline-hover-bg': '#0366d6',
+  'btn-outline-hover-border': '#1b1f2326',
+  'btn-outline-hover-shadow': '0 1px 0 #1b1f231a',
+  'btn-outline-hover-inset-shadow': 'inset 0 1px 0 #ffffff08',
+  'btn-outline-hover-counter-bg': '#fff3',
+  'btn-outline-selected-text': '#fff',
+  'btn-outline-selected-bg': '#035fc7',
+  'btn-outline-selected-border': '#1b1f2326',
+  'btn-outline-selected-shadow': 'inset 0 1px 0 #05264c33',
+  'btn-outline-disabled-text': '#0366d680',
+  'btn-outline-disabled-bg': '#fafbfc',
+  'btn-outline-disabled-counter-bg': '#0366d60d',
+  'btn-outline-focus-border': '#1b1f2326',
+  'btn-outline-focus-shadow': '0 0 0 3px #005cc566',
+  'btn-outline-counter-bg': '#0366d61a',
+  'btn-danger-text': '#d73a49',
+  'btn-danger-hover-text': '#fff',
+  'btn-danger-hover-bg': '#cb2431',
+  'btn-danger-hover-border': '#1b1f2326',
+  'btn-danger-hover-shadow': '0 1px 0 #1b1f231a',
+  'btn-danger-hover-inset-shadow': 'inset 0 1px 0 #ffffff08',
+  'btn-danger-hover-counter-bg': '#fff3',
+  'btn-danger-selected-text': '#fff',
+  'btn-danger-selected-bg': '#d42d3d',
+  'btn-danger-selected-border': '#1b1f2326',
+  'btn-danger-selected-shadow': 'inset 0 1px 0 #86181d33',
+  'btn-danger-disabled-text': '#d73a4980',
+  'btn-danger-disabled-bg': '#fafbfc',
+  'btn-danger-disabled-counter-bg': '#d73a490d',
+  'btn-danger-focus-border': '#1b1f2326',
+  'btn-danger-focus-shadow': '0 0 0 3px #cb243166',
+  'btn-danger-counter-bg': '#d73a491a',
+  'btn-counter-bg': '#1b1f2314',
+  'counter-text': '#24292e',
+  'counter-bg': '#d1d5da80',
+  'counter-primary-text': '#fff',
+  'counter-primary-bg': '#6a737d',
+  'counter-secondary-text': '#6a737d',
+  'dropdown-shadow': '0 8px 24px #959da533',
+  'label-border': '#e1e4e8',
+  'label-primary-text': '#24292e',
+  'label-primary-border': '#6a737d',
+  'label-secondary-text': '#586069',
+  'label-secondary-border': '#e1e4e8',
+  'label-info-text': '#0366d6',
+  'label-info-border': '#0366d6',
+  'label-success-text': '#22863a',
+  'label-success-border': '#28a745',
+  'label-warning-text': '#735c0f',
+  'label-warning-border': '#b08800',
+  'label-danger-text': '#d73a49',
+  'label-danger-border': '#cb2431',
+  'label-orange-text': '#c24e00',
+  'label-orange-border': '#f66a0a',
+  'input-bg': '#fff',
+  'input-contrast-bg': '#fafbfc',
+  'input-border': '#e1e4e8',
+  'input-shadow': 'inset 0 1px 2px #1b1f2313',
+  'input-disabled-bg': '#fff',
+  'input-disabled-border': '#e1e4e8',
+  'input-warning-border': '#f9c513',
+  'input-error-border': '#cb2431',
+  'input-tooltip-success-text': '#144620',
+  'input-tooltip-success-bg': '#dcffe4',
+  'input-tooltip-success-border': '#34d058',
+  'input-tooltip-warning-text': '#735c0f',
+  'input-tooltip-warning-bg': '#fff5b1',
+  'input-tooltip-warning-border': '#f9c513',
+  'input-tooltip-error-text': '#86181d',
+  'input-tooltip-error-bg': '#ffeef0',
+  'input-tooltip-error-border': '#f97583',
+  'avatar-bg': '#fff',
+  'avatar-border': '#0000',
+  'avatar-stack-fade': '#d1d5da',
+  'avatar-stack-fade-more': '#e1e4e8',
+  'avatar-child-shadow': '-2px -2px 0 #fffc',
+  'toast-text': '#24292e',
+  'toast-bg': '#fff',
+  'toast-border': '#e1e4e8',
+  'toast-shadow': '0 8px 24px #959da533',
+  'toast-icon': '#fff',
+  'toast-icon-bg': '#0366d6',
+  'toast-icon-border': '#0000',
+  'toast-success-text': '#24292e',
+  'toast-success-border': '#e1e4e8',
+  'toast-success-icon': '#fff',
+  'toast-success-icon-bg': '#28a745',
+  'toast-success-icon-border': '#0000',
+  'toast-warning-text': '#24292e',
+  'toast-warning-border': '#e1e4e8',
+  'toast-warning-icon': '#24292e',
+  'toast-warning-icon-bg': '#ffd33d',
+  'toast-warning-icon-border': '#0000',
+  'toast-danger-text': '#24292e',
+  'toast-danger-border': '#e1e4e8',
+  'toast-danger-icon': '#fff',
+  'toast-danger-icon-bg': '#d73a49',
+  'toast-danger-icon-border': '#0000',
+  'toast-loading-text': '#24292e',
+  'toast-loading-border': '#e1e4e8',
+  'toast-loading-icon': '#fff',
+  'toast-loading-icon-bg': '#586069',
+  'toast-loading-icon-border': '#0000',
+  'timeline-text': '#444d56',
+  'timeline-badge-bg': '#e1e4e8',
+  'timeline-target-badge-border': '#2188ff',
+  'timeline-target-badge-shadow': '#c8e1ff',
+  'select-menu-border-secondary': '#eaecef',
+  'select-menu-shadow': '0 0 18px #1b1f2366',
+  'select-menu-backdrop-bg': '#1b1f2380',
+  'select-menu-backdrop-border': '#0000',
+  'select-menu-tap-highlight': '#d1d5da80',
+  'select-menu-tap-focus-bg': '#dbedff',
+  'box-blue-border': '#c8e1ff',
+  'box-row-yellow-bg': '#fffbdd',
+  'box-row-blue-bg': '#f1f8ff',
+  'box-header-blue-bg': '#f1f8ff',
+  'box-header-blue-border': '#c8e1ff',
+  'box-border-info': '#0366d633',
+  'box-bg-info': '#f1f8ff',
+  'box-border-warning': '#ffd33d66',
+  'box-bg-warning': '#fffdef',
+  'branch-name-text': '#1b1f2399',
+  'branch-name-icon': '#a8bbd0',
+  'branch-name-bg': '#eaf5ff',
+  'branch-name-link-text': '#0366d6',
+  'branch-name-link-icon': '#a8bbd0',
+  'branch-name-link-bg': '#eaf5ff',
+  'markdown-code-bg': '#1b1f230d',
+  'markdown-frame-border': '#dfe2e5',
+  'markdown-blockquote-border': '#dfe2e5',
+  'markdown-table-border': '#dfe2e5',
+  'markdown-table-tr-border': '#c6cbd1',
+  'menu-heading-text': '#24292e',
+  'menu-border-active': '#f9826c',
+  'menu-bg-active': '#0000',
+  'sidenav-selected-bg': '#fff',
+  'sidenav-border-active': '#f9826c',
+  'header-text': '#ffffffb3',
+  'header-bg': '#24292e',
+  'header-logo': '#fff',
+  'filter-item-bar-bg': '#eff3f6',
+  'hidden-text-expander-bg': '#dfe2e5',
+  'hidden-text-expander-bg-hover': '#c6cbd1',
+  'drag-and-drop-border': '#c3c8cf',
+  'upload-enabled-border': '#dfe2e5',
+  'upload-enabled-border-focused': '#4a9eff',
+  'previewable-comment-form-border': '#c3c8cf',
+  'underlinenav-border': '#d1d5da00',
+  'underlinenav-border-hover': '#d1d5da',
+  'underlinenav-border-active': '#f9826c',
+  'underlinenav-text': '#24292e',
+  'underlinenav-text-hover': '#24292e',
+  'underlinenav-text-active': '#24292e',
+  'underlinenav-icon': '#959da5',
+  'underlinenav-icon-hover': '#959da5',
+  'underlinenav-icon-active': '#24292e',
+  'underlinenav-counter-text': '#24292e',
+  'verified-badge-text': '#22863a',
+  'verified-badge-bg': '#fff',
+  'verified-badge-border': '#e1e4e8',
+  'social-count-bg': '#fff',
+  'tooltip-text': '#fff',
+  'tooltip-bg': '#24292e',
+  'header-search-bg': '#24292e',
+  'header-search-border': '#444d56',
+  'search-keyword-hl': '#fffbdd',
+  'diffstat-neutral-bg': '#d1d5da',
+  'diffstat-neutral-border': '#d1d5da',
+  'diffstat-deletion-bg': '#d73a49',
+  'diffstat-deletion-border': '#d73a49',
+  'diffstat-addition-bg': '#28a745',
+  'diffstat-addition-border': '#28a745',
+  'files-explorer-icon': '#79b8ff',
+  'hl-author-bg': '#f1f8ff',
+  'hl-author-border': '#c8e1ff',
+  'logo-subdued': '#d1d5da',
+  'discussion-border': '#a2cbac',
+  'discussion-bg-success': '#28a745',
+  'actions-workflow-table-sticky-bg': '#fffffff2',
+  'repo-language-color-border': '#1b1f231a',
+  'code-selection-bg': '#c8e1ff',
+  'blob-line-highlight-bg': '#fffbdd',
+  'blob-line-highlight-border': '#0000',
+  'diff-addition-text': '#22863a',
+  'diff-addition-bg': '#e6ffed',
+  'diff-addition-border': '#34d058',
+  'diff-deletion-text': '#cb2431',
+  'diff-deletion-bg': '#ffeef0',
+  'diff-deletion-border': '#d73a49',
+  'diff-change-text': '#b08800',
+  'diff-change-bg': '#fff5b1',
+  'diff-change-border': '#f9c513',
+  'diff-blob-num-text': '#1b1f234d',
+  'diff-blob-num-hover-text': '#1b1f2399',
+  'diff-blob-addition-num-text': '#1b1f234d',
+  'diff-blob-addition-num-hover-text': '#1b1f2399',
+  'diff-blob-addition-num-bg': '#cdffd8',
+  'diff-blob-addition-line-bg': '#e6ffed',
+  'diff-blob-addition-word-bg': '#acf2bd',
+  'diff-blob-deletion-num-text': '#1b1f234d',
+  'diff-blob-deletion-num-hover-text': '#1b1f2399',
+  'diff-blob-deletion-num-bg': '#ffdce0',
+  'diff-blob-deletion-line-bg': '#ffeef0',
+  'diff-blob-deletion-word-bg': '#fdb8c0',
+  'diff-blob-hunk-text': '#1b1f23b3',
+  'diff-blob-hunk-num-bg': '#dbedff',
+  'diff-blob-hunk-line-bg': '#f1f8ff',
+  'diff-blob-empty-block-bg': '#fafbfc',
+  'diff-blob-selected-line-highlight-bg': '#ffdf5d33',
+  'diff-blob-selected-line-highlight-border': '#ffd33d',
+  'diff-blob-selected-line-highlight-mix-blend-mode': 'multiply',
+  'diff-blob-expander-icon': '#586069',
+  'diff-blob-expander-hover-icon': '#fff',
+  'diff-blob-expander-hover-bg': '#0366d6',
+  'diff-blob-comment-button-icon': '#fff',
+  'diff-blob-comment-button-bg': '#0366d6',
+  'diff-blob-comment-button-gradient-bg': '#0372ef',
+  'global-nav-logo': '#fff',
+  'global-nav-bg': '#24292e',
+  'global-nav-text': '#fff',
+  'global-nav-icon': '#fff',
+  'global-nav-input-bg': '#fafbfc',
+  'global-nav-input-border': '#fafbfc',
+  'global-nav-input-icon': '#d1d5da',
+  'global-nav-input-placeholder': '#959da5',
+  'calendar-graph-day-bg': '#ebedf0',
+  'calendar-graph-day-border': '#1b1f230f',
+  'calendar-graph-day-l1-bg': '#9be9a8',
+  'calendar-graph-day-l2-bg': '#40c463',
+  'calendar-graph-day-l3-bg': '#30a14e',
+  'calendar-graph-day-l4-bg': '#216e39',
+  'calendar-graph-day-l4-border': '#1b1f230f',
+  'calendar-graph-day-l3-border': '#1b1f230f',
+  'calendar-graph-day-l2-border': '#1b1f230f',
+  'calendar-graph-day-l1-border': '#1b1f230f',
+  'footer-invertocat-octicon': '#d1d5da',
+  'footer-invertocat-octicon-hover': '#6a737d',
+  'pr-state-draft-text': '#fff',
+  'pr-state-draft-bg': '#6a737d',
+  'pr-state-draft-border': '#0000',
+  'pr-state-open-text': '#fff',
+  'pr-state-open-bg': '#28a745',
+  'pr-state-open-border': '#0000',
+  'pr-state-merged-text': '#fff',
+  'pr-state-merged-bg': '#6f42c1',
+  'pr-state-merged-border': '#0000',
+  'pr-state-closed-text': '#fff',
+  'pr-state-closed-bg': '#d73a49',
+  'pr-state-closed-border': '#0000',
+  'topic-tag-text': '#0366d6',
+  'topic-tag-bg': '#f1f8ff',
+  'topic-tag-hover-bg': '#def',
+  'topic-tag-active-bg': '#e7f3ff',
+  'merge-box-success-icon-bg': '#28a745',
+  'merge-box-success-icon-text': '#fff',
+  'merge-box-success-icon-border': '#0000',
+  'merge-box-success-indicator-bg': '#28a745',
+  'merge-box-success-indicator-border': '#0000',
+  'merge-box-merged-icon-bg': '#6f42c1',
+  'merge-box-merged-icon-text': '#fff',
+  'merge-box-merged-icon-border': '#0000',
+  'merge-box-merged-box-border': '#6f42c1',
+  'merge-box-neutral-icon-bg': '#6a737d',
+  'merge-box-neutral-icon-text': '#fff',
+  'merge-box-neutral-icon-border': '#0000',
+  'merge-box-neutral-indicator-bg': '#6a737d',
+  'merge-box-neutral-indicator-border': '#0000',
+  'merge-box-warning-icon-bg': '#dbab09',
+  'merge-box-warning-icon-text': '#fff',
+  'merge-box-warning-icon-border': '#0000',
+  'merge-box-warning-box-border': '#ffd33d',
+  'merge-box-warning-merge-highlight': '#0000',
+  'merge-box-error-icon-bg': '#d73a49',
+  'merge-box-error-icon-text': '#fff',
+  'merge-box-error-icon-border': '#0000',
+  'merge-box-error-indicator-bg': '#d73a49',
+  'merge-box-error-indicator-border': '#0000',
+  'project-card-bg': '#fff',
+  'project-header-bg': '#24292e',
+  'project-sidebar-bg': '#fff',
+  'project-gradient-in': '#fff',
+  'project-gradient-out': '#fff0',
+  'marketing-icon-primary': '#2188ff',
+  'marketing-icon-secondary': '#79b8ff',
+  'prettylights-syntax-comment': '#6a737d',
+  'prettylights-syntax-constant': '#005cc5',
+  'prettylights-syntax-entity': '#6f42c1',
+  'prettylights-syntax-storage-modifier-import': '#24292e',
+  'prettylights-syntax-entity-tag': '#22863a',
+  'prettylights-syntax-keyword': '#d73a49',
+  'prettylights-syntax-string': '#032f62',
+  'prettylights-syntax-variable': '#e36209',
+  'prettylights-syntax-brackethighlighter-unmatched': '#b31d28',
+  'prettylights-syntax-invalid-illegal-text': '#fafbfc',
+  'prettylights-syntax-invalid-illegal-bg': '#b31d28',
+  'prettylights-syntax-carriage-return-text': '#fafbfc',
+  'prettylights-syntax-carriage-return-bg': '#d73a49',
+  'prettylights-syntax-string-regexp': '#22863a',
+  'prettylights-syntax-markup-list': '#735c0f',
+  'prettylights-syntax-markup-heading': '#005cc5',
+  'prettylights-syntax-markup-italic': '#24292e',
+  'prettylights-syntax-markup-bold': '#24292e',
+  'prettylights-syntax-markup-deleted-text': '#b31d28',
+  'prettylights-syntax-markup-deleted-bg': '#ffeef0',
+  'prettylights-syntax-markup-inserted-text': '#22863a',
+  'prettylights-syntax-markup-inserted-bg': '#f0fff4',
+  'prettylights-syntax-markup-changed-text': '#e36209',
+  'prettylights-syntax-markup-changed-bg': '#ffebda',
+  'prettylights-syntax-markup-ignored-text': '#f6f8fa',
+  'prettylights-syntax-markup-ignored-bg': '#005cc5',
+  'prettylights-syntax-meta-diff-range': '#6f42c1',
+  'prettylights-syntax-brackethighlighter-angle': '#586069',
+  'prettylights-syntax-sublimelinter-gutter-mark': '#959da5',
+  'prettylights-syntax-constant-other-reference-link': '#032f62',
+  'codemirror-text': '#24292e',
+  'codemirror-bg': '#fff',
+  'codemirror-gutters-bg': '#fff',
+  'codemirror-guttermarker-text': '#fff',
+  'codemirror-guttermarker-subtle-text': '#d1d5da',
+  'codemirror-linenumber-text': '#959da5',
+  'codemirror-cursor': '#24292e',
+  'codemirror-selection-bg': '#c8e1ff',
+  'codemirror-activeline-bg': '#fafbfc',
+  'codemirror-matchingbracket-text': '#24292e',
+  'codemirror-lines-bg': '#fff',
+  'codemirror-syntax-comment': '#6a737d',
+  'codemirror-syntax-constant': '#005cc5',
+  'codemirror-syntax-entity': '#6f42c1',
+  'codemirror-syntax-keyword': '#d73a49',
+  'codemirror-syntax-storage': '#d73a49',
+  'codemirror-syntax-string': '#032f62',
+  'codemirror-syntax-support': '#005cc5',
+  'codemirror-syntax-variable': '#e36209',
+  'ansi-black': '#24292e',
+  'ansi-black-bright': '#2f363d',
+  'ansi-white': '#e1e4e8',
+  'ansi-white-bright': '#e1e4e8',
+  'ansi-gray': '#959da5',
+  'ansi-red': '#f97583',
+  'ansi-red-bright': '#fdaeb7',
+  'ansi-green': '#85e89d',
+  'ansi-green-bright': '#bef5cb',
+  'ansi-yellow': '#ffea7f',
+  'ansi-yellow-bright': '#fff5b1',
+  'ansi-blue': '#79b8ff',
+  'ansi-blue-bright': '#c8e1ff',
+  'ansi-magenta': '#b392f0',
+  'ansi-magenta-bright': '#d1bcf9',
+  'ansi-cyan': '#76e3ea',
+  'ansi-cyan-bright': '#b3f0ff',
+);

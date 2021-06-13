@@ -106,6 +106,16 @@ export async function getPullTreeData(
   return await request(url, { accessToken })
 }
 
+export async function getPullComments(
+  userName: string,
+  repoName: string,
+  pullId: string,
+  accessToken?: string,
+): Promise<GitHubAPI.PullComments> {
+  const url = `https://${API_ENDPOINT}/repos/${userName}/${repoName}/pulls/${pullId}/comments`
+  return await request(url, { accessToken })
+}
+
 export async function getPullPageDocument(
   userName: string,
   repoName: string,

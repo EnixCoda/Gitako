@@ -2,6 +2,7 @@ import {
   ChevronDownIcon as ChevronDown,
   ChevronRightIcon as ChevronRight,
   ClockIcon as Clock,
+  CommentIcon as Comment,
   FileCodeIcon as FileCode,
   FileIcon as File,
   FileMediaIcon as FileMedia,
@@ -10,130 +11,76 @@ import {
   GearIcon as Gear,
   GrabberIcon as Grabber,
   HourglassIcon as Hourglass,
-  Icon as OcticonIcon,
   IconProps,
   MarkdownIcon as Markdown,
   OctofaceIcon as Octoface,
+  PinIcon as Pin,
   ReplyIcon as Reply,
   SearchIcon as Search,
+  TabIcon as Tab,
   XIcon as X,
 } from '@primer/octicons-react'
 import * as React from 'react'
 import { cx } from 'utils/cx'
 
-function getSVGIconComponent(
-  type: string,
-): {
-  IconComponent: OcticonIcon
-  name: string
-} {
-  switch (type) {
-    case 'search':
-      return {
-        IconComponent: Search,
-        name: 'Search',
-      }
-    case 'loading':
-      return {
-        IconComponent: Clock,
-        name: 'Clock',
-      }
-    case 'hourglass':
-      return {
-        IconComponent: Hourglass,
-        name: 'Hourglass',
-      }
-    case 'submodule':
-      return {
-        IconComponent: Submodule,
-        name: 'Submodule',
-      }
-    case 'grabber':
-      return {
-        IconComponent: Grabber,
-        name: 'Grabber',
-      }
-    case 'octoface':
-      return {
-        IconComponent: Octoface,
-        name: 'Octoface',
-      }
-    case 'chevron-down':
-      return {
-        IconComponent: ChevronDown,
-        name: 'ChevronDown',
-      }
-    case 'x':
-      return {
-        IconComponent: X,
-        name: 'X',
-      }
-    case 'gear':
-      return {
-        IconComponent: Gear,
-        name: 'Gear',
-      }
-    case 'folder':
-      return {
-        IconComponent: ChevronRight,
-        name: 'ChevronRight',
-      }
-    case 'go-to':
-      return {
-        IconComponent: Reply,
-        name: 'Reply',
-      }
-    // not supported in octicon v2 yet
-    // case '.pdf':
-    //   return {
-    //     IconComponent: FilePdf,
-    //     name: 'FilePdf',
-    //   }
-    case '.zip':
-    case '.rar':
-    case '.7z':
-      return {
-        IconComponent: FileZip,
-        name: 'FileZip',
-      }
-    case '.md':
-      return {
-        IconComponent: Markdown,
-        name: 'Markdown',
-      }
-    case '.png':
-    case '.jpg':
-    case '.gif':
-    case '.bmp':
-      return {
-        IconComponent: FileMedia,
-        name: 'FileMedia',
-      }
-    case '.js':
-    case '.jsx':
-    case '.ts':
-    case '.tsx':
-    case '.es6':
-    case '.coffee':
-    case '.css':
-    case '.less':
-    case '.scss':
-    case '.sass':
-      return {
-        IconComponent: FileCode,
-        name: 'FileCode',
-      }
-    // TODO: adapt to more file types
-    // case '': return FileBinary
-    // case '': return FileSubmodule
-    // case '': return FileSymlinkDirectory
-    // case '': return FileSymlinkFile
-    default:
-      return {
-        IconComponent: File,
-        name: 'File',
-      }
-  }
+const iconToComponentMap = {
+  Search,
+  Clock,
+  Comment,
+  Hourglass,
+  Submodule,
+  Grabber,
+  Octoface,
+  ChevronDown,
+  X,
+  Gear,
+  ChevronRight,
+  Reply,
+  FileZip,
+  Markdown,
+  FileMedia,
+  FileCode,
+  File,
+  Pin,
+  Tab,
+}
+
+const defaultIcon = 'File'
+const typeToIconComponentMap: {
+  [type: string]: keyof typeof iconToComponentMap
+} = {
+  search: 'Search',
+  loading: 'Clock',
+  hourglass: 'Hourglass',
+  submodule: 'Submodule',
+  grabber: 'Grabber',
+  octoface: 'Octoface',
+  comment: 'Comment',
+  x: 'X',
+  pin: 'Pin',
+  tab: 'Tab',
+  gear: 'Gear',
+  folder: 'ChevronRight',
+  'chevron-down': 'ChevronDown',
+  'go-to': 'Reply',
+  '.zip': 'FileZip',
+  '.rar': 'FileZip',
+  '.7z': 'FileZip',
+  '.md': 'Markdown',
+  '.png': 'FileMedia',
+  '.jpg': 'FileMedia',
+  '.gif': 'FileMedia',
+  '.bmp': 'FileMedia',
+  '.js': 'FileCode',
+  '.jsx': 'FileCode',
+  '.ts': 'FileCode',
+  '.tsx': 'FileCode',
+  '.es6': 'FileCode',
+  '.coffee': 'FileCode',
+  '.css': 'FileCode',
+  '.less': 'FileCode',
+  '.scss': 'FileCode',
+  '.sass': 'FileCode',
 }
 
 type Props = {
@@ -151,7 +98,8 @@ export const Icon = React.memo(function Icon({
 }: Props) {
   let children: React.ReactNode = null
   if (!placeholder) {
-    const { name, IconComponent } = getSVGIconComponent(type)
+    const name = typeToIconComponentMap[type] || defaultIcon
+    const IconComponent = iconToComponentMap[name]
     children = <IconComponent className={cx('octicon', name)} {...otherProps} />
   }
   return (

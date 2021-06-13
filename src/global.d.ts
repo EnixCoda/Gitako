@@ -1,9 +1,12 @@
 type MetaData = {
   userName: string
   repoName: string
+  defaultBranchName: string
   branchName: string
   type?: EnumString<'tree' | 'blob' | 'pull'>
 }
+
+type PartialMetaData = Omit<MakeOptional<MetaData, 'branchName'>, 'defaultBranchName'>
 
 type TreeNode = {
   name: string
@@ -13,6 +16,7 @@ type TreeNode = {
   url?: string
   sha?: string
   accessDenied?: boolean
+  comments?: number
 }
 
 type IO<T, ChangeT = T> = {

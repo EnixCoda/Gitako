@@ -10,13 +10,13 @@ const className = 'clippy-wrapper'
 export const ClippyClassName = className
 
 export function Clippy({ codeSnippetElement }: Props) {
-  const [status, setStatus] = React.useState<'normal' | 'success' | 'fail'>('normal')
+  const [state, setState] = React.useState<'normal' | 'success' | 'fail'>('normal')
   React.useEffect(() => {
     const timer = window.setTimeout(() => {
-      setStatus('normal')
+      setState('normal')
     }, 1000)
     return () => window.clearTimeout(timer)
-  }, [status])
+  }, [state])
 
   // Temporary fix:
   // React moved root node of event delegation since v17
@@ -26,7 +26,7 @@ export function Clippy({ codeSnippetElement }: Props) {
     const element = elementRef.current
     if (element) {
       function onClippyClick() {
-        setStatus(copyElementContent(codeSnippetElement) ? 'success' : 'fail')
+        setState(copyElementContent(codeSnippetElement) ? 'success' : 'fail')
       }
       element.addEventListener('click', onClippyClick)
       return () => element.removeEventListener('click', onClippyClick)
@@ -36,7 +36,7 @@ export function Clippy({ codeSnippetElement }: Props) {
   return (
     <div className={className}>
       <button className="clippy" ref={elementRef}>
-        <i className={cx('icon', status)} />
+        <i className={cx('icon', state)} />
       </button>
     </div>
   )

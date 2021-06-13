@@ -1,13 +1,15 @@
+import { useConfigs } from 'containers/ConfigsContext'
 import { GITHUB_OAUTH } from 'env'
 import { Base64 } from 'js-base64'
-import { platform } from 'platforms'
-import * as React from 'react'
 import { resolveGitModules } from 'utils/gitSubmodule'
-import { useOnPJAXDone } from 'utils/hooks/usePJAX'
 import { sortFoldersToFront } from 'utils/treeParser'
 import * as API from './API'
 import * as DOMHelper from './DOMHelper'
+import { useGitHubAttachCopyFileButton } from './hooks/useGitHubAttachCopyFileButton'
+import { useGitHubAttachCopySnippetButton } from './hooks/useGitHubAttachCopySnippetButton'
+import { useGitHubCodeFold } from './hooks/useGitHubCodeFold'
 import * as URLHelper from './URLHelper'
+export { useGitHubCodeFold } from './hooks/useGitHubCodeFold'
 
 function processTree(tree: TreeNode[]): TreeNode {
   // nodes are created from items and put onto tree
@@ -70,9 +72,7 @@ function getUrlForRedirect(
   // Modern browsers have great support for handling unsafe URL,
   // It may be possible to sanitize path with
   // `path => path.includes('#') ? path.replace(/#/g, '%23') : '...'
-  return `https://${
-    window.location.host
-  }/${userName}/${repoName}/${type}/${branchName}/${path
+  return `https://${window.location.host}/${userName}/${repoName}/${type}/${branchName}/${path
     .split('/')
     .map(encodeURIComponent)
     .join('/')}`
@@ -82,11 +82,32 @@ export function isEnterprise() {
   return !window.location.host.endsWith('github.com')
 }
 
+function resolvePageScope(defaultBranchName?: string) {
+  const parsed = URLHelper.parse()
+  switch (parsed.type) {
+    case 'blob':
+    case 'tree': {
+      // handle URLs like {user}/{repo}/{'tree'|'blob'}/{sha|branch}, issue #131
+      const branchName = DOMHelper.getCurrentBranch()
+      if (branchName && branchName !== defaultBranchName) return `branch-${branchName}`
+      break
+    }
+    case 'tags':
+      return 'tags'
+    case 'releases':
+      return 'releases'
+    case 'pull':
+      const pullId = URLHelper.isInPullPage()
+      if (pullId) return `pull-${pullId}`
+  }
+  return 'general'
+}
+
 const pathSHAMap = new Map<string, string>()
 
 export const GitHub: Platform = {
   isEnterprise,
-  resolveMeta() {
+  resolvePartialMetaData() {
     if (!DOMHelper.isInRepoPage()) {
       return null
     }
@@ -119,8 +140,7 @@ export const GitHub: Platform = {
     return metaData
   },
   async getDefaultBranchName({ userName, repoName }, accessToken) {
-    const data = await API.getRepoMeta(userName, repoName, accessToken)
-    return data.default_branch
+    return (await API.getRepoMeta(userName, repoName, accessToken)).default_branch
   },
   resolveUrlFromMetaData({ userName, repoName }) {
     return {
@@ -140,9 +160,10 @@ export const GitHub: Platform = {
         GITHUB_API_RESPONSE_LENGTH_LIMIT / GITHUB_API_PAGED_RESPONSE_LENGTH_LIMIT,
       )
       let page = 1
-      const [pullData, treeData] = await Promise.all([
+      const [pullData, treeData, commentData] = await Promise.all([
         API.getPullData(userName, repoName, pullId, accessToken),
         API.getPullTreeData(userName, repoName, pullId, page, accessToken),
+        API.getPullComments(userName, repoName, pullId, accessToken),
       ])
 
       const count = pullData.changed_files
@@ -170,6 +191,7 @@ export const GitHub: Platform = {
           window.location.search
         }#${creator(item.filename) || ''}`,
         sha: item.sha,
+        comments: commentData?.filter(comment => item.filename === comment.path).length,
       }))
 
       const root = processTree(nodes)
@@ -235,7 +257,11 @@ export const GitHub: Platform = {
     return Boolean(URLHelper.isInPullPage())
   },
   getCurrentPath(branchName) {
-    return URLHelper.getCurrentPath(branchName)
+    if (URLHelper.parse().path.length) {
+      return DOMHelper.getPath()
+    } else {
+      return []
+    }
   },
   setOAuth(code) {
     return API.OAuth(code)
@@ -248,6 +274,12 @@ export const GitHub: Platform = {
     })
     return `https://github.com/login/oauth/authorize?` + params.toString()
   },
+  usePlatformHooks() {
+    const { copyFileButton, copySnippetButton, codeFolding } = useConfigs().value
+    useGitHubAttachCopyFileButton(copyFileButton)
+    useGitHubAttachCopySnippetButton(copySnippetButton)
+    useGitHubCodeFold(codeFolding)
+  },
 }
 
 async function createPullFileResolver(userName: string, repoName: string, pullId: string) {
@@ -257,55 +289,4 @@ async function createPullFileResolver(userName: string, repoName: string, pullId
     const id = doc.querySelector(`*[data-path^="${path}"]`)?.parentElement?.id
     return id
   }
-}
-
-function findMissingFolders(nodes: TreeNode[]) {
-  const folders = new Set<string>()
-  const foundFolders = new Set<string>()
-  for (const node of nodes) {
-    let path = node.path
-    if (node.type === 'tree') foundFolders.add(path)
-    else {
-      while (true) {
-        // 'a/b' -> 'a'
-        // 'a' -> ''
-        path = path.substring(0, path.lastIndexOf('/'))
-        if (path === '') break
-        folders.add(path)
-      }
-    }
-  }
-
-  const missingFolders: string[] = []
-  for (const folder of folders) {
-    if (!foundFolders.has(folder)) {
-      missingFolders.push(folder)
-    }
-  }
-
-  return missingFolders
-}
-
-export function useGitHubAttachCopySnippetButton(copySnippetButton: boolean) {
-  const attachCopySnippetButton = React.useCallback(
-    function attachCopySnippetButton() {
-      if (platform !== GitHub) return
-      if (copySnippetButton) return DOMHelper.attachCopySnippet() || undefined // for the sake of react effect
-    },
-    [copySnippetButton],
-  )
-  React.useEffect(attachCopySnippetButton, [copySnippetButton])
-  useOnPJAXDone(attachCopySnippetButton)
-}
-
-export function useGitHubAttachCopyFileButton(copyFileButton: boolean) {
-  const attachCopyFileButton = React.useCallback(
-    function attachCopyFileButton() {
-      if (platform !== GitHub) return
-      if (copyFileButton) return DOMHelper.attachCopyFileBtn() || undefined // for the sake of react effect
-    },
-    [copyFileButton],
-  )
-  React.useEffect(attachCopyFileButton, [copyFileButton])
-  useOnPJAXDone(attachCopyFileButton)
 }

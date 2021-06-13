@@ -1,4 +1,4 @@
-import { Text } from '@primer/components'
+import { Label, Text } from '@primer/components'
 import { LoadingIndicator } from 'components/LoadingIndicator'
 import { Node } from 'components/Node'
 import { SearchBar } from 'components/SearchBar'
@@ -11,9 +11,12 @@ import * as React from 'react'
 import { FixedSizeList, ListChildComponentProps } from 'react-window'
 import { cx } from 'utils/cx'
 import { focusFileExplorer } from 'utils/DOMHelper'
+import { run } from 'utils/general'
+import { useLoadedContext } from 'utils/hooks/useLoadedContext'
 import { useOnLocationChange } from 'utils/hooks/useOnLocationChange'
 import { useOnPJAXDone } from 'utils/hooks/usePJAX'
 import { VisibleNodes } from 'utils/VisibleNodesGenerator'
+import { SideBarStateContext } from '../containers/SideBarState'
 import { Icon } from './Icon'
 import { SearchMode, searchModes } from './searchModes'
 import { SizeObserver } from './SizeObserver'
@@ -27,7 +30,6 @@ type renderNodeContext = {
 
 const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplorer(props) {
   const {
-    state,
     visibleNodes,
     visibleNodesGenerator,
     freeze,
@@ -37,16 +39,14 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
     onFocusSearchBar,
     goTo,
     handleKeyDown,
-    toggleShowSettings,
     metaData,
     expandTo,
     setUpTree,
-    treeRoot,
     defer,
     searched,
   } = props
   const {
-    value: { accessToken, compressSingletonFolder, searchMode },
+    value: { accessToken, compressSingletonFolder, searchMode, commentToggle },
   } = useConfigs()
 
   const onSearch = React.useCallback(
@@ -59,18 +59,19 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
     [updateSearchKey, visibleNodesGenerator],
   )
 
+  const stateContext = useLoadedContext(SideBarStateContext)
+  const state = stateContext.value
+
   React.useEffect(() => {
-    if (treeRoot) {
-      setUpTree({
-        treeRoot,
-        metaData,
-        config: {
-          compressSingletonFolder,
-          accessToken,
-        },
-      })
-    }
-  }, [setUpTree, treeRoot, metaData, compressSingletonFolder, accessToken])
+    setUpTree({
+      metaData,
+      config: {
+        compressSingletonFolder,
+        accessToken,
+      },
+      stateContext,
+    })
+  }, [setUpTree, metaData, compressSingletonFolder, accessToken])
 
   React.useEffect(() => {
     if (visibleNodes?.focusedNode) focusFileExplorer()
@@ -104,18 +105,26 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
           <Icon type="search" />
         </button>
       ) : undefined
+    const renderFileCommentAmounts = (node: TreeNode): React.ReactNode =>
+      node.comments !== undefined &&
+      node.comments > 0 && (
+        <span className={'node-item-comment'}>
+          <Icon type={'comment'} /> {node.comments > 9 ? '9+' : node.comments}
+        </span>
+      )
 
     const renders: ((node: TreeNode) => React.ReactNode)[] = []
+    if (commentToggle) renders.push(renderFileCommentAmounts)
     if (searchMode === 'fuzzy') renders.push(renderFindInFolderButton)
     if (searched) renders.push(renderGoToButton)
 
     return renders.length
       ? node => renders.map((render, i) => <React.Fragment key={i}>{render(node)}</React.Fragment>)
       : undefined
-  }, [goTo, onSearch, searched, searchMode])
+  }, [goTo, onSearch, searched, searchMode, commentToggle])
 
   const renderLabelText = React.useCallback(
-    node => searchModes[searchMode].renderNodeLabelText(node, searchKey),
+    (node: TreeNode) => searchModes[searchMode].renderNodeLabelText(node, searchKey),
     [searchKey, searchMode],
   )
 
@@ -131,59 +140,63 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
   )
 
   return (
-    <div
-      className={cx(`file-explorer`, { freeze })}
-      tabIndex={-1}
-      onKeyDown={handleKeyDown}
-      onClick={freeze ? toggleShowSettings : undefined}
-    >
-      {state !== 'done' ? (
-        <LoadingIndicator
-          text={
-            {
-              pulling: 'Fetching File List...',
-              rendering: 'Rendering File List...',
-            }[state]
-          }
-        />
-      ) : (
-        visibleNodes &&
-        renderNodeContext && (
-          <>
-            <SearchBar value={searchKey} onSearch={onSearch} onFocus={onFocusSearchBar} />
-            {searched && visibleNodes.nodes.length === 0 && (
-              <>
-                <Text marginTop={6} textAlign="center" color="text.gray">
-                  No results found.
-                </Text>
-                {defer && (
-                  <Text textAlign="center" color="gray.4" fontSize="12px">
-                    Lazy mode is ON. Search results are limited to loaded folders.
-                  </Text>
-                )}
-              </>
-            )}
-            <SizeObserver className={'files'}>
-              {({ width = 0, height = 0 }) => (
-                <ListView
-                  height={height}
-                  width={width}
-                  renderNodeContext={renderNodeContext}
-                  expandTo={expandTo}
-                  metaData={metaData}
-                />
-              )}
-            </SizeObserver>
-          </>
-        )
-      )}
+    <div className={cx(`file-explorer`, { freeze })} tabIndex={-1} onKeyDown={handleKeyDown}>
+      {run(() => {
+        switch (state) {
+          case 'tree-loading':
+            return <LoadingIndicator text={'Fetching File List...'} />
+          case 'tree-rendering':
+            return <LoadingIndicator text={'Rendering File List...'} />
+          case 'tree-rendered':
+            return (
+              visibleNodes &&
+              renderNodeContext && (
+                <>
+                  <SearchBar value={searchKey} onSearch={onSearch} onFocus={onFocusSearchBar} />
+                  {searched && visibleNodes.nodes.length === 0 && (
+                    <>
+                      <Text marginTop={6} textAlign="center" color="text.gray">
+                        No results found.
+                      </Text>
+                      {defer && (
+                        <Text textAlign="center" color="gray.4" fontSize="12px">
+                          Lazy mode is ON. Search results are limited to loaded folders.
+                        </Text>
+                      )}
+                    </>
+                  )}
+                  <SizeObserver className={'files'}>
+                    {({ width = 0, height = 0 }) => (
+                      <ListView
+                        height={height}
+                        width={width}
+                        renderNodeContext={renderNodeContext}
+                        expandTo={expandTo}
+                        metaData={metaData}
+                      />
+                    )}
+                  </SizeObserver>
+
+                  {defer && (
+                    <Label
+                      title="File tree data is loaded on demand. And search results are limited."
+                      bg="yellow.5"
+                      color="gray.6"
+                    >
+                      Lazy Mode
+                    </Label>
+                  )}
+                </>
+              )
+            )
+        }
+      })}
     </div>
   )
 }
 
 RawFileExplorer.defaultProps = {
   freeze: false,
-  state: 'pulling',
   searchKey: '',
   visibleNodes: null,
 }
@@ -248,13 +261,15 @@ function ListView({ width, height, metaData, expandTo, renderNodeContext }: List
   useOnLocationChange(goToCurrentItem)
   useOnPJAXDone(goToCurrentItem)
 
+  const { compactFileTree } = useConfigs().value
+
   return (
     <FixedSizeList
       ref={listRef}
       itemKey={(index, { visibleNodes }) => visibleNodes?.nodes[index]?.path}
       itemData={renderNodeContext}
       itemCount={visibleNodes.nodes.length}
-      itemSize={37}
+      itemSize={compactFileTree ? 24 : 37}
       height={height}
       width={width}
     >

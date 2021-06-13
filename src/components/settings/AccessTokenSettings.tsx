@@ -8,7 +8,7 @@ import * as React from 'react'
 import { useStateIO } from 'utils/hooks/useStateIO'
 import { SettingsSection } from './SettingsSection'
 
-const ACCESS_TOKEN_REGEXP = /^[0-9a-f]+$/
+const ACCESS_TOKEN_REGEXP = /^([0-9a-fA-F]+|gh[pousr]_[A-Za-z0-9_]+)$/
 
 type Props = {}
 
@@ -37,28 +37,31 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
     [],
   )
 
-  const onPressAccessToken = React.useCallback(({ key }: React.KeyboardEvent) => {
-    if (key === 'Enter') saveToken()
-  }, [])
-
   const saveToken = React.useCallback(
-    async (hint?: typeof useAccessTokenHint.value) => {
+    async (
+      hint: typeof useAccessTokenHint.value = (
+        <span>
+          <a href="#" onClick={() => window.location.reload()}>
+            Reload
+          </a>{' '}
+          to activate!
+        </span>
+      ),
+    ) => {
       if (accessToken) {
         configContext.onChange({ accessToken })
         useAccessToken.onChange('')
-        useAccessTokenHint.onChange(
-          hint || (
-            <span>
-              <a href="#" onClick={() => window.location.reload()}>
-                Reload
-              </a>{' '}
-              to activate!
-            </span>
-          ),
-        )
+        useAccessTokenHint.onChange(hint)
       }
     },
     [accessToken],
+  )
+
+  const onPressAccessToken = React.useCallback(
+    ({ key }: React.KeyboardEvent) => {
+      if (key === 'Enter') saveToken()
+    },
+    [saveToken],
   )
 
   return (
@@ -121,7 +124,7 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
           </div>
         </div>
       )}
-      {accessTokenHint && !focusInput.value && <span className={'hint'}>{accessTokenHint}</span>}
+      {accessTokenHint && <span className={'hint'}>{accessTokenHint}</span>}
     </SettingsSection>
   )
 }

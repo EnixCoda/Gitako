@@ -1,15 +1,25 @@
 import { SideBar } from 'components/SideBar'
-import { ConfigsContext, ConfigsContextWrapper } from 'containers/ConfigsContext'
+import { ConfigsContextWrapper } from 'containers/ConfigsContext'
 import * as React from 'react'
-import { ErrorBoundary } from './ErrorBoundary'
+import { ErrorBoundary } from '../containers/ErrorBoundary'
+import { StateBarErrorContextWrapper } from '../containers/ErrorContext'
+import { OAuthWrapper } from '../containers/OAuthWrapper'
+import { RepoContextWrapper } from '../containers/RepoContext'
+import { StateBarStateContextWrapper } from '../containers/SideBarState'
 
 export function Gitako() {
   return (
     <ErrorBoundary>
       <ConfigsContextWrapper>
-        <ConfigsContext.Consumer>
-          {configContext => configContext && <SideBar configContext={configContext} />}
-        </ConfigsContext.Consumer>
+        <StateBarStateContextWrapper>
+          <StateBarErrorContextWrapper>
+            <OAuthWrapper>
+              <RepoContextWrapper>
+                <SideBar />
+              </RepoContextWrapper>
+            </OAuthWrapper>
+          </StateBarErrorContextWrapper>
+        </StateBarStateContextWrapper>
       </ConfigsContextWrapper>
     </ErrorBoundary>
   )

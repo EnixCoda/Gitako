@@ -43,7 +43,7 @@ export function CopyFileButton(props: React.PropsWithChildren<Props>) {
   }, [])
 
   return (
-    <a ref={elementRef} className={cx('btn btn-sm BtnGroup-item copy-file-btn', className)}>
+    <a ref={elementRef} className={cx('btn btn-sm BtnGroup-item', className)}>
       {content}
     </a>
   )

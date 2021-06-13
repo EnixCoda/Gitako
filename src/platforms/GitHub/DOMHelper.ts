@@ -44,8 +44,9 @@ export function getCurrentBranch(passive = false) {
   if (branchButtonElement) {
     const branchNameSpanElement = branchButtonElement.querySelector('span')
     if (branchNameSpanElement) {
-      const partialBranchNameFromInnerText = branchNameSpanElement.innerText
-      if (!partialBranchNameFromInnerText.includes('…')) return partialBranchNameFromInnerText
+      const partialBranchNameFromInnerText = branchNameSpanElement.textContent || ''
+      if (partialBranchNameFromInnerText && !partialBranchNameFromInnerText.includes('…'))
+        return partialBranchNameFromInnerText
     }
     const defaultTitle = 'Switch branches or tags'
     const title = branchButtonElement.title.trim()
@@ -139,6 +140,13 @@ export function getCodeElement() {
  * click these buttons will copy file content to clipboard
  */
 export function attachCopyFileBtn() {
+  const removeButtons = () => {
+    const buttons = document.querySelectorAll(`.${copyFileButtonClassName}`)
+    buttons.forEach(button => {
+      button.parentElement?.removeChild(button)
+    })
+  }
+
   if (getCurrentPageType() === PAGE_TYPES.RAW_TEXT) {
     // the button group in file content header
     const buttonGroupSelector = '.repository-content .Box-header .BtnGroup'
@@ -147,6 +155,8 @@ export function attachCopyFileBtn() {
     if (buttonGroups.length === 0) {
       raiseError(new Error(`No button groups found`))
     }
+
+    removeButtons() // prevent duplicated buttons
 
     buttonGroups.forEach(async buttonGroup => {
       if (!buttonGroup.lastElementChild) return
@@ -158,12 +168,7 @@ export function attachCopyFileBtn() {
   }
 
   // return callback so that disabling after redirecting from file page to non-page works properly
-  return () => {
-    const buttons = document.querySelectorAll(`.${copyFileButtonClassName}`)
-    buttons.forEach(button => {
-      button.parentElement?.removeChild(button)
-    })
-  }
+  return removeButtons
 }
 
 export function attachCopySnippet() {
@@ -227,4 +232,23 @@ export function attachCopySnippet() {
       },
     )
   })
+}
+
+export function getPath() {
+  const folderPathElementSelector = '.file-navigation .position-relative' // available when in path like '/tree/...'
+  const blobPathElementSelector = '#blob-path' // available when in path like '/blob/...'
+  const pathElement =
+    document.querySelector(blobPathElementSelector) ||
+    document.querySelector(folderPathElementSelector)?.nextElementSibling
+  if (!pathElement?.querySelector('.js-repo-root')) {
+    return []
+  }
+  const path = ((pathElement as HTMLDivElement).textContent || '')
+    .replace(/\n/g, '')
+    .replace(/\/\s+Jump to.*/m, '')
+    .trim()
+    .split('/')
+    .filter(Boolean)
+    .slice(1) // the first is the repo's name
+  return path
 }

@@ -1,0 +1,64 @@
+@use './light/variables.scss' as light;
+@use './dark/variables.scss' as dark;
+@use './darkDimmed/variables.scss' as darkDimmed;
+
+@mixin setVariables($variables) {
+  @each $name, $value in $variables {
+    --gitako-#{$name}: #{$value};
+  }
+}
+
+// Following rules are organized according to common variables to reduce output CSS size
+:root {
+  // default, e.g. when not login
+  @include setVariables(light.$variables);
+}
+
+:root {
+  &[data-color-mode='light'][data-light-theme='light'],
+  &[data-color-mode='dark'][data-dark-theme='light'] {
+    @include setVariables(light.$variables);
+  }
+
+  &[data-color-mode='light'][data-light-theme='dark'],
+  &[data-color-mode='dark'][data-dark-theme='dark'] {
+    @include setVariables(dark.$variables);
+  }
+
+  &[data-color-mode='light'][data-light-theme='dark_dimmed'],
+  &[data-color-mode='dark'][data-dark-theme='dark_dimmed'] {
+    @include setVariables(darkDimmed.$variables);
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root[data-color-mode='auto'] {
+    &[data-light-theme='light'] {
+      @include setVariables(light.$variables);
+    }
+
+    &[data-light-theme='dark'] {
+      @include setVariables(dark.$variables);
+    }
+
+    &[data-light-theme='dark_dimmed'] {
+      @include setVariables(darkDimmed.$variables);
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-color-mode='auto'] {
+    &[data-dark-theme='light'] {
+      @include setVariables(light.$variables);
+    }
+
+    &[data-dark-theme='dark'] {
+      @include setVariables(dark.$variables);
+    }
+
+    &[data-dark-theme='dark_dimmed'] {
+      @include setVariables(darkDimmed.$variables);
+    }
+  }
+}

@@ -65,7 +65,7 @@ function getUrlForRedirect(
   // Modern browsers have great support for handling unsafe URL,
   // It may be possible to sanitize path with
   // `path => path.includes('#') ? path.replace(/#/g, '%23') : '...'
-  return `https://${
+  return `${window.location.protocol}//${
     window.location.host
   }/${userName}/${repoName}/src/branch/${branchName}/${path
     .split('/')
@@ -77,7 +77,7 @@ export const Gitea: Platform = {
   isEnterprise() {
     return !window.location.host.endsWith('gitea.com')
   },
-  resolveMeta() {
+  resolvePartialMetaData() {
     if (!DOMHelper.isInRepoPage()) {
       return null
     }
@@ -107,8 +107,8 @@ export const Gitea: Platform = {
   },
   resolveUrlFromMetaData({ userName, repoName }) {
     return {
-      repoUrl: `https://${window.location.host}/${userName}/${repoName}`,
-      userUrl: `https://${window.location.host}/${userName}`,
+      repoUrl: `${window.location.protocol}//${window.location.host}/${userName}/${repoName}`,
+      userUrl: `${window.location.protocol}//${window.location.host}/${userName}`,
     }
   },
   async getTreeData(metaData, path, recursive, accessToken) {
@@ -163,6 +163,6 @@ export const Gitea: Platform = {
     return API.OAuth(code)
   },
   getOAuthLink() {
-    return `https://${window.location.host}/api/v1/user/applications/oauth2`
+    return `${window.location.protocol}//${window.location.host}/api/v1/user/applications/oauth2`
   },
 }
