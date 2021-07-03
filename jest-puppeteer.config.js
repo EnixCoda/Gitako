@@ -1,11 +1,19 @@
 const path = require('path')
+if (process.arch === 'arm64') {
+  require('dotenv').config({
+    path: '.env.arm.mac',
+  })
+}
 
 const CRX_PATH = path.resolve(__dirname, 'dist')
 
 module.exports = {
   launch: {
-    executablePath: process.env.PUPPETEER_EXEC_PATH, // set by mujo-code/puppeteer-headful
-    headless: false, // required for extensions
+    // set by mujo-code/puppeteer-headful on GitHub actions
+    // also for usages on ARM chip Mac
+    executablePath: process.env.PUPPETEER_EXEC_PATH,
+    // required for enabling extensions
+    headless: false,
     args: [`--disable-extensions-except=${CRX_PATH}`, `--load-extension=${CRX_PATH}`],
   },
 }
