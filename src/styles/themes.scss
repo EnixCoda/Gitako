@@ -1,6 +1,7 @@
 @use './light/variables.scss' as light;
 @use './dark/variables.scss' as dark;
 @use './darkDimmed/variables.scss' as darkDimmed;
+@use './darkHighContrast/variables.scss' as darkHighContrast;
 
 @mixin setVariables($variables) {
   @each $name, $value in $variables {
@@ -29,6 +30,11 @@
   &[data-color-mode='dark'][data-dark-theme='dark_dimmed'] {
     @include setVariables(darkDimmed.$variables);
   }
+
+  &[data-color-mode='light'][data-light-theme='dark_high_contrast'],
+  &[data-color-mode='dark'][data-dark-theme='dark_high_contrast'] {
+    @include setVariables(darkHighContrast.$variables);
+  }
 }
 
 @media (prefers-color-scheme: light) {
@@ -43,6 +49,10 @@
 
     &[data-light-theme='dark_dimmed'] {
       @include setVariables(darkDimmed.$variables);
+    }
+
+    &[data-light-theme='dark_high_contrast'] {
+      @include setVariables(darkHighContrast.$variables);
     }
   }
 }
@@ -59,6 +69,10 @@
 
     &[data-dark-theme='dark_dimmed'] {
       @include setVariables(darkDimmed.$variables);
+    }
+
+    &[data-dark-theme='dark_high_contrast'] {
+      @include setVariables(darkHighContrast.$variables);
     }
   }
 }

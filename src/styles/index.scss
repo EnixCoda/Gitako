@@ -633,15 +633,15 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           &.focused {
             @include interactive-background(
               var(--gitako-bg-tertiary),
-              var(--gitako-bg-secondary),
-              var(--gitako-bg-overlay)
+              var(--gitako-bg-tertiary),
+              var(--gitako-bg-secondary)
             );
           }
 
           @include interactive-background(
-            var(--gitako-auto-white),
+            var(--gitako-bg-primary),
+            var(--gitako-bg-tertiary),
             var(--gitako-bg-secondary),
-            var(--gitako-bg-tertiary)
           );
 
           &.disabled {
