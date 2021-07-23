@@ -22,11 +22,11 @@ describe(`in Gitako project page`, () => {
 
     const filesEle = await page.waitForSelector('.gitako-side-bar .files')
     // node of tsconfig.json should NOT be rendered before scroll down
-    await expectToNotFind(selectFileTreeItem('tsconfig.json'))
+    await expectToNotFind(selectFileTreeItem('package.json'))
     const box = await filesEle.boundingBox()
     if (box) {
       await page.mouse.move(box.x + 40, box.y + 40)
-      await scroll({ totalDistance: 100, duration: 1000 })
+      await scroll({ totalDistance: 200, duration: 1000 })
 
       // node of tsconfig.json should be rendered now
       await expectToFind(selectFileTreeItem('tsconfig.json'))
