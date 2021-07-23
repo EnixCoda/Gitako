@@ -9,11 +9,13 @@ function modify(source = '', pairs = []) {
   for (const [original, replace] of pairs) {
     if (source.includes(original)) {
       source = source.replace(original, replace)
-      if (source.includes(original)) {
-        throw new Error(`More than one original string found`, JSON.stringify(original))
-      }
+    } else {
+      throw new Error(`Original string not found: ${JSON.stringify(original)}`)
     }
-    throw new Error(`Original string not found`, JSON.stringify(original))
+
+    if (source.includes(original)) {
+      throw new Error(`More than one original string found`, JSON.stringify(original))
+    }
   }
 
   return source
@@ -59,7 +61,7 @@ async function fixPJAXAPI(loose) {
     await fs.writeFile(filePath, modified, 'utf-8')
   } catch (err) {
     console.error((err && err.message) || err)
-    const shouldTerminate = true
+    const shouldTerminate = process.env.IGNORE_FIX_PJAX_API_FAILURE !== 'true'
     if (shouldTerminate) process.exit(1)
   }
 }
