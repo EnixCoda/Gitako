@@ -149,106 +149,12 @@ export const GitHub: Platform = {
     }
   },
   async getTreeData(metaData, path = '/', recursive, accessToken) {
-    const { userName, repoName, branchName } = metaData
-
     const pullId = URLHelper.isInPullPage()
     if (pullId) {
-      // https://developer.github.com/v3/pulls/#list-pull-requests-files
-      const GITHUB_API_RESPONSE_LENGTH_LIMIT = 3000
-      const GITHUB_API_PAGED_RESPONSE_LENGTH_LIMIT = 30
-      const MAX_PAGE = Math.ceil(
-        GITHUB_API_RESPONSE_LENGTH_LIMIT / GITHUB_API_PAGED_RESPONSE_LENGTH_LIMIT,
-      )
-      let page = 1
-      const [pullData, treeData, commentData] = await Promise.all([
-        API.getPullData(userName, repoName, pullId, accessToken),
-        API.getPullTreeData(userName, repoName, pullId, page, accessToken),
-        API.getPullComments(userName, repoName, pullId, accessToken),
-      ])
-
-      const count = pullData.changed_files
-      if (treeData.length < count) {
-        const restPages = []
-        while (page * GITHUB_API_PAGED_RESPONSE_LENGTH_LIMIT < count) {
-          restPages.push(++page)
-        }
-        if (page > MAX_PAGE) {
-          // TODO: hint
-        }
-        const moreFiles = await Promise.all(
-          restPages.map(page => API.getPullTreeData(userName, repoName, pullId, page, accessToken)),
-        )
-        treeData.push(...([] as GitHubAPI.PullTreeData).concat(...moreFiles))
-      }
-
-      const creator = await createPullFileResolver(userName, repoName, pullId)
-
-      const nodes: TreeNode[] = treeData.map(item => ({
-        path: item.filename || '',
-        type: 'blob',
-        name: item.filename?.replace(/^.*\//, '') || '',
-        url: `https://${window.location.host}/${userName}/${repoName}/pull/${pullId}/files${
-          window.location.search
-        }#${creator(item.filename) || ''}`,
-        sha: item.sha,
-        comments: commentData?.filter(comment => item.filename === comment.path).length,
-      }))
-
-      const root = processTree(nodes)
-      return { root }
+      return await getPullRequestTreeData(metaData, pullId, accessToken)
     }
 
-    const sha = path === '/' ? branchName : pathSHAMap.get(path)
-    if (!sha) throw new Error(`No sha for path "${path}"`)
-    const treeData = await API.getTreeData(userName, repoName, sha, recursive, accessToken)
-
-    // remove deep items
-    if (treeData.truncated) {
-      if (treeData.tree.some(item => item.path.includes('/')))
-        treeData.tree = treeData.tree.filter(item => !item.path.includes('/'))
-    }
-
-    // update map
-    if (path !== '/' || treeData.truncated) {
-      if (path !== '/') {
-        function sanitizePath(path: string) {
-          return path.replace(/\/\/+/g, '/').replace(/^\/|\/$/g, '') || '/'
-        }
-        treeData.tree.forEach(item => {
-          item.path = sanitizePath(`${path}/${item.path}`)
-        })
-      }
-      treeData.tree.forEach(item => {
-        pathSHAMap.set(item.path, item.sha)
-      })
-    }
-
-    const root = processTree(
-      treeData.tree.map(item => ({
-        path: item.path || '',
-        type: item.type || 'blob',
-        name: item.path?.replace(/^.*\//, '') || '',
-        url:
-          item.url && item.type && item.path
-            ? getUrlForRedirect(userName, repoName, branchName, item.type, item.path)
-            : undefined,
-        contents: item.type === 'tree' ? [] : undefined,
-        sha: item.sha,
-      })),
-    )
-
-    const gitModules = root.contents?.find(
-      item => item.type === 'blob' && item.name === '.gitmodules',
-    )
-    if (gitModules?.sha) {
-      const blobData = await API.getBlobData(userName, repoName, gitModules.sha, accessToken)
-
-      if (blobData && blobData.encoding === 'base64' && blobData.content) {
-        await resolveGitModules(root, Base64.decode(blobData.content))
-      }
-    }
-
-    return { root, defer: treeData.truncated }
+    return await getRepositoryTreeData(metaData, path, recursive, accessToken)
   },
   shouldShow() {
     return Boolean(DOMHelper.isInCodePage() || URLHelper.isInPullPage())
@@ -280,6 +186,116 @@ export const GitHub: Platform = {
     useGitHubAttachCopySnippetButton(copySnippetButton)
     useGitHubCodeFold(codeFolding)
   },
+}
+
+function sanitizePath(path: string) {
+  return path.replace(/\/\/+/g, '/').replace(/^\/|\/$/g, '') || '/'
+}
+
+async function getRepositoryTreeData(
+  { userName, repoName, branchName }: Pick<MetaData, 'userName' | 'repoName' | 'branchName'>,
+  path: string,
+  recursive: boolean | undefined,
+  accessToken: string | undefined,
+) {
+  const sha = path === '/' ? branchName : pathSHAMap.get(path)
+  if (!sha) throw new Error(`No sha for path "${path}"`)
+  const treeData = await API.getTreeData(userName, repoName, sha, recursive, accessToken)
+
+  // remove deep items
+  if (treeData.truncated) {
+    if (treeData.tree.some(item => item.path.includes('/')))
+      treeData.tree = treeData.tree.filter(item => !item.path.includes('/'))
+  }
+
+  // update map
+  if (path !== '/' || treeData.truncated) {
+    if (path !== '/') {
+      treeData.tree.forEach(item => {
+        item.path = sanitizePath(`${path}/${item.path}`)
+      })
+    }
+    treeData.tree.forEach(item => {
+      pathSHAMap.set(item.path, item.sha)
+    })
+  }
+
+  const root = processTree(
+    treeData.tree.map(item => ({
+      path: item.path || '',
+      type: item.type || 'blob',
+      name: item.path?.replace(/^.*\//, '') || '',
+      url:
+        item.url && item.type && item.path
+          ? getUrlForRedirect(userName, repoName, branchName, item.type, item.path)
+          : undefined,
+      contents: item.type === 'tree' ? [] : undefined,
+      sha: item.sha,
+    })),
+  )
+
+  const gitModules = root.contents?.find(
+    item => item.type === 'blob' && item.name === '.gitmodules',
+  )
+  if (gitModules?.sha) {
+    const blobData = await API.getBlobData(userName, repoName, gitModules.sha, accessToken)
+
+    if (blobData && blobData.encoding === 'base64' && blobData.content) {
+      await resolveGitModules(root, Base64.decode(blobData.content))
+    }
+  }
+
+  return { root, defer: treeData.truncated }
+}
+
+async function getPullRequestTreeData(
+  { userName, repoName }: Pick<MetaData, 'userName' | 'repoName' | 'branchName'>,
+  pullId: string,
+  accessToken?: string,
+) {
+  // https://developer.github.com/v3/pulls/#list-pull-requests-files
+  const GITHUB_API_RESPONSE_LENGTH_LIMIT = 3000
+  const GITHUB_API_PAGED_RESPONSE_LENGTH_LIMIT = 30
+  const MAX_PAGE = Math.ceil(
+    GITHUB_API_RESPONSE_LENGTH_LIMIT / GITHUB_API_PAGED_RESPONSE_LENGTH_LIMIT,
+  )
+  let page = 1
+  const [pullData, treeData, commentData] = await Promise.all([
+    API.getPullData(userName, repoName, pullId, accessToken),
+    API.getPullTreeData(userName, repoName, pullId, page, accessToken),
+    API.getPullComments(userName, repoName, pullId, accessToken),
+  ])
+
+  const count = pullData.changed_files
+  if (treeData.length < count) {
+    const restPages = []
+    while (page * GITHUB_API_PAGED_RESPONSE_LENGTH_LIMIT < count) {
+      restPages.push(++page)
+    }
+    if (page > MAX_PAGE) {
+      // TODO: hint
+    }
+    const moreFiles = await Promise.all(
+      restPages.map(page => API.getPullTreeData(userName, repoName, pullId, page, accessToken)),
+    )
+    treeData.push(...([] as GitHubAPI.PullTreeData).concat(...moreFiles))
+  }
+
+  const creator = await createPullFileResolver(userName, repoName, pullId)
+
+  const nodes: TreeNode[] = treeData.map(item => ({
+    path: item.filename || '',
+    type: 'blob',
+    name: item.filename?.replace(/^.*\//, '') || '',
+    url: `https://${window.location.host}/${userName}/${repoName}/pull/${pullId}/files${
+      window.location.search
+    }#${creator(item.filename) || ''}`,
+    sha: item.sha,
+    comments: commentData?.filter(comment => item.filename === comment.path).length,
+  }))
+
+  const root = processTree(nodes)
+  return { root }
 }
 
 async function createPullFileResolver(userName: string, repoName: string, pullId: string) {
