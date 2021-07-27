@@ -281,7 +281,13 @@ async function getPullRequestTreeData(
     treeData.push(...([] as GitHubAPI.PullTreeData).concat(...moreFiles))
   }
 
-  const creator = await createPullFileResolver(userName, repoName, pullId)
+  const docs = await API.getPullPageDocuments(userName, repoName, pullId)
+  const getFileElementHash = (path: string) => {
+    for (const doc of docs) {
+      const id = doc.querySelector(`*[data-path^="${path}"]`)?.parentElement?.id
+      if (id) return id
+    }
+  }
 
   const nodes: TreeNode[] = treeData.map(item => ({
     path: item.filename || '',
@@ -289,7 +295,7 @@ async function getPullRequestTreeData(
     name: item.filename?.replace(/^.*\//, '') || '',
     url: `https://${window.location.host}/${userName}/${repoName}/pull/${pullId}/files${
       window.location.search
-    }#${creator(item.filename) || ''}`,
+    }${formatHash(getFileElementHash(item.filename))}`,
     sha: item.sha,
     comments: commentData?.filter(comment => item.filename === comment.path).length,
   }))
@@ -298,11 +304,7 @@ async function getPullRequestTreeData(
   return { root }
 }
 
-async function createPullFileResolver(userName: string, repoName: string, pullId: string) {
-  const doc = await API.getPullPageDocument(userName, repoName, pullId)
-
-  return (path: string) => {
-    const id = doc.querySelector(`*[data-path^="${path}"]`)?.parentElement?.id
-    return id
-  }
+function formatHash(hash?: string) {
+  if (hash) return '#' + hash
+  return ''
 }
