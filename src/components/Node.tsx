@@ -2,7 +2,7 @@ import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { cx } from 'utils/cx'
 import { OperatingSystems, os } from 'utils/general'
-import { getFileIconSrc, getFolderIconSrc } from 'utils/parseIconMapCSV'
+import { getFileIconURL, getFolderIconURL } from 'utils/parseIconMapCSV'
 import { Icon } from './Icon'
 
 function getIconType(node: TreeNode) {
@@ -81,7 +81,7 @@ const NodeItemIcon = React.memo(function NodeItemIcon({
   } = useConfigs()
 
   const src = React.useMemo(
-    () => (node.type === 'tree' ? getFolderIconSrc(node, open) : getFileIconSrc(node)),
+    () => (node.type === 'tree' ? getFolderIconURL(node, open) : getFileIconURL(node)),
     [open],
   )
 

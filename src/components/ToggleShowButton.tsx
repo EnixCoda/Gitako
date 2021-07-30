@@ -1,4 +1,4 @@
-import iconSrc from 'assets/icons/Gitako.png'
+import iconURL from 'assets/icons/Gitako.png'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
@@ -60,7 +60,7 @@ export function ToggleShowButton({ error, className, onClick, onHover }: Props) 
         {toggleIconMode === 'octoface' ? (
           <Icon className={'octoface-icon'} type={'octoface'} />
         ) : (
-          <img className={'tentacle'} draggable={false} src={iconSrc} />
+          <img className={'tentacle'} draggable={false} src={iconURL} />
         )}
       </button>
       {error && <span className={'error-message'}>{error}</span>}
