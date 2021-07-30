@@ -4,6 +4,11 @@ FULL_VERSION=v$(RAW_VERSION)
 pull-icons:
 	git clone git@github.com:vscode-icons/vscode-icons.git vscode-icons --depth=1
 
+update-icons:
+	cd vscode-icons && git pull
+	node scripts/resolve-languages-map
+	node scripts/generate-icon-index
+
 build:
 	rm -rf dist
 	yarn build

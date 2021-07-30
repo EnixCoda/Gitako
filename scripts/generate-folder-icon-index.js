@@ -1,3 +1,7 @@
+const fileName = 'folder-icons-index'
+
+const link = 'https://github.com/vscode-icons/vscode-icons/wiki/ListOfFolders'
+
 function parsePageContent() {
   const records = []
   document.body
@@ -16,26 +20,27 @@ function parsePageContent() {
       })
     })
   return records
+
+  function getSrc(img) {
+    return img && img.src
+  }
 }
 
-function getSrc(img) {
-  return img && img.src
+function prepareCSV({ name, names, icon }) {
+  const [iconFileOpen, iconFileClosed] = [
+    icon.open.replace(/^.*?folder_type_(.*?)_opened\..*$/, '$1'),
+    icon.closed.replace(/^.*?folder_type_(.*?)\..*$/, '$1'),
+  ]
+  const cols = [name, names.join(':')]
+  if (
+    !['folder', 'root_folder'].includes(name) &&
+    (name !== iconFileOpen || iconFileOpen !== iconFileClosed)
+  )
+    cols.push(iconFileOpen, iconFileClosed)
+  return cols
 }
 
-function generateCSV(records) {
-  const prepend = 'https://github.com/vscode-icons/vscode-icons/raw/master/icons/folder_type_'
-  const append = '.svg?sanitize=true'
-  const separator = ':'
-  const csv = records
-    .map(({ name, names, icon }) =>
-      [
-        name,
-        names.join(separator),
-        // icon.replace(prepend, '').replace(append, ''), // assumption: name is equal to this
-      ].join(','),
-    )
-    .join('\n')
-  return csv
-}
-
-console.log(generateCSV(parsePageContent()))
+exports.fileName = fileName
+exports.link = link
+exports.parsePageContent = parsePageContent
+exports.prepareCSV = prepareCSV
