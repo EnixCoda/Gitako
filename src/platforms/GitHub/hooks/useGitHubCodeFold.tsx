@@ -87,6 +87,7 @@ function init() {
     if (!end) return
 
     const toggleElement = document.createElement('div')
+    toggleElement.setAttribute('title', 'Code Folding by Gitako')
     toggleElement.setAttribute('role', 'button')
     toggleElement.classList.add(theCSSClassForToggleElement)
 
