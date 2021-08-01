@@ -3,7 +3,7 @@ import {
   expectToFind,
   expectToNotFind,
   scroll,
-  selectFileTreeItem,
+  selectFileTreeItem
 } from '../utils'
 
 describe(`in Gitako project page`, () => {
@@ -23,7 +23,7 @@ describe(`in Gitako project page`, () => {
     const filesEle = await page.waitForSelector('.gitako-side-bar .files')
     // node of tsconfig.json should NOT be rendered before scroll down
     await expectToNotFind(selectFileTreeItem('package.json'))
-    const box = await filesEle.boundingBox()
+    const box = await filesEle?.boundingBox()
     if (box) {
       await page.mouse.move(box.x + 40, box.y + 40)
       await scroll({ totalDistance: 200, duration: 1000 })
