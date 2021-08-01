@@ -163,8 +163,14 @@ export const GitHub: Platform = {
     return Boolean(URLHelper.isInPullPage())
   },
   getCurrentPath(branchName) {
-    if (URLHelper.parse().path.length) {
-      return DOMHelper.getPath()
+    const pathFromURL = URLHelper.parse().path.join('/')
+    if (pathFromURL.length) {
+      if (branchName && pathFromURL.startsWith(branchName + '/')) {
+        return pathFromURL.replace(branchName + '/', '').split('/')
+      } else {
+        // This would fail before PJAX replace, but works well when no branchName, e.g. first load
+        return DOMHelper.getPath()
+      }
     } else {
       return []
     }
