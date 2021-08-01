@@ -142,10 +142,15 @@ export const GitHub: Platform = {
   async getDefaultBranchName({ userName, repoName }, accessToken) {
     return (await API.getRepoMeta(userName, repoName, accessToken)).default_branch
   },
-  resolveUrlFromMetaData({ userName, repoName }) {
+  resolveUrlFromMetaData({ userName, repoName, branchName }) {
+    const repoUrl = `https://${window.location.host}/${userName}/${repoName}`
+    const userUrl = `https://${window.location.host}/${userName}`
+    const pullId = URLHelper.isInPullPage()
+    const branchUrl = pullId ? `${repoUrl}/pull/${pullId}` : `${repoUrl}/tree/${branchName}`
     return {
-      repoUrl: `https://${window.location.host}/${userName}/${repoName}`,
-      userUrl: `https://${window.location.host}/${userName}`,
+      repoUrl,
+      userUrl,
+      branchUrl,
     }
   },
   async getTreeData(metaData, path = '/', recursive, accessToken) {

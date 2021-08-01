@@ -105,10 +105,14 @@ export const Gitea: Platform = {
     const data = await API.getRepoMeta(userName, repoName, accessToken)
     return data.default_branch
   },
-  resolveUrlFromMetaData({ userName, repoName }) {
+  resolveUrlFromMetaData({ userName, repoName, branchName }) {
+    const repoUrl = `${window.location.protocol}//${window.location.host}/${userName}/${repoName}`
+    const userUrl = `${window.location.protocol}//${window.location.host}/${userName}`
+    const branchUrl = `${repoUrl}/src/branch/${branchName}`
     return {
-      repoUrl: `${window.location.protocol}//${window.location.host}/${userName}/${repoName}`,
-      userUrl: `${window.location.protocol}//${window.location.host}/${userName}`,
+      repoUrl,
+      userUrl,
+      branchUrl,
     }
   },
   async getTreeData(metaData, path, recursive, accessToken) {

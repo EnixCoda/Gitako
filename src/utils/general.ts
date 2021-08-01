@@ -192,3 +192,11 @@ export function createPromiseQueue() {
     },
   }
 }
+
+export function isOpenInNewWindowClick(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) {
+  return (
+    (os === OperatingSystems.macOS && event.metaKey) ||
+    (os === OperatingSystems.Linux && event.ctrlKey) ||
+    (os === OperatingSystems.Windows && event.ctrlKey)
+  )
+}

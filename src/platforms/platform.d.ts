@@ -7,9 +7,10 @@ type Platform = {
     metaData: Pick<MetaData, 'userName' | 'repoName'>,
     accessToken?: string,
   ): Promise<string>
-  resolveUrlFromMetaData(metaData: Pick<MetaData, 'userName' | 'repoName'>): {
+  resolveUrlFromMetaData(metaData: MetaData): {
     userUrl: string
     repoUrl: string
+    branchUrl: string
   }
   getTreeData(
     metaData: Pick<MetaData, 'userName' | 'repoName' | 'branchName'>,

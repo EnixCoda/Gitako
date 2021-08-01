@@ -1,7 +1,7 @@
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { cx } from 'utils/cx'
-import { OperatingSystems, os } from 'utils/general'
+import { isOpenInNewWindowClick } from 'utils/general'
 import { getFileIconURL, getFolderIconURL } from 'utils/parseIconMapCSV'
 import { Icon } from './Icon'
 
@@ -43,14 +43,7 @@ export function Node({
     <a
       href={node.url}
       onClick={event => {
-        if (
-          (os === OperatingSystems.macOS && event.metaKey) ||
-          (os === OperatingSystems.Linux && event.ctrlKey) ||
-          (os === OperatingSystems.Windows && event.ctrlKey)
-        ) {
-          // The default behavior, open in new tab
-          return
-        }
+        if (isOpenInNewWindowClick(event)) return
 
         onClick(event, node)
       }}

@@ -102,10 +102,14 @@ export const Gitee: Platform = {
     const data = await API.getRepoMeta(userName, repoName, accessToken)
     return data.default_branch
   },
-  resolveUrlFromMetaData({ userName, repoName }) {
+  resolveUrlFromMetaData({ userName, repoName, branchName }) {
+    const repoUrl = `https://${window.location.host}/${userName}/${repoName}`
+    const userUrl = `https://${window.location.host}/${userName}`
+    const branchUrl = `${repoUrl}/tree/${branchName}`
     return {
-      repoUrl: `https://${window.location.host}/${userName}/${repoName}`,
-      userUrl: `https://${window.location.host}/${userName}`,
+      repoUrl,
+      userUrl,
+      branchUrl,
     }
   },
   async getTreeData(metaData, path, recursive, accessToken) {
