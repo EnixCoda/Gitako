@@ -78,6 +78,13 @@ export function FileTreeSettings(props: React.PropsWithChildren<Props>) {
       />
       <SimpleToggleField
         field={{
+          key: 'restoreExpandedFolders',
+          label: 'Restore expanded folders',
+          tooltip: 'Folders will be expanded again when clear search input',
+        }}
+      />
+      <SimpleToggleField
+        field={{
           key: 'commentToggle',
           label: 'Show PR file comments',
           tooltip: 'Show number of comments next to file names in Pull Requests.',

@@ -46,17 +46,17 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
     searched,
   } = props
   const {
-    value: { accessToken, compressSingletonFolder, searchMode, commentToggle },
+    value: { accessToken, compressSingletonFolder, searchMode, commentToggle, restoreExpandedFolders },
   } = useConfigs()
 
   const onSearch = React.useCallback(
     (searchKey: string, searchMode: SearchMode) => {
       updateSearchKey(searchKey)
       if (visibleNodesGenerator) {
-        visibleNodesGenerator.search(searchModes[searchMode].getSearchParams(searchKey))
+        visibleNodesGenerator.search(searchModes[searchMode].getSearchParams(searchKey), restoreExpandedFolders)
       }
     },
-    [updateSearchKey, visibleNodesGenerator],
+    [updateSearchKey, visibleNodesGenerator, restoreExpandedFolders],
   )
 
   const stateContext = useLoadedContext(SideBarStateContext)

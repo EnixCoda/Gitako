@@ -1,5 +1,4 @@
 import { SearchMode } from 'components/searchModes'
-import { platform, platformName } from 'platforms'
 import { storageHelper } from 'utils/storageHelper'
 import { migrateConfig } from './migrations'
 
@@ -20,6 +19,7 @@ export type Config = {
   commentToggle: boolean
   codeFolding: boolean
   compactFileTree: boolean
+  restoreExpandedFolders: boolean
 }
 
 enum configKeys {
@@ -39,6 +39,7 @@ enum configKeys {
   commentToggle = 'commentToggle',
   codeFolding = 'codeFolding',
   compactFileTree = 'compactFileTree',
+  restoreExpandedFolders = 'restoreExpandedFolders',
 }
 
 // do NOT use platform name
@@ -61,6 +62,7 @@ export const defaultConfigs: Config = {
   commentToggle: true,
   codeFolding: true,
   compactFileTree: false,
+  restoreExpandedFolders: true,
 }
 
 const configKeyArray = Object.values(configKeys)
