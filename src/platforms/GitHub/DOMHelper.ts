@@ -2,7 +2,7 @@ import { raiseError } from 'analytics'
 import { Clippy, ClippyClassName } from 'components/Clippy'
 import * as React from 'react'
 import { $ } from 'utils/DOMHelper'
-import { renderReact } from 'utils/general'
+import { renderReact, run } from 'utils/general'
 import { CopyFileButton, copyFileButtonClassName } from './CopyFileButton'
 
 export function resolveMeta(): Partial<MetaData> {
@@ -148,21 +148,28 @@ export function attachCopyFileBtn() {
   }
 
   if (getCurrentPageType() === PAGE_TYPES.RAW_TEXT) {
-    // the button group in file content header
-    const buttonGroupSelector = '.repository-content .Box-header .BtnGroup'
-    const buttonGroups = document.querySelectorAll(buttonGroupSelector)
+    let buttonGroup: HTMLElement | null = null
 
-    if (buttonGroups.length === 0) {
-      raiseError(new Error(`No button groups found`))
+    if (!buttonGroup) {
+      const rawUrlButtonSelector = '#raw-url'
+      const $buttonGroup = document.querySelector(rawUrlButtonSelector)?.parentElement
+      if ($buttonGroup) buttonGroup = $buttonGroup
     }
 
-    removeButtons() // prevent duplicated buttons
+    if (!buttonGroup) {
+      const buttonGroupSelector = '.repository-content .Box-header .BtnGroup'
+      const buttonGroups = document.querySelectorAll(buttonGroupSelector)
+      const $buttonGroup = buttonGroups[buttonGroups.length - 1]
+      if ($buttonGroup) buttonGroup = $buttonGroup as HTMLElement
+    }
 
-    buttonGroups.forEach(async buttonGroup => {
-      if (!buttonGroup.lastElementChild) return
-      const button = await renderReact(React.createElement(CopyFileButton))
-      if (button instanceof HTMLElement) {
-        buttonGroup.appendChild(button)
+    run(async () => {
+      if (!buttonGroup) raiseError(new Error(`No button groups found`))
+      else if (!buttonGroup.lastElementChild) return
+      else {
+        removeButtons() // prevent duplicated buttons
+        const button = await renderReact(React.createElement(CopyFileButton))
+        if (button instanceof HTMLElement) buttonGroup.appendChild(button)
       }
     })
   }
