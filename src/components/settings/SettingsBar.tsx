@@ -73,9 +73,13 @@ function SettingsBarContent() {
             {reloadHint && <div className={'hint'}>{reloadHint}</div>}
           </SettingsSection>
         )}
-        <SettingsSection title={'Feedback'}>
+        <SettingsSection title={'Talk to the author'}>
           <a href="https://github.com/EnixCoda/Gitako/issues" target="_blank">
-            Report bug / Request feature.
+            Report bug
+          </a>
+          {' / '}
+          <a href="https://github.com/EnixCoda/Gitako/discussions" target="_blank">
+            Discuss feature
           </a>
         </SettingsSection>
       </div>
