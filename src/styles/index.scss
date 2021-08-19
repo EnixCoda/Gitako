@@ -103,7 +103,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     display: table-cell;
   }
 
-  .gitako-code-fold-attached {
+  .gitako-code-fold-attached:not(.gitako-code-fold-attached-disabled) {
     tr {
       .gitako-code-fold-handler {
         display: initial;
