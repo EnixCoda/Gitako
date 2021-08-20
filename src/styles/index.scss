@@ -95,14 +95,6 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     padding-right: 20px;
   }
 
-  // cancel code fold if not wrapped with .gitako-code-fold-mark
-  .gitako-code-fold-handler {
-    display: none;
-  }
-  .gitako-code-fold-hidden {
-    display: table-cell;
-  }
-
   .gitako-code-fold-attached:not(.gitako-code-fold-attached-disabled) {
     tr {
       .gitako-code-fold-handler {
@@ -152,6 +144,11 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           );
         }
       }
+    }
+
+    // cancel code fold if not wrapped with .gitako-code-fold-mark
+    .gitako-code-fold-handler {
+      display: none;
     }
 
     .gitako-code-fold-hidden {
