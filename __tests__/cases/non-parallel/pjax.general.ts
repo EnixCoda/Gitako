@@ -4,8 +4,8 @@ import {
   patientClick,
   selectFileTreeItem,
   sleep,
-  waitForLegacyPJAXRedirect,
-} from '../utils'
+  waitForLegacyPJAXRedirect
+} from '../../utils'
 
 describe(`in Gitako project page`, () => {
   beforeAll(() => page.goto('https://github.com/EnixCoda/Gitako/tree/develop/src'))

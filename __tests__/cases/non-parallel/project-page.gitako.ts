@@ -4,7 +4,7 @@ import {
   expectToNotFind,
   scroll,
   selectFileTreeItem
-} from '../utils'
+} from '../../utils'
 
 describe(`in Gitako project page`, () => {
   beforeAll(() => page.goto('https://github.com/EnixCoda/Gitako'))
