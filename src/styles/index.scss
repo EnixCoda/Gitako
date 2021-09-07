@@ -288,6 +288,12 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     left: -40px;
   }
 
+  @media print {
+    & {
+      display: none;
+    }
+  }
+
   .#{$name}-toggle-show-button {
     @include icon-button(transparent, transparent, transparent);
     background: transparent;
