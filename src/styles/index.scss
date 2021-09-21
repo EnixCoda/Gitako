@@ -144,7 +144,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
         );
       }
 
-      &.active {
+      &.gitako-code-fold-active {
         .gitako-code-fold-handler {
           &::before {
             transform: rotate(-90deg);
@@ -655,7 +655,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           @include interactive-background(
             var(--gitako-bg-primary),
             var(--gitako-bg-tertiary),
-            var(--gitako-bg-secondary),
+            var(--gitako-bg-secondary)
           );
 
           &.disabled {

@@ -11,7 +11,7 @@ const tableSelector = `.blob-wrapper table`
 const selectorOfLineNumber = `.blob-num`
 const selectorOfLineContent = `.blob-code`
 
-const theCSSClassForToggleElementOnActive = 'active'
+const theCSSClassForToggleElementOnActive = 'gitako-code-fold-active'
 function init() {
   type LineNumber = number // alias
   const blocks: LineNumber[] = [] // startLine -> exclusiveEndLine
