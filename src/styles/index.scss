@@ -47,6 +47,12 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
   }
 }
 
+@mixin hide-for-print {
+  @media print {
+    display: none;
+  }
+}
+
 :root {
   --gitako-width: #{$side-bar-base-width};
 }
@@ -95,9 +101,16 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     padding-right: 20px;
   }
 
+  // hide code fold handler if not enabled
+  .gitako-code-fold-handler {
+    display: none;
+  }
+
   .gitako-code-fold-attached:not(.gitako-code-fold-attached-disabled) {
     tr {
       .gitako-code-fold-handler {
+        @include hide-for-print();
+
         display: initial;
         position: absolute;
         top: 0px;
@@ -144,15 +157,13 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           );
         }
       }
-    }
 
-    // cancel code fold if not wrapped with .gitako-code-fold-mark
-    .gitako-code-fold-handler {
-      display: none;
-    }
-
-    .gitako-code-fold-hidden {
-      display: none;
+      // hide folded sections, except for print
+      &.gitako-code-fold-hidden {
+        @media screen {
+          display: none;
+        }
+      }
     }
   }
   // code folding end
@@ -209,7 +220,9 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 }
 
 .with-gitako-spacing {
-  margin-left: var(--gitako-width);
+  @media screen {
+    margin-left: var(--gitako-width);
+  }
 
   // gitee
   &.git-project {
@@ -276,6 +289,8 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 }
 
 .#{$name}-toggle-show-button-wrapper {
+  @include hide-for-print();
+
   z-index: $minimal-z-index;
   position: fixed;
   top: 124px; // align with GitHub's navbar items
@@ -286,12 +301,6 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
   &.hidden {
     left: -40px;
-  }
-
-  @media print {
-    & {
-      display: none;
-    }
   }
 
   .#{$name}-toggle-show-button {
@@ -363,6 +372,8 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 }
 
 .#{$name}-side-bar {
+  @include hide-for-print();
+
   @import '~@primer/css/base/index.scss';
   button {
     border-radius: 6px;
