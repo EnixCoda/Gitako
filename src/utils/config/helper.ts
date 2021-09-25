@@ -50,7 +50,7 @@ export const defaultConfigs: Config = {
   shortcut: undefined,
   accessToken: '',
   compressSingletonFolder: true,
-  copyFileButton: true,
+  copyFileButton: platformStorageKey !== 'platform_github.com', // false when on github.com,
   copySnippetButton: platformStorageKey !== 'platform_github.com', // false when on github.com
   intelligentToggle: null,
   icons: 'rich',
