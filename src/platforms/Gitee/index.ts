@@ -3,6 +3,7 @@ import { platform } from 'platforms'
 import * as React from 'react'
 import { resolveGitModules } from 'utils/gitSubmodule'
 import { useOnPJAXDone } from 'utils/hooks/usePJAX'
+import { useProgressBar } from 'utils/hooks/useProgressBar'
 import { sortFoldersToFront } from 'utils/treeParser'
 import * as API from './API'
 import * as DOMHelper from './DOMHelper'
@@ -173,6 +174,9 @@ export const Gitee: Platform = {
   },
   setOAuth(code) {
     return API.OAuth(code)
+  },
+  usePlatformHooks() {
+    useProgressBar()
   },
 }
 

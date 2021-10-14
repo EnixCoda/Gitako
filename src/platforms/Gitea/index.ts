@@ -1,4 +1,5 @@
 import { resolveGitModules } from 'utils/gitSubmodule'
+import { useProgressBar } from 'utils/hooks/useProgressBar'
 import { sortFoldersToFront } from 'utils/treeParser'
 import * as API from './API'
 import * as DOMHelper from './DOMHelper'
@@ -168,5 +169,8 @@ export const Gitea: Platform = {
   },
   getOAuthLink() {
     return `${window.location.protocol}//${window.location.host}/api/v1/user/applications/oauth2`
+  },
+  usePlatformHooks() {
+    useProgressBar()
   },
 }
