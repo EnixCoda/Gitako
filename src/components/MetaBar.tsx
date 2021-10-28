@@ -1,6 +1,6 @@
 import { BranchName, Breadcrumb, Flex, Text } from '@primer/components'
 import { GitBranchIcon } from '@primer/octicons-react'
-import { platform, platformName } from 'platforms'
+import { platform } from 'platforms'
 import * as React from 'react'
 import { isOpenInNewWindowClick } from 'utils/general'
 import { loadWithPJAX } from 'utils/hooks/usePJAX'
@@ -28,16 +28,13 @@ export function MetaBar({ metaData }: Props) {
           href={branchUrl}
           as="a"
           className={'branch-name'}
-          {...(platformName === 'GitHub'
-            ? { 'data-pjax': '#repo-content-pjax-container' }
-            : {
-                onClick: e => {
-                  if (isOpenInNewWindowClick(e)) return
+          onClick={e => {
+            if (isOpenInNewWindowClick(e)) return
 
-                  e.preventDefault()
-                  loadWithPJAX(branchUrl)
-                },
-              })}
+            e.preventDefault()
+            loadWithPJAX(branchUrl, e.currentTarget)
+          }}
+          {...platform.delegatePJAXProps?.()}
         >
           {branchName || '...'}
         </BranchName>

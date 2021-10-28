@@ -3,7 +3,8 @@ import { GetCreatedMethod, MethodCreator } from 'driver/connect'
 import { platform } from 'platforms'
 import { Config } from 'utils/config/helper'
 import * as DOMHelper from 'utils/DOMHelper'
-import { OperatingSystems, os } from 'utils/general'
+import { isOpenInNewWindowClick, OperatingSystems, os } from 'utils/general'
+import { loadWithPJAX } from 'utils/hooks/usePJAX'
 import { VisibleNodes, VisibleNodesGenerator } from 'utils/VisibleNodesGenerator'
 
 export type Props = {
@@ -11,7 +12,6 @@ export type Props = {
   freeze: boolean
   accessToken: string | undefined
   config: Config
-  loadWithPJAX(url: string): void
   catchNetworkErrors: <T>(fn: () => T) => Promise<T | undefined>
 }
 
@@ -101,108 +101,94 @@ export const setUpTree: BoundMethodCreator<
     })
   }
 
-export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch => event => {
-  const {
-    state: { searched, visibleNodes },
-    props: { loadWithPJAX },
-  } = dispatch.get()
-  if (!visibleNodes) return
-  const { nodes, focusedNode, expandedNodes } = visibleNodes
-  function handleVerticalMove(index: number) {
-    if (0 <= index && index < nodes.length) {
-      DOMHelper.focusFileExplorer()
-      dispatch.call(focusNode, nodes[index])
-    } else {
-      DOMHelper.focusSearchInput()
-      dispatch.call(focusNode, null)
+export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent<HTMLElement>]> =
+  dispatch => event => {
+    const {
+      state: { searched, visibleNodes },
+    } = dispatch.get()
+    if (!visibleNodes) return
+    const { nodes, focusedNode, expandedNodes } = visibleNodes
+    function handleVerticalMove(index: number) {
+      if (0 <= index && index < nodes.length) {
+        DOMHelper.focusFileExplorer()
+        dispatch.call(focusNode, nodes[index])
+      } else {
+        DOMHelper.focusSearchInput()
+        dispatch.call(focusNode, null)
+      }
     }
-  }
 
-  const { key } = event
-  // prevent document body scrolling if the keypress results in Gitako action
-  let muteEvent = true
-  if (focusedNode) {
-    const focusedNodeIndex = nodes.findIndex(node => node.path === focusedNode.path)
-    switch (key) {
-      case 'ArrowUp':
-        // focus on previous node
-        handleVerticalMove(focusedNodeIndex - 1)
-        break
-
-      case 'ArrowDown':
-        // focus on next node
-        handleVerticalMove(focusedNodeIndex + 1)
-        break
-
-      case 'ArrowLeft':
-        if (wouldBlockHistoryNavigation(event)) {
-          muteEvent = false
+    const { key } = event
+    // prevent document body scrolling if the keypress results in Gitako action
+    let muteEvent = true
+    if (focusedNode) {
+      const focusedNodeIndex = nodes.findIndex(node => node.path === focusedNode.path)
+      switch (key) {
+        case 'ArrowUp':
+          // focus on previous node
+          handleVerticalMove(focusedNodeIndex - 1)
           break
-        }
-        if (expandedNodes.has(focusedNode.path)) {
-          dispatch.call(toggleNodeExpansion, focusedNode, { recursive: event.altKey })
-        } else {
-          // go forward to the start of the list, find the closest node with lower depth
-          const parentNode = getVisibleParentNode(nodes, focusedNode)
-          if (parentNode) {
-            dispatch.call(focusNode, parentNode)
+
+        case 'ArrowDown':
+          // focus on next node
+          handleVerticalMove(focusedNodeIndex + 1)
+          break
+
+        case 'ArrowLeft':
+          if (wouldBlockHistoryNavigation(event)) {
+            muteEvent = false
+            break
           }
-        }
-        break
-
-      // consider the two keys as 'confirm' key
-      case 'ArrowRight':
-        if (wouldBlockHistoryNavigation(event)) {
-          muteEvent = false
-          break
-        }
-        // expand node or focus on first content node or redirect to file page
-        if (focusedNode.type === 'tree') {
           if (expandedNodes.has(focusedNode.path)) {
-            const nextNode = nodes[focusedNodeIndex + 1]
-            if (focusedNode.contents?.includes(nextNode)) {
-              dispatch.call(focusNode, nextNode)
-            }
+            dispatch.call(toggleNodeExpansion, focusedNode, { recursive: event.altKey })
           } else {
-            dispatch.call(toggleNodeExpansion, focusedNode, { recursive: event.altKey })
+            // go forward to the start of the list, find the closest node with lower depth
+            const parentNode = getVisibleParentNode(nodes, focusedNode)
+            if (parentNode) {
+              dispatch.call(focusNode, parentNode)
+            }
           }
-        } else if (focusedNode.type === 'blob') {
-          if (focusedNode.url) loadWithPJAX(focusedNode.url)
-        } else if (focusedNode.type === 'commit') {
-          window.open(focusedNode.url)
-        }
-        break
-      case 'Enter':
-        // expand node or redirect to file page
-        if (searched) {
-          dispatch.call(goTo, focusedNode.path.split('/'))
-        } else {
+          break
+
+        // consider the two keys as 'confirm' key
+        case 'ArrowRight':
+          if (wouldBlockHistoryNavigation(event)) {
+            muteEvent = false
+            break
+          }
+          // expand node or focus on first content node or redirect to file page
           if (focusedNode.type === 'tree') {
-            dispatch.call(toggleNodeExpansion, focusedNode, { recursive: event.altKey })
+            if (expandedNodes.has(focusedNode.path)) {
+              const nextNode = nodes[focusedNodeIndex + 1]
+              if (focusedNode.contents?.includes(nextNode)) {
+                dispatch.call(focusNode, nextNode)
+              }
+            } else {
+              dispatch.call(toggleNodeExpansion, focusedNode, { recursive: event.altKey })
+            }
           } else if (focusedNode.type === 'blob') {
-            if (focusedNode.url) loadWithPJAX(focusedNode.url)
+            const focusedNodeElement = DOMHelper.findNodeElement(focusedNode, event.currentTarget)
+            if (focusedNodeElement && focusedNode.url)
+              loadWithPJAX(focusedNode.url, focusedNodeElement)
           } else if (focusedNode.type === 'commit') {
             window.open(focusedNode.url)
           }
-        }
-        break
-      default:
-        muteEvent = false
-    }
-    if (muteEvent) {
-      event.preventDefault()
-    }
-  } else {
-    // now search input is focused
-    if (nodes.length) {
-      switch (key) {
-        case 'ArrowDown':
-          DOMHelper.focusFileExplorer()
-          dispatch.call(focusNode, nodes[0])
           break
-        case 'ArrowUp':
-          DOMHelper.focusFileExplorer()
-          dispatch.call(focusNode, nodes[nodes.length - 1])
+        case 'Enter':
+          // expand node or redirect to file page
+          if (searched) {
+            dispatch.call(goTo, focusedNode.path.split('/'))
+          } else {
+            if (focusedNode.type === 'tree') {
+              dispatch.call(toggleNodeExpansion, focusedNode, { recursive: event.altKey })
+            } else if (focusedNode.type === 'blob') {
+              const focusedNodeElement = DOMHelper.findNodeElement(focusedNode, event.currentTarget)
+              if (focusedNodeElement && focusedNode.url)
+                loadWithPJAX(focusedNode.url, focusedNodeElement)
+            } else if (focusedNode.type === 'commit') {
+              window.open(focusedNode.url)
+            }
+          }
           break
         default:
           muteEvent = false
@@ -210,9 +196,27 @@ export const handleKeyDown: BoundMethodCreator<[React.KeyboardEvent]> = dispatch
       if (muteEvent) {
         event.preventDefault()
       }
+    } else {
+      // now search input is focused
+      if (nodes.length) {
+        switch (key) {
+          case 'ArrowDown':
+            DOMHelper.focusFileExplorer()
+            dispatch.call(focusNode, nodes[0])
+            break
+          case 'ArrowUp':
+            DOMHelper.focusFileExplorer()
+            dispatch.call(focusNode, nodes[nodes.length - 1])
+            break
+          default:
+            muteEvent = false
+        }
+        if (muteEvent) {
+          event.preventDefault()
+        }
+      }
     }
   }
-}
 
 export const onFocusSearchBar: BoundMethodCreator = dispatch => () => dispatch.call(focusNode, null)
 
@@ -277,6 +281,8 @@ export const focusNode: BoundMethodCreator<[TreeNode | null]> =
 export const onNodeClick: BoundMethodCreator<
   [React.MouseEvent<HTMLElement, MouseEvent>, TreeNode]
 > = dispatch => (event, node) => {
+  if (isOpenInNewWindowClick(event)) return
+
   const preventDefault = !(node.type === 'blob' && node.url?.includes('#'))
   if (preventDefault) event.preventDefault()
 
@@ -291,12 +297,9 @@ export const onNodeClick: BoundMethodCreator<
       (recursiveToggleFolder === 'alt' && event.altKey)
     dispatch.call(toggleNodeExpansion, node, { recursive })
   } else if (node.type === 'blob') {
-    const {
-      props: { loadWithPJAX },
-    } = dispatch.get()
     dispatch.call(focusNode, node)
     if (node.url && !node.url.includes('#')) {
-      loadWithPJAX(node.url)
+      loadWithPJAX(node.url, event.currentTarget)
     }
   } else if (node.type === 'commit') {
     if (node.url) {

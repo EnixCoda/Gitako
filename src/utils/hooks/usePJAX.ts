@@ -1,4 +1,5 @@
 import { Config, Pjax } from 'pjax-api'
+import { platform } from 'platforms'
 import * as React from 'react'
 import { useEvent } from 'react-use'
 
@@ -9,7 +10,7 @@ const config: Config = {
     // gitee
     '#git-project-content',
     // gitea
-    '.repository > .ui.container'
+    '.repository > .ui.container',
   ],
   update: {
     css: false,
@@ -42,8 +43,9 @@ export function usePJAX() {
   useRedirectedEvents(document, 'pjax:ready', 'pjax:end')
 }
 
-export const loadWithPJAX = (url: string) => {
-  Pjax.assign(url, config)
+export const loadWithPJAX = (url: string, element: HTMLElement) => {
+  if (platform.loadWithPJAX) platform.loadWithPJAX(url, element)
+  else Pjax.assign(url, config)
 }
 
 export function useOnPJAXDone(callback: () => void) {

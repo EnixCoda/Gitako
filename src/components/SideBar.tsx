@@ -13,7 +13,7 @@ import * as DOMHelper from 'utils/DOMHelper'
 import { run } from 'utils/general'
 import { useCatchNetworkError } from 'utils/hooks/useCatchNetworkError'
 import { useLoadedContext } from 'utils/hooks/useLoadedContext'
-import { loadWithPJAX, useOnPJAXDone, usePJAX } from 'utils/hooks/usePJAX'
+import { useOnPJAXDone, usePJAX } from 'utils/hooks/usePJAX'
 import { useProgressBar } from 'utils/hooks/useProgressBar'
 import { useStateIO } from 'utils/hooks/useStateIO'
 import { SideBarErrorContext } from '../containers/ErrorContext'
@@ -181,7 +181,6 @@ export function SideBar() {
                               metaData={metaData}
                               freeze={showSettings}
                               accessToken={accessToken}
-                              loadWithPJAX={loadWithPJAX}
                               config={configContext.value}
                               catchNetworkErrors={useCatchNetworkError()}
                             />

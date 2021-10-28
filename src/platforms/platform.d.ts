@@ -23,5 +23,9 @@ type Platform = {
   getCurrentPath(branchName: string): string[] | null
   setOAuth(code: string): Promise<string | null>
   getOAuthLink(): string
+  delegatePJAXProps?(options?: {
+    node?: TreeNode
+  }): void | (React.DOMAttributes<HTMLElement> & Record<string, any>) // support data-* attributes
+  loadWithPJAX?(url: string, element: HTMLElement): void
   usePlatformHooks?(): void
 }
