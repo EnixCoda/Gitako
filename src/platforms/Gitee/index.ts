@@ -83,7 +83,7 @@ export const Gitee: Platform = {
     if (DOMHelper.isInCodePage()) {
       // not working well with non-branch blob
       // cannot handle '/' split branch name, should not use when possibly on branch page
-      branchName = DOMHelper.getCurrentBranch() || URLHelper.parseSHA()
+      branchName = (DOMHelper.getCurrentBranch() || URLHelper.parseSHA())?.trim()
     }
 
     const { userName, repoName, type } = URLHelper.parse()
