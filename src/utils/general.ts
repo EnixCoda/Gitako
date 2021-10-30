@@ -195,7 +195,7 @@ export function createPromiseQueue() {
 
 export function isOpenInNewWindowClick(event: React.MouseEvent<HTMLElement, MouseEvent>) {
   return (
-    (os === OperatingSystems.macOS && event.metaKey) ||
+    (os === OperatingSystems.macOS && (event.metaKey || event.shiftKey)) ||
     (os === OperatingSystems.Linux && event.ctrlKey) ||
     (os === OperatingSystems.Windows && event.ctrlKey)
   )
