@@ -129,3 +129,9 @@ export function setResizingState(on: boolean) {
   if (on) target.classList.add('resizing')
   else target.classList.remove('resizing')
 }
+
+export function findNodeElement(node:TreeNode, rootElement: HTMLElement): HTMLElement | null {
+  const nodeElement = rootElement.querySelector(`a[href="${node.url}"]`)
+  if (nodeElement instanceof HTMLElement) return nodeElement
+  return null
+}

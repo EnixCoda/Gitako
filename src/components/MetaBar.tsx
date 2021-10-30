@@ -32,8 +32,9 @@ export function MetaBar({ metaData }: Props) {
             if (isOpenInNewWindowClick(e)) return
 
             e.preventDefault()
-            loadWithPJAX(branchUrl)
+            loadWithPJAX(branchUrl, e.currentTarget)
           }}
+          {...platform.delegatePJAXProps?.()}
         >
           {branchName || '...'}
         </BranchName>

@@ -197,6 +197,18 @@ export const GitHub: Platform = {
     useGitHubAttachCopySnippetButton(copySnippetButton)
     useGitHubCodeFold(codeFolding)
   },
+  delegatePJAXProps(options) {
+    if (!options?.node || options.node.type === 'blob')
+      return {
+        'data-pjax': '#repo-content-pjax-container',
+        onClick() {
+          /* Overwriting default onClick */
+        },
+      }
+  },
+  loadWithPJAX(url, element) {
+    element.click()
+  },
 }
 
 function sanitizePath(path: string) {
