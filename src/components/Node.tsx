@@ -1,4 +1,5 @@
 import { useConfigs } from 'containers/ConfigsContext'
+import { platformName } from 'platforms'
 import * as React from 'react'
 import { cx } from 'utils/cx'
 import { isOpenInNewWindowClick } from 'utils/general'
@@ -42,11 +43,15 @@ export function Node({
   return (
     <a
       href={node.url}
-      onClick={event => {
-        if (isOpenInNewWindowClick(event)) return
+      {...(platformName === 'GitHub' && node.type === 'blob'
+        ? { 'data-pjax': '#repo-content-pjax-container' }
+        : {
+            onClick: event => {
+              if (isOpenInNewWindowClick(event)) return
 
-        onClick(event, node)
-      }}
+              onClick(event, node)
+            },
+          })}
       className={cx(`node-item`, { focused, disabled: node.accessDenied, expanded, compact })}
       style={{ ...style, paddingLeft: `${10 + (compact ? 10 : 20) * depth}px` }}
       title={node.path}
