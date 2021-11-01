@@ -13,6 +13,13 @@
 :root {
   // default, e.g. when not login
   @include setVariables(light.$variables);
+
+  // mapping 'canvas' to 'bg', this should be removed once GitHub exposes 'bg' colors
+  --gitako-bg-default-transparent: var(--gitako-canvas-default-transparent);
+  --gitako-bg-default: var(--gitako-canvas-default);
+  --gitako-bg-inset: var(--gitako-canvas-inset);
+  --gitako-bg-overlay: var(--gitako-canvas-overlay);
+  --gitako-bg-subtle: var(--gitako-canvas-subtle);
 }
 
 :root {
