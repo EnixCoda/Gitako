@@ -5,7 +5,7 @@ import {
   patientClick,
   selectFileTreeItem,
   sleep,
-  waitForPJAXAPIRedirect
+  waitForLegacyPJAXRedirect
 } from '../../utils'
 
 describe(`in Gitako project page`, () => {
@@ -16,17 +16,17 @@ describe(`in Gitako project page`, () => {
 
     await expandFloatModeSidebar()
     await patientClick(selectFileTreeItem('.babelrc'))
-    await waitForPJAXAPIRedirect()
+    await waitForLegacyPJAXRedirect()
 
     // The selector for file content
     await expectToFind('table.js-file-line-container')
 
-    page.goBack()
-    await waitForPJAXAPIRedirect()
+    await waitForLegacyPJAXRedirect(async () => {
+      await sleep(1000) // This prevents failing in some cases due to some mystery scheduling issue of puppeteer or jest
+      page.goBack()
+    })
 
     // The selector for file content
     await expectToNotFind('table.js-file-line-container')
-
-    // await waitForPJAXAPIRedirect()
   })
 })
