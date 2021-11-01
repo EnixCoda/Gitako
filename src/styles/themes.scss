@@ -11,7 +11,6 @@
   }
 }
 
-// Following rules are organized according to common variables to reduce output CSS size
 :root {
   // default, e.g. when not login
   @include setVariables(light.$variables);
@@ -24,90 +23,32 @@
   --gitako-bg-subtle: var(--gitako-canvas-subtle);
 }
 
-:root {
-  &[data-color-mode='light'][data-light-theme='light'],
-  &[data-color-mode='dark'][data-dark-theme='light'] {
-    @include setVariables(light.$variables);
-  }
-
-  &[data-color-mode='light'][data-light-theme='dark'],
-  &[data-color-mode='dark'][data-dark-theme='dark'] {
-    @include setVariables(dark.$variables);
-  }
-
-  &[data-color-mode='light'][data-light-theme='dark_dimmed'],
-  &[data-color-mode='dark'][data-dark-theme='dark_dimmed'] {
-    @include setVariables(darkDimmed.$variables);
-  }
-
-  &[data-color-mode='light'][data-light-theme='dark_high_contrast'],
-  &[data-color-mode='dark'][data-dark-theme='dark_high_contrast'] {
-    @include setVariables(darkHighContrast.$variables);
-  }
-
-  &[data-color-mode='light'][data-light-theme='dark_colorblind'],
-  &[data-color-mode='dark'][data-dark-theme='dark_colorblind'] {
-    @include setVariables(darkColorblind.$variables);
-  }
-
-  &[data-color-mode='light'][data-light-theme='light_colorblind'],
-  &[data-color-mode='dark'][data-dark-theme='light_colorblind'] {
-    @include setVariables(lightColorblind.$variables);
-  }
-}
-
-@media (prefers-color-scheme: light) {
-  :root[data-color-mode='auto'] {
-    &[data-light-theme='light'] {
-      @include setVariables(light.$variables);
+@mixin theme($themeName, $variables) {
+  :root {
+    &[data-color-mode='light'][data-light-theme='#{$themeName}'],
+    &[data-color-mode='dark'][data-dark-theme='#{$themeName}'] {
+      @include setVariables($variables);
     }
 
-    &[data-light-theme='dark'] {
-      @include setVariables(dark.$variables);
-    }
+    &[data-color-mode='auto'] {
+      &[data-light-theme='#{$themeName}'] {
+        @media (prefers-color-scheme: light) {
+          @include setVariables($variables);
+        }
+      }
 
-    &[data-light-theme='dark_dimmed'] {
-      @include setVariables(darkDimmed.$variables);
-    }
-
-    &[data-light-theme='dark_high_contrast'] {
-      @include setVariables(darkHighContrast.$variables);
-    }
-
-    &[data-light-theme='dark_colorblind'] {
-      @include setVariables(darkColorblind.$variables);
-    }
-
-    &[data-light-theme='light_colorblind'] {
-      @include setVariables(lightColorblind.$variables);
+      &[data-dark-theme='#{$themeName}'] {
+        @media (prefers-color-scheme: dark) {
+          @include setVariables($variables);
+        }
+      }
     }
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root[data-color-mode='auto'] {
-    &[data-dark-theme='light'] {
-      @include setVariables(light.$variables);
-    }
-
-    &[data-dark-theme='dark'] {
-      @include setVariables(dark.$variables);
-    }
-
-    &[data-dark-theme='dark_dimmed'] {
-      @include setVariables(darkDimmed.$variables);
-    }
-
-    &[data-dark-theme='dark_high_contrast'] {
-      @include setVariables(darkHighContrast.$variables);
-    }
-
-    &[data-dark-theme='dark_colorblind'] {
-      @include setVariables(darkColorblind.$variables);
-    }
-
-    &[data-dark-theme='light_colorblind'] {
-      @include setVariables(lightColorblind.$variables);
-    }
-  }
-}
+@include theme('light', light.$variables);
+@include theme('dark', dark.$variables);
+@include theme('dark_dimmed', darkDimmed.$variables);
+@include theme('dark_high_contrast', darkHighContrast.$variables);
+@include theme('light_colorblind', lightColorblind.$variables);
+@include theme('dark_colorblind', darkColorblind.$variables);
