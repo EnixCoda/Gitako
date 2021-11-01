@@ -395,7 +395,6 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     }
 
     .gitako-side-bar-body-wrapper-content {
-      width: var(--gitako-width);
     }
   }
   .#{$name}-resize-handler {
@@ -425,7 +424,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
   .#{$name}-side-bar-body {
     $button-size: 32px;
     position: relative;
-    width: 100%;
+    width: var(--gitako-width);
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -616,9 +615,16 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
         }
 
         .files {
+          position: relative;
           flex: 1;
-          overflow: auto;
-          overflow-x: hidden; // prevent x-scroll bar show up while sizing
+          overflow: hidden;
+
+          // Put this inside files will help files to get proper size derived from parents, regardless of its content size
+          .magic-size-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+          }
         }
 
         .node-item {
@@ -633,14 +639,14 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
             @include interactive-background(
               var(--gitako-canvas-subtle),
               var(--gitako-canvas-subtle),
-              var(--gitako-canvas-inset),
+              var(--gitako-canvas-inset)
             );
           }
 
           @include interactive-background(
             var(--gitako-canvas-default),
             var(--gitako-canvas-subtle),
-            var(--gitako-canvas-inset),
+            var(--gitako-canvas-inset)
           );
 
           &.disabled {

@@ -167,13 +167,15 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
                   )}
                   <SizeObserver className={'files'}>
                     {({ width = 0, height = 0 }) => (
-                      <ListView
-                        height={height}
-                        width={width}
-                        renderNodeContext={renderNodeContext}
-                        expandTo={expandTo}
-                        metaData={metaData}
-                      />
+                      <div className={'magic-size-container'}>
+                        <ListView
+                          height={height}
+                          width={width}
+                          renderNodeContext={renderNodeContext}
+                          expandTo={expandTo}
+                          metaData={metaData}
+                        />
+                      </div>
                     )}
                   </SizeObserver>
 
