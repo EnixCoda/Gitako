@@ -7,7 +7,7 @@ import { CopyFileButton, copyFileButtonClassName } from './CopyFileButton'
 
 export function resolveMeta(): Partial<MetaData> {
   const metaData = {
-    userName: $('[itemprop="author"] > a[rel="author"]]', e => e.textContent?.trim()),
+    userName: $('[itemprop="author"] > a[rel="author"]', e => e.textContent?.trim()),
     repoName: $('[itemprop="name"] > a[href]', e => e.textContent?.trim()),
     branchName: getCurrentBranch(true),
   }
