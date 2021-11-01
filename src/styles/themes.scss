@@ -2,6 +2,8 @@
 @use './dark/variables.scss' as dark;
 @use './darkDimmed/variables.scss' as darkDimmed;
 @use './darkHighContrast/variables.scss' as darkHighContrast;
+@use './darkColorblind/variables.scss' as darkColorblind;
+@use './lightColorblind/variables.scss' as lightColorblind;
 
 @mixin setVariables($variables) {
   @each $name, $value in $variables {
@@ -42,6 +44,16 @@
   &[data-color-mode='dark'][data-dark-theme='dark_high_contrast'] {
     @include setVariables(darkHighContrast.$variables);
   }
+
+  &[data-color-mode='light'][data-light-theme='dark_colorblind'],
+  &[data-color-mode='dark'][data-dark-theme='dark_colorblind'] {
+    @include setVariables(darkColorblind.$variables);
+  }
+
+  &[data-color-mode='light'][data-light-theme='light_colorblind'],
+  &[data-color-mode='dark'][data-dark-theme='light_colorblind'] {
+    @include setVariables(lightColorblind.$variables);
+  }
 }
 
 @media (prefers-color-scheme: light) {
@@ -60,6 +72,14 @@
 
     &[data-light-theme='dark_high_contrast'] {
       @include setVariables(darkHighContrast.$variables);
+    }
+
+    &[data-light-theme='dark_colorblind'] {
+      @include setVariables(darkColorblind.$variables);
+    }
+
+    &[data-light-theme='light_colorblind'] {
+      @include setVariables(lightColorblind.$variables);
     }
   }
 }
@@ -80,6 +100,14 @@
 
     &[data-dark-theme='dark_high_contrast'] {
       @include setVariables(darkHighContrast.$variables);
+    }
+
+    &[data-dark-theme='dark_colorblind'] {
+      @include setVariables(darkColorblind.$variables);
+    }
+
+    &[data-dark-theme='light_colorblind'] {
+      @include setVariables(lightColorblind.$variables);
     }
   }
 }
