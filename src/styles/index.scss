@@ -61,7 +61,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
   // github
   &.shrink-github-header {
     .js-header-wrapper {
-      background: var(--gitako-bg-canvas-inverse);
+      background: var(--gitako-bg-canvas-inverse); // REPLACE
     }
     .Header {
       max-width: 1280px;
@@ -80,7 +80,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
       & > *:first-child {
         // repo info and nav bar
-        box-shadow: inset 0 -1px 0 var(--gitako-border-overlay); // from .UnderlineNav
+        box-shadow: inset 0 -1px 0 var(--gitako-border-overlay); // from .UnderlineNav // REPLACE
 
         & > * {
           max-width: 1280px;
@@ -138,9 +138,9 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
         }
 
         @include interactive-background-on-before(
-          var(--gitako-icon-tertiary),
-          var(--gitako-icon-primary),
-          var(--gitako-icon-secondary)
+          var(--gitako-icon-tertiary), // REPLACE
+          var(--gitako-icon-primary), // REPLACE
+          var(--gitako-icon-secondary) // REPLACE
         );
       }
 
@@ -151,9 +151,9 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           }
 
           @include interactive-background-on-before(
-            var(--gitako-icon-secondary),
-            var(--gitako-icon-tertiary),
-            var(--gitako-icon-primary)
+            var(--gitako-icon-secondary), // REPLACE
+            var(--gitako-icon-tertiary), // REPLACE
+            var(--gitako-icon-primary) // REPLACE
           );
         }
       }
@@ -181,13 +181,13 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
       .clippy {
         width: 32px;
         height: 32px;
-        border: 1px solid var(--gitako-border-tertiary);
+        border: 1px solid var(--gitako-border-tertiary); // REPLACE
         border-radius: 4px;
 
         @include interactive-background(
-          var(--gitako-btn-bg),
-          var(--gitako-btn-hover-bg),
-          var(--gitako-btn-focus-bg)
+          var(--gitako-btn-bg), // REPLACE
+          var(--gitako-btn-hover-bg), // REPLACE
+          var(--gitako-btn-focus-bg) // REPLACE
         );
         .icon {
           width: 100%;
@@ -221,7 +221,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
 .with-gitako-spacing {
   @media screen {
-    margin-left: var(--gitako-width);
+    margin-left: var(--gitako-width); // REPLACE
   }
 
   // gitee
@@ -268,8 +268,8 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
 @mixin icon-button(
   $default: transparent,
-  $hover: var(--gitako-btn-hover-bg),
-  $active: var(--gitako-btn-focus-bg),
+  $hover: var(--gitako-btn-hover-bg), // REPLACE
+  $active: var(--gitako-btn-focus-bg), // REPLACE
   $focus: $hover
 ) {
   @include flex-center();
@@ -282,10 +282,10 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
 // Why does not TextInput get theme properly?
 @mixin input {
-  color: var(--gitako-text-primary);
-  background-color: var(--gitako-input-bg);
-  border-color: var(--gitako-border-primary);
-  box-shadow: var(--gitako-input-shadow);
+  color: var(--gitako-text-primary); // REPLACE
+  background-color: var(--gitako-input-bg); // REPLACE
+  border-color: var(--gitako-border-primary); // REPLACE
+  box-shadow: var(--gitako-input-shadow); // REPLACE
 }
 
 .#{$name}-toggle-show-button-wrapper {
@@ -322,11 +322,11 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
       height: 32px;
       padding: 4px;
       border-radius: 6px;
-      border: 1px solid var(--gitako-border-tertiary);
-      background: var(--gitako-bg-tertiary);
-      color: var(--gitako-icon-primary);
+      border: 1px solid var(--gitako-border-tertiary); // REPLACE
+      background: var(--gitako-bg-tertiary); // REPLACE
+      color: var(--gitako-icon-primary); // REPLACE
       &:active {
-        color: var(--gitako-icon-tertiary);
+        color: var(--gitako-icon-tertiary); // REPLACE
       }
       transition: all ease 0.3s;
       font-size: 16px;
@@ -342,13 +342,13 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
       object-fit: contain;
       transition: all ease 0.4s;
       transform: translateX(-8px);
-      filter: drop-shadow(0 0 1px var(--gitako-bg-backdrop));
+      filter: drop-shadow(0 0 1px var(--gitako-bg-backdrop)); // REPLACE
     }
     &:active,
     &:hover {
       .tentacle {
         transform: translateX(-4px);
-        filter: drop-shadow(0 0 2px var(--gitako-bg-backdrop));
+        filter: drop-shadow(0 0 2px var(--gitako-bg-backdrop)); // REPLACE
       }
     }
   }
@@ -358,10 +358,10 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     margin-left: 4px;
     padding: 2px 4px;
     font-size: 12px;
-    color: var(--gitako-text-red);
-    border: 1px solid var(--gitako-border-overlay);
+    color: var(--gitako-text-red); // REPLACE
+    border: 1px solid var(--gitako-border-overlay); // REPLACE
     border-radius: 2px;
-    background-color: var(--gitako-bg-tertiary);
+    background-color: var(--gitako-bg-tertiary); // REPLACE
   }
 
   &:hover {
@@ -380,7 +380,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     font-weight: 600;
   }
   a {
-    color: var(--gitako-text-link);
+    color: var(--gitako-text-link); // REPLACE
   }
 
   $resizeHandlerWidth: 1px;
@@ -402,12 +402,12 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
       left: 0;
       transition: all 0.25s cubic-bezier(0.55, 0.06, 0.68, 0.19); // values from Chrome devtools
       &.collapsed {
-        left: calc(0px - #{$resizeHandlerWidth} - var(--gitako-width));
+        left: calc(0px - #{$resizeHandlerWidth} - var(--gitako-width)); // REPLACE
       }
     }
 
     .gitako-side-bar-body-wrapper-content {
-      width: var(--gitako-width);
+      width: var(--gitako-width); // REPLACE
     }
   }
   .#{$name}-resize-handler {
@@ -416,15 +416,15 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     cursor: ew-resize;
     user-select: none;
     width: 0;
-    background: var(--gitako-bg-tertiary);
-    border-right: $resizeHandlerWidth solid var(--gitako-border-tertiary);
+    background: var(--gitako-bg-tertiary); // REPLACE
+    border-right: $resizeHandlerWidth solid var(--gitako-border-tertiary); // REPLACE
     overflow: hidden;
     box-sizing: content-box;
     &:hover,
     &:active {
       width: 16px;
-      background: var(--gitako-bg-secondary);
-      border-left: 1px solid var(--gitako-border-tertiary);
+      background: var(--gitako-bg-secondary); // REPLACE
+      border-left: 1px solid var(--gitako-border-tertiary); // REPLACE
     }
 
     .octicon.Grabber {
@@ -441,19 +441,19 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     height: 100%;
     display: flex;
     flex-direction: column;
-    background: var(--gitako-bg-secondary);
-    border-left: 1px solid var(--gitako-border-overlay);
+    background: var(--gitako-bg-secondary); // REPLACE
+    border-left: 1px solid var(--gitako-border-overlay); // REPLACE
     overflow: hidden;
 
     .octicon {
       transition: transform 0.3s ease;
-      color: var(--gitako-icon-tertiary);
+      color: var(--gitako-icon-tertiary); // REPLACE
       width: 100%;
       height: 100%;
     }
 
     .octicon-color {
-      color: var(--gitako-icon-tertiary);
+      color: var(--gitako-icon-tertiary); // REPLACE
     }
 
     .octicon-wrapper {
@@ -472,7 +472,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
       .header {
         position: relative;
         min-height: 62px; // GitHub header height if login
-        background: var(--gitako-bg-tertiary);
+        background: var(--gitako-bg-tertiary); // REPLACE
         padding: 6px 10px;
         flex-shrink: 0;
         position: relative; // prevent overlap by outline of other elements
@@ -482,7 +482,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           line-height: 32px;
 
           a {
-            color: var(--gitako-text-link);
+            color: var(--gitako-text-link); // REPLACE
             white-space: normal;
           }
         }
@@ -490,8 +490,8 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
         .branch-name {
           margin-left: 4px;
           padding: 4px 6px; // did not align well for some reason :/
-          color: var(--gitako-branch-name-text);
-          background-color: var(--gitako-branch-name-bg);
+          color: var(--gitako-branch-name-text); // REPLACE
+          background-color: var(--gitako-branch-name-bg); // REPLACE
         }
 
         .close-side-bar-button-position {
@@ -510,11 +510,11 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
             }
 
             &.active .octicon {
-              color: var(--gitako-icon-primary);
+              color: var(--gitako-icon-primary); // REPLACE
             }
 
             .action-icon {
-              color: var(--gitako-icon-tertiary);
+              color: var(--gitako-icon-tertiary); // REPLACE
               width: 20px;
               height: 20px;
               text-align: center;
@@ -543,12 +543,12 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
         width: 100%;
         height: 100%;
         @include flex-center();
-        border-top: 1px solid var(--gitako-border-overlay);
+        border-top: 1px solid var(--gitako-border-overlay); // REPLACE
 
         .loading-indicator {
           display: flex;
           align-items: center;
-          color: var(--gitako-text-placeholder);
+          color: var(--gitako-text-placeholder); // REPLACE
 
           &-icon {
             width: 20px;
@@ -588,14 +588,14 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           .search-input {
             width: 100%;
             box-shadow: none; // stay low
-            border-color: var(--gitako-border-overlay);
+            border-color: var(--gitako-border-overlay); // REPLACE
             border-radius: 0; // its rounded corner not match with nearby elements
-            color: var(--gitako-text-primary);
-            background: var(--gitako-bg-canvas);
+            color: var(--gitako-text-primary); // REPLACE
+            background: var(--gitako-bg-canvas); // REPLACE
             padding-right: 40px; // save space for actions
 
             &.error {
-              border-color: var(--gitako-border-danger);
+              border-color: var(--gitako-border-danger); // REPLACE
             }
           }
 
@@ -613,18 +613,18 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
               margin: 0;
               padding: 2px 4px;
               min-width: 32px;
-              border: 1px solid var(--gitako-border-secondary);
+              border: 1px solid var(--gitako-border-secondary); // REPLACE
               border-radius: 8px;
-              color: var(--gitako-text-secondary);
+              color: var(--gitako-text-secondary); // REPLACE
               font-size: 12px;
               font-weight: 500;
               line-height: 1;
               outline: none;
 
               @include interactive-background(
-                var(--gitako-bg-primary),
-                var(--gitako-bg-secondary),
-                var(--gitako-bg-tertiary)
+                var(--gitako-bg-primary), // REPLACE
+                var(--gitako-bg-secondary), // REPLACE
+                var(--gitako-bg-tertiary) // REPLACE
               );
             }
           }
@@ -646,21 +646,21 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
           &.focused {
             @include interactive-background(
-              var(--gitako-bg-tertiary),
-              var(--gitako-bg-tertiary),
-              var(--gitako-bg-secondary)
+              var(--gitako-bg-tertiary), // REPLACE
+              var(--gitako-bg-tertiary), // REPLACE
+              var(--gitako-bg-secondary) // REPLACE
             );
           }
 
           @include interactive-background(
-            var(--gitako-bg-primary),
-            var(--gitako-bg-tertiary),
-            var(--gitako-bg-secondary)
+            var(--gitako-bg-primary), // REPLACE
+            var(--gitako-bg-tertiary), // REPLACE
+            var(--gitako-bg-secondary) // REPLACE
           );
 
           &.disabled {
             pointer-events: none;
-            color: var(--gitako-text-disabled);
+            color: var(--gitako-text-disabled); // REPLACE
           }
           display: flex;
           justify-content: space-between;
@@ -671,17 +671,17 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           white-space: nowrap;
           transition: padding 0.3s ease; // on toggle expansion in search results
 
-          border-bottom: 1px solid var(--gitako-border-secondary);
+          border-bottom: 1px solid var(--gitako-border-secondary); // REPLACE
           &.compact {
             border-bottom: none;
             &.focused {
-              border-top: 1px solid var(--gitako-border-secondary);
-              border-bottom: 1px solid var(--gitako-border-secondary);
+              border-top: 1px solid var(--gitako-border-secondary); // REPLACE
+              border-bottom: 1px solid var(--gitako-border-secondary); // REPLACE
             }
           }
 
           &:not(:hover) {
-            color: var(--gitako-text-primary);
+            color: var(--gitako-text-primary); // REPLACE
           }
 
           @mixin icon-size() {
@@ -728,7 +728,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
           &:not(:hover) {
             .node-item-label .prefix {
-              color: var(--gitako-text-tertiary);
+              color: var(--gitako-text-tertiary); // REPLACE
             }
           }
 
@@ -740,7 +740,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
               display: inline-block;
               width: 48px;
               padding: 0 4px;
-              color: var(--gitako-text-tertiary);
+              color: var(--gitako-text-tertiary); // REPLACE
 
               .octicon-wrapper {
                 margin: 0; // make it closer to the comment amount label
@@ -781,12 +781,12 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
     .#{$name}-settings-bar {
       z-index: 2;
-      background: var(--gitako-bg-tertiary);
+      background: var(--gitako-bg-tertiary); // REPLACE
       display: flex;
       flex-direction: column;
       max-height: calc(100vh - 120px);
       &-title {
-        border-top: 1px solid var(--gitako-border-secondary);
+        border-top: 1px solid var(--gitako-border-secondary); // REPLACE
         padding: 10px;
         box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.2), 0 3px 4px 0 rgba(0, 0, 0, 0.14),
           0 3px 3px -2px rgba(0, 0, 0, 0.12);
@@ -804,7 +804,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           height: 10px;
           top: 0;
           left: 0;
-          background: var(--gitako-bg-tertiary);
+          background: var(--gitako-bg-tertiary); // REPLACE
           z-index: 1;
         }
         .settings-section {
@@ -835,10 +835,10 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
               // make it look like text inputs
               height: 36px;
               border-radius: 6px;
-              border: 1px solid var(--gitako-input-border);
-              background: var(--gitako-input-bg);
-              color: var(--gitako-text-primary);
-              box-shadow: var(--gitako-input-shadow);
+              border: 1px solid var(--gitako-input-border); // REPLACE
+              background: var(--gitako-input-bg); // REPLACE
+              color: var(--gitako-text-primary); // REPLACE
+              box-shadow: var(--gitako-input-shadow); // REPLACE
             }
             &.field-checkbox {
               padding-left: 20px;
@@ -863,7 +863,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
         margin-bottom: 4px;
       }
       .hint {
-        color: var(--gitako-text-placeholder);
+        color: var(--gitako-text-placeholder); // REPLACE
       }
       .access-token-input-control {
         display: flex;
@@ -885,10 +885,10 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
         justify-content: space-between;
         align-items: center;
         padding: 2px 6px 2px 10px;
-        border-top: 1px solid var(--gitako-border-secondary);
+        border-top: 1px solid var(--gitako-border-secondary); // REPLACE
 
         .version {
-          color: var(--gitako-text-tertiary);
+          color: var(--gitako-text-tertiary); // REPLACE
         }
 
         .header-right {
