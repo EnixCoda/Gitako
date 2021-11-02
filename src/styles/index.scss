@@ -497,7 +497,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
             }
 
             &.active .octicon {
-              color: var(--gitako-fg-subtle);
+              color: var(--gitako-fg-default);
             }
 
             .action-icon {
