@@ -1,9 +1,10 @@
 @use './themes/light.scss' as light;
 @use './themes/dark.scss' as dark;
-@use './themes/darkDimmed.scss' as darkDimmed;
+@use './themes/lightHighContrast.scss' as lightHighContrast;
 @use './themes/darkHighContrast.scss' as darkHighContrast;
-@use './themes/darkColorblind.scss' as darkColorblind;
 @use './themes/lightColorblind.scss' as lightColorblind;
+@use './themes/darkColorblind.scss' as darkColorblind;
+@use './themes/darkDimmed.scss' as darkDimmed;
 
 @mixin setVariables($variables) {
   @each $name, $value in $variables {
@@ -48,7 +49,8 @@
 
 @include theme('light', light.$variables);
 @include theme('dark', dark.$variables);
-@include theme('dark_dimmed', darkDimmed.$variables);
+@include theme('light_high_contrast', lightHighContrast.$variables);
 @include theme('dark_high_contrast', darkHighContrast.$variables);
 @include theme('light_colorblind', lightColorblind.$variables);
 @include theme('dark_colorblind', darkColorblind.$variables);
+@include theme('dark_dimmed', darkDimmed.$variables);
