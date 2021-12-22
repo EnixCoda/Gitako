@@ -200,7 +200,7 @@ export const GitHub: Platform = {
   delegatePJAXProps(options) {
     if (!options?.node || options.node.type === 'blob')
       return {
-        'data-pjax': '#repo-content-pjax-container',
+        'data-pjax': '#repo-content-pjax-container, #js-repo-pjax-container',
         onClick() {
           /* Overwriting default onClick */
         },
