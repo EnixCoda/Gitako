@@ -466,11 +466,17 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
         .user-and-repo {
           display: inline; // would be override by CSS rule of section from @primer/css
-          line-height: 32px;
 
-          a {
-            color: var(--gitako-accent-fg);
-            white-space: normal;
+          li {
+            display: inline-flex;
+            align-items: center;
+            min-height: 32px;
+            padding: 4px 0;
+
+            a {
+              color: var(--gitako-accent-fg);
+              white-space: normal;
+            }
           }
         }
 
@@ -479,6 +485,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           padding: 4px 6px; // did not align well for some reason :/
           color: var(--gitako-fg-muted);
           background-color: var(--gitako-accent-subtle);
+          word-break: break-word;
         }
 
         .close-side-bar-button-position {

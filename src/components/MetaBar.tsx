@@ -15,8 +15,10 @@ export function MetaBar({ metaData }: Props) {
   return (
     <>
       <Breadcrumb className={'user-and-repo'}>
-        <Breadcrumb.Item href={userUrl}>{userName}</Breadcrumb.Item>
-        <Breadcrumb.Item href={repoUrl}>
+        <Breadcrumb.Item className={'user-name'} href={userUrl}>
+          {userName}
+        </Breadcrumb.Item>
+        <Breadcrumb.Item className={'repo-name'} href={repoUrl}>
           <Text fontWeight="bolder">{repoName}</Text>
         </Breadcrumb.Item>
       </Breadcrumb>
