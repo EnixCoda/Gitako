@@ -1,10 +1,10 @@
 import { Icon } from 'components/Icon'
 import * as React from 'react'
-import { Size } from './SideBarBodyWrapper'
+import { Size2D } from './SideBarBodyWrapper'
 
 type Props = {
-  size: Size
-  onResize(size: Size): void
+  size: Size2D
+  onResize(size: Size2D): void
   onResetSize?(): void
   onResizeStateChange?(state: ResizeState): void
   style?: React.CSSProperties
@@ -12,15 +12,35 @@ type Props = {
 
 type ResizeState = 'idle' | 'resizing'
 
-export function HorizontalResizeHandler({
-  onResize,
-  onResetSize,
-  onResizeStateChange,
-  size,
-  style,
-}: Props) {
+export function ResizeHandler({ onResize, onResetSize, onResizeStateChange, size, style }: Props) {
+  const { onPointerDown } = useResizeHandler(size, onResize, { onResizeStateChange })
+
+  return (
+    <div
+      className={'gitako-resize-handler'}
+      onPointerDown={onPointerDown}
+      onDoubleClick={onResetSize}
+      style={style}
+    >
+      <Icon type={'grabber'} className={'grabber-icon'} size={20} />
+    </div>
+  )
+}
+
+export function useResizeHandler(
+  size: Size2D,
+  onResize: (size: Size2D) => void,
+  {
+    onResizeStateChange,
+    onClick,
+  }: Partial<{
+    onResizeStateChange: (state: ResizeState) => void
+    onClick: (e: PointerEvent) => void
+  }> = {},
+) {
   const pointerDown = React.useRef(false)
-  const startX = React.useRef(0)
+  const pointerMoved = React.useRef(false)
+  const initialSizeRef = React.useRef([0, 0])
   const baseSize = React.useRef(size)
   const latestPropSize = React.useRef(size)
 
@@ -28,43 +48,39 @@ export function HorizontalResizeHandler({
     latestPropSize.current = size
   }, [size])
 
-  const onPointerDown = React.useCallback(({ clientX }: React.MouseEvent) => {
-    startX.current = clientX
-    pointerDown.current = true
-    baseSize.current = latestPropSize.current
-    onResizeStateChange?.('resizing')
-  }, [])
-
   React.useEffect(() => {
-    const onPointerMove = ({ clientX }: MouseEvent) => {
+    const onPointerMove = ({ clientX, clientY }: PointerEvent) => {
       if (!pointerDown.current) return
-      const shift = clientX - startX.current
-      onResize(baseSize.current + shift)
+      pointerMoved.current = true
+      const [x, y] = baseSize.current
+      onResize([x + clientX - initialSizeRef.current[0], y + clientY - initialSizeRef.current[1]])
     }
-    window.addEventListener('mousemove', onPointerMove)
-    return () => window.removeEventListener('mousemove', onPointerMove)
+    window.addEventListener('pointermove', onPointerMove)
+    return () => window.removeEventListener('pointermove', onPointerMove)
   }, [onResize])
 
   React.useEffect(() => {
-    const onPointerUp = () => {
+    const onPointerUp = (e: PointerEvent) => {
       if (pointerDown.current) {
         pointerDown.current = false
+
+        if (!pointerMoved.current) onClick?.(e)
+        pointerMoved.current = false
+
         baseSize.current = latestPropSize.current
         onResizeStateChange?.('idle')
       }
     }
-    window.addEventListener('mouseup', onPointerUp)
-    return () => window.removeEventListener('mouseup', onPointerUp)
+    window.addEventListener('pointerup', onPointerUp)
+    return () => window.removeEventListener('pointerup', onPointerUp)
   }, [])
 
-  return (
-    <div
-      className={'gitako-resize-handler'}
-      onMouseDown={onPointerDown}
-      onDoubleClick={onResetSize}
-      style={style}
-    >
-      <Icon type={'grabber'} className={'grabber-icon'} size={20} />
-    </div>
-  )
+  const onPointerDown = React.useCallback(({ clientX, clientY }: React.PointerEvent) => {
+    pointerDown.current = true
+    initialSizeRef.current = [clientX, clientY]
+    baseSize.current = latestPropSize.current
+    onResizeStateChange?.('resizing')
+  }, [])
+
+  return { onPointerDown }
 }

@@ -1,4 +1,4 @@
-import { HorizontalResizeHandler } from 'components/ResizeHandler'
+import { ResizeHandler } from 'components/ResizeHandler'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
@@ -7,7 +7,8 @@ import { cx } from 'utils/cx'
 import { setCSSVariable } from 'utils/DOMHelper'
 import * as features from 'utils/features'
 
-export type Size = number
+type Size = number
+export type Size2D = [Size, Size]
 type Props = {
   baseSize: Size
   className?: string
@@ -67,7 +68,7 @@ export function SideBarBodyWrapper({
   const onResize = React.useMemo(() => {
     let sizeToApply: number,
       applied = true
-    return (size: number) => {
+    return ([size]: number[]) => {
       // do NOT merge this with the above similar effect, side bar will jump otherwise
       sizeToApply = getSafeSize(size, width)
       setSize(sizeToApply)
@@ -94,6 +95,7 @@ export function SideBarBodyWrapper({
     [onLeave],
   )
 
+  const newLocal: [number, number] = React.useMemo(() => [size, size], [size])
   return (
     <div
       ref={bodyWrapperRef}
@@ -102,7 +104,7 @@ export function SideBarBodyWrapper({
     >
       <div className={'gitako-side-bar-body-wrapper-content'}>{children}</div>
       {features.resize && (
-        <HorizontalResizeHandler
+        <ResizeHandler
           onResize={onResize}
           onResetSize={() => {
             setSize(defaultConfigs.sideBarWidth)
@@ -111,7 +113,7 @@ export function SideBarBodyWrapper({
           onResizeStateChange={state => {
             blockLeaveRef.current = state === 'resizing'
           }}
-          size={size}
+          size={newLocal}
         />
       )}
     </div>
