@@ -46,14 +46,23 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
     searched,
   } = props
   const {
-    value: { accessToken, compressSingletonFolder, searchMode, commentToggle, restoreExpandedFolders },
+    value: {
+      accessToken,
+      compressSingletonFolder,
+      searchMode,
+      commentToggle,
+      restoreExpandedFolders,
+    },
   } = useConfigs()
 
   const onSearch = React.useCallback(
     (searchKey: string, searchMode: SearchMode) => {
       updateSearchKey(searchKey)
       if (visibleNodesGenerator) {
-        visibleNodesGenerator.search(searchModes[searchMode].getSearchParams(searchKey), restoreExpandedFolders)
+        visibleNodesGenerator.search(
+          searchModes[searchMode].getSearchParams(searchKey),
+          restoreExpandedFolders,
+        )
       }
     },
     [updateSearchKey, visibleNodesGenerator, restoreExpandedFolders],
@@ -74,8 +83,8 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
   }, [setUpTree, metaData, compressSingletonFolder, accessToken])
 
   React.useEffect(() => {
-    if (visibleNodes?.focusedNode) focusFileExplorer()
-  })
+    focusFileExplorer()
+  }, [])
 
   const renderActions: ((node: TreeNode) => React.ReactNode) | undefined = React.useMemo(() => {
     const renderGoToButton = (node: TreeNode): React.ReactNode => (

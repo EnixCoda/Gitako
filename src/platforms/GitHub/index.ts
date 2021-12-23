@@ -305,20 +305,29 @@ async function getPullRequestTreeData(
   }
 
   const docs = await API.getPullPageDocuments(userName, repoName, pullId)
+  // query all elements at once to make getFileElementHash run faster
+  const elementsHavePath = docs.map(doc => doc.querySelectorAll(`[data-path]`))
   const getFileElementHash = (path: string) => {
-    for (const doc of docs) {
-      const id = doc.querySelector(`*[data-path^="${path}"]`)?.parentElement?.id
-      if (id) return id
+    let e
+    for (const group of elementsHavePath) {
+      for (let i = 0; i < group.length; i++) {
+        const element = group[i]
+        if (element.getAttribute('data-path')?.startsWith(path)) {
+          e = element
+          break
+        }
+      }
+      if (e) break
     }
+    return e?.parentElement?.id
   }
 
+  const urlMainPart = `https://${window.location.host}/${userName}/${repoName}/pull/${pullId}/files${window.location.search}`
   const nodes: TreeNode[] = treeData.map(item => ({
     path: item.filename || '',
     type: 'blob',
     name: item.filename?.replace(/^.*\//, '') || '',
-    url: `https://${window.location.host}/${userName}/${repoName}/pull/${pullId}/files${
-      window.location.search
-    }${formatHash(getFileElementHash(item.filename))}`,
+    url: `${urlMainPart}${formatHash(getFileElementHash(item.filename))}`,
     sha: item.sha,
     comments: commentData?.filter(comment => item.filename === comment.path).length,
   }))
