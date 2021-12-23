@@ -104,7 +104,10 @@ export function SideBarBodyWrapper({
       {features.resize && (
         <HorizontalResizeHandler
           onResize={onResize}
-          onResetSize={() => setSize(defaultConfigs.sideBarWidth)}
+          onResetSize={() => {
+            setSize(defaultConfigs.sideBarWidth)
+            apply(sizeVariableMountPoint, defaultConfigs.sideBarWidth)
+          }}
           onResizeStateChange={state => {
             blockLeaveRef.current = state === 'resizing'
           }}
