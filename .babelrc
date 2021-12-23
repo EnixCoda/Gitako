@@ -4,22 +4,10 @@
       "plugins": ["babel-plugin-transform-es2015-modules-commonjs"]
     }
   },
-  "presets": [
-    [
-      "@babel/preset-env",
-      {
-        "modules": false,
-        "targets": {
-          "esmodules": true
-        },
-        "exclude": [
-          "@babel/plugin-transform-async-to-generator",
-          "@babel/plugin-proposal-object-rest-spread"
-        ]
-      }
-    ],
-    "@babel/preset-typescript",
-    "@babel/preset-react"
-  ],
+  // 1
+  // 2
+  // 3
+  // 4
+  // 5
   "plugins": ["@babel/plugin-proposal-optional-chaining", "@babel/plugin-proposal-class-properties"]
 }
