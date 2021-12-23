@@ -81,9 +81,6 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
   }
 }
 
-:root {
-  --gitako-width: #{$side-bar-base-width};
-}
 
 .#{$name}-ready {
   // github

@@ -58,9 +58,9 @@ Sentry.init(sentryOptions)
 
 export const withErrorLog: Middleware = function withErrorLog(method, args) {
   return [
-    async function (...args: any[]) {
+    async function () {
       try {
-        await method.apply(null, args)
+        await method.apply(null, arguments as any)
       } catch (error) {
         raiseError(error)
       }

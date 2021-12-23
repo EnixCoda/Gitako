@@ -273,8 +273,8 @@ class FlattenLayer extends CompressLayer {
     const expand = !this.expandedNodes.has(node.path)
     await traverse(
       [node],
-      async node => {
-        await this.$setExpand(node, expand)
+      node => {
+        this.$setExpand(node, expand)
         return recursive
       },
       node => node.contents || [],

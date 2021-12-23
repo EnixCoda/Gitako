@@ -126,6 +126,7 @@ export function SideBar() {
           })}
           baseSize={baseSize}
           onLeave={sidebarToggleMode === 'float' ? () => setShowSideBar(false) : undefined}
+          sizeVariableMountPoint={sidebarToggleMode === 'persistent' ? document.body : undefined}
         >
           <div className={'gitako-side-bar-body'}>
             <div

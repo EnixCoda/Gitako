@@ -264,8 +264,10 @@ export const toggleNodeExpansion: BoundMethodCreator<
     } = dispatch.get()
     if (!visibleNodesGenerator) return
 
-    visibleNodesGenerator.focusNode(node)
-    await visibleNodesGenerator.toggleExpand(node, recursive)
+    if (node.type === 'tree') {
+      visibleNodesGenerator.focusNode(node)
+      await visibleNodesGenerator.toggleExpand(node, recursive)
+    }
   }
 
 export const focusNode: BoundMethodCreator<[TreeNode | null]> =
