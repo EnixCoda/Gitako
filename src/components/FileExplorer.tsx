@@ -17,6 +17,8 @@ import { useOnLocationChange } from 'utils/hooks/useOnLocationChange'
 import { useOnPJAXDone } from 'utils/hooks/usePJAX'
 import { VisibleNodes } from 'utils/VisibleNodesGenerator'
 import { SideBarStateContext } from '../containers/SideBarState'
+import { DiffStatGraph } from './DiffStatGraph'
+import { DiffStatText } from './DiffStatText'
 import { Icon } from './Icon'
 import { SearchMode, searchModes } from './searchModes'
 import { SizeObserver } from './SizeObserver'
@@ -52,6 +54,7 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
       searchMode,
       commentToggle,
       restoreExpandedFolders,
+      showDiffInText,
     },
   } = useConfigs()
 
@@ -121,16 +124,26 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
           <Icon type={'comment'} /> {node.comments > 9 ? '9+' : node.comments}
         </span>
       )
+    const renderFileStatus = ({ diff }: TreeNode): React.ReactNode =>
+      diff && (
+        <span
+          className={'node-item-diff'}
+          title={`${diff.status}, ${diff.changes} changes: +${diff.additions} & -${diff.deletions}`}
+        >
+          {showDiffInText ? <DiffStatText diff={diff} /> : <DiffStatGraph diff={diff} />}
+        </span>
+      )
 
     const renders: ((node: TreeNode) => React.ReactNode)[] = []
     if (commentToggle) renders.push(renderFileCommentAmounts)
+    renders.push(renderFileStatus)
     if (searchMode === 'fuzzy') renders.push(renderFindInFolderButton)
     if (searched) renders.push(renderGoToButton)
 
     return renders.length
       ? node => renders.map((render, i) => <React.Fragment key={i}>{render(node)}</React.Fragment>)
       : undefined
-  }, [goTo, onSearch, searched, searchMode, commentToggle])
+  }, [goTo, onSearch, searched, searchMode, commentToggle, showDiffInText])
 
   const renderLabelText = React.useCallback(
     (node: TreeNode) => searchModes[searchMode].renderNodeLabelText(node, searchKey),

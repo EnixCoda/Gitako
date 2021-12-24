@@ -92,6 +92,13 @@ export function FileTreeSettings(props: React.PropsWithChildren<Props>) {
       />
       <SimpleToggleField
         field={{
+          key: 'showDiffInText',
+          label: 'Show PR file diff in text',
+          tooltip: 'Glance diff in a more precise way.',
+        }}
+      />
+      <SimpleToggleField
+        field={{
           key: 'compactFileTree',
           label: 'Compact file tree layout',
           tooltip: 'View file tree structures more effectively.',

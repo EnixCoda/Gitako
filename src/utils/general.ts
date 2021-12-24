@@ -21,12 +21,14 @@ export enum OperatingSystems {
 }
 
 function detectOS(): OperatingSystems {
-  const {
-    navigator: { userAgent },
-  } = window
-  if (userAgent.indexOf(OperatingSystems.Windows) !== -1) return OperatingSystems.Windows
-  else if (userAgent.indexOf(OperatingSystems.macOS) !== -1) return OperatingSystems.macOS
-  else if (userAgent.indexOf(OperatingSystems.Linux) !== -1) return OperatingSystems.Linux
+  if (typeof window !== 'undefined') {
+    const {
+      navigator: { userAgent },
+    } = window
+    if (userAgent.indexOf(OperatingSystems.Windows) !== -1) return OperatingSystems.Windows
+    else if (userAgent.indexOf(OperatingSystems.macOS) !== -1) return OperatingSystems.macOS
+    else if (userAgent.indexOf(OperatingSystems.Linux) !== -1) return OperatingSystems.Linux
+  }
   return OperatingSystems.others
 }
 
@@ -199,4 +201,14 @@ export function isOpenInNewWindowClick(event: React.MouseEvent<HTMLElement, Mous
     (os === OperatingSystems.Linux && event.ctrlKey) ||
     (os === OperatingSystems.Windows && event.ctrlKey)
   )
+}
+
+export function resolveDiffGraphMeta(additions: number, deletions: number, changes: number) {
+  const both = additions > 0 && deletions > 0,
+    overflow = changes > 5,
+    preserved = both && overflow ? 1 : 0,
+    g = overflow ? Math.floor(((5 - preserved) * (additions + 1)) / (changes + 1)) : additions,
+    r = overflow ? 5 - preserved - g : deletions,
+    w = 5 - g - r
+  return { g, r, w }
 }

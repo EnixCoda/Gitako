@@ -323,14 +323,22 @@ async function getPullRequestTreeData(
   }
 
   const urlMainPart = `https://${window.location.host}/${userName}/${repoName}/pull/${pullId}/files${window.location.search}`
-  const nodes: TreeNode[] = treeData.map(item => ({
-    path: item.filename || '',
-    type: 'blob',
-    name: item.filename?.replace(/^.*\//, '') || '',
-    url: `${urlMainPart}${formatHash(getFileElementHash(item.filename))}`,
-    sha: item.sha,
-    comments: commentData?.filter(comment => item.filename === comment.path).length,
-  }))
+  const nodes: TreeNode[] = treeData.map(
+    ({ filename, sha, additions, deletions, changes, status }) => ({
+      path: filename || '',
+      type: 'blob',
+      name: filename?.replace(/^.*\//, '') || '',
+      url: `${urlMainPart}${formatHash(getFileElementHash(filename))}`,
+      sha: sha,
+      comments: commentData?.filter(comment => filename === comment.path).length,
+      diff: {
+        status,
+        additions,
+        deletions,
+        changes,
+      },
+    }),
+  )
 
   const root = processTree(nodes)
   return { root }

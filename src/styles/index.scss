@@ -81,7 +81,6 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
   }
 }
 
-
 .#{$name}-ready {
   // github
   // code folding start
@@ -732,13 +731,77 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
             padding-right: 8px;
 
             .node-item-comment {
-              display: inline-block;
-              width: 48px;
+              display: inline-flex;
+              align-items: center;
+              min-width: 36px;
               padding: 0 4px;
               color: var(--gitako-fg-muted);
 
               .octicon-wrapper {
                 margin: 0; // make it closer to the comment amount label
+              }
+            }
+
+            .node-item-diff {
+              display: inline-flex;
+              align-items: center;
+              padding: 0 4px;
+              color: var(--gitako-fg-muted);
+
+              .octicon-wrapper {
+                margin: 0; // make it closer to the diff details
+              }
+
+              .added .octicon {
+                color: var(--gitako-success-emphasis);
+              }
+              .removed .octicon {
+                color: var(--gitako-danger-emphasis);
+              }
+              .renamed .octicon {
+                color: var(--gitako-done-emphasis);
+              }
+              .modified .octicon {
+                color: var(--gitako-accent-emphasis);
+              }
+              .ignored .octicon {
+                color: var(--gitako-neutral-emphasis);
+              }
+
+              .diff-stat-graph {
+                display: inline-block;
+                white-space: nowrap;
+                > span {
+                  display: inline-block;
+                  width: 2px;
+                  height: 10px;
+                  margin: 0 1px;
+                  border-radius: 2px;
+                  background: var(--gitako-neutral-emphasis);
+                }
+
+                .diff-stat-graph-addition {
+                  background: var(--gitako-success-emphasis);
+                }
+
+                .diff-stat-graph-deletion {
+                  background: var(--gitako-danger-emphasis);
+                }
+              }
+
+              .diff-stat-text {
+                display: inline-block;
+                white-space: nowrap;
+                font-family: 'Cascadia Code', 'Courier New', Courier, monospace; // Use some commonly available monospace font
+                .additions {
+                  color: var(--gitako-success-emphasis);
+                }
+                .delimiter {
+                  color: var(--gitako-neutral-emphasis);
+                }
+                .deletions {
+                  color: var(--gitako-danger-emphasis);
+                }
               }
             }
 
