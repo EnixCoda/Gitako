@@ -118,12 +118,16 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
         </button>
       ) : undefined
     const renderFileCommentAmounts = (node: TreeNode): React.ReactNode =>
-      node.comments !== undefined &&
-      node.comments > 0 && (
-        <span className={'node-item-comment'}>
-          <Icon type={'comment'} /> {node.comments > 9 ? '9+' : node.comments}
+      node.comments?.active ? (
+        <span
+          className={'node-item-comment'}
+          title={`${node.comments.active + node.comments.resolved} comments, ${
+            node.comments.active
+          } active, ${node.comments.resolved} resolved`}
+        >
+          <Icon type={'comment'} /> {node.comments.active > 9 ? '9+' : node.comments.active}
         </span>
-      )
+      ) : null
     const renderFileStatus = ({ diff }: TreeNode): React.ReactNode =>
       diff && (
         <span
@@ -135,8 +139,8 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
       )
 
     const renders: ((node: TreeNode) => React.ReactNode)[] = []
-    if (commentToggle) renders.push(renderFileCommentAmounts)
     renders.push(renderFileStatus)
+    if (commentToggle) renders.push(renderFileCommentAmounts)
     if (searchMode === 'fuzzy') renders.push(renderFindInFolderButton)
     if (searched) renders.push(renderGoToButton)
 

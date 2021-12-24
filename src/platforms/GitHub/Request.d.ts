@@ -37,6 +37,7 @@ declare namespace GitHubAPI {
 
   type PullComment = {
     path: string
+    position: number | null
     pull_request_review_id: number
     id: number
     node_id: string

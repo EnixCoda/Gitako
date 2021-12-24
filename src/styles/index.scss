@@ -738,7 +738,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
               color: var(--gitako-fg-muted);
 
               .octicon-wrapper {
-                margin: 0; // make it closer to the comment amount label
+                margin: 2px; // make it closer to the comment amount label
               }
             }
 
@@ -792,7 +792,9 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
               .diff-stat-text {
                 display: inline-block;
                 white-space: nowrap;
-                font-family: 'Cascadia Code', 'Courier New', Courier, monospace; // Use some commonly available monospace font
+                // Use some commonly available monospace font, the leading ones are copied from GitHub
+                font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono,
+                  monospace, 'Cascadia Code', 'Courier New', Courier;
                 .additions {
                   color: var(--gitako-success-emphasis);
                 }

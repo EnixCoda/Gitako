@@ -1,6 +1,7 @@
 import { useConfigs } from 'containers/ConfigsContext'
 import { GITHUB_OAUTH } from 'env'
 import { Base64 } from 'js-base64'
+import { run } from 'utils/general'
 import { resolveGitModules } from 'utils/gitSubmodule'
 import { sortFoldersToFront } from 'utils/treeParser'
 import * as API from './API'
@@ -330,7 +331,14 @@ async function getPullRequestTreeData(
       name: filename?.replace(/^.*\//, '') || '',
       url: `${urlMainPart}${formatHash(getFileElementHash(filename))}`,
       sha: sha,
-      comments: commentData?.filter(comment => filename === comment.path).length,
+      comments: run(() => {
+        const comments = commentData?.filter(comment => filename === comment.path)
+        if (comments?.length)
+          return {
+            active: comments.filter(comment => comment.position !== null).length,
+            resolved: comments.filter(comment => comment.position === null).length,
+          }
+      }),
       diff: {
         status,
         additions,
