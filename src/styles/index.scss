@@ -11,7 +11,12 @@ $min-width-with-gitako: $min-screen-width + $side-bar-base-width;
 
 $github-header-z-index: 32;
 $github-pull-request-float-header-z-index: 110;
-$minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-z-index) + 1;
+$github-notifications-center-header-z-index: 999;
+$minimal-z-index: max(
+    $github-header-z-index,
+    $github-pull-request-float-header-z-index,
+    $github-notifications-center-header-z-index
+  ) + 1;
 
 @mixin interactive-frame() {
   @include interactive-border;
