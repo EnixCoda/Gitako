@@ -9,6 +9,17 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 const srcPath = path.resolve(__dirname, 'src')
 const packagesPath = path.resolve(__dirname, 'packages')
 
+function resolvePathInput(input) {
+  return path.isAbsolute(input) ? input : path.resolve(process.cwd(), input)
+}
+
+const buildTarget = process.env.TARGET
+const buildTargetOutputMap = {
+  safari: 'Safari/Gitako/Gitako Extension/Resources',
+}
+const envOutputDir = process.env.OUTPUT_DIR || buildTargetOutputMap[buildTarget]
+const outputPath = envOutputDir ? resolvePathInput(envOutputDir) : path.resolve(__dirname, 'dist')
+
 const IN_PRODUCTION_MODE = process.env.NODE_ENV === 'production'
 const plugins = [
   new CopyWebpackPlugin([
@@ -24,6 +35,13 @@ const plugins = [
           author,
           homepage_url,
         })
+
+        // Disable custom domains for Safari
+        if (buildTarget === 'safari') {
+          Reflect.deleteProperty(manifest, 'optional_permissions')
+          Reflect.deleteProperty(manifest, 'background')
+        }
+
         if (!IN_PRODUCTION_MODE) {
           Object.assign(manifest, {
             web_accessible_resources: manifest.web_accessible_resources.concat('*.map'), // enable source mapping while developing
@@ -75,7 +93,7 @@ module.exports = {
   devtool: IN_PRODUCTION_MODE ? 'source-map' : 'inline-source-map',
   mode: IN_PRODUCTION_MODE ? 'production' : 'development',
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: outputPath,
     filename: '[name].js',
   },
   resolve: {
