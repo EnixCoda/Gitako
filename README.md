@@ -1,45 +1,47 @@
 # Gitako
 
 <p align="center">
-  <img width="256" src="src/assets/icons/Gitako.png" />
+  <img width="192" src="src/assets/icons/Gitako.png" />
 </p>
 
-Gitako is a file tree extension for GitHub, available for Chrome, Firefox and Edge. And more than that, it has lots of useful features.
+Gitako is a free file tree extension for GitHub, available on Chrome, Firefox and Edge.
 
 ### Features
 
-- 📂 neat file tree for repository and pull request
-- 🔎 instant file search and navigation
-- 🕶️ support private repositories and [GitHub enterprise](https://github.com/EnixCoda/Gitako/wiki/Use-in-GitHub-enterprise-and-other-sites)
-- 🏎 extremely fast even in gigantic projects
-- ⌨️ intuitive keyboard accessibility
-- 🗂 support git submodule
-- ↔️ resizable layout
-- 📋 copy snippets and file
-- 🎨 friendly UI and rich icons
+- 📂 File tree for repository and pull request
+- 🔎 Instant file search and navigation
+- 🕶️ Support private repositories
+- 🧩 Support [GitHub enterprise](https://github.com/EnixCoda/Gitako/wiki/Use-in-GitHub-enterprise-and-other-sites), Gitea, Gitee, and [more](https://github.com/EnixCoda/Gitako/issues/60)
+- 🏎 Always performant, even in gigantic projects
+- ⌨️ Intuitive keyboard navigation
+- 📋 Copy snippets and file content
+- 🎨 Various icons and official themes support
+- 🗂 Support git submodule
+- 📏 Fold source code
 
-### Installation
+### Install
 
-[![Install for Chrome](./ChromeWebStoreBadge.svg)](https://chrome.google.com/webstore/detail/gitako-github-file-tree/giljefjcheohhamkjphiebfjnlphnokk)
+<a href="https://chrome.google.com/webstore/detail/gitako-github-file-tree/giljefjcheohhamkjphiebfjnlphnokk"><img width="64" alt="Chrome" src="./assets/Chrome.svg" /></a>
+<a href="https://microsoftedge.microsoft.com/addons/detail/alpoloddcggjhakjemghahlkofjekbca"><img width="64" alt="Edge" src="./assets/Edge.svg" /></a>
+<a href="https://addons.mozilla.org/en-US/firefox/addon/gitako-github-file-tree/"><img width="64" alt="Firefox" src="./assets/Firefox.svg" /></a>
 
-[for Edge](https://microsoftedge.microsoft.com/addons/detail/alpoloddcggjhakjemghahlkofjekbca)
-
-[for Firefox](https://addons.mozilla.org/en-US/firefox/addon/gitako-github-file-tree/)
+It is more recommended for Edge users to install from Chrome store. It may delay for weeks before updates got published to Edge store because its review process is slow.
 
 ### Help Gitako
 
-If you appreciate Gitako and would like to help it grow better, please either
-- Give it a star ⭐️ at GitHub
-- Leave a review 👍 in the extension store
+Gitako is **FREE**. If you like it, please
 
-Feature request discussions and bug reports are welcome, feel free to draft an [issue](https://github.com/EnixCoda/Gitako/issues/)!
+- ⭐️ Star it at GitHub
+- 👍 Review in the extension store
+
+[Feature discussions](https://github.com/EnixCoda/Gitako/discussions) and [bug reports](https://github.com/EnixCoda/Gitako/issues/) are also welcome!
 
 ### About
 
-#### Name and logo?
+#### Source of the name and logo?
 
 The totem of GitHub is a cute octopus. And octopus in Japanese is `タコ`(tako).
-Then link them together:
+Then concat them together:
 
     git + tako -> gitako
 

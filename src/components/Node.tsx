@@ -1,8 +1,8 @@
 import { useConfigs } from 'containers/ConfigsContext'
+import { platform } from 'platforms'
 import * as React from 'react'
 import { cx } from 'utils/cx'
-import { OperatingSystems, os } from 'utils/general'
-import { getFileIconSrc, getFolderIconSrc } from 'utils/parseIconMapCSV'
+import { getFileIconURL, getFolderIconURL } from 'utils/parseIconMapCSV'
 import { Icon } from './Icon'
 
 function getIconType(node: TreeNode) {
@@ -42,21 +42,11 @@ export function Node({
   return (
     <a
       href={node.url}
-      onClick={event => {
-        if (
-          (os === OperatingSystems.macOS && event.metaKey) ||
-          (os === OperatingSystems.Linux && event.ctrlKey) ||
-          (os === OperatingSystems.Windows && event.ctrlKey)
-        ) {
-          // The default behavior, open in new tab
-          return
-        }
-
-        onClick(event, node)
-      }}
+      onClick={event => onClick(event, node)}
       className={cx(`node-item`, { focused, disabled: node.accessDenied, expanded, compact })}
       style={{ ...style, paddingLeft: `${10 + (compact ? 10 : 20) * depth}px` }}
       title={node.path}
+      {...platform.delegatePJAXProps?.({ node })}
     >
       <div className={'node-item-label'}>
         <NodeItemIcon node={node} open={expanded} loading={loading} />
@@ -81,7 +71,7 @@ const NodeItemIcon = React.memo(function NodeItemIcon({
   } = useConfigs()
 
   const src = React.useMemo(
-    () => (node.type === 'tree' ? getFolderIconSrc(node, open) : getFileIconSrc(node)),
+    () => (node.type === 'tree' ? getFolderIconURL(node, open) : getFileIconURL(node)),
     [open],
   )
 

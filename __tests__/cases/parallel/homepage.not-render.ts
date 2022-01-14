@@ -1,4 +1,4 @@
-import { expectToNotFind } from '../utils'
+import { expectToNotFind } from '../../utils'
 
 describe(`in GitHub homepage`, () => {
   beforeAll(() => page.goto('https://github.com'))

@@ -1,4 +1,4 @@
-import { expectToFind, expectToNotFind, sleep, waitForLegacyPJAXRedirect } from '../utils'
+import { expectToFind, expectToNotFind, sleep, waitForLegacyPJAXRedirect } from '../../utils'
 
 describe(`in Gitako project page`, () => {
   beforeAll(() => page.goto('https://github.com/EnixCoda/Gitako/tree/develop/src'))
@@ -9,8 +9,9 @@ describe(`in Gitako project page`, () => {
         `.js-details-container div[role="row"] div[role="rowheader"] a[title*="."]`,
       )
       if (commitLinks.length < 2) throw new Error(`No enough files`)
-      await commitLinks[i].click()
-      await waitForLegacyPJAXRedirect()
+      await waitForLegacyPJAXRedirect(async () => {
+        await commitLinks[i].click()
+      })
       await expectToFind('table.js-file-line-container')
       await sleep(1000)
 

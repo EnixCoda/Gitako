@@ -5,16 +5,16 @@
 const fs = require('fs').promises
 const path = require('path')
 
-function modify(source = '', pairs = [], loose = true) {
+function modify(source = '', pairs = []) {
   for (const [original, replace] of pairs) {
     if (source.includes(original)) {
       source = source.replace(original, replace)
-      if (source.includes(original)) {
-        throw new Error(`More than one original string found`, JSON.stringify(original))
-      }
     } else {
-      if (loose) console.log(`Skipped missing snippet`, original)
-      else throw new Error(`Original string not found`, JSON.stringify(original))
+      throw new Error(`Original string not found: ${JSON.stringify(original)}`)
+    }
+
+    if (source.includes(original)) {
+      throw new Error(`More than one original string found`, JSON.stringify(original))
     }
   }
 
@@ -54,11 +54,16 @@ async function fixPJAXAPI(loose) {
             }`,
     ],
   ]
-  const filePath = path.resolve(__dirname, '..', `node_modules/pjax-api/dist/pjax-api.js`)
-  const source = await fs.readFile(filePath, 'utf-8')
-  const modified = modify(source, pairs, loose)
-  fs.writeFile(filePath, modified, 'utf-8')
+  try {
+    const filePath = path.resolve(__dirname, '..', `node_modules/pjax-api/dist/pjax-api.js`)
+    const source = await fs.readFile(filePath, 'utf-8')
+    const modified = modify(source, pairs, loose)
+    await fs.writeFile(filePath, modified, 'utf-8')
+  } catch (err) {
+    console.error((err && err.message) || err)
+    const shouldTerminate = process.env.IGNORE_FIX_PJAX_API_FAILURE !== 'true'
+    if (shouldTerminate) process.exit(1)
+  }
 }
 
-const loose = process.argv.includes('loose')
-fixPJAXAPI(loose)
+fixPJAXAPI()

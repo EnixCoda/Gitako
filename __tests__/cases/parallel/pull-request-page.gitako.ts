@@ -1,4 +1,4 @@
-import { expectToFind } from '../utils'
+import { expectToFind } from '../../utils'
 
 describe(`in Gitako project page`, () => {
   beforeAll(() => page.goto('https://github.com/EnixCoda/Gitako/pull/71'))

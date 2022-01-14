@@ -1,5 +1,4 @@
 import { SearchMode } from 'components/searchModes'
-import { platform, platformName } from 'platforms'
 import { storageHelper } from 'utils/storageHelper'
 import { migrateConfig } from './migrations'
 
@@ -20,6 +19,8 @@ export type Config = {
   commentToggle: boolean
   codeFolding: boolean
   compactFileTree: boolean
+  restoreExpandedFolders: boolean
+  showDiffInText: boolean
 }
 
 enum configKeys {
@@ -39,15 +40,20 @@ enum configKeys {
   commentToggle = 'commentToggle',
   codeFolding = 'codeFolding',
   compactFileTree = 'compactFileTree',
+  restoreExpandedFolders = 'restoreExpandedFolders',
+  showDiffInText = 'showDiffInText',
 }
+
+// do NOT use platform name
+const platformStorageKey = `platform_` + window.location.host.toLowerCase()
 
 export const defaultConfigs: Config = {
   sideBarWidth: 260,
   shortcut: undefined,
   accessToken: '',
   compressSingletonFolder: true,
-  copyFileButton: true,
-  copySnippetButton: !(platformName === 'GitHub' && !platform.isEnterprise()), // false when on github.com
+  copyFileButton: platformStorageKey !== 'platform_github.com', // false when on github.com,
+  copySnippetButton: platformStorageKey !== 'platform_github.com', // false when on github.com
   intelligentToggle: null,
   icons: 'rich',
   toggleButtonVerticalDistance: 124, // align with GitHub's navbar items
@@ -58,6 +64,8 @@ export const defaultConfigs: Config = {
   commentToggle: true,
   codeFolding: true,
   compactFileTree: false,
+  restoreExpandedFolders: true,
+  showDiffInText: false,
 }
 
 const configKeyArray = Object.values(configKeys)
@@ -71,8 +79,6 @@ function applyDefaultConfigs(configs: Partial<Config>) {
 
 export type VersionedConfig<SiteConfig> = Record<string, SiteConfig> & { configVersion: string }
 
-// do NOT use platform name
-const platformStorageKey = `platform_` + window.location.host.toLowerCase()
 const prepareConfig = new Promise<void>(async resolve => {
   await migrateConfig()
   resolve()

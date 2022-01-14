@@ -116,11 +116,11 @@ export async function getPullComments(
   return await request(url, { accessToken })
 }
 
-export async function getPullPageDocument(
+export async function getPullPageDocuments(
   userName: string,
   repoName: string,
   pullId: string, // not used
-): Promise<Document> {
+): Promise<Document[]> {
   // Response of this API contains view of few files but is not complete.
   const filesDOM = await getDOM(
     `https://${window.location.host}/${userName}/${repoName}/pull/${pullId}/files?_pjax=%23js-repo-pjax-container`,
@@ -137,11 +137,26 @@ export async function getPullPageDocument(
   const search = new URLSearchParams(window.location.search)
   search.set('sha1', baseSHA)
   search.set('sha2', headSHA)
-  return await getDOM(`https://${window.location.host}/${userName}/${repoName}/diffs?${search}`)
+  let lines = 0
+  const diffsDOMs: Document[] = []
+  while (true) {
+    search.set('lines', lines.toString())
+    const diffsDOM = await getDOM(
+      `https://${window.location.host}/${userName}/${repoName}/diffs?${search}`,
+    )
+    diffsDOMs.push(diffsDOM)
 
-  async function getDOM(url: string) {
-    return new DOMParser().parseFromString(await (await fetch(url)).text(), 'text/html')
+    if (diffsDOM.querySelector('.js-diff-progressive-container')) {
+      lines += 3000
+    } else {
+      break
+    }
   }
+  return diffsDOMs
+}
+
+async function getDOM(url: string) {
+  return new DOMParser().parseFromString(await (await fetch(url)).text(), 'text/html')
 }
 
 export async function getBlobData(

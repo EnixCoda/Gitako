@@ -15,6 +15,12 @@ export function SearchBar({ onSearch, onFocus, value }: Props) {
   const configs = useConfigs()
   const { searchMode } = configs.value
 
+  const toggleButtonDescription = `${
+    searchMode === 'regex'
+      ? 'Match file name with regular expression.'
+      : 'Match file path sequence with input.'
+  } Click to toggle.`
+
   return (
     <div className={'search-input-wrapper'}>
       <TextInput
@@ -36,7 +42,7 @@ export function SearchBar({ onSearch, onFocus, value }: Props) {
       <div className={`actions`}>
         <button
           className={`toggle-search-mode`}
-          title="Toggle search mode"
+          title={toggleButtonDescription}
           onClick={() => {
             const newMode = searchMode === 'regex' ? 'fuzzy' : 'regex'
             configs.onChange({
@@ -44,7 +50,7 @@ export function SearchBar({ onSearch, onFocus, value }: Props) {
             })
             onSearch(value, newMode)
           }}
-          aria-label="Toggle search mode"
+          aria-label={toggleButtonDescription}
         >
           {searchMode === 'regex' ? '.*' : 'path'}
         </button>

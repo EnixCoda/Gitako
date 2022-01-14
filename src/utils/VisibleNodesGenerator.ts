@@ -124,6 +124,10 @@ class ShakeLayer extends BaseLayer {
   lastSearchParams: SearchParams | null = null
   shakeHub = new EventHub<{ emit: TreeNode | null }>()
 
+  get isSearching() {
+    return this.lastSearchParams !== null
+  }
+
   constructor(options: Options) {
     super(options)
 
@@ -193,6 +197,7 @@ class FlattenLayer extends CompressLayer {
   focusedNode: TreeNode | null = null
   nodes: TreeNode[] = []
   expandedNodes: Set<TreeNode['path']> = new Set()
+  backupExpandedNodes: Set<TreeNode['path']> = new Set()
   flattenHub = new EventHub<{ emit: null }>()
 
   constructor(options: Options) {
@@ -268,8 +273,8 @@ class FlattenLayer extends CompressLayer {
     const expand = !this.expandedNodes.has(node.path)
     await traverse(
       [node],
-      async node => {
-        await this.$setExpand(node, expand)
+      node => {
+        this.$setExpand(node, expand)
         return recursive
       },
       node => node.contents || [],
@@ -300,18 +305,24 @@ class FlattenLayer extends CompressLayer {
     }
   }, this.generateVisibleNodes)
 
-  search = (searchParams: Pick<SearchParams, 'matchNode'> | null) => {
-    this.shake(
-      searchParams
-        ? {
-            matchNode: searchParams.matchNode,
-            onChildMatch: node => this.$setExpand(node, true),
-          }
-        : null,
-    )
-    // collapse all nodes on clearing search key
-    if (!searchParams) {
+  search = (searchParams: Pick<SearchParams, 'matchNode'> | null, restoreExpandedFolders?: boolean) => {
+    // backup expansion before search
+    if (searchParams) {
+      if (!this.isSearching) {
+        this.backupExpandedNodes.clear()
+        this.expandedNodes.forEach(path => this.backupExpandedNodes.add(path))
+      }
+      this.shake({
+        matchNode: searchParams.matchNode,
+        onChildMatch: node => this.$setExpand(node, true),
+      })
+    } else {
+      this.shake(null)
+      // collapse all nodes on clearing search key
       this.expandedNodes.clear()
+      if (restoreExpandedFolders) {
+        this.backupExpandedNodes.forEach(path => this.expandedNodes.add(path))
+      }
     }
   }
 }

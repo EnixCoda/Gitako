@@ -11,7 +11,7 @@ const tableSelector = `.blob-wrapper table`
 const selectorOfLineNumber = `.blob-num`
 const selectorOfLineContent = `.blob-code`
 
-const theCSSClassForToggleElementOnActive = 'active'
+const theCSSClassForToggleElementOnActive = 'gitako-code-fold-active'
 function init() {
   type LineNumber = number // alias
   const blocks: LineNumber[] = [] // startLine -> exclusiveEndLine
@@ -87,6 +87,7 @@ function init() {
     if (!end) return
 
     const toggleElement = document.createElement('div')
+    toggleElement.setAttribute('title', 'Code Folding by Gitako')
     toggleElement.setAttribute('role', 'button')
     toggleElement.classList.add(theCSSClassForToggleElement)
 

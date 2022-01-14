@@ -16,7 +16,12 @@ export const migration: Migration = {
       'intelligentToggle',
       'icons',
     ])
-    if (config && (!('configVersion' in config) || config.configVersion < version)) {
+    if (
+      config &&
+      (!('configVersion' in config) ||
+        config.configVersion === null ||
+        config.configVersion < version)
+    ) {
       await storageHelper.set({ platform_GitHub: config, configVersion: version })
     }
   },

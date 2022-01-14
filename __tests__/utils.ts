@@ -68,12 +68,10 @@ export function once(event: string, target: 'document' | 'window') {
   })
 }
 
-export function waitForLegacyPJAXRedirect() {
-  return once('pjax:end', 'document')
-}
-
-export function waitForPJAXAPIRedirect() {
-  return once('pjax:ready', 'document')
+export async function waitForLegacyPJAXRedirect(action?: () => void | Promise<void>) {
+  const promise = once('pjax:end', 'document')
+  await action?.()
+  return promise
 }
 
 export function selectFileTreeItem(path: string): string {

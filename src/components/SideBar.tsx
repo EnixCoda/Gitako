@@ -13,8 +13,7 @@ import * as DOMHelper from 'utils/DOMHelper'
 import { run } from 'utils/general'
 import { useCatchNetworkError } from 'utils/hooks/useCatchNetworkError'
 import { useLoadedContext } from 'utils/hooks/useLoadedContext'
-import { loadWithPJAX, useOnPJAXDone, usePJAX } from 'utils/hooks/usePJAX'
-import { useProgressBar } from 'utils/hooks/useProgressBar'
+import { useOnPJAXDone, usePJAX } from 'utils/hooks/usePJAX'
 import { useStateIO } from 'utils/hooks/useStateIO'
 import { SideBarErrorContext } from '../containers/ErrorContext'
 import { RepoContext } from '../containers/RepoContext'
@@ -98,7 +97,6 @@ export function SideBar() {
   platform.usePlatformHooks?.()
 
   usePJAX()
-  useProgressBar()
 
   // Hide sidebar when error due to auth but token is set  #128
   const hideSidebarOnInvalidToken: boolean =
@@ -128,6 +126,7 @@ export function SideBar() {
           })}
           baseSize={baseSize}
           onLeave={sidebarToggleMode === 'float' ? () => setShowSideBar(false) : undefined}
+          sizeVariableMountPoint={sidebarToggleMode === 'persistent' ? document.body : undefined}
         >
           <div className={'gitako-side-bar-body'}>
             <div
@@ -181,7 +180,6 @@ export function SideBar() {
                               metaData={metaData}
                               freeze={showSettings}
                               accessToken={accessToken}
-                              loadWithPJAX={loadWithPJAX}
                               config={configContext.value}
                               catchNetworkErrors={useCatchNetworkError()}
                             />

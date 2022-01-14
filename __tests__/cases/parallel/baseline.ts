@@ -1,8 +1,8 @@
 /**
- * Make sure some basic behaviors of puppeteer assertions
+ * Confirm basic behaviors of puppeteer assertions
  */
 
-import { expectToFind, expectToNotFind } from '../utils'
+import { expectToFind, expectToNotFind } from '../../utils'
 
 describe(`in random page`, () => {
   beforeAll(() => page.goto('https://google.com'))

@@ -3,6 +3,7 @@ import { platform } from 'platforms'
 import * as React from 'react'
 import { resolveGitModules } from 'utils/gitSubmodule'
 import { useOnPJAXDone } from 'utils/hooks/usePJAX'
+import { useProgressBar } from 'utils/hooks/useProgressBar'
 import { sortFoldersToFront } from 'utils/treeParser'
 import * as API from './API'
 import * as DOMHelper from './DOMHelper'
@@ -82,7 +83,7 @@ export const Gitee: Platform = {
     if (DOMHelper.isInCodePage()) {
       // not working well with non-branch blob
       // cannot handle '/' split branch name, should not use when possibly on branch page
-      branchName = DOMHelper.getCurrentBranch() || URLHelper.parseSHA()
+      branchName = (DOMHelper.getCurrentBranch() || URLHelper.parseSHA())?.trim()
     }
 
     const { userName, repoName, type } = URLHelper.parse()
@@ -102,10 +103,14 @@ export const Gitee: Platform = {
     const data = await API.getRepoMeta(userName, repoName, accessToken)
     return data.default_branch
   },
-  resolveUrlFromMetaData({ userName, repoName }) {
+  resolveUrlFromMetaData({ userName, repoName, branchName }) {
+    const repoUrl = `https://${window.location.host}/${userName}/${repoName}`
+    const userUrl = `https://${window.location.host}/${userName}`
+    const branchUrl = `${repoUrl}/tree/${branchName}`
     return {
-      repoUrl: `https://${window.location.host}/${userName}/${repoName}`,
-      userUrl: `https://${window.location.host}/${userName}`,
+      repoUrl,
+      userUrl,
+      branchUrl,
     }
   },
   async getTreeData(metaData, path, recursive, accessToken) {
@@ -169,6 +174,9 @@ export const Gitee: Platform = {
   },
   setOAuth(code) {
     return API.OAuth(code)
+  },
+  usePlatformHooks() {
+    useProgressBar()
   },
 }
 

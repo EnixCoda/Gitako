@@ -16,7 +16,16 @@ type TreeNode = {
   url?: string
   sha?: string
   accessDenied?: boolean
-  comments?: number
+  comments?: {
+    active: number,
+    resolved: number,
+  }
+  diff?: {
+    status: 'modified' | 'added' | 'removed' | 'renamed'
+    additions: number
+    deletions: number
+    changes: number
+  }
 }
 
 type IO<T, ChangeT = T> = {

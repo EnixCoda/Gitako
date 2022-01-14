@@ -1,18 +1,21 @@
-const languageIds = require('./language-id-ext.json')
+const { languages } = require('./tmp/languages')
+const fileName = 'file-icons-index'
 
-function generateCSV() {
+const link = 'https://github.com/vscode-icons/vscode-icons/wiki/ListOfFiles'
+
+function parsePageContent() {
   const records = []
-
   document.body
     .querySelector('table')
     .querySelectorAll('tbody tr')
     .forEach(tr => {
       const [name, id, dark, light] = Array.from(tr.querySelectorAll('td'))
       const exts = []
+      const ids = []
       const names = []
-      id.innerHTML
-        .replace(/<sub>|<\/sub>/g, '')
-        .split(', ')
+
+      id.querySelector('sub')
+        .innerHTML.split(', ')
         .map(part => {
           const tags = part.match(/<(\w+)>(.*?)<\/\1>/g)
           if (tags) {
@@ -21,51 +24,50 @@ function generateCSV() {
               if (match) {
                 const [, tag, content] = match
                 if (tag === 'strong') {
-                  // filenames in bold
-                  names.push(content)
+                  // filenames
+                  names.push(content.toLowerCase())
                 } else if (tag === 'code') {
-                  // language ids in code block
-                  const map = Object.values(languageIds).find(({ ids }) =>
-                    (Array.isArray(ids) ? ids : [ids]).includes(content),
-                  )
-                  if (map && map.exts) exts.push(map.exts)
+                  // language ids
+                  ids.push(content)
                 } else {
                   console.warn(`Found unrecognized format`, subPart, tag) // unknown
                 }
               }
             })
           } else if (part) {
-            // extensions are in regular fonts
-            exts.push(part.replace(/^\./, ''))
+            // extensions
+            exts.push(part.toLowerCase())
           }
         })
       records.push({
         name: name.innerText,
-        exts,
         names,
+        exts,
+        ids,
         icon: getSrc(dark.querySelector('img')) || getSrc(light.querySelector('img')),
       })
     })
+  return records
 
   function getSrc(img) {
     return img && img.src
   }
-
-  const prepend = 'https://github.com/vscode-icons/vscode-icons/raw/master/icons/file_type_'
-  const append = '.svg?sanitize=true'
-  const separator = ':'
-  const csv = records
-    .map(({ name, names, exts, icon }) =>
-      [
-        name,
-        names.join(separator),
-        exts.join(separator),
-        // icon.replace(prepend, '').replace(append, ''), // assumption: name is equal to this
-      ].join(','),
-    )
-    .join('\n')
-
-  return csv
 }
 
-console.log(generateCSV())
+function prepareCSV({ name, names, exts, ids, icon }) {
+  ids.forEach(content => {
+    const defaultExtension = Object.values(languages)
+      .find(({ ids }) => (Array.isArray(ids) ? ids : [ids]).includes(content))
+      .defaultExtension.toLowerCase()
+    if (!exts.includes(defaultExtension)) exts.push(defaultExtension)
+  })
+  const iconFile = icon.replace(/^.*?file_type_(.*?)\..*$/, '$1')
+  const cols = [name, names.join(':'), exts.join(':')]
+  if (!['file'].includes(name) && name !== iconFile) cols.push(iconFile)
+  return cols
+}
+
+exports.fileName = fileName
+exports.link = link
+exports.parsePageContent = parsePageContent
+exports.prepareCSV = prepareCSV

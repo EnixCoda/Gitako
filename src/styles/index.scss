@@ -11,9 +11,42 @@ $min-width-with-gitako: $min-screen-width + $side-bar-base-width;
 
 $github-header-z-index: 32;
 $github-pull-request-float-header-z-index: 110;
-$minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-z-index) + 1;
+$github-notifications-center-header-z-index: 999;
+$minimal-z-index: max(
+    $github-header-z-index,
+    $github-pull-request-float-header-z-index,
+    $github-notifications-center-header-z-index
+  ) + 1;
 
-@mixin interactive-background($default, $hover, $active, $focus: $hover) {
+@mixin interactive-frame() {
+  @include interactive-border;
+  @include interactive-background;
+}
+
+@mixin interactive-border(
+  $default: var(--gitako-btn-border),
+  $hover: var(--gitako-btn-hover-border),
+  $active: var(--gitako-btn-active-border),
+  $focus: $hover
+) {
+  border: 1px solid $default;
+  &:hover {
+    border: 1px solid $hover;
+  }
+  &:focus {
+    border: 1px solid $focus;
+  }
+  &:active {
+    border: 1px solid $active;
+  }
+}
+
+@mixin interactive-background(
+  $default: var(--gitako-btn-bg),
+  $hover: var(--gitako-btn-hover-bg),
+  $active: var(--gitako-btn-active-bg),
+  $focus: $hover
+) {
   background-color: $default;
   &:hover {
     background-color: $hover;
@@ -47,47 +80,14 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
   }
 }
 
-:root {
-  --gitako-width: #{$side-bar-base-width};
+@mixin hide-for-print {
+  @media print {
+    display: none;
+  }
 }
 
 .#{$name}-ready {
   // github
-  &.shrink-github-header {
-    .js-header-wrapper {
-      background: var(--gitako-bg-canvas-inverse);
-    }
-    .Header {
-      max-width: 1280px;
-      margin: 0 auto;
-      @media (max-width: 1020px) {
-        overflow: hidden; // prevent blank scroll area when Gitako is open and window is narrow
-      }
-      @media (min-width: 1280px) {
-        padding: 0 32px !important;
-      }
-    }
-    main {
-      // overflow: hidden;
-      // This prevents blank scroll area when Gitako is open and window is narrow.
-      // But it conflicts with the pr toolbar. Keep it here as a reminder.
-
-      & > *:first-child {
-        // repo info and nav bar
-        box-shadow: inset 0 -1px 0 var(--gitako-border-overlay); // from .UnderlineNav
-
-        & > * {
-          max-width: 1280px;
-          margin: 0 auto;
-        }
-
-        nav {
-          overflow: auto !important;
-        }
-      }
-    }
-  }
-
   // code folding start
   .blob-wrapper table .blob-num {
     position: relative; // for positioning
@@ -95,17 +95,16 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     padding-right: 20px;
   }
 
-  // cancel code fold if not wrapped with .gitako-code-fold-mark
+  // hide code fold handler if not enabled
   .gitako-code-fold-handler {
     display: none;
   }
-  .gitako-code-fold-hidden {
-    display: table-cell;
-  }
 
-  .gitako-code-fold-attached {
+  .gitako-code-fold-attached:not(.gitako-code-fold-attached-disabled) {
     tr {
       .gitako-code-fold-handler {
+        @include hide-for-print();
+
         display: initial;
         position: absolute;
         top: 0px;
@@ -133,29 +132,32 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
         }
 
         @include interactive-background-on-before(
-          var(--gitako-icon-tertiary),
-          var(--gitako-icon-primary),
-          var(--gitako-icon-secondary)
+          var(--gitako-fg-subtle),
+          var(--gitako-fg-default),
+          var(--gitako-fg-muted)
         );
       }
 
-      &.active {
+      &.gitako-code-fold-active {
         .gitako-code-fold-handler {
           &::before {
             transform: rotate(-90deg);
           }
 
           @include interactive-background-on-before(
-            var(--gitako-icon-secondary),
-            var(--gitako-icon-tertiary),
-            var(--gitako-icon-primary)
+            var(--gitako-fg-muted),
+            var(--gitako-fg-default),
+            var(--gitako-fg-subtle)
           );
         }
       }
-    }
 
-    .gitako-code-fold-hidden {
-      display: none;
+      // hide folded sections, except for print
+      &.gitako-code-fold-hidden {
+        @media screen {
+          display: none;
+        }
+      }
     }
   }
   // code folding end
@@ -173,14 +175,10 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
       .clippy {
         width: 32px;
         height: 32px;
-        border: 1px solid var(--gitako-border-tertiary);
+        border: 1px solid var(--gitako-border-default);
         border-radius: 4px;
 
-        @include interactive-background(
-          var(--gitako-btn-bg),
-          var(--gitako-btn-hover-bg),
-          var(--gitako-btn-focus-bg)
-        );
+        @include interactive-background;
         .icon {
           width: 100%;
           height: 100%;
@@ -212,7 +210,9 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 }
 
 .with-gitako-spacing {
-  margin-left: var(--gitako-width);
+  @media screen {
+    margin-left: var(--gitako-width);
+  }
 
   // gitee
   &.git-project {
@@ -272,13 +272,15 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
 // Why does not TextInput get theme properly?
 @mixin input {
-  color: var(--gitako-text-primary);
-  background-color: var(--gitako-input-bg);
-  border-color: var(--gitako-border-primary);
-  box-shadow: var(--gitako-input-shadow);
+  color: var(--gitako-fg-default);
+  background-color: var(--gitako-canvas-default);
+  border-color: var(--gitako-border-default);
+  box-shadow: var(--gitako-primer-shadow-inset);
 }
 
 .#{$name}-toggle-show-button-wrapper {
+  @include hide-for-print();
+
   z-index: $minimal-z-index;
   position: fixed;
   top: 124px; // align with GitHub's navbar items
@@ -310,11 +312,10 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
       height: 32px;
       padding: 4px;
       border-radius: 6px;
-      border: 1px solid var(--gitako-border-tertiary);
-      background: var(--gitako-bg-tertiary);
-      color: var(--gitako-icon-primary);
+      @include interactive-frame;
+      color: var(--gitako-fg-default);
       &:active {
-        color: var(--gitako-icon-tertiary);
+        color: var(--gitako-fg-subtle);
       }
       transition: all ease 0.3s;
       font-size: 16px;
@@ -330,13 +331,13 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
       object-fit: contain;
       transition: all ease 0.4s;
       transform: translateX(-8px);
-      filter: drop-shadow(0 0 1px var(--gitako-bg-backdrop));
+      filter: drop-shadow(0 0 1px var(--gitako-primer-canvas-backdrop));
     }
     &:active,
     &:hover {
       .tentacle {
         transform: translateX(-4px);
-        filter: drop-shadow(0 0 2px var(--gitako-bg-backdrop));
+        filter: drop-shadow(0 0 2px var(--gitako-primer-canvas-backdrop));
       }
     }
   }
@@ -346,10 +347,10 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     margin-left: 4px;
     padding: 2px 4px;
     font-size: 12px;
-    color: var(--gitako-text-red);
-    border: 1px solid var(--gitako-border-overlay);
+    color: var(--gitako-danger-fg);
+    border: 1px solid var(--gitako-border-default);
     border-radius: 2px;
-    background-color: var(--gitako-bg-tertiary);
+    background-color: var(--gitako-bg-subtle);
   }
 
   &:hover {
@@ -360,13 +361,15 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 }
 
 .#{$name}-side-bar {
+  @include hide-for-print();
+
   @import '~@primer/css/base/index.scss';
   button {
     border-radius: 6px;
     font-weight: 600;
   }
   a {
-    color: var(--gitako-text-link);
+    color: var(--gitako-accent-fg);
   }
 
   $resizeHandlerWidth: 1px;
@@ -393,7 +396,6 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     }
 
     .gitako-side-bar-body-wrapper-content {
-      width: var(--gitako-width);
     }
   }
   .#{$name}-resize-handler {
@@ -402,15 +404,15 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
     cursor: ew-resize;
     user-select: none;
     width: 0;
-    background: var(--gitako-bg-tertiary);
-    border-right: $resizeHandlerWidth solid var(--gitako-border-tertiary);
+    background: var(--gitako-bg-subtle);
+    border-right: $resizeHandlerWidth solid var(--gitako-border-default);
     overflow: hidden;
     box-sizing: content-box;
     &:hover,
     &:active {
       width: 16px;
-      background: var(--gitako-bg-secondary);
-      border-left: 1px solid var(--gitako-border-tertiary);
+      background: var(--gitako-bg-subtle);
+      border-left: 1px solid var(--gitako-border-default);
     }
 
     .octicon.Grabber {
@@ -423,23 +425,23 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
   .#{$name}-side-bar-body {
     $button-size: 32px;
     position: relative;
-    width: 100%;
+    width: var(--gitako-width);
     height: 100%;
     display: flex;
     flex-direction: column;
-    background: var(--gitako-bg-secondary);
-    border-left: 1px solid var(--gitako-border-overlay);
+    background: var(--gitako-bg-subtle);
+    border-left: 1px solid var(--gitako-border-default);
     overflow: hidden;
 
     .octicon {
       transition: transform 0.3s ease;
-      color: var(--gitako-icon-tertiary);
+      color: var(--gitako-fg-subtle);
       width: 100%;
       height: 100%;
     }
 
     .octicon-color {
-      color: var(--gitako-icon-tertiary);
+      color: var(--gitako-fg-subtle);
     }
 
     .octicon-wrapper {
@@ -458,26 +460,33 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
       .header {
         position: relative;
         min-height: 62px; // GitHub header height if login
-        background: var(--gitako-bg-tertiary);
+        background: var(--gitako-bg-subtle);
         padding: 6px 10px;
         flex-shrink: 0;
         position: relative; // prevent overlap by outline of other elements
 
         .user-and-repo {
           display: inline; // would be override by CSS rule of section from @primer/css
-          line-height: 32px;
 
-          a {
-            color: var(--gitako-text-link);
-            white-space: normal;
+          li {
+            display: inline-flex;
+            align-items: center;
+            min-height: 32px;
+            padding: 4px 0;
+
+            a {
+              color: var(--gitako-accent-fg);
+              white-space: normal;
+            }
           }
         }
 
         .branch-name {
           margin-left: 4px;
           padding: 4px 6px; // did not align well for some reason :/
-          color: var(--gitako-branch-name-text);
-          background-color: var(--gitako-branch-name-bg);
+          color: var(--gitako-fg-muted);
+          background-color: var(--gitako-accent-subtle);
+          word-break: break-word;
         }
 
         .close-side-bar-button-position {
@@ -496,11 +505,11 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
             }
 
             &.active .octicon {
-              color: var(--gitako-icon-primary);
+              color: var(--gitako-fg-default);
             }
 
             .action-icon {
-              color: var(--gitako-icon-tertiary);
+              color: var(--gitako-fg-subtle);
               width: 20px;
               height: 20px;
               text-align: center;
@@ -529,12 +538,12 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
         width: 100%;
         height: 100%;
         @include flex-center();
-        border-top: 1px solid var(--gitako-border-overlay);
+        border-top: 1px solid var(--gitako-border-default);
 
         .loading-indicator {
           display: flex;
           align-items: center;
-          color: var(--gitako-text-placeholder);
+          color: var(--gitako-fg-subtle);
 
           &-icon {
             width: 20px;
@@ -574,14 +583,15 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           .search-input {
             width: 100%;
             box-shadow: none; // stay low
-            border-color: var(--gitako-border-overlay);
+            border-width: 1px 0 1px 0; // remove border on left&right to make UI clear
+            border-color: var(--gitako-border-default);
             border-radius: 0; // its rounded corner not match with nearby elements
-            color: var(--gitako-text-primary);
-            background: var(--gitako-bg-canvas);
+            color: var(--gitako-fg-default);
+            background: var(--gitako-bg-default);
             padding-right: 40px; // save space for actions
 
             &.error {
-              border-color: var(--gitako-border-danger);
+              border-color: var(--gitako-danger-emphasis);
             }
           }
 
@@ -599,27 +609,30 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
               margin: 0;
               padding: 2px 4px;
               min-width: 32px;
-              border: 1px solid var(--gitako-border-secondary);
+              border: 1px solid var(--gitako-border-muted);
               border-radius: 8px;
-              color: var(--gitako-text-secondary);
+              color: var(--gitako-fg-muted);
               font-size: 12px;
               font-weight: 500;
               line-height: 1;
               outline: none;
 
-              @include interactive-background(
-                var(--gitako-bg-primary),
-                var(--gitako-bg-secondary),
-                var(--gitako-bg-tertiary)
-              );
+              @include interactive-frame;
             }
           }
         }
 
         .files {
+          position: relative;
           flex: 1;
-          overflow: auto;
-          overflow-x: hidden; // prevent x-scroll bar show up while sizing
+          overflow: hidden;
+
+          // Put this inside files will help files to get proper size derived from parents, regardless of its content size
+          .magic-size-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+          }
         }
 
         .node-item {
@@ -632,21 +645,21 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
           &.focused {
             @include interactive-background(
-              var(--gitako-bg-tertiary),
-              var(--gitako-bg-secondary),
-              var(--gitako-bg-overlay)
+              var(--gitako-canvas-subtle),
+              var(--gitako-canvas-subtle),
+              var(--gitako-canvas-inset)
             );
           }
 
           @include interactive-background(
-            var(--gitako-auto-white),
-            var(--gitako-bg-secondary),
-            var(--gitako-bg-tertiary)
+            var(--gitako-canvas-default),
+            var(--gitako-canvas-subtle),
+            var(--gitako-canvas-inset)
           );
 
           &.disabled {
             pointer-events: none;
-            color: var(--gitako-text-disabled);
+            color: var(--gitako-fg-muted);
           }
           display: flex;
           justify-content: space-between;
@@ -657,17 +670,17 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           white-space: nowrap;
           transition: padding 0.3s ease; // on toggle expansion in search results
 
-          border-bottom: 1px solid var(--gitako-border-secondary);
+          border-bottom: 1px solid var(--gitako-border-muted);
           &.compact {
             border-bottom: none;
             &.focused {
-              border-top: 1px solid var(--gitako-border-secondary);
-              border-bottom: 1px solid var(--gitako-border-secondary);
+              border-top: 1px solid var(--gitako-border-muted);
+              border-bottom: 1px solid var(--gitako-border-muted);
             }
           }
 
           &:not(:hover) {
-            color: var(--gitako-text-primary);
+            color: var(--gitako-fg-default);
           }
 
           @mixin icon-size() {
@@ -714,7 +727,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
           &:not(:hover) {
             .node-item-label .prefix {
-              color: var(--gitako-text-tertiary);
+              color: var(--gitako-fg-muted);
             }
           }
 
@@ -723,13 +736,79 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
             padding-right: 8px;
 
             .node-item-comment {
-              display: inline-block;
-              width: 48px;
+              display: inline-flex;
+              align-items: center;
+              min-width: 36px;
               padding: 0 4px;
-              color: var(--gitako-text-tertiary);
+              color: var(--gitako-fg-muted);
 
               .octicon-wrapper {
-                margin: 0; // make it closer to the comment amount label
+                margin: 2px; // make it closer to the comment amount label
+              }
+            }
+
+            .node-item-diff {
+              display: inline-flex;
+              align-items: center;
+              padding: 0 4px;
+              color: var(--gitako-fg-muted);
+
+              .octicon-wrapper {
+                margin: 0; // make it closer to the diff details
+              }
+
+              .added .octicon {
+                color: var(--gitako-success-emphasis);
+              }
+              .removed .octicon {
+                color: var(--gitako-danger-emphasis);
+              }
+              .renamed .octicon {
+                color: var(--gitako-done-emphasis);
+              }
+              .modified .octicon {
+                color: var(--gitako-accent-emphasis);
+              }
+              .ignored .octicon {
+                color: var(--gitako-neutral-emphasis);
+              }
+
+              .diff-stat-graph {
+                display: inline-block;
+                white-space: nowrap;
+                > span {
+                  display: inline-block;
+                  width: 2px;
+                  height: 10px;
+                  margin: 0 1px;
+                  border-radius: 2px;
+                  background: var(--gitako-neutral-emphasis);
+                }
+
+                .diff-stat-graph-addition {
+                  background: var(--gitako-success-emphasis);
+                }
+
+                .diff-stat-graph-deletion {
+                  background: var(--gitako-danger-emphasis);
+                }
+              }
+
+              .diff-stat-text {
+                display: inline-block;
+                white-space: nowrap;
+                // Use some commonly available monospace font, the leading ones are copied from GitHub
+                font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono,
+                  monospace, 'Cascadia Code', 'Courier New', Courier;
+                .additions {
+                  color: var(--gitako-success-emphasis);
+                }
+                .delimiter {
+                  color: var(--gitako-neutral-emphasis);
+                }
+                .deletions {
+                  color: var(--gitako-danger-emphasis);
+                }
               }
             }
 
@@ -767,12 +846,12 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
 
     .#{$name}-settings-bar {
       z-index: 2;
-      background: var(--gitako-bg-tertiary);
+      background: var(--gitako-bg-subtle);
       display: flex;
       flex-direction: column;
       max-height: calc(100vh - 120px);
       &-title {
-        border-top: 1px solid var(--gitako-border-secondary);
+        border-top: 1px solid var(--gitako-border-muted);
         padding: 10px;
         box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.2), 0 3px 4px 0 rgba(0, 0, 0, 0.14),
           0 3px 3px -2px rgba(0, 0, 0, 0.12);
@@ -790,7 +869,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
           height: 10px;
           top: 0;
           left: 0;
-          background: var(--gitako-bg-tertiary);
+          background: var(--gitako-bg-subtle);
           z-index: 1;
         }
         .settings-section {
@@ -821,10 +900,10 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
               // make it look like text inputs
               height: 36px;
               border-radius: 6px;
-              border: 1px solid var(--gitako-input-border);
-              background: var(--gitako-input-bg);
-              color: var(--gitako-text-primary);
-              box-shadow: var(--gitako-input-shadow);
+              border: 1px solid var(--gitako-border-default);
+              background: var(--gitako-canvas-default);
+              color: var(--gitako-fg-default);
+              box-shadow: var(--gitako-primer-shadow-inset);
             }
             &.field-checkbox {
               padding-left: 20px;
@@ -849,7 +928,7 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
         margin-bottom: 4px;
       }
       .hint {
-        color: var(--gitako-text-placeholder);
+        color: var(--gitako-fg-subtle);
       }
       .access-token-input-control {
         display: flex;
@@ -871,10 +950,10 @@ $minimal-z-index: max($github-header-z-index, $github-pull-request-float-header-
         justify-content: space-between;
         align-items: center;
         padding: 2px 6px 2px 10px;
-        border-top: 1px solid var(--gitako-border-secondary);
+        border-top: 1px solid var(--gitako-border-muted);
 
         .version {
-          color: var(--gitako-text-tertiary);
+          color: var(--gitako-fg-muted);
         }
 
         .header-right {

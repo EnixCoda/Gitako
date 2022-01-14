@@ -17,6 +17,8 @@ import { useOnLocationChange } from 'utils/hooks/useOnLocationChange'
 import { useOnPJAXDone } from 'utils/hooks/usePJAX'
 import { VisibleNodes } from 'utils/VisibleNodesGenerator'
 import { SideBarStateContext } from '../containers/SideBarState'
+import { DiffStatGraph } from './DiffStatGraph'
+import { DiffStatText } from './DiffStatText'
 import { Icon } from './Icon'
 import { SearchMode, searchModes } from './searchModes'
 import { SizeObserver } from './SizeObserver'
@@ -46,17 +48,27 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
     searched,
   } = props
   const {
-    value: { accessToken, compressSingletonFolder, searchMode, commentToggle },
+    value: {
+      accessToken,
+      compressSingletonFolder,
+      searchMode,
+      commentToggle,
+      restoreExpandedFolders,
+      showDiffInText,
+    },
   } = useConfigs()
 
   const onSearch = React.useCallback(
     (searchKey: string, searchMode: SearchMode) => {
       updateSearchKey(searchKey)
       if (visibleNodesGenerator) {
-        visibleNodesGenerator.search(searchModes[searchMode].getSearchParams(searchKey))
+        visibleNodesGenerator.search(
+          searchModes[searchMode].getSearchParams(searchKey),
+          restoreExpandedFolders,
+        )
       }
     },
-    [updateSearchKey, visibleNodesGenerator],
+    [updateSearchKey, visibleNodesGenerator, restoreExpandedFolders],
   )
 
   const stateContext = useLoadedContext(SideBarStateContext)
@@ -74,8 +86,8 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
   }, [setUpTree, metaData, compressSingletonFolder, accessToken])
 
   React.useEffect(() => {
-    if (visibleNodes?.focusedNode) focusFileExplorer()
-  })
+    focusFileExplorer()
+  }, [])
 
   const renderActions: ((node: TreeNode) => React.ReactNode) | undefined = React.useMemo(() => {
     const renderGoToButton = (node: TreeNode): React.ReactNode => (
@@ -106,14 +118,28 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
         </button>
       ) : undefined
     const renderFileCommentAmounts = (node: TreeNode): React.ReactNode =>
-      node.comments !== undefined &&
-      node.comments > 0 && (
-        <span className={'node-item-comment'}>
-          <Icon type={'comment'} /> {node.comments > 9 ? '9+' : node.comments}
+      node.comments?.active ? (
+        <span
+          className={'node-item-comment'}
+          title={`${node.comments.active + node.comments.resolved} comments, ${
+            node.comments.active
+          } active, ${node.comments.resolved} resolved`}
+        >
+          <Icon type={'comment'} /> {node.comments.active > 9 ? '9+' : node.comments.active}
+        </span>
+      ) : null
+    const renderFileStatus = ({ diff }: TreeNode): React.ReactNode =>
+      diff && (
+        <span
+          className={'node-item-diff'}
+          title={`${diff.status}, ${diff.changes} changes: +${diff.additions} & -${diff.deletions}`}
+        >
+          {showDiffInText ? <DiffStatText diff={diff} /> : <DiffStatGraph diff={diff} />}
         </span>
       )
 
     const renders: ((node: TreeNode) => React.ReactNode)[] = []
+    renders.push(renderFileStatus)
     if (commentToggle) renders.push(renderFileCommentAmounts)
     if (searchMode === 'fuzzy') renders.push(renderFindInFolderButton)
     if (searched) renders.push(renderGoToButton)
@@ -121,7 +147,7 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
     return renders.length
       ? node => renders.map((render, i) => <React.Fragment key={i}>{render(node)}</React.Fragment>)
       : undefined
-  }, [goTo, onSearch, searched, searchMode, commentToggle])
+  }, [goTo, onSearch, searched, searchMode, commentToggle, showDiffInText])
 
   const renderLabelText = React.useCallback(
     (node: TreeNode) => searchModes[searchMode].renderNodeLabelText(node, searchKey),
@@ -167,13 +193,15 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
                   )}
                   <SizeObserver className={'files'}>
                     {({ width = 0, height = 0 }) => (
-                      <ListView
-                        height={height}
-                        width={width}
-                        renderNodeContext={renderNodeContext}
-                        expandTo={expandTo}
-                        metaData={metaData}
-                      />
+                      <div className={'magic-size-container'}>
+                        <ListView
+                          height={height}
+                          width={width}
+                          renderNodeContext={renderNodeContext}
+                          expandTo={expandTo}
+                          metaData={metaData}
+                        />
+                      </div>
                     )}
                   </SizeObserver>
 
