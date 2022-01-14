@@ -34,6 +34,16 @@ function detectOS(): OperatingSystems {
 
 export const os = detectOS()
 
+export const detectBrowser = () => {
+  const ua = navigator.userAgent.toLowerCase()
+  if (ua.includes('safari')) {
+    if (ua.includes('chrome')) return 'Chrome'
+    return 'Safari'
+  }
+
+  return 'Other'
+}
+
 export function friendlyFormatShortcut(shortcut?: string) {
   if (!shortcut) return ''
   if (os === OperatingSystems.Windows) {

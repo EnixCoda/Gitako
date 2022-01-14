@@ -6,6 +6,8 @@ import { defaultConfigs } from 'utils/config/helper'
 import { cx } from 'utils/cx'
 import { setCSSVariable } from 'utils/DOMHelper'
 import * as features from 'utils/features'
+import { detectBrowser } from 'utils/general'
+import { useConditionalHook } from '../utils/hooks/useConditionalHook'
 
 type Size = number
 export type Size2D = [Size, Size]
@@ -35,6 +37,11 @@ export function SideBarBodyWrapper({
   const [size, setSize] = React.useState(baseSize)
   const configContext = useConfigs()
   const blockLeaveRef = React.useRef(false)
+
+  const heightForSafari = useConditionalHook(
+    () => detectBrowser() === 'Safari',
+    () => useWindowSize().height,
+  )
 
   React.useEffect(() => {
     setSize(baseSize)
@@ -95,11 +102,12 @@ export function SideBarBodyWrapper({
     [onLeave],
   )
 
-  const newLocal: [number, number] = React.useMemo(() => [size, size], [size])
+  const dummySize: [number, number] = React.useMemo(() => [size, size], [size])
   return (
     <div
       ref={bodyWrapperRef}
       className={cx('gitako-side-bar-body-wrapper', className)}
+      style={{ height: heightForSafari }}
       onMouseLeave={onMouseLeave}
     >
       <div className={'gitako-side-bar-body-wrapper-content'}>{children}</div>
@@ -113,7 +121,7 @@ export function SideBarBodyWrapper({
           onResizeStateChange={state => {
             blockLeaveRef.current = state === 'resizing'
           }}
-          size={newLocal}
+          size={dummySize}
         />
       )}
     </div>
