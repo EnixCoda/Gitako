@@ -31,7 +31,7 @@ export const fuzzyMode: ModeShape = {
         : undefined
       progress += chunk.length + 1
       return (
-        <span key={chunk} className={cx({ prefix: index + 1 !== chunks.length })}>
+        <span key={index} className={cx({ prefix: index + 1 !== chunks.length })}>
           <Highlight match={regexp} text={index + 1 === chunks.length ? chunk : chunk + '/'} />
         </span>
       )
