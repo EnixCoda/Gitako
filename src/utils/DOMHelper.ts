@@ -2,15 +2,24 @@
  * this helper helps manipulating DOM
  */
 
+export function setGitakoBodyClass(className: string, enable: boolean) {
+  const classList = document.body.classList
+  if (enable) classList.add(className)
+  else classList.remove(className)
+}
+
 /**
  * when gitako is ready, make page's header narrower
  * or cancel it
  */
 export function markGitakoReadyState(ready: boolean) {
   const readyClassName = 'gitako-ready'
-  const classList = document.body.classList
-  if (ready) classList.add(readyClassName)
-  else classList.remove(readyClassName)
+  return setGitakoBodyClass(readyClassName, ready)
+}
+
+export function markGitakoSafariFlag(enable = true) {
+  const className = 'gitako-safari'
+  return setGitakoBodyClass(className, enable)
 }
 
 /**

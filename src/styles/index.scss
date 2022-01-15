@@ -979,6 +979,24 @@ $minimal-z-index: max(
   }
 }
 
+// patches for Safari
+.gitako-safari {
+  .#{$name}-side-bar {
+    .#{$name}-side-bar-body {
+      .#{$name}-settings-bar {
+        &-content {
+          .field {
+            select {
+              -webkit-appearance: none;
+              padding: 0 6px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 // gitee
 .git-project {
   // reset styles
