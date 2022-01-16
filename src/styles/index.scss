@@ -86,6 +86,19 @@ $minimal-z-index: max(
   }
 }
 
+@mixin pseudo-primer-icon($icon-name) {
+  content: '';
+  display: block;
+  cursor: pointer;
+  user-select: none;
+  -webkit-mask-image: url('~@primer/octicons/build/svg/' + $icon-name + '.svg?inline');
+  mask-image: url('~@primer/octicons/build/svg/' + $icon-name + '.svg?inline');
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
 .#{$name}-ready {
   // github
   // code folding start
@@ -116,19 +129,10 @@ $minimal-z-index: max(
         align-items: center;
 
         &::before {
-          content: '';
-          display: block;
           width: 10px;
           height: 20px;
-          cursor: pointer;
-          user-select: none;
           transition: 0.25s ease;
-          -webkit-mask-image: url('~@primer/octicons/build/svg/chevron-down.svg?inline');
-          mask-image: url('~@primer/octicons/build/svg/chevron-down.svg?inline');
-          -webkit-mask-size: contain;
-          mask-size: contain;
-          -webkit-mask-position: center;
-          mask-position: center;
+          @include pseudo-primer-icon('chevron-down');
         }
 
         @include interactive-background-on-before(
@@ -894,16 +898,38 @@ $minimal-z-index: max(
                 cursor: not-allowed;
               }
             }
-            select {
-              width: 100%;
-              -moz-appearance: menulist-button;
-              // make it look like text inputs
-              height: 36px;
-              border-radius: 6px;
-              border: 1px solid var(--gitako-border-default);
-              background: var(--gitako-canvas-default);
-              color: var(--gitako-fg-default);
-              box-shadow: var(--gitako-primer-shadow-inset);
+            .select-wrapper {
+              position: relative;
+
+              select {
+                width: 100%;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+                // make it look like text inputs
+                height: 36px;
+                padding: 0 6px;
+                border-radius: 6px;
+                border: 1px solid var(--gitako-border-default);
+                background: var(--gitako-canvas-default);
+                color: var(--gitako-fg-default);
+                box-shadow: var(--gitako-primer-shadow-inset);
+              }
+
+              .chevron {
+                position: absolute;
+                right: 6px;
+                top: 8px;
+                width: 10px;
+                height: 20px;
+
+                &::before {
+                  width: 10px;
+                  height: 20px;
+                  background-color: var(--gitako-fg-subtle);
+                  @include pseudo-primer-icon('chevron-down');
+                }
+              }
             }
             &.field-checkbox {
               padding-left: 20px;
@@ -972,24 +998,6 @@ $minimal-z-index: max(
 
           .octicon-wrapper {
             width: 18px;
-          }
-        }
-      }
-    }
-  }
-}
-
-// patches for Safari
-.gitako-safari {
-  .#{$name}-side-bar {
-    .#{$name}-side-bar-body {
-      .#{$name}-settings-bar {
-        &-content {
-          .field {
-            select {
-              -webkit-appearance: none;
-              padding: 0 6px;
-            }
           }
         }
       }
