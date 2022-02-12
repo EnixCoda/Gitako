@@ -10,7 +10,7 @@ import { platform } from 'platforms'
 import * as React from 'react'
 import { cx } from 'utils/cx'
 import * as DOMHelper from 'utils/DOMHelper'
-import { run } from 'utils/general'
+import { detectBrowser, run } from 'utils/general'
 import { useCatchNetworkError } from 'utils/hooks/useCatchNetworkError'
 import { useLoadedContext } from 'utils/hooks/useLoadedContext'
 import { useOnPJAXDone, usePJAX } from 'utils/hooks/usePJAX'
@@ -48,6 +48,10 @@ export function SideBar() {
       DOMHelper.markGitakoReadyState(false)
     }
   }, [hasMetaData])
+
+  React.useEffect(() => {
+    if (detectBrowser() === 'Safari') DOMHelper.markGitakoSafariFlag()
+  }, [])
 
   const sidebarToggleMode = configContext.value.sidebarToggleMode
   const intelligentToggle = configContext.value.intelligentToggle

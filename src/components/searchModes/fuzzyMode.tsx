@@ -2,7 +2,7 @@ import * as React from 'react'
 import { cx } from 'utils/cx'
 import { hasUpperCase } from 'utils/general'
 import { ModeShape } from '.'
-import { Highlight } from '../Highlight'
+import { HighlightOnIndexes } from '../HighlightOnIndexes'
 
 export const fuzzyMode: ModeShape = {
   getSearchParams(searchKey) {
@@ -26,13 +26,13 @@ export const fuzzyMode: ModeShape = {
     let progress = 0
     return chunks.map((chunk, index, chunks) => {
       const chunkIndexes = indexes.filter(i => i >= progress && i < chunk.length + progress)
-      const regexp = chunkIndexes.length
-        ? new RegExp(chunkIndexes.map(i => `(?<=^.{${i - progress}}).`).join('|'))
-        : undefined
-      progress += chunk.length + 1
+
+      const highlightIndexes = chunkIndexes.length ? chunkIndexes.map(i => i - progress) : undefined
+
+      progress += chunk.length + 1 // not neat side effect in map function
       return (
         <span key={index} className={cx({ prefix: index + 1 !== chunks.length })}>
-          <Highlight match={regexp} text={index + 1 === chunks.length ? chunk : chunk + '/'} />
+          <HighlightOnIndexes indexes={highlightIndexes} text={index + 1 === chunks.length ? chunk : chunk + '/'} />
         </span>
       )
     })

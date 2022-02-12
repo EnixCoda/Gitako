@@ -13,6 +13,10 @@ build:
 	rm -rf dist
 	yarn build
 
+copy-build-safari:
+	rm -rf Safari/Gitako/Gitako\ Extension/Resources/*
+	cd dist && cp -r . ../Safari/Gitako/Gitako\ Extension/Resources
+
 test:
 	yarn test
 

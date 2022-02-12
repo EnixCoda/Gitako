@@ -75,7 +75,9 @@ export function useResizeHandler(
     return () => window.removeEventListener('pointerup', onPointerUp)
   }, [])
 
-  const onPointerDown = React.useCallback(({ clientX, clientY }: React.PointerEvent) => {
+  const onPointerDown = React.useCallback((e: React.PointerEvent) => {
+    e.preventDefault() // Prevent unexpected selection when dragging in Safari
+    const { clientX, clientY } = e
     pointerDown.current = true
     initialSizeRef.current = [clientX, clientY]
     baseSize.current = latestPropSize.current

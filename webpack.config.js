@@ -9,6 +9,18 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 const srcPath = path.resolve(__dirname, 'src')
 const packagesPath = path.resolve(__dirname, 'packages')
 
+function resolvePathInput(input) {
+  return path.isAbsolute(input) ? input : path.resolve(process.cwd(), input)
+}
+
+const buildTarget = process.env.TARGET
+const buildTargetOutputMap = {
+  safari: 'Safari/Gitako/Gitako Extension/Resources',
+}
+const envOutputDir = process.env.OUTPUT_DIR || buildTargetOutputMap[buildTarget]
+const outputPath = envOutputDir ? resolvePathInput(envOutputDir) : path.resolve(__dirname, 'dist')
+
+const IN_PRODUCTION_MODE = process.env.NODE_ENV === 'production'
 const plugins = [
   new CopyWebpackPlugin([
     {
@@ -17,9 +29,25 @@ const plugins = [
       transform(content) {
         const { version, description, author, homepage: homepage_url } = require('./package.json')
         const manifest = JSON.parse(content)
-        return JSON.stringify(
-          Object.assign(manifest, { version, description, author, homepage_url }),
-        )
+        Object.assign(manifest, {
+          version,
+          description,
+          author,
+          homepage_url,
+        })
+
+        // Disable custom domains for Safari
+        if (buildTarget === 'safari') {
+          Reflect.deleteProperty(manifest, 'optional_permissions')
+          Reflect.deleteProperty(manifest, 'background')
+        }
+
+        if (!IN_PRODUCTION_MODE) {
+          Object.assign(manifest, {
+            web_accessible_resources: manifest.web_accessible_resources.concat('*.map'), // enable source mapping while developing
+          })
+        }
+        return JSON.stringify(manifest)
       },
     },
     {
@@ -50,7 +78,6 @@ if (analyse) {
   console.log(`BundleAnalyzerPlugin added`)
 }
 
-const IN_PRODUCTION_MODE = process.env.NODE_ENV === 'production'
 plugins.push(
   new webpack.DefinePlugin({
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
@@ -66,7 +93,7 @@ module.exports = {
   devtool: IN_PRODUCTION_MODE ? 'source-map' : 'inline-source-map',
   mode: IN_PRODUCTION_MODE ? 'production' : 'development',
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: outputPath,
     filename: '[name].js',
   },
   resolve: {

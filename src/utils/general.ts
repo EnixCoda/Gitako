@@ -34,6 +34,16 @@ function detectOS(): OperatingSystems {
 
 export const os = detectOS()
 
+export const detectBrowser = () => {
+  const ua = navigator.userAgent.toLowerCase()
+  if (ua.includes('safari')) {
+    if (ua.includes('chrome')) return 'Chrome'
+    return 'Safari'
+  }
+
+  return 'Other'
+}
+
 export function friendlyFormatShortcut(shortcut?: string) {
   if (!shortcut) return ''
   if (os === OperatingSystems.Windows) {
@@ -133,13 +143,7 @@ export async function JSONRequest(url: string, data: any, extra: RequestInit = {
 export function searchKeyToRegexp(searchKey: string) {
   if (!searchKey) return null
 
-  try {
-    const flags = hasUpperCase(searchKey) ? '' : 'i'
-    // case-sensitive when searchKey contains uppercase char
-    return new RegExp(searchKey, flags)
-  } catch (err) {
-    return null // matching nothing if failed transforming regexp
-  }
+  return safeRegexp(searchKey, hasUpperCase(searchKey) ? 'g' : 'gi')
 }
 
 export function hasUpperCase(input: string) {
@@ -155,13 +159,16 @@ export async function renderReact(element: ReactElement) {
   })
 }
 
-export function isValidRegexpSource(source: string) {
+export function safeRegexp(pattern: string | RegExp, flags?: string | undefined) {
   try {
-    new RegExp(source)
-    return true
+    return new RegExp(pattern, flags)
   } catch (err) {
-    return false
+    return null
   }
+}
+
+export function isValidRegexpSource(source: string) {
+  return Boolean(safeRegexp(source))
 }
 
 export function withEffect<Method extends (...args: any[]) => any>(

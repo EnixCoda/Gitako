@@ -1,29 +1,22 @@
 import * as React from 'react'
 import { cx } from 'utils/cx'
-import { hasUpperCase, isValidRegexpSource, searchKeyToRegexp } from 'utils/general'
+import { searchKeyToRegexp } from 'utils/general'
 import { ModeShape } from '.'
 import { Highlight } from '../Highlight'
 
 export const regexMode: ModeShape = {
   getSearchParams(searchKey) {
-    if (!searchKey) return null
-
     const regexp = searchKeyToRegexp(searchKey)
     if (regexp) {
-      const matchNode = (node: TreeNode) => regexp.test(node.name)
-
       return {
-        matchNode,
+        matchNode: node => regexp.test(node.name),
       }
     }
 
     return null
   },
   renderNodeLabelText(node, searchKey) {
-    const regex =
-      searchKey && isValidRegexpSource(searchKey)
-        ? new RegExp(searchKey, 'g' + (hasUpperCase(searchKey) ? '' : 'i'))
-        : undefined
+    const regex = searchKeyToRegexp(searchKey) || undefined
     const { name } = node
     return name.includes('/') ? (
       name.split('/').map((chunk, index, chunks) => (

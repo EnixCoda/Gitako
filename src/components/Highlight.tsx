@@ -1,18 +1,23 @@
 import * as React from 'react'
 
-export function Highlight(props: { text: string; match?: RegExp }) {
+export function Highlight(props: { text: string; match?: RegExp | string }) {
   const { text, match } = props
   const $match = React.useMemo(() => {
-    if (match instanceof RegExp) {
-      if (match.flags.includes('g')) return match
-      return new RegExp(match.source, 'g' + match.flags)
+    if (match) {
+      if (match instanceof RegExp) {
+        if (match.flags.includes('g')) return match
+        return new RegExp(match.source, 'g' + match.flags)
+      }
+      return new RegExp(match, 'g')
     }
     return null
   }, [match])
 
-  if (!($match instanceof RegExp) || typeof text !== 'string') return <>{text}</>
+  if (!$match) return <>{text}</>
 
-  const matchedPieces = Array.from(text.matchAll($match)).map(([text]) => text)
+  const matchedPieces = Array.from(text.matchAll($match)).map(
+    ([text, highlightText = text]) => highlightText,
+  )
   const preservedPieces = text.split($match)
   const content = []
 

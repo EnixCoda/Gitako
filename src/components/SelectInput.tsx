@@ -11,21 +11,24 @@ export function SelectInput<T>({
   }
 >) {
   return (
-    <select
-      onChange={e => {
-        const key = e.target.value
-        const option = options.find(option => option.key === key)
-        onChange(option!?.value)
-      }}
-      value={options.find(option => option.value === value)?.key}
-      {...selectProps}
-    >
-      {options.map(option => (
-        <option key={option.key} value={option.key}>
-          {option.label}
-        </option>
-      ))}
-    </select>
+    <div className={'select-wrapper'}>
+      <select
+        onChange={e => {
+          const key = e.target.value
+          const option = options.find(option => option.key === key)
+          onChange(option!?.value)
+        }}
+        value={options.find(option => option.value === value)?.key}
+        {...selectProps}
+      >
+        {options.map(option => (
+          <option key={option.key} value={option.key}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+      <span className={'chevron'} />
+    </div>
   )
 }
 export type Option<T> = {
