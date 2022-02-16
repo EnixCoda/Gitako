@@ -143,6 +143,8 @@ $minimal-z-index: max(
       }
 
       &.gitako-code-fold-active {
+        background-color: var(--gitako-neutral-muted);
+
         .gitako-code-fold-handler {
           &::before {
             transform: rotate(-90deg);
@@ -153,6 +155,12 @@ $minimal-z-index: max(
             var(--gitako-fg-default),
             var(--gitako-fg-subtle)
           );
+        }
+
+        .blob-code::after {
+            color: var(--gitako-fg-muted);
+            content: '⋯';
+            margin: 0.1em 0.2em 0px;
         }
       }
 
