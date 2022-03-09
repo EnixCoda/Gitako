@@ -327,7 +327,7 @@ jekyll,,jekyll
 jenkins,,jenkins
 jinja,,jinja
 jpm,.jpmignore,
-js,,js
+js,,js:cjs,
 js_official,,js
 jsbeautify,.jsbeautifyrc:jsbeautifyrc:.jsbeautify:jsbeautify,
 jsconfig,jsconfig.json,
