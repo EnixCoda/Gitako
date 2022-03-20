@@ -322,6 +322,7 @@ class FlattenLayer extends CompressLayer {
       this.expandedNodes.clear()
       if (restoreExpandedFolders) {
         this.backupExpandedNodes.forEach(path => this.expandedNodes.add(path))
+        this.backupExpandedNodes.clear()
       }
     }
   }

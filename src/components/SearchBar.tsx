@@ -48,7 +48,8 @@ export function SearchBar({ onSearch, onFocus, value }: Props) {
             configs.onChange({
               searchMode: newMode,
             })
-            onSearch(value, newMode)
+            // Skip search if no input to prevent resetting folder expansions
+            if (value) onSearch(value, newMode)
           }}
           aria-label={toggleButtonDescription}
         >
