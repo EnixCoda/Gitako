@@ -27,9 +27,9 @@ class ViewController: NSViewController {
 
             DispatchQueue.main.async {
                 if (state.isEnabled) {
-                    self.appNameLabel.stringValue = "\(appName)'s extension is currently on. You can close this window now."
+                    self.appNameLabel.stringValue = "\(appName)'s extension is currently on.\nYou can close this window now."
                 } else {
-                    self.appNameLabel.stringValue = "\(appName)'s extension is currently off. You can turn it on in Safari Extensions preferences."
+                    self.appNameLabel.stringValue = "\(appName)'s extension is currently off.\nYou can turn it on in Safari Extensions preferences.\nNote: the button below may not work, then please open preferences manually."
                 }
             }
         }
@@ -47,5 +47,4 @@ class ViewController: NSViewController {
             }
         }
     }
-
 }
