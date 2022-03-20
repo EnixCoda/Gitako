@@ -2,8 +2,7 @@ import { BranchName, Breadcrumb, Flex, Text } from '@primer/components'
 import { GitBranchIcon } from '@primer/octicons-react'
 import { platform } from 'platforms'
 import * as React from 'react'
-import { isOpenInNewWindowClick } from 'utils/general'
-import { loadWithPJAX } from 'utils/hooks/usePJAX'
+import { createAnchorClickHandler } from 'utils/general'
 
 type Props = {
   metaData: MetaData
@@ -18,7 +17,12 @@ export function MetaBar({ metaData }: Props) {
         <Breadcrumb.Item className={'user-name'} href={userUrl}>
           {userName}
         </Breadcrumb.Item>
-        <Breadcrumb.Item className={'repo-name'} href={repoUrl}>
+        <Breadcrumb.Item
+          className={'repo-name'}
+          href={repoUrl}
+          onClick={createAnchorClickHandler(repoUrl)}
+          {...platform.delegatePJAXProps?.()}
+        >
           <Text fontWeight="bolder">{repoName}</Text>
         </Breadcrumb.Item>
       </Breadcrumb>
@@ -30,12 +34,7 @@ export function MetaBar({ metaData }: Props) {
           href={branchUrl}
           as="a"
           className={'branch-name'}
-          onClick={e => {
-            if (isOpenInNewWindowClick(e)) return
-
-            e.preventDefault()
-            loadWithPJAX(branchUrl, e.currentTarget)
-          }}
+          onClick={createAnchorClickHandler(branchUrl)}
           {...platform.delegatePJAXProps?.()}
         >
           {branchName || '...'}

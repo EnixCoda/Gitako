@@ -1,5 +1,6 @@
 import { ReactElement } from 'react'
 import * as ReactDOM from 'react-dom'
+import { loadWithPJAX } from './hooks/usePJAX'
 
 export function pick<T>(source: T, keys: string[]): Partial<T> {
   if (keys && typeof keys === 'object') {
@@ -218,4 +219,13 @@ export function resolveDiffGraphMeta(additions: number, deletions: number, chang
     r = overflow ? 5 - preserved - g : deletions,
     w = 5 - g - r
   return { g, r, w }
+}
+
+export function createAnchorClickHandler(url: string) {
+  return (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    if (isOpenInNewWindowClick(e)) return
+
+    e.preventDefault()
+    loadWithPJAX(url, e.currentTarget)
+  }
 }
