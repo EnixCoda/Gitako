@@ -168,7 +168,7 @@ export const GitHub: Platform = {
     return await getRepositoryTreeData(metaData, path, recursive, accessToken)
   },
   shouldShow() {
-    return Boolean(DOMHelper.isInCodePage() || URLHelper.isInPullPage())
+    return Boolean(DOMHelper.isInCodePage() || (URLHelper.isInPullPage() && !DOMHelper.isNativePRFileTreeShown()))
   },
   shouldExpandAll() {
     return Boolean(URLHelper.isInPullPage())

@@ -27,7 +27,8 @@ export function isInRepoPage() {
 
 export function isInCodePage() {
   const branchListSelector = ['#branch-select-menu', '.branch-select-menu'].join()
-  return Boolean($(branchListSelector))
+  // The element may still exist in DOM for PR pages, but not visible
+  return Boolean($(branchListSelector, e => e.offsetWidth > 0 && e.offsetHeight > 0))
 }
 
 export function getIssueTitle() {
@@ -258,4 +259,8 @@ export function getPath() {
     .filter(Boolean)
     .slice(1) // the first is the repo's name
   return path
+}
+
+export function isNativePRFileTreeShown() {
+  return $('file-tree[data-target="diff-layout.fileTree"]')
 }
