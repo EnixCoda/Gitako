@@ -48,10 +48,11 @@ export const setUpTree: BoundMethodCreator<
     { stateContext: SideBarStateContextShape } & Required<Pick<Props, 'metaData'>> & {
         config: Pick<Config, 'compressSingletonFolder' | 'accessToken'>
       },
+    () => boolean,
   ]
 > =
   dispatch =>
-  ({ stateContext, metaData, config }) => {
+  ({ stateContext, metaData, config }, checker) => {
     const {
       props: { catchNetworkErrors },
     } = dispatch.get()
@@ -59,7 +60,9 @@ export const setUpTree: BoundMethodCreator<
     catchNetworkErrors(async () => {
       const { userName, repoName, branchName } = metaData
 
+      if (!checker()) return
       stateContext.onChange('tree-loading')
+
       const { root: treeRoot, defer = false } = await platform.getTreeData(
         {
           branchName: branchName,
@@ -71,6 +74,7 @@ export const setUpTree: BoundMethodCreator<
         config.accessToken,
       )
 
+      if (!checker()) return
       stateContext.onChange('tree-rendering')
       dispatch.set({ defer })
 
@@ -82,21 +86,29 @@ export const setUpTree: BoundMethodCreator<
           return root
         },
       })
+
+      if (!checker()) return
       dispatch.set({ visibleNodesGenerator })
-      visibleNodesGenerator.onUpdate(visibleNodes => dispatch.set({ visibleNodes }))
+
+      visibleNodesGenerator.onUpdate(visibleNodes => {
+        if (!checker()) return
+        dispatch.set({ visibleNodes })
+      })
 
       if (platform.shouldExpandAll?.()) {
         const unsubscribe = visibleNodesGenerator.onUpdate(visibleNodes => {
           unsubscribe()
-          visibleNodes.nodes.forEach(node =>
-            dispatch.call(toggleNodeExpansion, node, { recursive: true }),
-          )
+          visibleNodes.nodes.forEach(node => {
+            if (!checker()) return
+            dispatch.call(toggleNodeExpansion, node, { recursive: true })
+          })
         })
       } else {
         const targetPath = platform.getCurrentPath(metaData.branchName)
-        if (targetPath) dispatch.call(goTo, targetPath)
+        if (targetPath && checker()) dispatch.call(goTo, targetPath)
       }
 
+      if (!checker()) return
       stateContext.onChange('tree-rendered')
     })
   }

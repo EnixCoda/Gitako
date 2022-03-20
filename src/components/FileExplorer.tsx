@@ -15,6 +15,7 @@ import { run } from 'utils/general'
 import { useLoadedContext } from 'utils/hooks/useLoadedContext'
 import { useOnLocationChange } from 'utils/hooks/useOnLocationChange'
 import { useOnPJAXDone } from 'utils/hooks/usePJAX'
+import { useSequentialEffect } from 'utils/hooks/useSequentialEffect'
 import { VisibleNodes } from 'utils/VisibleNodesGenerator'
 import { SideBarStateContext } from '../containers/SideBarState'
 import { DiffStatGraph } from './DiffStatGraph'
@@ -74,16 +75,22 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
   const stateContext = useLoadedContext(SideBarStateContext)
   const state = stateContext.value
 
-  React.useEffect(() => {
-    setUpTree({
-      metaData,
-      config: {
-        compressSingletonFolder,
-        accessToken,
-      },
-      stateContext,
-    })
-  }, [setUpTree, metaData, compressSingletonFolder, accessToken])
+  useSequentialEffect(
+    checker => {
+      setUpTree(
+        {
+          metaData,
+          config: {
+            compressSingletonFolder,
+            accessToken,
+          },
+          stateContext,
+        },
+        checker,
+      )
+    },
+    [setUpTree, metaData, compressSingletonFolder, accessToken],
+  )
 
   React.useEffect(() => {
     focusFileExplorer()
