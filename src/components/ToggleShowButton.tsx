@@ -3,8 +3,8 @@ import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
 import { cx } from 'utils/cx'
+import { useResizeHandler } from 'utils/hooks/useResizeHandler'
 import { Icon } from './Icon'
-import { useResizeHandler } from './ResizeHandler'
 
 type Props = {
   error?: string | null
