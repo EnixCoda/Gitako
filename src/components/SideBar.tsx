@@ -55,7 +55,13 @@ export function SideBar() {
 
   const sidebarToggleMode = configContext.value.sidebarToggleMode
   const intelligentToggle = configContext.value.intelligentToggle
-  const $shouldShow = useStateIO(intelligentToggle === null ? false : intelligentToggle)
+  const $shouldShow = useStateIO(() =>
+    intelligentToggle === null
+      ? sidebarToggleMode === 'persistent'
+        ? platform.shouldShow()
+        : false
+      : intelligentToggle,
+  )
   const shouldShow = $shouldShow.value
   React.useEffect(() => {
     if (sidebarToggleMode === 'persistent') {
@@ -69,7 +75,7 @@ export function SideBar() {
     }
   }, [shouldShow, sidebarToggleMode])
 
-  // Save expand state on toggle if auto expand if not on
+  // Save expand state on toggle if auto expand is off
   React.useEffect(() => {
     if (intelligentToggle !== null) {
       configContext.onChange({ intelligentToggle: shouldShow })
@@ -96,7 +102,13 @@ export function SideBar() {
   }, [error])
   useToggleSideBarWithKeyboard(state, configContext, toggleShowSideBar)
 
-  useSetShouldShowOnPJAXDone(setShowSideBar)
+  const updateSideBarVisibility = React.useCallback(() => {
+    if (intelligentToggle === null && sidebarToggleMode === 'persistent') {
+      setShowSideBar(platform.shouldShow())
+    }
+  }, [intelligentToggle, sidebarToggleMode])
+
+  useOnPJAXDone(updateSideBarVisibility)
 
   platform.usePlatformHooks?.()
 
@@ -200,17 +212,4 @@ export function SideBar() {
       </div>
     </Theme>
   )
-}
-
-function useSetShouldShowOnPJAXDone(setShouldShow: (value: boolean) => void) {
-  const { intelligentToggle, sidebarToggleMode } = useConfigs().value
-  const updateSideBarVisibility = React.useCallback(() => {
-    if (intelligentToggle === null && sidebarToggleMode === 'persistent') {
-      setShouldShow(platform.shouldShow())
-    }
-  }, [intelligentToggle, sidebarToggleMode])
-  React.useEffect(() => {
-    updateSideBarVisibility()
-  }, [updateSideBarVisibility])
-  useOnPJAXDone(updateSideBarVisibility)
 }
