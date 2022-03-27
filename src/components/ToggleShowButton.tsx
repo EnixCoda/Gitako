@@ -37,11 +37,14 @@ export function ToggleShowButton({ error, className, onClick, onHover }: Props) 
     [distance],
   )
 
+  // reposition on window height change, but ignores distance change
   React.useEffect(() => {
     if (ref.current) {
       ref.current.style.top = distance + 'px'
     }
-  }, [])
+  }, [height])
+
+  // And this repositions on drag
   const { onPointerDown } = useResizeHandler(
     [distance, distance],
     ([, y]) => {
