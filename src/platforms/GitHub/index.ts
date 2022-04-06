@@ -6,6 +6,7 @@ import { resolveGitModules } from 'utils/gitSubmodule'
 import { sortFoldersToFront } from 'utils/treeParser'
 import * as API from './API'
 import * as DOMHelper from './DOMHelper'
+import { useEnterpriseStatBarStyleFix } from './hooks/useEnterpriseStatBarStyleFix'
 import { useGitHubAttachCopyFileButton } from './hooks/useGitHubAttachCopyFileButton'
 import { useGitHubAttachCopySnippetButton } from './hooks/useGitHubAttachCopySnippetButton'
 import { useGitHubCodeFold } from './hooks/useGitHubCodeFold'
@@ -202,6 +203,7 @@ export const GitHub: Platform = {
     useGitHubAttachCopyFileButton(copyFileButton)
     useGitHubAttachCopySnippetButton(copySnippetButton)
     useGitHubCodeFold(codeFolding)
+    useEnterpriseStatBarStyleFix()
   },
   delegatePJAXProps(options) {
     if (!options?.node || options.node.type === 'blob')

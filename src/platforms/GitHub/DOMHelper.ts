@@ -264,3 +264,7 @@ export function getPath() {
 export function isNativePRFileTreeShown() {
   return $('file-tree[data-target="diff-layout.fileTree"]')
 }
+
+export function selectEnterpriseStatHeader() {
+  return $('.stats-ui-enabled .server-stats')
+}
