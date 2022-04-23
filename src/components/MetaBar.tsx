@@ -2,7 +2,7 @@ import { BranchName, Breadcrumb, Flex, Text } from '@primer/components'
 import { GitBranchIcon } from '@primer/octicons-react'
 import { platform } from 'platforms'
 import * as React from 'react'
-import { createAnchorClickHandler } from 'utils/general'
+import { createAnchorClickHandler } from "utils/createAnchorClickHandler"
 
 type Props = {
   metaData: MetaData
