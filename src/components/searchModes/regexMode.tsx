@@ -20,7 +20,7 @@ export const regexMode: ModeShape = {
     const { name } = node
     return name.includes('/') ? (
       name.split('/').map((chunk, index, chunks) => (
-        <span key={chunk} className={cx({ prefix: index + 1 !== chunks.length })}>
+        <span key={index} className={cx({ prefix: index + 1 !== chunks.length })}>
           <Highlight match={regex} text={chunk} />
           {index + 1 !== chunks.length && '/'}
         </span>
