@@ -295,29 +295,40 @@ export const focusNode: BoundMethodCreator<[TreeNode | null]> =
 export const onNodeClick: BoundMethodCreator<
   [React.MouseEvent<HTMLElement, MouseEvent>, TreeNode]
 > = dispatch => (event, node) => {
-  if (isOpenInNewWindowClick(event)) return
+  switch (node.type) {
+    case 'tree': {
+      const {
+        props: {
+          config: { recursiveToggleFolder },
+        },
+      } = dispatch.get()
+      const recursive =
+        (recursiveToggleFolder === 'shift' && event.shiftKey) ||
+        (recursiveToggleFolder === 'alt' && event.altKey)
+      // recursive toggle action may conflict with browser default action
+      // e.g. shift + click is the default open in new tab action on macOS
+      // giving recursive toggle action higher priority than default action
+      if (!recursive && isOpenInNewWindowClick(event)) return
 
-  const preventDefault = !(node.type === 'blob' && node.url?.includes('#'))
-  if (preventDefault) event.preventDefault()
-
-  if (node.type === 'tree') {
-    const {
-      props: {
-        config: { recursiveToggleFolder },
-      },
-    } = dispatch.get()
-    const recursive =
-      (recursiveToggleFolder === 'shift' && event.shiftKey) ||
-      (recursiveToggleFolder === 'alt' && event.altKey)
-    dispatch.call(toggleNodeExpansion, node, { recursive })
-  } else if (node.type === 'blob') {
-    dispatch.call(focusNode, node)
-    if (node.url && !node.url.includes('#')) {
-      loadWithPJAX(node.url, event.currentTarget)
+      event.preventDefault()
+      dispatch.call(toggleNodeExpansion, node, { recursive })
+      break
     }
-  } else if (node.type === 'commit') {
-    if (node.url) {
-      window.open(node.url, '_blank')
+    case 'blob': {
+      if (isOpenInNewWindowClick(event)) return
+
+      dispatch.call(focusNode, node)
+      if (node.url) {
+        const isHashLink = node.url.includes('#')
+        if (!isHashLink) {
+          event.preventDefault()
+          loadWithPJAX(node.url, event.currentTarget)
+        }
+      }
+      break
+    }
+    case 'commit': {
+      // pass event, open in new tab thanks to the target="_blank" on the anchor element
     }
   }
 }

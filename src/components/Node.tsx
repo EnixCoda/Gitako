@@ -46,6 +46,7 @@ export function Node({
       className={cx(`node-item`, { focused, disabled: node.accessDenied, expanded, compact })}
       style={{ ...style, paddingLeft: `${10 + (compact ? 10 : 20) * depth}px` }}
       title={node.path}
+      target={node.type === 'commit' ? '_blank' : undefined}
       {...platform.delegatePJAXProps?.({ node })}
     >
       <div className={'node-item-label'}>
