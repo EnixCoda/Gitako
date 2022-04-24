@@ -8,8 +8,11 @@ export const fuzzyMode: ModeShape = {
   getSearchParams(searchKey) {
     if (!searchKey) return null
 
-    const matchNode = (node: TreeNode) =>
-      fuzzyMatch(searchKey, hasUpperCase(searchKey) ? node.path : node.path.toLowerCase())
+    const matchNode = (node: TreeNode) => {
+      const path = hasUpperCase(searchKey) ? node.path : node.path.toLowerCase()
+      const { match, lastIndex } = fuzzyMatch(searchKey, path)
+      return match && (searchKey[searchKey.length - 1] === '/' || lastIndex > path.lastIndexOf('/'))
+    }
     return {
       matchNode,
     }
@@ -32,7 +35,10 @@ export const fuzzyMode: ModeShape = {
       progress += chunk.length + 1 // not neat side effect in map function
       return (
         <span key={index} className={cx({ prefix: index + 1 !== chunks.length })}>
-          <HighlightOnIndexes indexes={highlightIndexes} text={index + 1 === chunks.length ? chunk : chunk + '/'} />
+          <HighlightOnIndexes
+            indexes={highlightIndexes}
+            text={index + 1 === chunks.length ? chunk : chunk + '/'}
+          />
         </span>
       )
     })
@@ -45,7 +51,10 @@ function fuzzyMatch(input: string, sample: string) {
   while (i < input.length && j < sample.length) {
     if (input[i] === sample[j++]) i++
   }
-  return i === input.length
+  return {
+    lastIndex: j - 1,
+    match: i === input.length,
+  }
 }
 
 function fuzzyMatchIndexes(input: string, sample: string, shift: number = 0) {
