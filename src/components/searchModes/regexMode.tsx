@@ -9,7 +9,10 @@ export const regexMode: ModeShape = {
     const regexp = searchKeyToRegexp(searchKey)
     if (regexp) {
       return {
-        matchNode: node => regexp.test(node.name),
+        matchNode: node => {
+          regexp.lastIndex = 0
+          return regexp.test(node.name)
+        },
       }
     }
 

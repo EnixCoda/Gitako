@@ -6,41 +6,30 @@ function search(
   match: (node: TreeNode) => boolean,
   onChildMatch: (node: TreeNode) => void,
 ): TreeNode | null {
-  // go traverse no matter root matches or not to make sure find all nodes
+  // go traverse no matter whether root matches to make sure find & expand the related nodes
+  // The `related nodes` are the nodes that either itself matches or any of direct or indirect children match
   const contents = []
 
   if (root.type === 'tree' && root.contents) {
-    let childMatch = false
-    for (const node of root.contents) {
-      if (match(node)) {
-        childMatch = true
-        break
-      }
-    }
-
     for (const node of root.contents) {
       const $node = search(node, match, onChildMatch)
-      if ($node) {
-        if ($node !== node) childMatch = true
-        contents.push($node)
-      }
+      if ($node) contents.push($node)
     }
 
-    if (childMatch) {
-      onChildMatch(root)
-    }
+    if (contents.length) onChildMatch(root)
+  }
 
-    if (contents?.length) {
-      return {
-        ...root,
-        contents,
-      }
+  // Return root if itself matches
+  if (match(root)) return root
+
+  // Otherwise, but when deeper nodes match, return partial root
+  if (contents.length) {
+    return {
+      ...root,
+      contents,
     }
   }
 
-  if (match(root)) {
-    return root
-  }
   return null
 }
 
