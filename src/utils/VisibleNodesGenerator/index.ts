@@ -251,13 +251,10 @@ class FlattenLayer extends CompressLayer {
   }
 
   barelySetExpand = (node: TreeNode, expand: boolean) => {
-    if (expand) {
-      if (node.type === 'tree') {
-        // expanding non-tree node could cause unexpected UX
-        this.expandedNodes.add(node.path)
-      }
-    } else {
-      this.expandedNodes.delete(node.path)
+    // expanding non-tree node could cause unexpected UX
+    if (node.type === 'tree') {
+      if (expand) this.expandedNodes.add(node.path)
+      else this.expandedNodes.delete(node.path)
     }
   }
 
@@ -309,12 +306,13 @@ class FlattenLayer extends CompressLayer {
     searchParams: Pick<SearchParams, 'matchNode'> | null,
     restoreExpandedFolders?: boolean,
   ) => {
-    // backup expansion before search
     if (searchParams) {
       if (!this.isSearching) {
+        // backup expansion when start search
         this.backupExpandedNodes.clear()
         this.expandedNodes.forEach(path => this.backupExpandedNodes.add(path))
       }
+      this.expandedNodes.clear() // Reset expansion on every search, ensure cleanest search result expansion
       this.shake({
         matchNode: searchParams.matchNode,
         onChildMatch: node => this.$setExpand(node, true),
