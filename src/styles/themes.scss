@@ -4,6 +4,8 @@
 @use './themes/darkHighContrast.scss' as darkHighContrast;
 @use './themes/lightColorblind.scss' as lightColorblind;
 @use './themes/darkColorblind.scss' as darkColorblind;
+@use './themes/lightTritanopia.scss' as lightTritanopia;
+@use './themes/darkTritanopia.scss' as darkTritanopia;
 @use './themes/darkDimmed.scss' as darkDimmed;
 
 @mixin setVariables($variables) {
@@ -52,5 +54,7 @@
 @include theme('light_high_contrast', lightHighContrast.$variables);
 @include theme('dark_high_contrast', darkHighContrast.$variables);
 @include theme('light_colorblind', lightColorblind.$variables);
+@include theme('light_tritanopia', lightTritanopia.$variables);
 @include theme('dark_colorblind', darkColorblind.$variables);
+@include theme('dark_tritanopia', darkTritanopia.$variables);
 @include theme('dark_dimmed', darkDimmed.$variables);
