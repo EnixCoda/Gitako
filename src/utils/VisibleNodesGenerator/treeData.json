@@ -1,0 +1,1780 @@
+{
+  "name": "",
+  "path": "",
+  "contents": [
+    {
+      "path": ".github",
+      "type": "tree",
+      "name": ".github",
+      "url": "https://github.com/EnixCoda/Gitako/tree/develop/.github",
+      "contents": [
+        {
+          "path": ".github/workflows",
+          "type": "tree",
+          "name": "workflows",
+          "url": "https://github.com/EnixCoda/Gitako/tree/develop/.github/workflows",
+          "contents": [
+            {
+              "path": ".github/workflows/ci.yml",
+              "type": "blob",
+              "name": "ci.yml",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/.github/workflows/ci.yml",
+              "sha": "f7075e73f72158f695569f670845bf42fd5a1826"
+            },
+            {
+              "path": ".github/workflows/release-assets.yml",
+              "type": "blob",
+              "name": "release-assets.yml",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/.github/workflows/release-assets.yml",
+              "sha": "155f6231e2263deaa32735e9fc5baa07a16ec0c0"
+            }
+          ],
+          "sha": "0d7fdb80a94f0f573dce577a2104443b6eab56e6"
+        },
+        {
+          "path": ".github/FUNDING.yml",
+          "type": "blob",
+          "name": "FUNDING.yml",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/.github/FUNDING.yml",
+          "sha": "316614aa78572e921e3abe80053b6aa7629c1fa6"
+        }
+      ],
+      "sha": "552dfd65dff68c0c81eaf5df15ba62af07de0868"
+    },
+    {
+      "path": "Safari",
+      "type": "tree",
+      "name": "Safari",
+      "url": "https://github.com/EnixCoda/Gitako/tree/develop/Safari",
+      "contents": [
+        {
+          "path": "Safari/Gitako",
+          "type": "tree",
+          "name": "Gitako",
+          "url": "https://github.com/EnixCoda/Gitako/tree/develop/Safari/Gitako",
+          "contents": [
+            {
+              "path": "Safari/Gitako/Gitako Extension",
+              "type": "tree",
+              "name": "Gitako Extension",
+              "url": "https://github.com/EnixCoda/Gitako/tree/develop/Safari/Gitako/Gitako%20Extension",
+              "contents": [
+                {
+                  "path": "Safari/Gitako/Gitako Extension/Gitako_Extension.entitlements",
+                  "type": "blob",
+                  "name": "Gitako_Extension.entitlements",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/Safari/Gitako/Gitako%20Extension/Gitako_Extension.entitlements",
+                  "sha": "f2ef3ae0265b40c475e8ef90e3a311c31786c594"
+                },
+                {
+                  "path": "Safari/Gitako/Gitako Extension/Info.plist",
+                  "type": "blob",
+                  "name": "Info.plist",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/Safari/Gitako/Gitako%20Extension/Info.plist",
+                  "sha": "56722ee6f2e25d6a68081436b951b13c9e5a97a1"
+                },
+                {
+                  "path": "Safari/Gitako/Gitako Extension/SafariWebExtensionHandler.swift",
+                  "type": "blob",
+                  "name": "SafariWebExtensionHandler.swift",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/Safari/Gitako/Gitako%20Extension/SafariWebExtensionHandler.swift",
+                  "sha": "a0e14c2462426385c1f72bf3af65094ed88da784"
+                }
+              ],
+              "sha": "5be60c92630d11ebbc935cbe11f01bed9f42517a"
+            },
+            {
+              "path": "Safari/Gitako/Gitako.xcodeproj",
+              "type": "tree",
+              "name": "Gitako.xcodeproj",
+              "url": "https://github.com/EnixCoda/Gitako/tree/develop/Safari/Gitako/Gitako.xcodeproj",
+              "contents": [
+                {
+                  "path": "Safari/Gitako/Gitako.xcodeproj/project.xcworkspace",
+                  "type": "tree",
+                  "name": "project.xcworkspace",
+                  "url": "https://github.com/EnixCoda/Gitako/tree/develop/Safari/Gitako/Gitako.xcodeproj/project.xcworkspace",
+                  "contents": [
+                    {
+                      "path": "Safari/Gitako/Gitako.xcodeproj/project.xcworkspace/xcshareddata",
+                      "type": "tree",
+                      "name": "xcshareddata",
+                      "url": "https://github.com/EnixCoda/Gitako/tree/develop/Safari/Gitako/Gitako.xcodeproj/project.xcworkspace/xcshareddata",
+                      "contents": [
+                        {
+                          "path": "Safari/Gitako/Gitako.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist",
+                          "type": "blob",
+                          "name": "IDEWorkspaceChecks.plist",
+                          "url": "https://github.com/EnixCoda/Gitako/blob/develop/Safari/Gitako/Gitako.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist",
+                          "sha": "18d981003d68d0546c4804ac2ff47dd97c6e7921"
+                        }
+                      ],
+                      "sha": "c43cc9b8ba4e4ae5c6df5ed5e3f199668b7fead0"
+                    },
+                    {
+                      "path": "Safari/Gitako/Gitako.xcodeproj/project.xcworkspace/contents.xcworkspacedata",
+                      "type": "blob",
+                      "name": "contents.xcworkspacedata",
+                      "url": "https://github.com/EnixCoda/Gitako/blob/develop/Safari/Gitako/Gitako.xcodeproj/project.xcworkspace/contents.xcworkspacedata",
+                      "sha": "919434a6254f0e9651f402737811be6634a03e9c"
+                    }
+                  ],
+                  "sha": "0094c9846cdbe0e73a44bebdf09a408adff74ba7"
+                },
+                {
+                  "path": "Safari/Gitako/Gitako.xcodeproj/project.pbxproj",
+                  "type": "blob",
+                  "name": "project.pbxproj",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/Safari/Gitako/Gitako.xcodeproj/project.pbxproj",
+                  "sha": "eb1f85adde8eee4bfa6e084a7400dc6f5e6d2194"
+                }
+              ],
+              "sha": "ea6053a9270bb0673c28b7a1fb42f96a4a3c6a58"
+            },
+            {
+              "path": "Safari/Gitako/Gitako",
+              "type": "tree",
+              "name": "Gitako",
+              "url": "https://github.com/EnixCoda/Gitako/tree/develop/Safari/Gitako/Gitako",
+              "contents": [
+                {
+                  "path": "Safari/Gitako/Gitako/Assets.xcassets",
+                  "type": "tree",
+                  "name": "Assets.xcassets",
+                  "url": "https://github.com/EnixCoda/Gitako/tree/develop/Safari/Gitako/Gitako/Assets.xcassets",
+                  "contents": [
+                    {
+                      "path": "Safari/Gitako/Gitako/Assets.xcassets/AccentColor.colorset",
+                      "type": "tree",
+                      "name": "AccentColor.colorset",
+                      "url": "https://github.com/EnixCoda/Gitako/tree/develop/Safari/Gitako/Gitako/Assets.xcassets/AccentColor.colorset",
+                      "contents": [
+                        {
+                          "path": "Safari/Gitako/Gitako/Assets.xcassets/AccentColor.colorset/Contents.json",
+                          "type": "blob",
+                          "name": "Contents.json",
+                          "url": "https://github.com/EnixCoda/Gitako/blob/develop/Safari/Gitako/Gitako/Assets.xcassets/AccentColor.colorset/Contents.json",
+                          "sha": "eb8789700816459c1e1480e0b34781d9fb78a1ca"
+                        }
+                      ],
+                      "sha": "986bd324c26d854187559f27f8194c8afd1795ac"
+                    },
+                    {
+                      "path": "Safari/Gitako/Gitako/Assets.xcassets/AppIcon.appiconset",
+                      "type": "tree",
+                      "name": "AppIcon.appiconset",
+                      "url": "https://github.com/EnixCoda/Gitako/tree/develop/Safari/Gitako/Gitako/Assets.xcassets/AppIcon.appiconset",
+                      "contents": [
+                        {
+                          "path": "Safari/Gitako/Gitako/Assets.xcassets/AppIcon.appiconset/Contents.json",
+                          "type": "blob",
+                          "name": "Contents.json",
+                          "url": "https://github.com/EnixCoda/Gitako/blob/develop/Safari/Gitako/Gitako/Assets.xcassets/AppIcon.appiconset/Contents.json",
+                          "sha": "1fc4d502c6318d85bf0113c0c5dbdce750e0eaf2"
+                        },
+                        {
+                          "path": "Safari/Gitako/Gitako/Assets.xcassets/AppIcon.appiconset/Gitako-128.png",
+                          "type": "blob",
+                          "name": "Gitako-128.png",
+                          "url": "https://github.com/EnixCoda/Gitako/blob/develop/Safari/Gitako/Gitako/Assets.xcassets/AppIcon.appiconset/Gitako-128.png",
+                          "sha": "60c967f1513d82f27164f482b56fb6363789a0eb"
+                        },
+                        {
+                          "path": "Safari/Gitako/Gitako/Assets.xcassets/AppIcon.appiconset/Gitako-256.png",
+                          "type": "blob",
+                          "name": "Gitako-256.png",
+                          "url": "https://github.com/EnixCoda/Gitako/blob/develop/Safari/Gitako/Gitako/Assets.xcassets/AppIcon.appiconset/Gitako-256.png",
+                          "sha": "6902e6008f34ceac80b503047a1af4415f65604c"
+                        },
+                        {
+                          "path": "Safari/Gitako/Gitako/Assets.xcassets/AppIcon.appiconset/Gitako-64.png",
+                          "type": "blob",
+                          "name": "Gitako-64.png",
+                          "url": "https://github.com/EnixCoda/Gitako/blob/develop/Safari/Gitako/Gitako/Assets.xcassets/AppIcon.appiconset/Gitako-64.png",
+                          "sha": "e9db0ac98bc3fbc31a31dbb2dd66c7bbebe20b38"
+                        }
+                      ],
+                      "sha": "83bd88b482a427eafba7b54e31b6907f7dc8b47a"
+                    },
+                    {
+                      "path": "Safari/Gitako/Gitako/Assets.xcassets/Contents.json",
+                      "type": "blob",
+                      "name": "Contents.json",
+                      "url": "https://github.com/EnixCoda/Gitako/blob/develop/Safari/Gitako/Gitako/Assets.xcassets/Contents.json",
+                      "sha": "73c00596a7fca3f3d4bdd64053b69d86745f9e10"
+                    }
+                  ],
+                  "sha": "cb7c7ddc6fd4ec536f807f413cd10f566e0c571b"
+                },
+                {
+                  "path": "Safari/Gitako/Gitako/Base.lproj",
+                  "type": "tree",
+                  "name": "Base.lproj",
+                  "url": "https://github.com/EnixCoda/Gitako/tree/develop/Safari/Gitako/Gitako/Base.lproj",
+                  "contents": [
+                    {
+                      "path": "Safari/Gitako/Gitako/Base.lproj/Main.storyboard",
+                      "type": "blob",
+                      "name": "Main.storyboard",
+                      "url": "https://github.com/EnixCoda/Gitako/blob/develop/Safari/Gitako/Gitako/Base.lproj/Main.storyboard",
+                      "sha": "7eb23b7b7fa6f49ba2734e8862a52438cd91fcbf"
+                    }
+                  ],
+                  "sha": "e8a38ba6aa6c79cfa247ebf82fbc371975e2c28f"
+                },
+                {
+                  "path": "Safari/Gitako/Gitako/AppDelegate.swift",
+                  "type": "blob",
+                  "name": "AppDelegate.swift",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/Safari/Gitako/Gitako/AppDelegate.swift",
+                  "sha": "73965029729e1138d5f2f471513c2d03417298aa"
+                },
+                {
+                  "path": "Safari/Gitako/Gitako/Gitako.entitlements",
+                  "type": "blob",
+                  "name": "Gitako.entitlements",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/Safari/Gitako/Gitako/Gitako.entitlements",
+                  "sha": "f2ef3ae0265b40c475e8ef90e3a311c31786c594"
+                },
+                {
+                  "path": "Safari/Gitako/Gitako/Info.plist",
+                  "type": "blob",
+                  "name": "Info.plist",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/Safari/Gitako/Gitako/Info.plist",
+                  "sha": "c748bf6984862a3a3141182a6bfa04f92fdfa36b"
+                },
+                {
+                  "path": "Safari/Gitako/Gitako/ViewController.swift",
+                  "type": "blob",
+                  "name": "ViewController.swift",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/Safari/Gitako/Gitako/ViewController.swift",
+                  "sha": "aef059eb8a509062d08b95e048010d92ebbf34a7"
+                }
+              ],
+              "sha": "465e5c995e8508e349b8132625478b8bbab4bc95"
+            },
+            {
+              "path": "Safari/Gitako/GitakoTests",
+              "type": "tree",
+              "name": "GitakoTests",
+              "url": "https://github.com/EnixCoda/Gitako/tree/develop/Safari/Gitako/GitakoTests",
+              "contents": [
+                {
+                  "path": "Safari/Gitako/GitakoTests/GitakoTests.swift",
+                  "type": "blob",
+                  "name": "GitakoTests.swift",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/Safari/Gitako/GitakoTests/GitakoTests.swift",
+                  "sha": "ab23269f6229f045c081e8643406759872fbaebd"
+                },
+                {
+                  "path": "Safari/Gitako/GitakoTests/Info.plist",
+                  "type": "blob",
+                  "name": "Info.plist",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/Safari/Gitako/GitakoTests/Info.plist",
+                  "sha": "64d65ca495770bdc9600e58687865b73a36bed3a"
+                }
+              ],
+              "sha": "18b9d34b6d77ffedda5aa175d0fcb5ef852697f7"
+            },
+            {
+              "path": "Safari/Gitako/GitakoUITests",
+              "type": "tree",
+              "name": "GitakoUITests",
+              "url": "https://github.com/EnixCoda/Gitako/tree/develop/Safari/Gitako/GitakoUITests",
+              "contents": [
+                {
+                  "path": "Safari/Gitako/GitakoUITests/GitakoUITests.swift",
+                  "type": "blob",
+                  "name": "GitakoUITests.swift",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/Safari/Gitako/GitakoUITests/GitakoUITests.swift",
+                  "sha": "3bcaea9680d0c648a80b66dcc8f51a284542880e"
+                },
+                {
+                  "path": "Safari/Gitako/GitakoUITests/Info.plist",
+                  "type": "blob",
+                  "name": "Info.plist",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/Safari/Gitako/GitakoUITests/Info.plist",
+                  "sha": "64d65ca495770bdc9600e58687865b73a36bed3a"
+                }
+              ],
+              "sha": "17565c975e78892a40b2409aa307b67b109449c9"
+            }
+          ],
+          "sha": "c59412b7eafc41d2dc8cb63b59d3c012f4e66e3f"
+        },
+        {
+          "path": "Safari/.gitignore",
+          "type": "blob",
+          "name": ".gitignore",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/Safari/.gitignore",
+          "sha": "074d44ab77cfa9b527476eef1a1f26d9d0498436"
+        }
+      ],
+      "sha": "c27301aab9251e44899d204387ec24f1fd5dec05"
+    },
+    {
+      "path": "__tests__",
+      "type": "tree",
+      "name": "__tests__",
+      "url": "https://github.com/EnixCoda/Gitako/tree/develop/__tests__",
+      "contents": [
+        {
+          "path": "__tests__/cases",
+          "type": "tree",
+          "name": "cases",
+          "url": "https://github.com/EnixCoda/Gitako/tree/develop/__tests__/cases",
+          "contents": [
+            {
+              "path": "__tests__/cases/non-parallel",
+              "type": "tree",
+              "name": "non-parallel",
+              "url": "https://github.com/EnixCoda/Gitako/tree/develop/__tests__/cases/non-parallel",
+              "contents": [
+                {
+                  "path": "__tests__/cases/non-parallel/pjax.commits-page.ts",
+                  "type": "blob",
+                  "name": "pjax.commits-page.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/__tests__/cases/non-parallel/pjax.commits-page.ts",
+                  "sha": "cdd87bcd35525bc46ec736d9e9176560d564a966"
+                },
+                {
+                  "path": "__tests__/cases/non-parallel/pjax.files-page.ts",
+                  "type": "blob",
+                  "name": "pjax.files-page.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/__tests__/cases/non-parallel/pjax.files-page.ts",
+                  "sha": "bfe72bbfedaf06d3bc9f7f49c9cffe8dd59cf67e"
+                },
+                {
+                  "path": "__tests__/cases/non-parallel/pjax.general.ts",
+                  "type": "blob",
+                  "name": "pjax.general.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/__tests__/cases/non-parallel/pjax.general.ts",
+                  "sha": "76657f4e69e22768d62daffed7e9b5377bb501f9"
+                },
+                {
+                  "path": "__tests__/cases/non-parallel/pjax.internal.ts",
+                  "type": "blob",
+                  "name": "pjax.internal.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/__tests__/cases/non-parallel/pjax.internal.ts",
+                  "sha": "4b57bec43fd709b413de1ed1e4cd5615c232699a"
+                },
+                {
+                  "path": "__tests__/cases/non-parallel/project-page.gitako.ts",
+                  "type": "blob",
+                  "name": "project-page.gitako.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/__tests__/cases/non-parallel/project-page.gitako.ts",
+                  "sha": "6a831a971dc8cd9549bc7f5b2ee93aa5ba346a8d"
+                }
+              ],
+              "sha": "83f1b0705300e2216f02b264a5bcab2315b6f739"
+            },
+            {
+              "path": "__tests__/cases/parallel",
+              "type": "tree",
+              "name": "parallel",
+              "url": "https://github.com/EnixCoda/Gitako/tree/develop/__tests__/cases/parallel",
+              "contents": [
+                {
+                  "path": "__tests__/cases/parallel/baseline.ts",
+                  "type": "blob",
+                  "name": "baseline.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/__tests__/cases/parallel/baseline.ts",
+                  "sha": "a8e7a74329701aaaceaaa18ec32073f681693e18"
+                },
+                {
+                  "path": "__tests__/cases/parallel/expand-to-target.ts",
+                  "type": "blob",
+                  "name": "expand-to-target.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/__tests__/cases/parallel/expand-to-target.ts",
+                  "sha": "4be5dc0eefb73ba20ea87f33457f301fbc3348d1"
+                },
+                {
+                  "path": "__tests__/cases/parallel/homepage.not-render.ts",
+                  "type": "blob",
+                  "name": "homepage.not-render.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/__tests__/cases/parallel/homepage.not-render.ts",
+                  "sha": "8d670078b2def03fc0401949c7e6872b20557faa"
+                },
+                {
+                  "path": "__tests__/cases/parallel/pull-request-page.gitako.ts",
+                  "type": "blob",
+                  "name": "pull-request-page.gitako.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/__tests__/cases/parallel/pull-request-page.gitako.ts",
+                  "sha": "a502711ff391b98304fdfe0abe48650fd2d4a79d"
+                }
+              ],
+              "sha": "4e1ee2df88805efe8ca75961e8e72203cb0cd17f"
+            }
+          ],
+          "sha": "bdbca71a69952fdc004e1b24c5f78eb9441107a3"
+        },
+        {
+          "path": "__tests__/global.d.ts",
+          "type": "blob",
+          "name": "global.d.ts",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/__tests__/global.d.ts",
+          "sha": "0e702f5a22860225341047bda6da739f1198c4d8"
+        },
+        {
+          "path": "__tests__/jest.config.js",
+          "type": "blob",
+          "name": "jest.config.js",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/__tests__/jest.config.js",
+          "sha": "d9cf6da352d45f156d4f2c974da5b288427790c0"
+        },
+        {
+          "path": "__tests__/jest.non-parallel.config.js",
+          "type": "blob",
+          "name": "jest.non-parallel.config.js",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/__tests__/jest.non-parallel.config.js",
+          "sha": "c874fea86886a4bdd6a81a61407731de6adbd71c"
+        },
+        {
+          "path": "__tests__/jest.parallel.config.js",
+          "type": "blob",
+          "name": "jest.parallel.config.js",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/__tests__/jest.parallel.config.js",
+          "sha": "7f7916f91b8aec32d2720844de8b434bd4bf90ed"
+        },
+        {
+          "path": "__tests__/puppeteer.d.ts",
+          "type": "blob",
+          "name": "puppeteer.d.ts",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/__tests__/puppeteer.d.ts",
+          "sha": "cc45d12f39a81b52b481f7b56bfc7d52c7dbeeba"
+        },
+        {
+          "path": "__tests__/tsconfig.json",
+          "type": "blob",
+          "name": "tsconfig.json",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/__tests__/tsconfig.json",
+          "sha": "4e4518eccd5966cb7218ec85ed11bc76c9e28365"
+        },
+        {
+          "path": "__tests__/utils.ts",
+          "type": "blob",
+          "name": "utils.ts",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/__tests__/utils.ts",
+          "sha": "c81b87e8aff6c517d8a2f72002b8fae9a51d2069"
+        }
+      ],
+      "sha": "e7e1339042ac7acd3f72b747a0d4fac0b2f7efa2"
+    },
+    {
+      "path": "assets",
+      "type": "tree",
+      "name": "assets",
+      "url": "https://github.com/EnixCoda/Gitako/tree/develop/assets",
+      "contents": [
+        {
+          "path": "assets/Chrome.svg",
+          "type": "blob",
+          "name": "Chrome.svg",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/assets/Chrome.svg",
+          "sha": "2b90ad3de63a1c310ab3fa04e51c37672a081c9b"
+        },
+        {
+          "path": "assets/Edge.svg",
+          "type": "blob",
+          "name": "Edge.svg",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/assets/Edge.svg",
+          "sha": "f986f0899f4649e8048f2bd898d0af7d425336af"
+        },
+        {
+          "path": "assets/Firefox.svg",
+          "type": "blob",
+          "name": "Firefox.svg",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/assets/Firefox.svg",
+          "sha": "065152acf649a404104c9519727de7f30f70af10"
+        }
+      ],
+      "sha": "ef990cdbb373a6169ab3b1ebdfad02c95d2ce24c"
+    },
+    {
+      "path": "scripts",
+      "type": "tree",
+      "name": "scripts",
+      "url": "https://github.com/EnixCoda/Gitako/tree/develop/scripts",
+      "contents": [
+        {
+          "path": "scripts/check-emit-dir.js",
+          "type": "blob",
+          "name": "check-emit-dir.js",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/scripts/check-emit-dir.js",
+          "sha": "b08ed56129870d34f8887a64aa69a49044f861fb"
+        },
+        {
+          "path": "scripts/fix-pjax-api.js",
+          "type": "blob",
+          "name": "fix-pjax-api.js",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/scripts/fix-pjax-api.js",
+          "sha": "b2b8b4a9b7d6bd2acc5a5c521a1826df649e4688"
+        },
+        {
+          "path": "scripts/generate-file-icon-index.js",
+          "type": "blob",
+          "name": "generate-file-icon-index.js",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/scripts/generate-file-icon-index.js",
+          "sha": "4fc0d4edac7fd3bf595c53794a6aea2c2b4468f7"
+        },
+        {
+          "path": "scripts/generate-folder-icon-index.js",
+          "type": "blob",
+          "name": "generate-folder-icon-index.js",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/scripts/generate-folder-icon-index.js",
+          "sha": "1f559a27ff9ef63ba5cf7d54cc0b8ced099d7ec1"
+        },
+        {
+          "path": "scripts/generate-icon-index.js",
+          "type": "blob",
+          "name": "generate-icon-index.js",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/scripts/generate-icon-index.js",
+          "sha": "5a023167e5c5d8af79981bdd8f1349bc1eed762b"
+        },
+        {
+          "path": "scripts/get-version.js",
+          "type": "blob",
+          "name": "get-version.js",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/scripts/get-version.js",
+          "sha": "9186eda345c9465bf54af47dc859801a40ef23c7"
+        },
+        {
+          "path": "scripts/language-id-ext.json",
+          "type": "blob",
+          "name": "language-id-ext.json",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/scripts/language-id-ext.json",
+          "sha": "b4254a51a3c95cc13e6752ba619ccb7d81668626"
+        },
+        {
+          "path": "scripts/resolve-languages-map.js",
+          "type": "blob",
+          "name": "resolve-languages-map.js",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/scripts/resolve-languages-map.js",
+          "sha": "360d9366a1cba778c1994b1f5ffbfd51bc71c1c6"
+        }
+      ],
+      "sha": "cdd56d11c3ab1b79970a17ecb1d2b7b09586860f"
+    },
+    {
+      "path": "server",
+      "type": "tree",
+      "name": "server",
+      "url": "https://github.com/EnixCoda/Gitako/tree/develop/server",
+      "contents": [
+        {
+          "path": "server/api",
+          "type": "tree",
+          "name": "api",
+          "url": "https://github.com/EnixCoda/Gitako/tree/develop/server/api",
+          "contents": [
+            {
+              "path": "server/api/gitee.ts",
+              "type": "blob",
+              "name": "gitee.ts",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/server/api/gitee.ts",
+              "sha": "df763400ba8ce0b7cb09cca233a46e04515cdfd8"
+            },
+            {
+              "path": "server/api/github.ts",
+              "type": "blob",
+              "name": "github.ts",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/server/api/github.ts",
+              "sha": "cd723a280c4eb4c0f126a869781a813b031dc051"
+            },
+            {
+              "path": "server/api/index.ts",
+              "type": "blob",
+              "name": "index.ts",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/server/api/index.ts",
+              "sha": "055beed94eea170024a45a81898146443d2211b7"
+            },
+            {
+              "path": "server/api/redirect.ts",
+              "type": "blob",
+              "name": "redirect.ts",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/server/api/redirect.ts",
+              "sha": "6450bd4f7b5aa424b7d00ae582463cbdaeea9f1b"
+            },
+            {
+              "path": "server/api/utils.ts",
+              "type": "blob",
+              "name": "utils.ts",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/server/api/utils.ts",
+              "sha": "ad16ab610707c04e9f7bb499db1d36c8fae6ec9c"
+            }
+          ],
+          "sha": "cf5a3b82a6a478d605cba7fa7762bf411f0235df"
+        },
+        {
+          "path": "server/.gitignore",
+          "type": "blob",
+          "name": ".gitignore",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/server/.gitignore",
+          "sha": "e985853ed84acf10f62f639a4733083229c5a55d"
+        },
+        {
+          "path": "server/package.json",
+          "type": "blob",
+          "name": "package.json",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/server/package.json",
+          "sha": "458e100716e23c8d2ebafd05aa5e3dae35dc739e"
+        },
+        {
+          "path": "server/tsconfig.json",
+          "type": "blob",
+          "name": "tsconfig.json",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/server/tsconfig.json",
+          "sha": "60f1478b68c816a455cff200d2d56a4b715d0db8"
+        },
+        {
+          "path": "server/vercel.json",
+          "type": "blob",
+          "name": "vercel.json",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/server/vercel.json",
+          "sha": "a41e5478b849d15cf3f2b58d10767e83e1ceae76"
+        },
+        {
+          "path": "server/yarn.lock",
+          "type": "blob",
+          "name": "yarn.lock",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/server/yarn.lock",
+          "sha": "1330d17c3de7871eddbd189cddf126f7cbfd217a"
+        }
+      ],
+      "sha": "3d4c7e668820b0a1d1ddc20bacb4ac42b13e4886"
+    },
+    {
+      "path": "src",
+      "type": "tree",
+      "name": "src",
+      "url": "https://github.com/EnixCoda/Gitako/tree/develop/src",
+      "contents": [
+        {
+          "path": "src/assets",
+          "type": "tree",
+          "name": "assets",
+          "url": "https://github.com/EnixCoda/Gitako/tree/develop/src/assets",
+          "contents": [
+            {
+              "path": "src/assets/icons",
+              "type": "tree",
+              "name": "icons",
+              "url": "https://github.com/EnixCoda/Gitako/tree/develop/src/assets/icons",
+              "contents": [
+                {
+                  "path": "src/assets/icons/Gitako-128.png",
+                  "type": "blob",
+                  "name": "Gitako-128.png",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/assets/icons/Gitako-128.png",
+                  "sha": "60c967f1513d82f27164f482b56fb6363789a0eb"
+                },
+                {
+                  "path": "src/assets/icons/Gitako-256.png",
+                  "type": "blob",
+                  "name": "Gitako-256.png",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/assets/icons/Gitako-256.png",
+                  "sha": "6902e6008f34ceac80b503047a1af4415f65604c"
+                },
+                {
+                  "path": "src/assets/icons/Gitako-64.png",
+                  "type": "blob",
+                  "name": "Gitako-64.png",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/assets/icons/Gitako-64.png",
+                  "sha": "e9db0ac98bc3fbc31a31dbb2dd66c7bbebe20b38"
+                },
+                {
+                  "path": "src/assets/icons/Gitako.png",
+                  "type": "blob",
+                  "name": "Gitako.png",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/assets/icons/Gitako.png",
+                  "sha": "85f902a2052f7e4396b10cdd69dc182150202e3b"
+                },
+                {
+                  "path": "src/assets/icons/csv.d.ts",
+                  "type": "blob",
+                  "name": "csv.d.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/assets/icons/csv.d.ts",
+                  "sha": "7a5ed7fd0737cdef5d3d458fd4c5c23afc63305a"
+                },
+                {
+                  "path": "src/assets/icons/file-icons-index.csv",
+                  "type": "blob",
+                  "name": "file-icons-index.csv",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/assets/icons/file-icons-index.csv",
+                  "sha": "fdaf7b92a6898154578ea29a5876c7623947565c"
+                },
+                {
+                  "path": "src/assets/icons/folder-icons-index.csv",
+                  "type": "blob",
+                  "name": "folder-icons-index.csv",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/assets/icons/folder-icons-index.csv",
+                  "sha": "62f18f4e9b08ee0ee63a119831f2549e95ad2cc8"
+                },
+                {
+                  "path": "src/assets/icons/png.d.ts",
+                  "type": "blob",
+                  "name": "png.d.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/assets/icons/png.d.ts",
+                  "sha": "02b2e8991312a450e518c40b5611989c4a026c99"
+                }
+              ],
+              "sha": "3e0d34f2f5894113752be0a34cdbee3144b0f73a"
+            }
+          ],
+          "sha": "61bd7fb5a7e9a7c22114f4be8d132bf354ccc559"
+        },
+        {
+          "path": "src/components",
+          "type": "tree",
+          "name": "components",
+          "url": "https://github.com/EnixCoda/Gitako/tree/develop/src/components",
+          "contents": [
+            {
+              "path": "src/components/searchModes",
+              "type": "tree",
+              "name": "searchModes",
+              "url": "https://github.com/EnixCoda/Gitako/tree/develop/src/components/searchModes",
+              "contents": [
+                {
+                  "path": "src/components/searchModes/fuzzyMode.tsx",
+                  "type": "blob",
+                  "name": "fuzzyMode.tsx",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/searchModes/fuzzyMode.tsx",
+                  "sha": "b2e495bbe38fa994e4dd1044943be1929677a6dc"
+                },
+                {
+                  "path": "src/components/searchModes/index.tsx",
+                  "type": "blob",
+                  "name": "index.tsx",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/searchModes/index.tsx",
+                  "sha": "e007e492e7c4742fd7117259119cf749bedc573b"
+                },
+                {
+                  "path": "src/components/searchModes/regexMode.tsx",
+                  "type": "blob",
+                  "name": "regexMode.tsx",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/searchModes/regexMode.tsx",
+                  "sha": "bfd3b3933679c3a827f3038510638da0fc585482"
+                }
+              ],
+              "sha": "0869ab22ff511c659734626bd29c87d084a5d2c2"
+            },
+            {
+              "path": "src/components/settings",
+              "type": "tree",
+              "name": "settings",
+              "url": "https://github.com/EnixCoda/Gitako/tree/develop/src/components/settings",
+              "contents": [
+                {
+                  "path": "src/components/settings/AccessTokenSettings.tsx",
+                  "type": "blob",
+                  "name": "AccessTokenSettings.tsx",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/settings/AccessTokenSettings.tsx",
+                  "sha": "b675dbec15e78cf700e0cc1931dd86fc2b8a7949"
+                },
+                {
+                  "path": "src/components/settings/Field.tsx",
+                  "type": "blob",
+                  "name": "Field.tsx",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/settings/Field.tsx",
+                  "sha": "87031fed6a26cd1e1fb72f5ec81d96da8acf5020"
+                },
+                {
+                  "path": "src/components/settings/FileTreeSettings.tsx",
+                  "type": "blob",
+                  "name": "FileTreeSettings.tsx",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/settings/FileTreeSettings.tsx",
+                  "sha": "25c823e3443ad5aa7b1ed5c49f2191d40dc33923"
+                },
+                {
+                  "path": "src/components/settings/SettingsBar.tsx",
+                  "type": "blob",
+                  "name": "SettingsBar.tsx",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/settings/SettingsBar.tsx",
+                  "sha": "4e604910b370ad790b0f5348100f8804de374611"
+                },
+                {
+                  "path": "src/components/settings/SettingsSection.tsx",
+                  "type": "blob",
+                  "name": "SettingsSection.tsx",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/settings/SettingsSection.tsx",
+                  "sha": "209bd16acb8dbb98cce6fe1e53256bd84e6f17ed"
+                },
+                {
+                  "path": "src/components/settings/SidebarSettings.tsx",
+                  "type": "blob",
+                  "name": "SidebarSettings.tsx",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/settings/SidebarSettings.tsx",
+                  "sha": "1370a66f8127109db3c08809e9d392070adfb388"
+                }
+              ],
+              "sha": "8e5dbe07f5444b5f5c75d29e6153209c821aebff"
+            },
+            {
+              "path": "src/components/AccessDeniedDescription.tsx",
+              "type": "blob",
+              "name": "AccessDeniedDescription.tsx",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/AccessDeniedDescription.tsx",
+              "sha": "eb0777855418ad4a4d478df2a60d37d1aa97a9dd"
+            },
+            {
+              "path": "src/components/Clippy.tsx",
+              "type": "blob",
+              "name": "Clippy.tsx",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/Clippy.tsx",
+              "sha": "2508ade20943165b4fb113af901f2e3a36ae4c3d"
+            },
+            {
+              "path": "src/components/DiffStatGraph.tsx",
+              "type": "blob",
+              "name": "DiffStatGraph.tsx",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/DiffStatGraph.tsx",
+              "sha": "7aaa2dd55f623d146033037e51efc12d8b209233"
+            },
+            {
+              "path": "src/components/DiffStatText.tsx",
+              "type": "blob",
+              "name": "DiffStatText.tsx",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/DiffStatText.tsx",
+              "sha": "2f8715c2b32247e8f76fb4537d1ec5bfa2242e06"
+            },
+            {
+              "path": "src/components/FileExplorer.tsx",
+              "type": "blob",
+              "name": "FileExplorer.tsx",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/FileExplorer.tsx",
+              "sha": "587a6432553f17934fca1d8a11fb19b4ab1a32a9"
+            },
+            {
+              "path": "src/components/Gitako.tsx",
+              "type": "blob",
+              "name": "Gitako.tsx",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/Gitako.tsx",
+              "sha": "13039b3601f5c72b67fbb3b5e03fb6b87989e5d6"
+            },
+            {
+              "path": "src/components/Highlight.tsx",
+              "type": "blob",
+              "name": "Highlight.tsx",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/Highlight.tsx",
+              "sha": "820a2942b13885eb0ca606bbdd796d709c89a934"
+            },
+            {
+              "path": "src/components/HighlightOnIndexes.tsx",
+              "type": "blob",
+              "name": "HighlightOnIndexes.tsx",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/HighlightOnIndexes.tsx",
+              "sha": "189b2ce871aa56af1196e02eed6de18dd0e2d36c"
+            },
+            {
+              "path": "src/components/IIFC.tsx",
+              "type": "blob",
+              "name": "IIFC.tsx",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/IIFC.tsx",
+              "sha": "6a57b87da2813f796d5e38abae722903e8495d7a"
+            },
+            {
+              "path": "src/components/Icon.tsx",
+              "type": "blob",
+              "name": "Icon.tsx",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/Icon.tsx",
+              "sha": "1204d18ce057f72dc18f96c2c448f83c60e99bd1"
+            },
+            {
+              "path": "src/components/LoadingIndicator.tsx",
+              "type": "blob",
+              "name": "LoadingIndicator.tsx",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/LoadingIndicator.tsx",
+              "sha": "c0d0dadc1e1d53ee6d116977ed68568f12c6d926"
+            },
+            {
+              "path": "src/components/MetaBar.tsx",
+              "type": "blob",
+              "name": "MetaBar.tsx",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/MetaBar.tsx",
+              "sha": "903d954ce4762bb4e39decec0d399d921fe11ee9"
+            },
+            {
+              "path": "src/components/Node.tsx",
+              "type": "blob",
+              "name": "Node.tsx",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/Node.tsx",
+              "sha": "1b8b2b0f0bd2f6bae78b40a61c71e8a91254cbf7"
+            },
+            {
+              "path": "src/components/Portal.tsx",
+              "type": "blob",
+              "name": "Portal.tsx",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/Portal.tsx",
+              "sha": "24979542804c0646d08017295c3bdd8a17f75b32"
+            },
+            {
+              "path": "src/components/ResizeHandler.tsx",
+              "type": "blob",
+              "name": "ResizeHandler.tsx",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/ResizeHandler.tsx",
+              "sha": "4c4442a8bffd5d8f4ac8edb6de89be985c564773"
+            },
+            {
+              "path": "src/components/SearchBar.tsx",
+              "type": "blob",
+              "name": "SearchBar.tsx",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/SearchBar.tsx",
+              "sha": "05a1f964ac8975be9949bef5d13c9ab9286af891"
+            },
+            {
+              "path": "src/components/SelectInput.tsx",
+              "type": "blob",
+              "name": "SelectInput.tsx",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/SelectInput.tsx",
+              "sha": "48479a4797534a9b1b6e01828cc1495f645cec2a"
+            },
+            {
+              "path": "src/components/SideBar.tsx",
+              "type": "blob",
+              "name": "SideBar.tsx",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/SideBar.tsx",
+              "sha": "a2cb8111ed88a674034a7f535cd89bd8d1aa964b"
+            },
+            {
+              "path": "src/components/SideBarBodyWrapper.tsx",
+              "type": "blob",
+              "name": "SideBarBodyWrapper.tsx",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/SideBarBodyWrapper.tsx",
+              "sha": "e9a6a9831fcbde969cc1466c4afa266caf45cec7"
+            },
+            {
+              "path": "src/components/SimpleToggleField.tsx",
+              "type": "blob",
+              "name": "SimpleToggleField.tsx",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/SimpleToggleField.tsx",
+              "sha": "7e0ec27594561e7c5ac1bdf593e7635b043e8032"
+            },
+            {
+              "path": "src/components/SizeObserver.tsx",
+              "type": "blob",
+              "name": "SizeObserver.tsx",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/SizeObserver.tsx",
+              "sha": "9739e2fb2e7e5a8727bfd0d6813debfc6ae3a3bc"
+            },
+            {
+              "path": "src/components/ToggleShowButton.tsx",
+              "type": "blob",
+              "name": "ToggleShowButton.tsx",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/components/ToggleShowButton.tsx",
+              "sha": "fada7eccb44dff5f99f0b447b4aaf3b49be8b809"
+            }
+          ],
+          "sha": "efc4c164bf6f8bcc2859875377816a6c898588bb"
+        },
+        {
+          "path": "src/containers",
+          "type": "tree",
+          "name": "containers",
+          "url": "https://github.com/EnixCoda/Gitako/tree/develop/src/containers",
+          "contents": [
+            {
+              "path": "src/containers/ConfigsContext.tsx",
+              "type": "blob",
+              "name": "ConfigsContext.tsx",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/containers/ConfigsContext.tsx",
+              "sha": "4710a83de92edac8e03bc706b73e2696e48b1ac7"
+            },
+            {
+              "path": "src/containers/ErrorBoundary.tsx",
+              "type": "blob",
+              "name": "ErrorBoundary.tsx",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/containers/ErrorBoundary.tsx",
+              "sha": "0f8c74ea3dd26f05203db171a6a25c4d2ba6ef7a"
+            },
+            {
+              "path": "src/containers/ErrorContext.tsx",
+              "type": "blob",
+              "name": "ErrorContext.tsx",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/containers/ErrorContext.tsx",
+              "sha": "53d945521fce3ca1e288f7a7648d4c9a41e28b9d"
+            },
+            {
+              "path": "src/containers/OAuthWrapper.tsx",
+              "type": "blob",
+              "name": "OAuthWrapper.tsx",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/containers/OAuthWrapper.tsx",
+              "sha": "c338c64036178cf81ad7ca8a033b49ea4f4b852d"
+            },
+            {
+              "path": "src/containers/RepoContext.tsx",
+              "type": "blob",
+              "name": "RepoContext.tsx",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/containers/RepoContext.tsx",
+              "sha": "3e7004a2c28f13853b9df639c10cc49d3a854dce"
+            },
+            {
+              "path": "src/containers/SideBarState.tsx",
+              "type": "blob",
+              "name": "SideBarState.tsx",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/containers/SideBarState.tsx",
+              "sha": "815a122a6948f29a31f2d5ce166771cd9c695226"
+            },
+            {
+              "path": "src/containers/Theme.tsx",
+              "type": "blob",
+              "name": "Theme.tsx",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/containers/Theme.tsx",
+              "sha": "d9c082db791d44d227c9f0bd70cb457048cfc5b8"
+            }
+          ],
+          "sha": "efe721c2e3824da60b42abf81cbc0e0f00b8e53d"
+        },
+        {
+          "path": "src/driver",
+          "type": "tree",
+          "name": "driver",
+          "url": "https://github.com/EnixCoda/Gitako/tree/develop/src/driver",
+          "contents": [
+            {
+              "path": "src/driver/core",
+              "type": "tree",
+              "name": "core",
+              "url": "https://github.com/EnixCoda/Gitako/tree/develop/src/driver/core",
+              "contents": [
+                {
+                  "path": "src/driver/core/FileExplorer.ts",
+                  "type": "blob",
+                  "name": "FileExplorer.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/driver/core/FileExplorer.ts",
+                  "sha": "8ca0de9fe10236c836c0f4158c795a0a54892cff"
+                },
+                {
+                  "path": "src/driver/core/index.ts",
+                  "type": "blob",
+                  "name": "index.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/driver/core/index.ts",
+                  "sha": "dd80f1013ee5f6627fc3602c35cf659668001593"
+                }
+              ],
+              "sha": "35f8292f2b7b102524c858327daffc11423a4e93"
+            },
+            {
+              "path": "src/driver/connect.ts",
+              "type": "blob",
+              "name": "connect.ts",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/driver/connect.ts",
+              "sha": "f710bcce3d523480758b7e81de3e04a7381eb93c"
+            }
+          ],
+          "sha": "7a08439c93581266132799b374b44300f885e2e5"
+        },
+        {
+          "path": "src/platforms",
+          "type": "tree",
+          "name": "platforms",
+          "url": "https://github.com/EnixCoda/Gitako/tree/develop/src/platforms",
+          "contents": [
+            {
+              "path": "src/platforms/GitHub",
+              "type": "tree",
+              "name": "GitHub",
+              "url": "https://github.com/EnixCoda/Gitako/tree/develop/src/platforms/GitHub",
+              "contents": [
+                {
+                  "path": "src/platforms/GitHub/hooks",
+                  "type": "tree",
+                  "name": "hooks",
+                  "url": "https://github.com/EnixCoda/Gitako/tree/develop/src/platforms/GitHub/hooks",
+                  "contents": [
+                    {
+                      "path": "src/platforms/GitHub/hooks/useGitHubAttachCopyFileButton.ts",
+                      "type": "blob",
+                      "name": "useGitHubAttachCopyFileButton.ts",
+                      "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/platforms/GitHub/hooks/useGitHubAttachCopyFileButton.ts",
+                      "sha": "aa1e40959ac554a58a066b162b5aa219f0f87a7f"
+                    },
+                    {
+                      "path": "src/platforms/GitHub/hooks/useGitHubAttachCopySnippetButton.ts",
+                      "type": "blob",
+                      "name": "useGitHubAttachCopySnippetButton.ts",
+                      "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/platforms/GitHub/hooks/useGitHubAttachCopySnippetButton.ts",
+                      "sha": "9a92f768d2875187e16ed8aeb4f6164ed2fa28c1"
+                    },
+                    {
+                      "path": "src/platforms/GitHub/hooks/useGitHubCodeFold.tsx",
+                      "type": "blob",
+                      "name": "useGitHubCodeFold.tsx",
+                      "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/platforms/GitHub/hooks/useGitHubCodeFold.tsx",
+                      "sha": "83c49db94f8d4f961b0b880a88dcc0952b0c2745"
+                    }
+                  ],
+                  "sha": "c587b1f68d4e754c64e379f3a88ed0cc432a84aa"
+                },
+                {
+                  "path": "src/platforms/GitHub/API.ts",
+                  "type": "blob",
+                  "name": "API.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/platforms/GitHub/API.ts",
+                  "sha": "d6c1d7c9a2c3ca5fe3a7467e74cc0c835059fd8b"
+                },
+                {
+                  "path": "src/platforms/GitHub/CopyFileButton.tsx",
+                  "type": "blob",
+                  "name": "CopyFileButton.tsx",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/platforms/GitHub/CopyFileButton.tsx",
+                  "sha": "47d26c078ee93c427c30a2ba72a56787a7cf5633"
+                },
+                {
+                  "path": "src/platforms/GitHub/DOMHelper.ts",
+                  "type": "blob",
+                  "name": "DOMHelper.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/platforms/GitHub/DOMHelper.ts",
+                  "sha": "7ff7b6ced941415c02490feb0ffeba81e091dca9"
+                },
+                {
+                  "path": "src/platforms/GitHub/Request.d.ts",
+                  "type": "blob",
+                  "name": "Request.d.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/platforms/GitHub/Request.d.ts",
+                  "sha": "3ee31cbb73fd65b14d9675965a780b82b2baf9e3"
+                },
+                {
+                  "path": "src/platforms/GitHub/URLHelper.ts",
+                  "type": "blob",
+                  "name": "URLHelper.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/platforms/GitHub/URLHelper.ts",
+                  "sha": "229317d81a9249c15912a1b1e3424b1e64d19efb"
+                },
+                {
+                  "path": "src/platforms/GitHub/index.ts",
+                  "type": "blob",
+                  "name": "index.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/platforms/GitHub/index.ts",
+                  "sha": "4401621f514e786dda9d0643784d1b85dc62b924"
+                }
+              ],
+              "sha": "9aca77980c876179e84d406db5c7d1c15e2e095c"
+            },
+            {
+              "path": "src/platforms/Gitea",
+              "type": "tree",
+              "name": "Gitea",
+              "url": "https://github.com/EnixCoda/Gitako/tree/develop/src/platforms/Gitea",
+              "contents": [
+                {
+                  "path": "src/platforms/Gitea/API.ts",
+                  "type": "blob",
+                  "name": "API.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/platforms/Gitea/API.ts",
+                  "sha": "c566d330822a49643e472c09a9447b12f151a362"
+                },
+                {
+                  "path": "src/platforms/Gitea/DOMHelper.ts",
+                  "type": "blob",
+                  "name": "DOMHelper.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/platforms/Gitea/DOMHelper.ts",
+                  "sha": "acd7043af0263c0ec41ed3b56b4ada442bc6972e"
+                },
+                {
+                  "path": "src/platforms/Gitea/Request.d.ts",
+                  "type": "blob",
+                  "name": "Request.d.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/platforms/Gitea/Request.d.ts",
+                  "sha": "1132de1f05f2f69d50492200055dfabc8501eaba"
+                },
+                {
+                  "path": "src/platforms/Gitea/URLHelper.ts",
+                  "type": "blob",
+                  "name": "URLHelper.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/platforms/Gitea/URLHelper.ts",
+                  "sha": "a68b81f865b42ce6855d059030fb3576c3bac33e"
+                },
+                {
+                  "path": "src/platforms/Gitea/index.ts",
+                  "type": "blob",
+                  "name": "index.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/platforms/Gitea/index.ts",
+                  "sha": "2052189b730de0fd709757b92c297071cb791175"
+                }
+              ],
+              "sha": "97c35abcba6e9b6420d6758b9e0f168fa95550b9"
+            },
+            {
+              "path": "src/platforms/Gitee",
+              "type": "tree",
+              "name": "Gitee",
+              "url": "https://github.com/EnixCoda/Gitako/tree/develop/src/platforms/Gitee",
+              "contents": [
+                {
+                  "path": "src/platforms/Gitee/API.ts",
+                  "type": "blob",
+                  "name": "API.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/platforms/Gitee/API.ts",
+                  "sha": "ac9d03006ad5abc6a59f40bf0f0b4d9e6111023b"
+                },
+                {
+                  "path": "src/platforms/Gitee/DOMHelper.ts",
+                  "type": "blob",
+                  "name": "DOMHelper.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/platforms/Gitee/DOMHelper.ts",
+                  "sha": "bd1a50f01ae53888425ff936fef47584107b8df3"
+                },
+                {
+                  "path": "src/platforms/Gitee/Request.d.ts",
+                  "type": "blob",
+                  "name": "Request.d.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/platforms/Gitee/Request.d.ts",
+                  "sha": "14e01707f09f700bd888a545537691646d60f7ec"
+                },
+                {
+                  "path": "src/platforms/Gitee/URLHelper.ts",
+                  "type": "blob",
+                  "name": "URLHelper.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/platforms/Gitee/URLHelper.ts",
+                  "sha": "0a539da1aab773176e23864680a5f72ccc9ba9da"
+                },
+                {
+                  "path": "src/platforms/Gitee/components.tsx",
+                  "type": "blob",
+                  "name": "components.tsx",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/platforms/Gitee/components.tsx",
+                  "sha": "945f11dfeb74ee11dadac561bb755f2c9569756c"
+                },
+                {
+                  "path": "src/platforms/Gitee/index.ts",
+                  "type": "blob",
+                  "name": "index.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/platforms/Gitee/index.ts",
+                  "sha": "66e519ceafc378803ab74b256d1425d8141e36bf"
+                }
+              ],
+              "sha": "39f89fed13c96d3929e4664375b1eef9b1c29e3e"
+            },
+            {
+              "path": "src/platforms/dummyPlatformForTypeSafety.ts",
+              "type": "blob",
+              "name": "dummyPlatformForTypeSafety.ts",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/platforms/dummyPlatformForTypeSafety.ts",
+              "sha": "92167149e55015bbb9ee61caabae663e9bd0333f"
+            },
+            {
+              "path": "src/platforms/index.ts",
+              "type": "blob",
+              "name": "index.ts",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/platforms/index.ts",
+              "sha": "b5ac56f52e6b8a5760df6c48be724c54c4dccda5"
+            },
+            {
+              "path": "src/platforms/platform.d.ts",
+              "type": "blob",
+              "name": "platform.d.ts",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/platforms/platform.d.ts",
+              "sha": "e555d7a436fa3636ee7324a5088f5e72d209f3cc"
+            }
+          ],
+          "sha": "c62fc62e073ef754edbdb9b5179f72de31ed954e"
+        },
+        {
+          "path": "src/styles",
+          "type": "tree",
+          "name": "styles",
+          "url": "https://github.com/EnixCoda/Gitako/tree/develop/src/styles",
+          "contents": [
+            {
+              "path": "src/styles/themes",
+              "type": "tree",
+              "name": "themes",
+              "url": "https://github.com/EnixCoda/Gitako/tree/develop/src/styles/themes",
+              "contents": [
+                {
+                  "path": "src/styles/themes/dark.scss",
+                  "type": "blob",
+                  "name": "dark.scss",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/styles/themes/dark.scss",
+                  "sha": "986117f13b92c98e22a710675a3a80c0fb45c7ae"
+                },
+                {
+                  "path": "src/styles/themes/darkColorblind.scss",
+                  "type": "blob",
+                  "name": "darkColorblind.scss",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/styles/themes/darkColorblind.scss",
+                  "sha": "49f7777518fd721ab595f365b0da56c6089fe31c"
+                },
+                {
+                  "path": "src/styles/themes/darkDimmed.scss",
+                  "type": "blob",
+                  "name": "darkDimmed.scss",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/styles/themes/darkDimmed.scss",
+                  "sha": "1d0a300371ad7b2791a0cbac6e23fd065654d237"
+                },
+                {
+                  "path": "src/styles/themes/darkHighContrast.scss",
+                  "type": "blob",
+                  "name": "darkHighContrast.scss",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/styles/themes/darkHighContrast.scss",
+                  "sha": "eb3f09b1875bfbd568b2b5d206f5bc949dcf9d2b"
+                },
+                {
+                  "path": "src/styles/themes/light.scss",
+                  "type": "blob",
+                  "name": "light.scss",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/styles/themes/light.scss",
+                  "sha": "ff031ffd42db173d4ab476d06226ab0209de1620"
+                },
+                {
+                  "path": "src/styles/themes/lightColorblind.scss",
+                  "type": "blob",
+                  "name": "lightColorblind.scss",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/styles/themes/lightColorblind.scss",
+                  "sha": "f23ee01a8f60d460f3dc9b781687e09ed43d6fbf"
+                },
+                {
+                  "path": "src/styles/themes/lightHighContrast.scss",
+                  "type": "blob",
+                  "name": "lightHighContrast.scss",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/styles/themes/lightHighContrast.scss",
+                  "sha": "8b1c9d59a06df7e60c43860ed48445a752accfa5"
+                }
+              ],
+              "sha": "3dea8b6b07379048aa34044692f6d18e740bcadc"
+            },
+            {
+              "path": "src/styles/index.scss",
+              "type": "blob",
+              "name": "index.scss",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/styles/index.scss",
+              "sha": "6d9754f0ff10a61bcb7315bf1fa1638fd9a17cff"
+            },
+            {
+              "path": "src/styles/themes.scss",
+              "type": "blob",
+              "name": "themes.scss",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/styles/themes.scss",
+              "sha": "61451a064a784a262d8c423a2e71e857d2ccb4dc"
+            }
+          ],
+          "sha": "1cbbadef1848595ffb3f94cf1035d19431ee7f2d"
+        },
+        {
+          "path": "src/utils",
+          "type": "tree",
+          "name": "utils",
+          "url": "https://github.com/EnixCoda/Gitako/tree/develop/src/utils",
+          "contents": [
+            {
+              "path": "src/utils/config",
+              "type": "tree",
+              "name": "config",
+              "url": "https://github.com/EnixCoda/Gitako/tree/develop/src/utils/config",
+              "contents": [
+                {
+                  "path": "src/utils/config/migrations",
+                  "type": "tree",
+                  "name": "migrations",
+                  "url": "https://github.com/EnixCoda/Gitako/tree/develop/src/utils/config/migrations",
+                  "contents": [
+                    {
+                      "path": "src/utils/config/migrations/1.0.1.ts",
+                      "type": "blob",
+                      "name": "1.0.1.ts",
+                      "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/config/migrations/1.0.1.ts",
+                      "sha": "45d2a1bb13501e39281ebefa5ff9d483097ef5af"
+                    },
+                    {
+                      "path": "src/utils/config/migrations/1.3.4.ts",
+                      "type": "blob",
+                      "name": "1.3.4.ts",
+                      "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/config/migrations/1.3.4.ts",
+                      "sha": "9fd8cd9b0ea74342221a3951e186f152406abe9f"
+                    },
+                    {
+                      "path": "src/utils/config/migrations/2.6.0.ts",
+                      "type": "blob",
+                      "name": "2.6.0.ts",
+                      "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/config/migrations/2.6.0.ts",
+                      "sha": "d5a522f37e4a2d89580e556bedbc5d5e1b1e50ac"
+                    },
+                    {
+                      "path": "src/utils/config/migrations/3.0.0.ts",
+                      "type": "blob",
+                      "name": "3.0.0.ts",
+                      "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/config/migrations/3.0.0.ts",
+                      "sha": "4db2fbaece7a9301783bb10f46455f2340fe0792"
+                    },
+                    {
+                      "path": "src/utils/config/migrations/3.5.0.ts",
+                      "type": "blob",
+                      "name": "3.5.0.ts",
+                      "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/config/migrations/3.5.0.ts",
+                      "sha": "1c25b3c9fa3d34e26c9e7edf44b247656b10fffd"
+                    },
+                    {
+                      "path": "src/utils/config/migrations/index.ts",
+                      "type": "blob",
+                      "name": "index.ts",
+                      "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/config/migrations/index.ts",
+                      "sha": "276c1979d9f79597879cc96018b59d994c2f9b6a"
+                    }
+                  ],
+                  "sha": "9a7bd604b3c627edfb90f03700de553eacf62ef5"
+                },
+                {
+                  "path": "src/utils/config/helper.ts",
+                  "type": "blob",
+                  "name": "helper.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/config/helper.ts",
+                  "sha": "ea3c369f0510de895c08d07a00079ea24543b3ac"
+                }
+              ],
+              "sha": "953827cca618ba5dbddc6691780b5f2d18918281"
+            },
+            {
+              "path": "src/utils/hooks",
+              "type": "tree",
+              "name": "hooks",
+              "url": "https://github.com/EnixCoda/Gitako/tree/develop/src/utils/hooks",
+              "contents": [
+                {
+                  "path": "src/utils/hooks/useAsyncMemo.ts",
+                  "type": "blob",
+                  "name": "useAsyncMemo.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/hooks/useAsyncMemo.ts",
+                  "sha": "62e2f53daff237831ed4f8c6317d2bcfc9e28882"
+                },
+                {
+                  "path": "src/utils/hooks/useCSSVariable.ts",
+                  "type": "blob",
+                  "name": "useCSSVariable.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/hooks/useCSSVariable.ts",
+                  "sha": "889a7740c627f2d54cf82ffa6d86150b656199a2"
+                },
+                {
+                  "path": "src/utils/hooks/useCatchNetworkError.ts",
+                  "type": "blob",
+                  "name": "useCatchNetworkError.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/hooks/useCatchNetworkError.ts",
+                  "sha": "f236641cae52f84b1b363e28bd45b2677dc2a4a8"
+                },
+                {
+                  "path": "src/utils/hooks/useConditionalHook.ts",
+                  "type": "blob",
+                  "name": "useConditionalHook.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/hooks/useConditionalHook.ts",
+                  "sha": "613269d47218b8efe420d42584b672f943e25eba"
+                },
+                {
+                  "path": "src/utils/hooks/useEffectOnSerializableUpdates.ts",
+                  "type": "blob",
+                  "name": "useEffectOnSerializableUpdates.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/hooks/useEffectOnSerializableUpdates.ts",
+                  "sha": "ecbcd4c510fef551d5aa20c29535a2f1980657d1"
+                },
+                {
+                  "path": "src/utils/hooks/useLoadedContext.ts",
+                  "type": "blob",
+                  "name": "useLoadedContext.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/hooks/useLoadedContext.ts",
+                  "sha": "7eea09601db134f4aa6807cce8c4a3e9e5d42aeb"
+                },
+                {
+                  "path": "src/utils/hooks/useMediaStyleSheet.ts",
+                  "type": "blob",
+                  "name": "useMediaStyleSheet.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/hooks/useMediaStyleSheet.ts",
+                  "sha": "40d3c76c3be1b24908539f43e51e2259eb3473b6"
+                },
+                {
+                  "path": "src/utils/hooks/useOnLocationChange.ts",
+                  "type": "blob",
+                  "name": "useOnLocationChange.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/hooks/useOnLocationChange.ts",
+                  "sha": "8de3fcd5280d2e02d1fbaf4c56245133a9c8e9ce"
+                },
+                {
+                  "path": "src/utils/hooks/usePJAX.ts",
+                  "type": "blob",
+                  "name": "usePJAX.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/hooks/usePJAX.ts",
+                  "sha": "396dcafe15987320189480ba8e19c06a1a370fe4"
+                },
+                {
+                  "path": "src/utils/hooks/useProgressBar.ts",
+                  "type": "blob",
+                  "name": "useProgressBar.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/hooks/useProgressBar.ts",
+                  "sha": "29a0c2b59236214f3a853907db1d08779bc8d143"
+                },
+                {
+                  "path": "src/utils/hooks/useSequentialEffect.ts",
+                  "type": "blob",
+                  "name": "useSequentialEffect.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/hooks/useSequentialEffect.ts",
+                  "sha": "3b7497f301bf8c53025083b77c6a72b9629468e6"
+                },
+                {
+                  "path": "src/utils/hooks/useStateIO.ts",
+                  "type": "blob",
+                  "name": "useStateIO.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/hooks/useStateIO.ts",
+                  "sha": "f216a50d6176931851d2a0fda93adba3fb311d8e"
+                },
+                {
+                  "path": "src/utils/hooks/useToggleSideBarWithKeyboard.ts",
+                  "type": "blob",
+                  "name": "useToggleSideBarWithKeyboard.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/hooks/useToggleSideBarWithKeyboard.ts",
+                  "sha": "19d0a935878fbef6a6677f19f5223c9fafb55705"
+                },
+                {
+                  "path": "src/utils/hooks/useUpdateReason.ts",
+                  "type": "blob",
+                  "name": "useUpdateReason.ts",
+                  "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/hooks/useUpdateReason.ts",
+                  "sha": "edcbf1a101f73bcdccd8ada1f2b9e4106d9830bb"
+                }
+              ],
+              "sha": "2c4068c02149dbfe0edef1afa25e4fa505b71bf5"
+            },
+            {
+              "path": "src/utils/DOMHelper.ts",
+              "type": "blob",
+              "name": "DOMHelper.ts",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/DOMHelper.ts",
+              "sha": "b369b46a6a9c907affe1afb57765df2a77c39561"
+            },
+            {
+              "path": "src/utils/EventHub.ts",
+              "type": "blob",
+              "name": "EventHub.ts",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/EventHub.ts",
+              "sha": "1fc02c5360923184bed0c184dfda048f14e2dec5"
+            },
+            {
+              "path": "src/utils/VisibleNodesGenerator.ts",
+              "type": "blob",
+              "name": "VisibleNodesGenerator.ts",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/VisibleNodesGenerator.ts",
+              "sha": "f1f9fe245111714a2e9d339e8b69302ff88f858e"
+            },
+            {
+              "path": "src/utils/cx.ts",
+              "type": "blob",
+              "name": "cx.ts",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/cx.ts",
+              "sha": "01ea7375c19e1aca09ccfa1c6ebab1f574273e39"
+            },
+            {
+              "path": "src/utils/features.ts",
+              "type": "blob",
+              "name": "features.ts",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/features.ts",
+              "sha": "fb1df66854b5375d331fd14e5ac5eb8086493827"
+            },
+            {
+              "path": "src/utils/general.test.ts",
+              "type": "blob",
+              "name": "general.test.ts",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/general.test.ts",
+              "sha": "205acc85a11c39abaef8c6661d562112bc5dc7c6"
+            },
+            {
+              "path": "src/utils/general.ts",
+              "type": "blob",
+              "name": "general.ts",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/general.ts",
+              "sha": "0b928c8628d370fe461b2fa6b7320572df5ec74a"
+            },
+            {
+              "path": "src/utils/gitSubmodule.ts",
+              "type": "blob",
+              "name": "gitSubmodule.ts",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/gitSubmodule.ts",
+              "sha": "c6ef1aae315f27fbd61148c45bae1692afec3917"
+            },
+            {
+              "path": "src/utils/keyHelper.ts",
+              "type": "blob",
+              "name": "keyHelper.ts",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/keyHelper.ts",
+              "sha": "407d5135208ecb2a3389c3605037f559d0bf183d"
+            },
+            {
+              "path": "src/utils/parseIconMapCSV.ts",
+              "type": "blob",
+              "name": "parseIconMapCSV.ts",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/parseIconMapCSV.ts",
+              "sha": "a82030756c94b0b62e255ca20e995f535d70d422"
+            },
+            {
+              "path": "src/utils/storageHelper.ts",
+              "type": "blob",
+              "name": "storageHelper.ts",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/storageHelper.ts",
+              "sha": "e3dc40af4f8fc353a2ccadf8076b0ba4a376804d"
+            },
+            {
+              "path": "src/utils/treeParser.ts",
+              "type": "blob",
+              "name": "treeParser.ts",
+              "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/utils/treeParser.ts",
+              "sha": "de5786b23c05142dc3f6f4f4da493b2f612288c8"
+            }
+          ],
+          "sha": "f1d7c0e29d525a5c099f570c8be3c4aaf0c3615f"
+        },
+        {
+          "path": "src/analytics.ts",
+          "type": "blob",
+          "name": "analytics.ts",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/analytics.ts",
+          "sha": "3ac4bd54acdd7987ca2cef0cb67d918e8a19084a"
+        },
+        {
+          "path": "src/background.ts",
+          "type": "blob",
+          "name": "background.ts",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/background.ts",
+          "sha": "179d229447b7c1893627278cd4fc374aef1fdcf1"
+        },
+        {
+          "path": "src/content.scss",
+          "type": "blob",
+          "name": "content.scss",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/content.scss",
+          "sha": "1744a5f9845f6e3399263d7136e7e195e1e44957"
+        },
+        {
+          "path": "src/content.tsx",
+          "type": "blob",
+          "name": "content.tsx",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/content.tsx",
+          "sha": "2d48ef52ee9120317d43ce8e4fef2bd1416b3136"
+        },
+        {
+          "path": "src/env.ts",
+          "type": "blob",
+          "name": "env.ts",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/env.ts",
+          "sha": "a013dc3fbf1424dea4adbc8279425f8306a62e05"
+        },
+        {
+          "path": "src/firefox-shim.js",
+          "type": "blob",
+          "name": "firefox-shim.js",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/firefox-shim.js",
+          "sha": "205efabdc2a3ee5ba57ff6f6627d556db990162f"
+        },
+        {
+          "path": "src/global.d.ts",
+          "type": "blob",
+          "name": "global.d.ts",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/global.d.ts",
+          "sha": "6015caab1bd871153352a0bd459f41cc4e9282d2"
+        },
+        {
+          "path": "src/manifest.json",
+          "type": "blob",
+          "name": "manifest.json",
+          "url": "https://github.com/EnixCoda/Gitako/blob/develop/src/manifest.json",
+          "sha": "7448eaa6b8482206d17e29a63b7f4ed15b0748e6"
+        }
+      ],
+      "sha": "64fc2485559174d0d2f5052acaa3b3d0b0c8cef7"
+    },
+    {
+      "path": ".babelrc",
+      "type": "blob",
+      "name": ".babelrc",
+      "url": "https://github.com/EnixCoda/Gitako/blob/develop/.babelrc",
+      "sha": "3d26498263986eee7b7dd5d67c27254616fe836b"
+    },
+    {
+      "path": ".env.arm.mac",
+      "type": "blob",
+      "name": ".env.arm.mac",
+      "url": "https://github.com/EnixCoda/Gitako/blob/develop/.env.arm.mac",
+      "sha": "060e3f2f6e921ceb78536c026ed9c0ee5a475dfa"
+    },
+    {
+      "path": ".env.example",
+      "type": "blob",
+      "name": ".env.example",
+      "url": "https://github.com/EnixCoda/Gitako/blob/develop/.env.example",
+      "sha": "46da2aa032d0ed78f2c13d3df0f20dfe08f571fa"
+    },
+    {
+      "path": ".gitignore",
+      "type": "blob",
+      "name": ".gitignore",
+      "url": "https://github.com/EnixCoda/Gitako/blob/develop/.gitignore",
+      "sha": "c4ca72a80d41a9e6d9188b42f071df7c8c1b53e4"
+    },
+    {
+      "path": ".sentryclirc",
+      "type": "blob",
+      "name": ".sentryclirc",
+      "url": "https://github.com/EnixCoda/Gitako/blob/develop/.sentryclirc",
+      "sha": "d480dc35369ca542832aaa3d2e53082ecd8ea85c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "blob",
+      "name": "LICENSE",
+      "url": "https://github.com/EnixCoda/Gitako/blob/develop/LICENSE",
+      "sha": "9336a94fbdaff67afa2266a972a3d25c85c70212"
+    },
+    {
+      "path": "Makefile",
+      "type": "blob",
+      "name": "Makefile",
+      "url": "https://github.com/EnixCoda/Gitako/blob/develop/Makefile",
+      "sha": "a3807ea95ea6ac0bee53a16c5197f5a91c650072"
+    },
+    {
+      "path": "README.md",
+      "type": "blob",
+      "name": "README.md",
+      "url": "https://github.com/EnixCoda/Gitako/blob/develop/README.md",
+      "sha": "8aac0b06245709f36563c9421b0a82ab3b676bee"
+    },
+    {
+      "path": "jest-puppeteer.config.js",
+      "type": "blob",
+      "name": "jest-puppeteer.config.js",
+      "url": "https://github.com/EnixCoda/Gitako/blob/develop/jest-puppeteer.config.js",
+      "sha": "163ce8adcb06d87dda4b886900c6ff5b8e70fe0d"
+    },
+    {
+      "path": "jest.config.js",
+      "type": "blob",
+      "name": "jest.config.js",
+      "url": "https://github.com/EnixCoda/Gitako/blob/develop/jest.config.js",
+      "sha": "25bc4e4a5eaab6d781c578fd0706538bea61d7f4"
+    },
+    {
+      "path": "package.json",
+      "type": "blob",
+      "name": "package.json",
+      "url": "https://github.com/EnixCoda/Gitako/blob/develop/package.json",
+      "sha": "c08e96e5c84401e5af7dfe9ae8a75f0e0cf1920d"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "blob",
+      "name": "tsconfig.json",
+      "url": "https://github.com/EnixCoda/Gitako/blob/develop/tsconfig.json",
+      "sha": "837b4fff9aca4d64d7049e2a09f7935b6ffa77f5"
+    },
+    {
+      "path": "webpack.config.js",
+      "type": "blob",
+      "name": "webpack.config.js",
+      "url": "https://github.com/EnixCoda/Gitako/blob/develop/webpack.config.js",
+      "sha": "c34aae71be174c70a92c151594982587a18df65f"
+    },
+    {
+      "path": "yarn.lock",
+      "type": "blob",
+      "name": "yarn.lock",
+      "url": "https://github.com/EnixCoda/Gitako/blob/develop/yarn.lock",
+      "sha": "76840c1df899388d96650772cf70db3871707b3b"
+    }
+  ],
+  "type": "tree"
+}

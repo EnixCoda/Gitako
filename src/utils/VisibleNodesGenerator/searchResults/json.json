@@ -1,0 +1,244 @@
+{
+  "focusedNode": null,
+  "depths": [
+    [
+      [
+        "",
+        [
+          [
+            "Safari/Gitako",
+            [
+              [
+                "Safari/Gitako/Gitako.xcodeproj/project.xcworkspace",
+                [["Safari/Gitako/Gitako.xcodeproj/project.xcworkspace/contents.xcworkspacedata"]]
+              ],
+              [
+                "Safari/Gitako/Gitako/Assets.xcassets",
+                [
+                  [
+                    "Safari/Gitako/Gitako/Assets.xcassets/AccentColor.colorset",
+                    [["Safari/Gitako/Gitako/Assets.xcassets/AccentColor.colorset/Contents.json"]]
+                  ],
+                  [
+                    "Safari/Gitako/Gitako/Assets.xcassets/AppIcon.appiconset",
+                    [["Safari/Gitako/Gitako/Assets.xcassets/AppIcon.appiconset/Contents.json"]]
+                  ],
+                  ["Safari/Gitako/Gitako/Assets.xcassets/Contents.json"]
+                ]
+              ]
+            ]
+          ],
+          [
+            "__tests__",
+            [
+              ["__tests__/jest.config.js"],
+              ["__tests__/jest.non-parallel.config.js"],
+              ["__tests__/jest.parallel.config.js"],
+              ["__tests__/tsconfig.json"]
+            ]
+          ],
+          ["scripts", [["scripts/language-id-ext.json"]]],
+          ["server", [["server/package.json"], ["server/tsconfig.json"], ["server/vercel.json"]]],
+          ["src", [["src/manifest.json"]]],
+          ["jest-puppeteer.config.js"],
+          ["jest.config.js"],
+          ["package.json"],
+          ["tsconfig.json"]
+        ]
+      ],
+      -1
+    ],
+    [
+      [
+        "Safari/Gitako",
+        [
+          [
+            "Safari/Gitako/Gitako.xcodeproj/project.xcworkspace",
+            [["Safari/Gitako/Gitako.xcodeproj/project.xcworkspace/contents.xcworkspacedata"]]
+          ],
+          [
+            "Safari/Gitako/Gitako/Assets.xcassets",
+            [
+              [
+                "Safari/Gitako/Gitako/Assets.xcassets/AccentColor.colorset",
+                [["Safari/Gitako/Gitako/Assets.xcassets/AccentColor.colorset/Contents.json"]]
+              ],
+              [
+                "Safari/Gitako/Gitako/Assets.xcassets/AppIcon.appiconset",
+                [["Safari/Gitako/Gitako/Assets.xcassets/AppIcon.appiconset/Contents.json"]]
+              ],
+              ["Safari/Gitako/Gitako/Assets.xcassets/Contents.json"]
+            ]
+          ]
+        ]
+      ],
+      0
+    ],
+    [
+      [
+        "Safari/Gitako/Gitako.xcodeproj/project.xcworkspace",
+        [["Safari/Gitako/Gitako.xcodeproj/project.xcworkspace/contents.xcworkspacedata"]]
+      ],
+      1
+    ],
+    [["Safari/Gitako/Gitako.xcodeproj/project.xcworkspace/contents.xcworkspacedata"], 2],
+    [
+      [
+        "Safari/Gitako/Gitako/Assets.xcassets",
+        [
+          [
+            "Safari/Gitako/Gitako/Assets.xcassets/AccentColor.colorset",
+            [["Safari/Gitako/Gitako/Assets.xcassets/AccentColor.colorset/Contents.json"]]
+          ],
+          [
+            "Safari/Gitako/Gitako/Assets.xcassets/AppIcon.appiconset",
+            [["Safari/Gitako/Gitako/Assets.xcassets/AppIcon.appiconset/Contents.json"]]
+          ],
+          ["Safari/Gitako/Gitako/Assets.xcassets/Contents.json"]
+        ]
+      ],
+      1
+    ],
+    [
+      [
+        "Safari/Gitako/Gitako/Assets.xcassets/AccentColor.colorset",
+        [["Safari/Gitako/Gitako/Assets.xcassets/AccentColor.colorset/Contents.json"]]
+      ],
+      2
+    ],
+    [["Safari/Gitako/Gitako/Assets.xcassets/AccentColor.colorset/Contents.json"], 3],
+    [
+      [
+        "Safari/Gitako/Gitako/Assets.xcassets/AppIcon.appiconset",
+        [["Safari/Gitako/Gitako/Assets.xcassets/AppIcon.appiconset/Contents.json"]]
+      ],
+      2
+    ],
+    [["Safari/Gitako/Gitako/Assets.xcassets/AppIcon.appiconset/Contents.json"], 3],
+    [["Safari/Gitako/Gitako/Assets.xcassets/Contents.json"], 2],
+    [
+      [
+        "__tests__",
+        [
+          ["__tests__/jest.config.js"],
+          ["__tests__/jest.non-parallel.config.js"],
+          ["__tests__/jest.parallel.config.js"],
+          ["__tests__/tsconfig.json"]
+        ]
+      ],
+      0
+    ],
+    [["__tests__/jest.config.js"], 1],
+    [["__tests__/jest.non-parallel.config.js"], 1],
+    [["__tests__/jest.parallel.config.js"], 1],
+    [["__tests__/tsconfig.json"], 1],
+    [["scripts", [["scripts/language-id-ext.json"]]], 0],
+    [["scripts/language-id-ext.json"], 1],
+    [["server", [["server/package.json"], ["server/tsconfig.json"], ["server/vercel.json"]]], 0],
+    [["server/package.json"], 1],
+    [["server/tsconfig.json"], 1],
+    [["server/vercel.json"], 1],
+    [["src", [["src/manifest.json"]]], 0],
+    [["src/manifest.json"], 1],
+    [["jest-puppeteer.config.js"], 0],
+    [["jest.config.js"], 0],
+    [["package.json"], 0],
+    [["tsconfig.json"], 0]
+  ],
+  "expandedNodes": [
+    "Safari/Gitako/Gitako.xcodeproj/project.xcworkspace",
+    "Safari/Gitako/Gitako.xcodeproj",
+    "Safari/Gitako/Gitako/Assets.xcassets/AccentColor.colorset",
+    "Safari/Gitako/Gitako/Assets.xcassets/AppIcon.appiconset",
+    "Safari/Gitako/Gitako/Assets.xcassets",
+    "Safari/Gitako/Gitako",
+    "Safari/Gitako",
+    "Safari",
+    "__tests__",
+    "scripts",
+    "server",
+    "src",
+    ""
+  ],
+  "loading": [],
+  "nodes": [
+    [
+      "Safari/Gitako",
+      [
+        [
+          "Safari/Gitako/Gitako.xcodeproj/project.xcworkspace",
+          [["Safari/Gitako/Gitako.xcodeproj/project.xcworkspace/contents.xcworkspacedata"]]
+        ],
+        [
+          "Safari/Gitako/Gitako/Assets.xcassets",
+          [
+            [
+              "Safari/Gitako/Gitako/Assets.xcassets/AccentColor.colorset",
+              [["Safari/Gitako/Gitako/Assets.xcassets/AccentColor.colorset/Contents.json"]]
+            ],
+            [
+              "Safari/Gitako/Gitako/Assets.xcassets/AppIcon.appiconset",
+              [["Safari/Gitako/Gitako/Assets.xcassets/AppIcon.appiconset/Contents.json"]]
+            ],
+            ["Safari/Gitako/Gitako/Assets.xcassets/Contents.json"]
+          ]
+        ]
+      ]
+    ],
+    [
+      "Safari/Gitako/Gitako.xcodeproj/project.xcworkspace",
+      [["Safari/Gitako/Gitako.xcodeproj/project.xcworkspace/contents.xcworkspacedata"]]
+    ],
+    ["Safari/Gitako/Gitako.xcodeproj/project.xcworkspace/contents.xcworkspacedata"],
+    [
+      "Safari/Gitako/Gitako/Assets.xcassets",
+      [
+        [
+          "Safari/Gitako/Gitako/Assets.xcassets/AccentColor.colorset",
+          [["Safari/Gitako/Gitako/Assets.xcassets/AccentColor.colorset/Contents.json"]]
+        ],
+        [
+          "Safari/Gitako/Gitako/Assets.xcassets/AppIcon.appiconset",
+          [["Safari/Gitako/Gitako/Assets.xcassets/AppIcon.appiconset/Contents.json"]]
+        ],
+        ["Safari/Gitako/Gitako/Assets.xcassets/Contents.json"]
+      ]
+    ],
+    [
+      "Safari/Gitako/Gitako/Assets.xcassets/AccentColor.colorset",
+      [["Safari/Gitako/Gitako/Assets.xcassets/AccentColor.colorset/Contents.json"]]
+    ],
+    ["Safari/Gitako/Gitako/Assets.xcassets/AccentColor.colorset/Contents.json"],
+    [
+      "Safari/Gitako/Gitako/Assets.xcassets/AppIcon.appiconset",
+      [["Safari/Gitako/Gitako/Assets.xcassets/AppIcon.appiconset/Contents.json"]]
+    ],
+    ["Safari/Gitako/Gitako/Assets.xcassets/AppIcon.appiconset/Contents.json"],
+    ["Safari/Gitako/Gitako/Assets.xcassets/Contents.json"],
+    [
+      "__tests__",
+      [
+        ["__tests__/jest.config.js"],
+        ["__tests__/jest.non-parallel.config.js"],
+        ["__tests__/jest.parallel.config.js"],
+        ["__tests__/tsconfig.json"]
+      ]
+    ],
+    ["__tests__/jest.config.js"],
+    ["__tests__/jest.non-parallel.config.js"],
+    ["__tests__/jest.parallel.config.js"],
+    ["__tests__/tsconfig.json"],
+    ["scripts", [["scripts/language-id-ext.json"]]],
+    ["scripts/language-id-ext.json"],
+    ["server", [["server/package.json"], ["server/tsconfig.json"], ["server/vercel.json"]]],
+    ["server/package.json"],
+    ["server/tsconfig.json"],
+    ["server/vercel.json"],
+    ["src", [["src/manifest.json"]]],
+    ["src/manifest.json"],
+    ["jest-puppeteer.config.js"],
+    ["jest.config.js"],
+    ["package.json"],
+    ["tsconfig.json"]
+  ]
+}
