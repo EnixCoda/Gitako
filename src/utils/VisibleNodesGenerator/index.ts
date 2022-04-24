@@ -1,5 +1,5 @@
-import { EventHub } from './EventHub'
-import { findNode, traverse, withEffect } from './general'
+import { EventHub } from '../EventHub'
+import { findNode, traverse, withEffect } from '../general'
 
 function search(
   root: TreeNode,
@@ -305,7 +305,10 @@ class FlattenLayer extends CompressLayer {
     }
   }, this.generateVisibleNodes)
 
-  search = (searchParams: Pick<SearchParams, 'matchNode'> | null, restoreExpandedFolders?: boolean) => {
+  search = (
+    searchParams: Pick<SearchParams, 'matchNode'> | null,
+    restoreExpandedFolders?: boolean,
+  ) => {
     // backup expansion before search
     if (searchParams) {
       if (!this.isSearching) {
