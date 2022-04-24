@@ -65,7 +65,7 @@ export const setUpTree: BoundMethodCreator<
 
       const { root: treeRoot, defer = false } = await platform.getTreeData(
         {
-          branchName: branchName,
+          branchName,
           userName,
           repoName,
         },

@@ -158,9 +158,9 @@ $minimal-z-index: max(
         }
 
         .blob-code::after {
-            color: var(--gitako-fg-muted);
-            content: '⋯';
-            margin: 0.1em 0.2em 0px;
+          color: var(--gitako-fg-muted);
+          content: '⋯';
+          margin: 0.1em 0.2em 0px;
         }
       }
 
@@ -631,6 +631,14 @@ $minimal-z-index: max(
 
               @include interactive-frame;
             }
+          }
+        }
+
+        .status {
+          padding: 4px;
+
+          .lazy-mode {
+            cursor: help;
           }
         }
 

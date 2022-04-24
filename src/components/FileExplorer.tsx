@@ -185,6 +185,18 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
               visibleNodes &&
               renderNodeContext && (
                 <>
+                  {defer && (
+                    <div className={'status'}>
+                      <Label
+                        title="This repository is large. Gitako has switched to Lazy Mode to improve performance. Folders will be loaded when it gets expanded."
+                        bg="yellow.5"
+                        color="gray.6"
+                        className={'lazy-mode'}
+                      >
+                        Lazy Mode is ON
+                      </Label>
+                    </div>
+                  )}
                   <SearchBar value={searchKey} onSearch={onSearch} onFocus={onFocusSearchBar} />
                   {searched && visibleNodes.nodes.length === 0 && (
                     <>
@@ -193,7 +205,7 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
                       </Text>
                       {defer && (
                         <Text textAlign="center" color="gray.4" fontSize="12px">
-                          Lazy mode is ON. Search results are limited to loaded folders.
+                          Search results are limited to loaded folders in Lazy Mode.
                         </Text>
                       )}
                     </>
@@ -211,16 +223,6 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
                       </div>
                     )}
                   </SizeObserver>
-
-                  {defer && (
-                    <Label
-                      title="File tree data is loaded on demand. And search results are limited."
-                      bg="yellow.5"
-                      color="gray.6"
-                    >
-                      Lazy Mode
-                    </Label>
-                  )}
                 </>
               )
             )
