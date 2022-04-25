@@ -43,8 +43,12 @@ const plugins = [
         }
 
         if (!IN_PRODUCTION_MODE) {
+          // enable source mapping while developing
           Object.assign(manifest, {
-            web_accessible_resources: manifest.web_accessible_resources.concat('*.map'), // enable source mapping while developing
+            web_accessible_resources: manifest.web_accessible_resources.concat({
+              resources: ['*.map'],
+              matches: ['*://*/*']
+            }),
           })
         }
         return JSON.stringify(manifest)
