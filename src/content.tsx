@@ -17,7 +17,7 @@ if (platform.resolvePartialMetaData()) {
 }
 
 async function init() {
-  await injectStyles(browser.extension.getURL('content.css'))
+  await injectStyles(browser.runtime.getURL('content.css'))
   const SideBarElement = document.createElement('div')
   document.body.appendChild(SideBarElement)
   ReactDOM.render(<Gitako />, SideBarElement)
