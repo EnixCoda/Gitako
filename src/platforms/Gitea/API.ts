@@ -93,11 +93,11 @@ export async function getBlobData(
 }
 
 export async function OAuth(code: string): Promise<string | null> {
-  const endpoint = `https://gitako.now.sh/oauth/gitea?`
+  const endpoint = `https://gitako.enix.one/oauth/gitea?`
     const res = await fetch(endpoint + new URLSearchParams({ code }).toString(), {
       method: 'post',
     })
-  
+
     if (res.ok) {
       const body = await res.json()
       const accessToken = body?.accessToken

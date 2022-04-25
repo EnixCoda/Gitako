@@ -171,7 +171,7 @@ export async function getBlobData(
 
 export async function OAuth(code: string): Promise<string | null> {
   try {
-    const endpoint = `https://gitako.now.sh/oauth/github?`
+    const endpoint = `https://gitako.enix.one/oauth/github?`
     const res = await fetch(endpoint + new URLSearchParams({ code }).toString(), {
       method: 'post',
     })

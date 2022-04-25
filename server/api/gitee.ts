@@ -9,7 +9,7 @@ async function oauth(code: string) {
     code: code,
     client_id: GITEE_OAUTH_CLIENT_ID,
     client_secret: GITEE_OAUTH_CLIENT_SECRET,
-    redirect_uri: 'https://gitako.now.sh/redirect/',
+    redirect_uri: 'https://gitako.enix.one/redirect/',
   })
 
   const res = await fetch('https://gitee.com/oauth/token?' + params.toString(), {

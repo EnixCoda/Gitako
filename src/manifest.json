@@ -11,7 +11,7 @@
     "contextMenus",
     "activeTab",
     "*://*.github.com/*",
-    "*://gitako.now.sh/*",
+    "*://gitako.enix.one/*",
     "*://*.sentry.io/*"
   ],
   "optional_permissions": ["http://*/*", "https://*/*"],

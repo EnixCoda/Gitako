@@ -167,7 +167,7 @@ export const Gitee: Platform = {
       scope: 'projects',
       response_type: 'code',
       redirect_uri:
-        'https://gitako.now.sh/redirect/?' +
+        'https://gitako.enix.one/redirect/?' +
         new URLSearchParams({ redirect: window.location.href }).toString(),
     })
     return `https://gitee.com/oauth/authorize?` + params.toString()
