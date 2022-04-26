@@ -146,10 +146,10 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
       )
 
     const renders: ((node: TreeNode) => React.ReactNode)[] = []
-    renders.push(renderFileStatus)
-    if (commentToggle) renders.push(renderFileCommentAmounts)
     if (searchMode === 'fuzzy') renders.push(renderFindInFolderButton)
     if (searched) renders.push(renderGoToButton)
+    if (commentToggle) renders.push(renderFileCommentAmounts)
+    renders.push(renderFileStatus)
 
     return renders.length
       ? node => renders.map((render, i) => <React.Fragment key={i}>{render(node)}</React.Fragment>)
