@@ -62,7 +62,7 @@ export const withErrorLog: Middleware = function withErrorLog(method, args) {
       try {
         await method.apply(null, arguments as any)
       } catch (error) {
-        raiseError(error)
+        if (error instanceof Error) raiseError(error)
       }
     } as any, // TO FIX: not sure how to fix this yet
     args,

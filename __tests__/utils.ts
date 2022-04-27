@@ -26,7 +26,7 @@ export async function scroll({
   }
 }
 
-export function assert(condition: boolean, err?: Error | string) {
+export function assert(condition: boolean, err?: Error | string): asserts condition {
   if (!condition) throw typeof err === 'string' ? new Error(err) : err
 }
 

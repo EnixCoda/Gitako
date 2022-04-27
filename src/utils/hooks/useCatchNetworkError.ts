@@ -1,6 +1,7 @@
 import { useConfigs } from 'containers/ConfigsContext'
 import { errors, platformName } from 'platforms'
 import { useCallback } from 'react'
+import { assert } from 'utils/assert'
 import { useLoadedContext } from 'utils/hooks/useLoadedContext'
 import { SideBarErrorContext } from '../../containers/ErrorContext'
 import { SideBarStateContext } from '../../containers/SideBarState'
@@ -15,6 +16,8 @@ export function useCatchNetworkError() {
       try {
         return await fn() // keep the await so that catch block can catch async errors
       } catch (err) {
+        assert(err instanceof Error)
+
         if (err.message === errors.EMPTY_PROJECT) {
           errorContext.onChange('This project seems to be empty.')
         } else if (err.message === errors.BLOCKED_PROJECT) {
