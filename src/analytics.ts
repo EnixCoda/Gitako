@@ -58,13 +58,13 @@ Sentry.init(sentryOptions)
 
 export const withErrorLog: Middleware = function withErrorLog(method, args) {
   return [
-    async function () {
+    async function (...args) {
       try {
-        await method.apply(null, arguments as any)
+        await method(...args)
       } catch (error) {
         if (error instanceof Error) raiseError(error)
       }
-    } as any, // TO FIX: not sure how to fix this yet
+    } as typeof method,
     args,
   ]
 }
