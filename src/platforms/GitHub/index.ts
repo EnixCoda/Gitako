@@ -271,7 +271,7 @@ async function getRepositoryTreeData(
     treeData.tree.map(item => ({
       path: item.path || '',
       type: item.type || 'blob',
-      name: item.path?.replace(/^.*\//, '') || '',
+      name: item.path?.split('/').pop() || '',
       url:
         item.url && item.type && item.path
           ? getUrlForRedirect(userName, repoName, branchName, item.type, item.path)
@@ -347,7 +347,7 @@ async function getCommitTreeData(
     treeData.map(item => ({
       type: 'blob',
       path: item.filename,
-      name: item.filename.replace(/^.*\//, ''),
+      name: item.filename.split('/').pop() || '',
       url: getItemURL(item.filename) || item.blob_url,
       sha: item.patch,
       diff: {
@@ -418,7 +418,7 @@ async function getPullRequestTreeData(
     ({ filename, sha, additions, deletions, changes, status }) => ({
       path: filename || '',
       type: 'blob',
-      name: filename?.replace(/^.*\//, '') || '',
+      name: filename?.split('/').pop() || '',
       url: `${urlMainPart}${formatHash(getFileElementHash(filename))}`,
       sha: sha,
       comments: run(() => {
