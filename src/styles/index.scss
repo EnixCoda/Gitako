@@ -476,6 +476,7 @@ $minimal-z-index: max(
         padding: 6px 10px;
         flex-shrink: 0;
         position: relative; // prevent overlap by outline of other elements
+        border-bottom: 1px solid var(--gitako-border-default);
 
         .user-and-repo {
           display: inline; // would be override by CSS rule of section from @primer/css
@@ -595,9 +596,7 @@ $minimal-z-index: max(
           .search-input {
             width: 100%;
             box-shadow: none; // stay low
-            border-width: 1px 0 1px 0; // remove border on left&right to make UI clear
-            border-color: var(--gitako-border-default);
-            border-radius: 0; // its rounded corner not match with nearby elements
+            border: none;
             color: var(--gitako-fg-default);
             background: var(--gitako-bg-default);
             padding-right: 40px; // save space for actions
@@ -646,6 +645,7 @@ $minimal-z-index: max(
           position: relative;
           flex: 1;
           overflow: hidden;
+          border-top: 1px solid var(--gitako-border-default);
 
           // Put this inside files will help files to get proper size derived from parents, regardless of its content size
           .magic-size-container {
@@ -865,18 +865,23 @@ $minimal-z-index: max(
     }
 
     .#{$name}-settings-bar {
-      z-index: 2;
       background: var(--gitako-bg-subtle);
       display: flex;
       flex-direction: column;
-      max-height: calc(100vh - 120px);
-      &-title {
+      max-height: calc(100vh - 240px);
+      min-height: 240px;
+
+      &-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
         border-top: 1px solid var(--gitako-border-muted);
         padding: 10px;
         box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.2), 0 3px 4px 0 rgba(0, 0, 0, 0.14),
           0 3px 3px -2px rgba(0, 0, 0, 0.12);
         z-index: 1;
       }
+
       &-content {
         padding: 10px 10px;
         flex: 1;
@@ -986,35 +991,31 @@ $minimal-z-index: max(
           @include input();
         }
       }
-      .header-row {
-        flex-shrink: 0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 2px 6px 2px 10px;
-        border-top: 1px solid var(--gitako-border-muted);
+    }
 
-        .version {
-          color: var(--gitako-fg-muted);
-        }
+    .gitako-footer {
+      flex-shrink: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2px 6px 2px 10px;
+      border-top: 1px solid var(--gitako-border-muted);
 
-        .header-right {
-          display: flex;
-          align-items: center;
-          user-select: none;
-        }
+      .version {
+        color: var(--gitako-fg-muted);
+      }
+    }
 
-        .settings-button {
-          @include icon-button();
-          $size: 32px;
-          width: $size;
-          height: $size;
-          border-radius: $size;
+    .settings-button {
+      @include icon-button();
+      $size: 32px;
+      width: $size;
+      height: $size;
+      border-radius: $size;
+      user-select: none;
 
-          .octicon-wrapper {
-            width: 18px;
-          }
-        }
+      .octicon-wrapper {
+        width: 18px;
       }
     }
   }

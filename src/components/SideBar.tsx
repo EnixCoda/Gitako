@@ -2,7 +2,7 @@ import { AccessDeniedDescription } from 'components/AccessDeniedDescription'
 import { FileExplorer } from 'components/FileExplorer'
 import { MetaBar } from 'components/MetaBar'
 import { Portal } from 'components/Portal'
-import { SettingsBar } from 'components/settings/SettingsBar'
+import { Footer } from 'components/settings/Footer'
 import { SideBarBodyWrapper } from 'components/SideBarBodyWrapper'
 import { ToggleShowButton } from 'components/ToggleShowButton'
 import { useConfigs } from 'containers/ConfigsContext'
@@ -23,6 +23,7 @@ import { useToggleSideBarWithKeyboard } from '../utils/hooks/useToggleSideBarWit
 import { Icon } from './Icon'
 import { IIFC } from './IIFC'
 import { LoadingIndicator } from './LoadingIndicator'
+import { SettingsBarContent } from './settings/SettingsBar'
 
 export function SideBar() {
   const metaData = React.useContext(RepoContext)
@@ -206,7 +207,8 @@ export function SideBar() {
                 }
               })}
             </div>
-            <SettingsBar toggleShowSettings={toggleShowSettings} activated={showSettings} />
+            {showSettings && <SettingsBarContent toggleShow={toggleShowSettings} />}
+            <Footer toggleShowSettings={toggleShowSettings} />
           </div>
         </SideBarBodyWrapper>
       </div>

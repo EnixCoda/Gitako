@@ -1,6 +1,4 @@
-import { Link } from '@primer/components'
 import { Icon } from 'components/Icon'
-import { VERSION } from 'env'
 import { platform } from 'platforms'
 import { GitHub } from 'platforms/GitHub'
 import * as React from 'react'
@@ -21,42 +19,42 @@ export const wikiLinks = {
   createAccessToken: `${WIKI_HOME_LINK}/Access-token-for-Gitako`,
 }
 
-type Props = {
-  activated: boolean
-  toggleShowSettings: () => void
-}
+const moreFields: SimpleField<'copyFileButton' | 'copySnippetButton' | 'codeFolding'>[] =
+  platform === GitHub
+    ? [
+        {
+          key: 'codeFolding',
+          label: 'Fold source code button',
+          wikiLink: wikiLinks.codeFolding,
+          tooltip: `Read more in Gitako's Wiki`,
+        },
+        {
+          key: 'copyFileButton',
+          label: 'Copy file button',
+          wikiLink: wikiLinks.copyFileButton,
+          tooltip: `Read more in Gitako's Wiki`,
+        },
+        {
+          key: 'copySnippetButton',
+          label: 'Copy snippet button',
+          wikiLink: wikiLinks.copySnippet,
+          tooltip: `Read more in Gitako's Wiki`,
+        },
+      ]
+    : []
 
-function SettingsBarContent() {
+export function SettingsBarContent({ toggleShow }: { toggleShow: () => void }) {
   const useReloadHint = useStateIO<React.ReactNode>('')
   const { value: reloadHint } = useReloadHint
 
-  const moreFields: SimpleField<'copyFileButton' | 'copySnippetButton'|'codeFolding'>[] =
-    platform === GitHub
-      ? [
-          {
-            key: 'codeFolding',
-            label: 'Fold source code button',
-            wikiLink: wikiLinks.codeFolding,
-            tooltip: `Read more in Gitako's Wiki`,
-          },
-          {
-            key: 'copyFileButton',
-            label: 'Copy file button',
-            wikiLink: wikiLinks.copyFileButton,
-            tooltip: `Read more in Gitako's Wiki`,
-          },
-          {
-            key: 'copySnippetButton',
-            label: 'Copy snippet button',
-            wikiLink: wikiLinks.copySnippet,
-            tooltip: `Read more in Gitako's Wiki`,
-          },
-        ]
-      : []
-
   return (
-    <>
-      <h2 className={'gitako-settings-bar-title'}>Settings</h2>
+    <div className={'gitako-settings-bar'}>
+      <div className={'gitako-settings-bar-header'}>
+        <h2 className={'gitako-settings-bar-title'}>Settings</h2>
+        <button className={'settings-button'} onClick={toggleShow}>
+          <Icon type={'chevron-down'} className={'hide-settings-icon'} />
+        </button>
+      </div>
       <div className={'gitako-settings-bar-content'}>
         <div className={'shadow-shelter'} />
         <AccessTokenSettings />
@@ -82,35 +80,6 @@ function SettingsBarContent() {
             Discuss feature
           </a>
         </SettingsSection>
-      </div>
-    </>
-  )
-}
-
-export function SettingsBar(props: Props) {
-  const { toggleShowSettings, activated } = props
-  return (
-    <div className={'gitako-settings-bar'}>
-      {activated && <SettingsBarContent />}
-      <div className={'header-row'}>
-        <Link
-          className={'version'}
-          fontSize={14}
-          href={wikiLinks.changeLog}
-          target={'_blank'}
-          title={'Check out new features!'}
-        >
-          {VERSION}
-        </Link>
-        <div className={'header-right'}>
-          <button className={'settings-button'} onClick={toggleShowSettings}>
-            {activated ? (
-              <Icon type={'chevron-down'} className={'hide-settings-icon'} />
-            ) : (
-              <Icon type={'gear'} className={'show-settings-icon'} />
-            )}
-          </button>
-        </div>
       </div>
     </div>
   )
