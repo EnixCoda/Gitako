@@ -262,10 +262,23 @@ $minimal-z-index: max(
   display: none;
 }
 
+@mixin flex($justify: center, $align: center, $inline: true) {
+  @if $inline {
+    display: inline-flex;
+  } @else {
+    display: flex;
+  }
+
+  @if $justify {
+    justify-content: $justify;
+  }
+  @if $align {
+    align-items: $align;
+  }
+}
+
 @mixin flex-center {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
+  @include flex();
 }
 
 @mixin icon-button(
@@ -551,7 +564,6 @@ $minimal-z-index: max(
         width: 100%;
         height: 100%;
         @include flex-center();
-        border-top: 1px solid var(--gitako-border-default);
 
         .loading-indicator {
           display: flex;
@@ -596,7 +608,9 @@ $minimal-z-index: max(
           .search-input {
             width: 100%;
             box-shadow: none; // stay low
-            border: none;
+            border: none; // reset borders on other sides
+            border-bottom: 1px solid var(--gitako-border-default);
+            border-radius: 0;
             color: var(--gitako-fg-default);
             background: var(--gitako-bg-default);
             padding-right: 40px; // save space for actions
@@ -645,7 +659,6 @@ $minimal-z-index: max(
           position: relative;
           flex: 1;
           overflow: hidden;
-          border-top: 1px solid var(--gitako-border-default);
 
           // Put this inside files will help files to get proper size derived from parents, regardless of its content size
           .magic-size-container {
