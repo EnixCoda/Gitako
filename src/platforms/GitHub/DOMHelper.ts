@@ -36,6 +36,11 @@ export function getIssueTitle() {
   return title?.trim().replace(/\n/g, '')
 }
 
+export function getCommitTitle() {
+  const title = $('.commit-title')?.textContent
+  return title?.trim().replace(/\n/g, '')
+}
+
 export function getCurrentBranch(passive = false) {
   const selectedBranchButtonSelector = [
     '.repository-content #branch-select-menu summary',

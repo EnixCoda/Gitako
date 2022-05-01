@@ -3,7 +3,7 @@ type MetaData = {
   repoName: string
   defaultBranchName: string
   branchName: string
-  type?: EnumString<'tree' | 'blob' | 'pull'>
+  type?: EnumString<'tree' | 'blob' | 'pull' | 'commit'>
 }
 
 type PartialMetaData = Omit<MakeOptional<MetaData, 'branchName'>, 'defaultBranchName'>

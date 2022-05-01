@@ -17,7 +17,9 @@ async function request(
   url: string,
   {
     accessToken,
+    resolveMode = 'body-json',
   }: {
+    resolveMode?: 'body-json' | 'response'
     accessToken?: string
   } = {},
 ) {
@@ -41,21 +43,28 @@ async function request(
   // True if res.status between 200~299
   // Ref: https://developer.mozilla.org/en-US/docs/Web/API/Response/ok
   if (res.ok) {
-    if (isJson) return res.json()
-    throw new Error(`Response content type is "${contentType}"`)
-  } else {
-    if (res.status === 404 || res.status === 401) throw new Error(errors.NOT_FOUND)
-    else if (res.status === 403) throw new Error(errors.API_RATE_LIMIT)
-    else if (res.status === 500) throw new Error(errors.SERVER_FAULT)
-    else if (isJson) {
-      const content = await res.json()
-      if (apiRateLimitExceeded(content)) throw new Error(errors.API_RATE_LIMIT)
-      if (isEmptyProject(content)) throw new Error(errors.EMPTY_PROJECT)
-      if (isBlockedProject(content)) throw new Error(errors.BLOCKED_PROJECT)
-      throw new Error(`Unknown message content "${content?.message}"`)
-    } else {
-      throw new Error(`Response content type is "${contentType}"`)
+    switch (resolveMode) {
+      case 'body-json': {
+        if (isJson) return res.json()
+        throw new Error(`Response content type is "${contentType}"`)
+      }
+      case 'response':
+        return res
     }
+    throw new Error(`Unknown resolve mode: ${resolveMode}`)
+  }
+
+  if (res.status === 404 || res.status === 401) throw new Error(errors.NOT_FOUND)
+  else if (res.status === 403) throw new Error(errors.API_RATE_LIMIT)
+  else if (res.status === 500) throw new Error(errors.SERVER_FAULT)
+  else if (resolveMode && isJson) {
+    const content = await res.json()
+    if (apiRateLimitExceeded(content)) throw new Error(errors.API_RATE_LIMIT)
+    if (isEmptyProject(content)) throw new Error(errors.EMPTY_PROJECT)
+    if (isBlockedProject(content)) throw new Error(errors.BLOCKED_PROJECT)
+    throw new Error(`Unknown message content "${content?.message}"`)
+  } else {
+    throw new Error(`Response content type is "${contentType}"`)
   }
 }
 
@@ -119,7 +128,7 @@ export async function getPullComments(
 export async function getPullPageDocuments(
   userName: string,
   repoName: string,
-  pullId: string, // not used
+  pullId: string,
 ): Promise<Document[]> {
   // Response of this API contains view of few files but is not complete.
   const filesDOM = await getDOM(
@@ -155,6 +164,36 @@ export async function getPullPageDocuments(
   return diffsDOMs
 }
 
+export async function getCommitPageDocuments(
+  userName: string,
+  repoName: string,
+  commitId: string,
+): Promise<Document[]> {
+  /**
+   *  <include-fragment
+   *    src="/EnixCoda/Gitako/diffs?bytes=444&amp;commentable=true&amp;commit=7de4488d7f00630512e0d494bab209004f2d4a58&amp;lines=202&amp;responsive=true&amp;sha1=022dd1736146a350f1564c40d28234973d47bafc&amp;sha2=7de4488d7f00630512e0d494bab209004f2d4a58&amp;start_entry=1&amp;sticky=false&amp;w=false"
+   *    class="diff-progressive-loader js-diff-progressive-loader mb-4 d-flex flex-items-center flex-justify-center"
+   *    data-targets="diff-file-filter.progressiveLoaders"
+   *    data-action="include-fragment-replace:diff-file-filter#refilterAfterAsyncLoad"
+   *  >
+   */
+  const fragmentSelector = 'include-fragment[data-targets="diff-file-filter.progressiveLoaders"]'
+
+  let doc = document
+  const documents: Document[] = [doc]
+  while (true) {
+    const fragment = doc.querySelector(fragmentSelector) as HTMLElement
+    if (!fragment) break
+    const src = fragment.getAttribute('src')
+    if (!src) break
+    const nextDoc = await getDOM(src)
+    documents.push(nextDoc)
+    doc = nextDoc
+  }
+
+  return documents
+}
+
 async function getDOM(url: string) {
   return new DOMParser().parseFromString(await (await fetch(url)).text(), 'text/html')
 }
@@ -184,4 +223,19 @@ export async function OAuth(code: string): Promise<string | null> {
   } catch (err) {
     return null
   }
+}
+
+export async function getCommitTreeData(
+  userName: string,
+  repoName: string,
+  sha: string,
+  page: number = 1,
+  accessToken?: string,
+): Promise<Response> {
+  const search = new URLSearchParams({
+    per_page: '100',
+    page: `${page}`,
+  })
+  const url = `https://${API_ENDPOINT}/repos/${userName}/${repoName}/commits/${sha}?` + search
+  return await request(url, { accessToken, resolveMode: 'response' })
 }

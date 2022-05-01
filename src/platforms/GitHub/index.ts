@@ -11,6 +11,7 @@ import { useGitHubAttachCopyFileButton } from './hooks/useGitHubAttachCopyFileBu
 import { useGitHubAttachCopySnippetButton } from './hooks/useGitHubAttachCopySnippetButton'
 import { useGitHubCodeFold } from './hooks/useGitHubCodeFold'
 import * as URLHelper from './URLHelper'
+import { resolveHeaderLink } from './utils'
 export { useGitHubCodeFold } from './hooks/useGitHubCodeFold'
 
 function processTree(tree: TreeNode[]): TreeNode {
@@ -131,6 +132,8 @@ export const GitHub: Platform = {
     let branchName
     if (URLHelper.isInPullPage()) {
       branchName = DOMHelper.getIssueTitle()
+    } else if (URLHelper.isInCommitPage()) {
+      branchName = DOMHelper.getCommitTitle() || metaFromURL.path[0]
     } else if (
       DOMHelper.isInCodePage() &&
       !['releases', 'tags'].includes(type || '') // resolve sentry issue #-CK
@@ -153,7 +156,12 @@ export const GitHub: Platform = {
     const repoUrl = `https://${window.location.host}/${userName}/${repoName}`
     const userUrl = `https://${window.location.host}/${userName}`
     const pullId = URLHelper.isInPullPage()
-    const branchUrl = pullId ? `${repoUrl}/pull/${pullId}` : `${repoUrl}/tree/${branchName}`
+    const commitId = URLHelper.isInCommitPage()
+    const branchUrl = pullId
+      ? `${repoUrl}/pull/${pullId}`
+      : commitId && URLHelper.isPossiblyCommitSHA(commitId)
+      ? `${repoUrl}/tree/${commitId}`
+      : `${repoUrl}/tree/${branchName}`
     return {
       repoUrl,
       userUrl,
@@ -165,14 +173,22 @@ export const GitHub: Platform = {
     if (pullId) {
       return await getPullRequestTreeData(metaData, pullId, accessToken)
     }
+    const commitId = URLHelper.isInCommitPage()
+    if (commitId) {
+      return await getCommitTreeData(metaData, commitId, accessToken)
+    }
 
     return await getRepositoryTreeData(metaData, path, recursive, accessToken)
   },
   shouldShow() {
-    return Boolean(DOMHelper.isInCodePage() || (URLHelper.isInPullPage() && !DOMHelper.isNativePRFileTreeShown()))
+    return Boolean(
+      DOMHelper.isInCodePage() ||
+        URLHelper.isInCommitPage() ||
+        (URLHelper.isInPullPage() && !DOMHelper.isNativePRFileTreeShown()),
+    )
   },
   shouldExpandAll() {
-    return Boolean(URLHelper.isInPullPage())
+    return Boolean(URLHelper.isInPullPage() || URLHelper.isInCommitPage())
   },
   getCurrentPath(branchName) {
     const pathFromURL = URLHelper.parse().path.join('/')
@@ -277,6 +293,73 @@ async function getRepositoryTreeData(
   }
 
   return { root, defer: treeData.truncated }
+}
+
+async function getCommitTreeData(
+  { userName, repoName }: Pick<MetaData, 'userName' | 'repoName' | 'branchName'>,
+  commitSHA: string,
+  accessToken: string | undefined,
+) {
+  const treeData: GitHubAPI.CommitTreeItem[] = []
+  let page = 1
+  while (true) {
+    const response = await API.getCommitTreeData(userName, repoName, commitSHA, page, accessToken)
+    const { files } = (await response.json()) as GitHubAPI.CommitResponseData
+    treeData.push(...files)
+
+    const headerLink = response.headers.get('link')
+    if (headerLink) {
+      const rels = resolveHeaderLink(headerLink)
+      if (rels) {
+        if (rels.position === 'first') {
+          page++
+        } else if (rels.position === 'middle') {
+          const searchOfLast = new URL(rels.last).searchParams
+          if (`${page}` === searchOfLast.get('page')) {
+            // this should not actually happen because GitHub responds `prev` and `first` for the first page
+            break
+          }
+          page++
+        } else {
+          // i.e. rels.position === 'last'
+          break
+        }
+      } else {
+        // unexpected link header content
+        break
+      }
+    } else {
+      // no link headers if there is <100 files
+      break
+    }
+  }
+
+  const documents = await API.getCommitPageDocuments(userName, repoName, commitSHA)
+
+  const getItemURL = (path: string) => {
+    for (const doc of documents) {
+      const id = doc.querySelector(`[data-path="${path}"]`)?.parentElement?.id
+      if (id) return `#${id}`
+    }
+  }
+
+  const root = processTree(
+    treeData.map(item => ({
+      type: 'blob',
+      path: item.filename,
+      name: item.filename.replace(/^.*\//, ''),
+      url: getItemURL(item.filename) || item.blob_url,
+      sha: item.patch,
+      diff: {
+        status: item.status,
+        additions: item.additions,
+        deletions: item.deletions,
+        changes: item.changes,
+      },
+    })),
+  )
+
+  return { root }
 }
 
 async function getPullRequestTreeData(
