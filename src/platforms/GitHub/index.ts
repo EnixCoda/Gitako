@@ -1,21 +1,19 @@
 import { useConfigs } from 'containers/ConfigsContext'
 import { GITHUB_OAUTH } from 'env'
 import { Base64 } from 'js-base64'
-import { formatID } from 'utils/DOMHelper'
-import { formatHash, run } from 'utils/general'
 import { resolveGitModules } from 'utils/gitSubmodule'
 import { sortFoldersToFront } from 'utils/treeParser'
 import * as API from './API'
 import * as DOMHelper from './DOMHelper'
+import { getCommitTreeData } from './getCommitTreeData'
+import { getPullRequestTreeData } from './getPullRequestTreeData'
 import { useEnterpriseStatBarStyleFix } from './hooks/useEnterpriseStatBarStyleFix'
 import { useGitHubAttachCopyFileButton } from './hooks/useGitHubAttachCopyFileButton'
 import { useGitHubAttachCopySnippetButton } from './hooks/useGitHubAttachCopySnippetButton'
 import { useGitHubCodeFold } from './hooks/useGitHubCodeFold'
 import * as URLHelper from './URLHelper'
-import { resolveHeaderLink } from './utils'
-export { useGitHubCodeFold } from './hooks/useGitHubCodeFold'
 
-function processTree(tree: TreeNode[]): TreeNode {
+export function processTree(tree: TreeNode[]): TreeNode {
   // nodes are created from items and put onto tree
   const pathToItem = new Map<string, TreeNode>()
   tree.forEach(item => pathToItem.set(item.path, item))
@@ -86,27 +84,6 @@ export function isEnterprise() {
   return !window.location.host.endsWith('github.com')
 }
 
-function resolvePageScope(defaultBranchName?: string) {
-  const parsed = URLHelper.parse()
-  switch (parsed.type) {
-    case 'blob':
-    case 'tree': {
-      // handle URLs like {user}/{repo}/{'tree'|'blob'}/{sha|branch}, issue #131
-      const branchName = DOMHelper.getCurrentBranch()
-      if (branchName && branchName !== defaultBranchName) return `branch-${branchName}`
-      break
-    }
-    case 'tags':
-      return 'tags'
-    case 'releases':
-      return 'releases'
-    case 'pull':
-      const pullId = URLHelper.isInPullPage()
-      if (pullId) return `pull-${pullId}`
-  }
-  return 'general'
-}
-
 const pathSHAMap = new Map<string, string>()
 
 // Try lookup PJAX containers, #js-repo-pjax-container could exist while #repo-content-pjax-container does not.
@@ -169,17 +146,14 @@ export const GitHub: Platform = {
       branchUrl,
     }
   },
-  async getTreeData(metaData, path = '/', recursive, accessToken) {
+  getTreeData(metaData, path = '/', recursive, accessToken) {
     const pullId = URLHelper.isInPullPage()
-    if (pullId) {
-      return await getPullRequestTreeData(metaData, pullId, accessToken)
-    }
-    const commitId = URLHelper.isInCommitPage()
-    if (commitId) {
-      return await getCommitTreeData(metaData, commitId, accessToken)
-    }
+    if (pullId) return getPullRequestTreeData(metaData, pullId, accessToken)
 
-    return await getRepositoryTreeData(metaData, path, recursive, accessToken)
+    const commitId = URLHelper.isInCommitPage()
+    if (commitId) return getCommitTreeData(metaData, commitId, accessToken)
+
+    return getRepositoryTreeData(metaData, path, recursive, accessToken)
   },
   shouldShow() {
     return Boolean(
@@ -295,151 +269,3 @@ async function getRepositoryTreeData(
 
   return { root, defer: treeData.truncated }
 }
-
-async function getCommitTreeData(
-  { userName, repoName }: Pick<MetaData, 'userName' | 'repoName' | 'branchName'>,
-  commitSHA: string,
-  accessToken: string | undefined,
-) {
-  const treeData: GitHubAPI.CommitTreeItem[] = []
-  let page = 1
-  while (true) {
-    const response = await API.getCommitTreeData(userName, repoName, commitSHA, page, accessToken)
-    const { files } = (await response.json()) as GitHubAPI.CommitResponseData
-    treeData.push(...files)
-
-    const headerLink = response.headers.get('link')
-    if (headerLink) {
-      const rels = resolveHeaderLink(headerLink)
-      if (rels) {
-        if (rels.position === 'first') {
-          page++
-        } else if (rels.position === 'middle') {
-          const searchOfLast = new URL(rels.last).searchParams
-          if (`${page}` === searchOfLast.get('page')) {
-            // this should not actually happen because GitHub responds `prev` and `first` for the first page
-            break
-          }
-          page++
-        } else {
-          // i.e. rels.position === 'last'
-          break
-        }
-      } else {
-        // unexpected link header content
-        break
-      }
-    } else {
-      // no link headers if there is <100 files
-      break
-    }
-  }
-
-  const documents = await API.getCommitPageDocuments(userName, repoName, commitSHA)
-
-  const getItemURL = (path: string) => {
-    for (const doc of documents) {
-      const id = doc.querySelector(`[data-path="${path}"]`)?.parentElement?.id
-      if (id) return formatID(id)
-    }
-  }
-
-  const root = processTree(
-    treeData.map(item => ({
-      type: 'blob',
-      path: item.filename,
-      name: item.filename.split('/').pop() || '',
-      url: getItemURL(item.filename) || item.blob_url,
-      sha: item.patch,
-      diff: {
-        status: item.status,
-        additions: item.additions,
-        deletions: item.deletions,
-        changes: item.changes,
-      },
-    })),
-  )
-
-  return { root }
-}
-
-async function getPullRequestTreeData(
-  { userName, repoName }: Pick<MetaData, 'userName' | 'repoName' | 'branchName'>,
-  pullId: string,
-  accessToken?: string,
-) {
-  // https://developer.github.com/v3/pulls/#list-pull-requests-files
-  const GITHUB_API_RESPONSE_LENGTH_LIMIT = 3000
-  const GITHUB_API_PAGED_RESPONSE_LENGTH_LIMIT = 30
-  const MAX_PAGE = Math.ceil(
-    GITHUB_API_RESPONSE_LENGTH_LIMIT / GITHUB_API_PAGED_RESPONSE_LENGTH_LIMIT,
-  )
-  let page = 1
-  const [pullData, treeData, commentData] = await Promise.all([
-    API.getPullData(userName, repoName, pullId, accessToken),
-    API.getPullTreeData(userName, repoName, pullId, page, accessToken),
-    API.getPullComments(userName, repoName, pullId, accessToken),
-  ])
-
-  const count = pullData.changed_files
-  if (treeData.length < count) {
-    const restPages = []
-    while (page * GITHUB_API_PAGED_RESPONSE_LENGTH_LIMIT < count) {
-      restPages.push(++page)
-    }
-    if (page > MAX_PAGE) {
-      // TODO: hint
-    }
-    const moreFiles = await Promise.all(
-      restPages.map(page => API.getPullTreeData(userName, repoName, pullId, page, accessToken)),
-    )
-    treeData.push(...([] as GitHubAPI.PullTreeData).concat(...moreFiles))
-  }
-
-  const docs = await API.getPullPageDocuments(userName, repoName, pullId)
-  // query all elements at once to make getFileElementHash run faster
-  const elementsHavePath = docs.map(doc => doc.querySelectorAll(`[data-path]`))
-  const getFileElementHash = (path: string) => {
-    let e
-    for (const group of elementsHavePath) {
-      for (let i = 0; i < group.length; i++) {
-        const element = group[i]
-        if (element.getAttribute('data-path')?.startsWith(path)) {
-          e = element
-          break
-        }
-      }
-      if (e) break
-    }
-    return e?.parentElement?.id
-  }
-
-  const urlMainPart = `https://${window.location.host}/${userName}/${repoName}/pull/${pullId}/files${window.location.search}`
-  const nodes: TreeNode[] = treeData.map(
-    ({ filename, sha, additions, deletions, changes, status }) => ({
-      path: filename || '',
-      type: 'blob',
-      name: filename?.split('/').pop() || '',
-      url: `${urlMainPart}${formatHash(getFileElementHash(filename))}`,
-      sha: sha,
-      comments: run(() => {
-        const comments = commentData?.filter(comment => filename === comment.path)
-        if (comments?.length)
-          return {
-            active: comments.filter(comment => comment.position !== null).length,
-            resolved: comments.filter(comment => comment.position === null).length,
-          }
-      }),
-      diff: {
-        status,
-        additions,
-        deletions,
-        changes,
-      },
-    }),
-  )
-
-  const root = processTree(nodes)
-  return { root }
-}
-

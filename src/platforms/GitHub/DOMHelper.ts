@@ -31,6 +31,10 @@ export function isInCodePage() {
   return Boolean($(branchListSelector, e => e.offsetWidth > 0 && e.offsetHeight > 0))
 }
 
+export function isInPullFilesPage() {
+  return $('#files_tab_counter')
+}
+
 export function getIssueTitle() {
   const title = $('.gh-header-title')?.textContent
   return title?.trim().replace(/\n/g, '')

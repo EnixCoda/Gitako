@@ -73,3 +73,54 @@ export function resolveHeaderLink(raw: string) {
     return
   }
 }
+
+export async function getDOM(url: string) {
+  return new DOMParser().parseFromString(await (await fetch(url)).text(), 'text/html')
+}
+
+export async function continuousLoadPages(doc: Document, onReceivePage?: (doc: Document) => void) {
+  /**
+   *  <include-fragment
+   *    src="..."
+   *    class="diff-progressive-loader js-diff-progressive-loader mb-4 d-flex flex-items-center flex-justify-center"
+   *    data-targets="diff-file-filter.progressiveLoaders"
+   *    data-action="include-fragment-replace:diff-file-filter#refilterAfterAsyncLoad"
+   *  >
+   */
+  const fragmentSelector = 'include-fragment[data-targets="diff-file-filter.progressiveLoaders"]'
+  const documents: Document[] = [doc]
+  while (true) {
+    const fragment = doc.querySelector(fragmentSelector) as HTMLElement
+    if (!fragment) break
+    const src = fragment.getAttribute('src')
+    if (!src) break
+    doc = await getDOM(src)
+    documents.push(doc)
+    onReceivePage?.(doc)
+  }
+  return documents
+}
+
+export function getCommentsMap(commentData: GitHubAPI.PullComments) {
+  const commentsMap = new Map<
+    string,
+    {
+      active: number
+      resolved: number
+    }
+  >()
+  commentData.forEach(comment => {
+    let stat = commentsMap.get(comment.path)
+    if (!stat) {
+      stat = {
+        active: 0,
+        resolved: 0,
+      }
+      commentsMap.set(comment.path, stat)
+    }
+
+    if (comment.position === null) stat.active++
+    else stat.resolved++
+  })
+  return commentsMap
+}

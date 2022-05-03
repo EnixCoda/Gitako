@@ -1,7 +1,8 @@
 import { errors } from 'platforms'
 import { isEnterprise } from '.'
+import { continuousLoadPages, getDOM, resolveHeaderLink } from './utils'
 
-function apiRateLimitExceeded(content: any /* safe any */) {
+function isAPIRateLimitExceeded(content: any /* safe any */) {
   return content?.['documentation_url'] === 'https://developer.github.com/v3/#rate-limiting'
 }
 
@@ -13,15 +14,23 @@ function isBlockedProject(content: any /* safe any */) {
   return content?.['message'] === 'Repository access blocked'
 }
 
-async function request(
+export const responseBodyResolvers = {
+  asIs: (response: Response) => response,
+  json(response: Response) {
+    const contentType = response.headers.get('Content-Type') || response.headers.get('content-type')
+    if (contentType?.includes('application/json')) return response.json()
+    throw new Error(`Response content type is "${contentType}"`)
+  },
+}
+
+async function request<T>(
   url: string,
   {
     accessToken,
-    resolveMode = 'body-json',
   }: {
-    resolveMode?: 'body-json' | 'response'
     accessToken?: string
   } = {},
+  bodyResolver: (response: Response) => Async<T> = responseBodyResolvers.json,
 ) {
   const headers = {} as HeadersInit & {
     Authorization?: string
@@ -37,35 +46,25 @@ async function request(
     throw new Error(errors.CONNECTION_BLOCKED)
   }
 
-  const contentType = res.headers.get('Content-Type') || res.headers.get('content-type')
-  const isJson = contentType?.includes('application/json')
   // About res.ok:
   // True if res.status between 200~299
   // Ref: https://developer.mozilla.org/en-US/docs/Web/API/Response/ok
-  if (res.ok) {
-    switch (resolveMode) {
-      case 'body-json': {
-        if (isJson) return res.json()
-        throw new Error(`Response content type is "${contentType}"`)
-      }
-      case 'response':
-        return res
-    }
-    throw new Error(`Unknown resolve mode: ${resolveMode}`)
-  }
+  if (res.ok) return bodyResolver(res)
 
   if (res.status === 404 || res.status === 401) throw new Error(errors.NOT_FOUND)
-  else if (res.status === 403) throw new Error(errors.API_RATE_LIMIT)
-  else if (res.status === 500) throw new Error(errors.SERVER_FAULT)
-  else if (resolveMode && isJson) {
-    const content = await res.json()
-    if (apiRateLimitExceeded(content)) throw new Error(errors.API_RATE_LIMIT)
-    if (isEmptyProject(content)) throw new Error(errors.EMPTY_PROJECT)
-    if (isBlockedProject(content)) throw new Error(errors.BLOCKED_PROJECT)
-    throw new Error(`Unknown message content "${content?.message}"`)
-  } else {
-    throw new Error(`Response content type is "${contentType}"`)
-  }
+  if (res.status === 403) throw new Error(errors.API_RATE_LIMIT)
+  if (res.status === 500) throw new Error(errors.SERVER_FAULT)
+
+  const content = await responseBodyResolvers.json(res)
+  if (isAPIRateLimitExceeded(content)) throw new Error(errors.API_RATE_LIMIT)
+  if (isEmptyProject(content)) throw new Error(errors.EMPTY_PROJECT)
+  if (isBlockedProject(content)) throw new Error(errors.BLOCKED_PROJECT)
+
+  const message =
+    typeof content === 'object'
+      ? (content as Record<string, unknown> | null)?.message
+      : `${content}`
+  throw new Error(`Unknown message content "${message}"`)
 }
 
 const API_ENDPOINT = isEnterprise() ? `${window.location.host}/api/v3` : 'api.github.com'
@@ -103,16 +102,28 @@ export async function getPullData(
   return await request(url, { accessToken })
 }
 
+export async function requestPullTreeData(
+  userName: string,
+  repoName: string,
+  pullId: string,
+  page: number,
+  pageSize?: number,
+  accessToken?: string,
+) {
+  const search = new URLSearchParams({ page: page.toString(), per_page: `${pageSize}` })
+  const url = `https://${API_ENDPOINT}/repos/${userName}/${repoName}/pulls/${pullId}/files?${search}`
+  return await request(url, { accessToken }, responseBodyResolvers.asIs)
+}
+
 export async function getPullTreeData(
   userName: string,
   repoName: string,
   pullId: string,
   page: number,
+  pageSize?: number,
   accessToken?: string,
 ): Promise<GitHubAPI.PullTreeData> {
-  const search = new URLSearchParams({ page: page.toString() })
-  const url = `https://${API_ENDPOINT}/repos/${userName}/${repoName}/pulls/${pullId}/files?${search}`
-  return await request(url, { accessToken })
+  return (await requestPullTreeData(userName, repoName, pullId, page, pageSize, accessToken)).json()
 }
 
 export async function getPullComments(
@@ -129,39 +140,15 @@ export async function getPullPageDocuments(
   userName: string,
   repoName: string,
   pullId: string,
+  document?: Document,
 ): Promise<Document[]> {
   // Response of this API contains view of few files but is not complete.
-  const filesDOM = await getDOM(
-    `https://${window.location.host}/${userName}/${repoName}/pull/${pullId}/files?_pjax=%23js-repo-pjax-container`,
+  return continuousLoadPages(
+    document ||
+      (await getDOM(
+        `https://${window.location.host}/${userName}/${repoName}/pull/${pullId}/files?_pjax=%23js-repo-pjax-container`,
+      )),
   )
-  const hookElement: HTMLDivElement | null = filesDOM.querySelector('div.js-pull-refresh-on-pjax')
-  const hookSearchParams = new URLSearchParams(hookElement?.dataset.url)
-  const [baseSHA, headSHA] = [
-    hookSearchParams.get('start_commit_oid'),
-    hookSearchParams.get('end_commit_oid'),
-  ]
-  if (!baseSHA || !headSHA) throw new Error(`Cannot fetch SHA for comparison`)
-
-  // The SHA used to be retrieved from DOM of the pull page, but they can be unreliable if the PR has conflicts
-  const search = new URLSearchParams(window.location.search)
-  search.set('sha1', baseSHA)
-  search.set('sha2', headSHA)
-  let lines = 0
-  const diffsDOMs: Document[] = []
-  while (true) {
-    search.set('lines', lines.toString())
-    const diffsDOM = await getDOM(
-      `https://${window.location.host}/${userName}/${repoName}/diffs?${search}`,
-    )
-    diffsDOMs.push(diffsDOM)
-
-    if (diffsDOM.querySelector('.js-diff-progressive-container')) {
-      lines += 3000
-    } else {
-      break
-    }
-  }
-  return diffsDOMs
 }
 
 export async function getCommitPageDocuments(
@@ -169,33 +156,8 @@ export async function getCommitPageDocuments(
   repoName: string,
   commitId: string,
 ): Promise<Document[]> {
-  /**
-   *  <include-fragment
-   *    src="/EnixCoda/Gitako/diffs?bytes=444&amp;commentable=true&amp;commit=7de4488d7f00630512e0d494bab209004f2d4a58&amp;lines=202&amp;responsive=true&amp;sha1=022dd1736146a350f1564c40d28234973d47bafc&amp;sha2=7de4488d7f00630512e0d494bab209004f2d4a58&amp;start_entry=1&amp;sticky=false&amp;w=false"
-   *    class="diff-progressive-loader js-diff-progressive-loader mb-4 d-flex flex-items-center flex-justify-center"
-   *    data-targets="diff-file-filter.progressiveLoaders"
-   *    data-action="include-fragment-replace:diff-file-filter#refilterAfterAsyncLoad"
-   *  >
-   */
-  const fragmentSelector = 'include-fragment[data-targets="diff-file-filter.progressiveLoaders"]'
-
-  let doc = document
-  const documents: Document[] = [doc]
-  while (true) {
-    const fragment = doc.querySelector(fragmentSelector) as HTMLElement
-    if (!fragment) break
-    const src = fragment.getAttribute('src')
-    if (!src) break
-    const nextDoc = await getDOM(src)
-    documents.push(nextDoc)
-    doc = nextDoc
-  }
-
-  return documents
-}
-
-async function getDOM(url: string) {
-  return new DOMParser().parseFromString(await (await fetch(url)).text(), 'text/html')
+  // arguments are not used because info are collected from DOM directly
+  return continuousLoadPages(document)
 }
 
 export async function getBlobData(
@@ -225,7 +187,7 @@ export async function OAuth(code: string): Promise<string | null> {
   }
 }
 
-export async function getCommitTreeData(
+export async function requestCommitTreeData(
   userName: string,
   repoName: string,
   sha: string,
@@ -237,5 +199,41 @@ export async function getCommitTreeData(
     page: `${page}`,
   })
   const url = `https://${API_ENDPOINT}/repos/${userName}/${repoName}/commits/${sha}?` + search
-  return await request(url, { accessToken, resolveMode: 'response' })
+  return await request(url, { accessToken }, responseBodyResolvers.asIs)
+}
+
+export async function getPaginatedData<T>(sendRequest: (page: number) => Promise<Response>) {
+  const responses: Response[] = []
+  let page = 1
+  while (true) {
+    const response = await sendRequest(page)
+    responses.push(response)
+
+    const headerLink = response.headers.get('link')
+    if (headerLink) {
+      const rels = resolveHeaderLink(headerLink)
+      if (rels) {
+        if (rels.position === 'first') {
+          page++
+        } else if (rels.position === 'middle') {
+          const searchOfLast = new URL(rels.last).searchParams
+          if (`${page}` === searchOfLast.get('page')) {
+            // this should not actually happen because GitHub responds `prev` and `first` for the first page
+            break
+          }
+          page++
+        } else {
+          // i.e. rels.position === 'last'
+          break
+        }
+      } else {
+        // unexpected link header content
+        break
+      }
+    } else {
+      // no link headers if there is <100 files
+      break
+    }
+  }
+  return Promise.all(responses.map(responseBodyResolvers.json)) as Promise<T[]>
 }
