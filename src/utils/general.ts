@@ -219,3 +219,8 @@ export function resolveDiffGraphMeta(additions: number, deletions: number, chang
     w = 5 - g - r
   return { g, r, w }
 }
+
+export function formatHash(hash?: string) {
+  if (hash) return '#' + hash
+  return ''
+}

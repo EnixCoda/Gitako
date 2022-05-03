@@ -1,7 +1,7 @@
 import { raiseError } from 'analytics'
 import { Clippy, ClippyClassName } from 'components/Clippy'
 import * as React from 'react'
-import { $ } from 'utils/DOMHelper'
+import { $, formatClass } from 'utils/DOMHelper'
 import { renderReact, run } from 'utils/general'
 import { CopyFileButton, copyFileButtonClassName } from './CopyFileButton'
 
@@ -147,7 +147,7 @@ export function getCodeElement() {
  */
 export function attachCopyFileBtn() {
   const removeButtons = () => {
-    const buttons = document.querySelectorAll(`.${copyFileButtonClassName}`)
+    const buttons = document.querySelectorAll(formatClass(copyFileButtonClassName))
     buttons.forEach(button => {
       button.parentElement?.removeChild(button)
     })
@@ -219,7 +219,7 @@ export function attachCopySnippet() {
           }
         }
         function removeAttachedOnes() {
-          const buttons = document.querySelectorAll(`.${ClippyClassName}`)
+          const buttons = document.querySelectorAll(formatClass(ClippyClassName))
           buttons.forEach(button => {
             button.parentElement?.removeChild(button)
           })

@@ -1,7 +1,8 @@
 import { useConfigs } from 'containers/ConfigsContext'
 import { GITHUB_OAUTH } from 'env'
 import { Base64 } from 'js-base64'
-import { run } from 'utils/general'
+import { formatID } from 'utils/DOMHelper'
+import { formatHash, run } from 'utils/general'
 import { resolveGitModules } from 'utils/gitSubmodule'
 import { sortFoldersToFront } from 'utils/treeParser'
 import * as API from './API'
@@ -339,7 +340,7 @@ async function getCommitTreeData(
   const getItemURL = (path: string) => {
     for (const doc of documents) {
       const id = doc.querySelector(`[data-path="${path}"]`)?.parentElement?.id
-      if (id) return `#${id}`
+      if (id) return formatID(id)
     }
   }
 
@@ -442,7 +443,3 @@ async function getPullRequestTreeData(
   return { root }
 }
 
-function formatHash(hash?: string) {
-  if (hash) return '#' + hash
-  return ''
-}

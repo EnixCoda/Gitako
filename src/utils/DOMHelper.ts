@@ -60,7 +60,7 @@ export function $(selector: string, existCallback?: any, otherwise?: any) {
  */
 export function insertLogoMountPoint() {
   const logoID = 'gitako-logo-mount-point'
-  const logoSelector = '#' + logoID
+  const logoSelector = formatID(logoID)
   return $(logoSelector, undefined, function createLogoMountPoint() {
     const logoMountElement = document.createElement('div')
     logoMountElement.setAttribute('id', logoID)
@@ -141,4 +141,12 @@ export function findNodeElement(node: TreeNode, rootElement: HTMLElement): HTMLE
 export function setCSSVariable(name: string, value: string | undefined, element: HTMLElement) {
   if (value === undefined) element.style.removeProperty(name)
   else element.style.setProperty(name, value)
+}
+
+export function formatID(id: string) {
+  return `#${id}`
+}
+
+export function formatClass(className: string) {
+  return `.${className}`
 }
