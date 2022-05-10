@@ -282,7 +282,7 @@ function ListView({ width, height, metaData, expandTo, renderNodeContext }: List
     if (listRef.current && focusedNode?.path) {
       const index = nodes.findIndex(node => node.path === focusedNode.path)
       if (index !== -1) {
-        listRef.current.scrollToItem(index, 'smart')
+        listRef.current.scrollToItem(index, 'auto')
       }
     }
   }, [focusedNode, nodes])
