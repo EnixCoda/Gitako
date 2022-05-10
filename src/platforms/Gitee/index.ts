@@ -1,4 +1,5 @@
 import { GITEE_OAUTH } from 'env'
+import { Base64 } from 'js-base64'
 import { platform } from 'platforms'
 import * as React from 'react'
 import { resolveGitModules } from 'utils/gitSubmodule'
