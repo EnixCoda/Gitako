@@ -1,4 +1,4 @@
-import { Button, Text, TextInput } from '@primer/components'
+import { Button, Text, TextInput } from '@primer/react'
 import { wikiLinks } from 'components/settings/SettingsBar'
 import { useConfigs } from 'containers/ConfigsContext'
 import { platform } from 'platforms'
@@ -109,7 +109,7 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
           )}
           <div className={'access-token-input-control'}>
             <TextInput
-              marginRight={1}
+              sx={{ marginRight: 1 }}
               className={'access-token-input'}
               value={accessToken}
               placeholder="Or input here manually"

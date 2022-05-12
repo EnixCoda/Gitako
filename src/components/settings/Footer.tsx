@@ -1,4 +1,4 @@
-import { Link } from '@primer/components'
+import { Link } from '@primer/react'
 import { Icon } from 'components/Icon'
 import { VERSION } from 'env'
 import * as React from 'react'
@@ -14,7 +14,6 @@ export function Footer(props: Props) {
     <div className={'gitako-footer'}>
       <Link
         className={'version'}
-        fontSize={14}
         href={wikiLinks.changeLog}
         target={'_blank'}
         title={'Check out new features!'}

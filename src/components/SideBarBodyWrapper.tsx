@@ -95,7 +95,7 @@ export function SideBarBodyWrapper({
   }, [sizeVariableMountPoint])
 
   const onMouseLeave = React.useCallback(
-    e => {
+    <E extends HTMLElement>(e: React.MouseEvent<E>) => {
       if (blockLeaveRef.current) return
       onLeave?.(e)
     },

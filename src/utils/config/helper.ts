@@ -12,7 +12,6 @@ export type Config = {
   intelligentToggle: boolean | null // `null` stands for intelligent, boolean for sidebar open state
   icons: 'rich' | 'dim' | 'native'
   toggleButtonVerticalDistance: number
-  toggleButtonContent: 'logo' | 'octoface'
   recursiveToggleFolder: 'shift' | 'alt'
   searchMode: SearchMode
   sidebarToggleMode: 'persistent' | 'float'
@@ -33,7 +32,6 @@ enum configKeys {
   intelligentToggle = 'intelligentToggle',
   icons = 'icons',
   toggleButtonVerticalDistance = 'toggleButtonVerticalDistance',
-  toggleButtonContent = 'toggleButtonContent',
   recursiveToggleFolder = 'recursiveToggleFolder',
   searchMode = 'searchMode',
   sidebarToggleMode = 'sidebarToggleMode',
@@ -57,7 +55,6 @@ export const defaultConfigs: Config = {
   intelligentToggle: null,
   icons: 'rich',
   toggleButtonVerticalDistance: 124, // align with GitHub's navbar items
-  toggleButtonContent: 'logo',
   recursiveToggleFolder: 'shift',
   searchMode: 'fuzzy',
   sidebarToggleMode: 'float',

@@ -1,4 +1,4 @@
-import { Label, Text } from '@primer/components'
+import { Label, Text } from '@primer/react'
 import { LoadingIndicator } from 'components/LoadingIndicator'
 import { Node } from 'components/Node'
 import { SearchBar } from 'components/SearchBar'
@@ -189,9 +189,8 @@ const RawFileExplorer: React.FC<Props & ConnectorState> = function RawFileExplor
                     <div className={'status'}>
                       <Label
                         title="This repository is large. Gitako has switched to Lazy Mode to improve performance. Folders will be loaded when it gets expanded."
-                        bg="yellow.5"
-                        color="gray.6"
                         className={'lazy-mode'}
+                        variant="attention"
                       >
                         Lazy Mode is ON
                       </Label>
@@ -285,7 +284,7 @@ function ListView({ width, height, metaData, expandTo, renderNodeContext }: List
         listRef.current.scrollToItem(index, 'auto')
       }
     }
-  }, [focusedNode, nodes])
+  }, [focusedNode?.path, nodes])
   // For some reason, removing the deps array above results in bug:
   // If scroll fast and far, then clicking on items would result in redirect
   // Not know the reason :(

@@ -91,8 +91,8 @@ $minimal-z-index: max(
   display: block;
   cursor: pointer;
   user-select: none;
-  -webkit-mask-image: url('~@primer/octicons/build/svg/' + $icon-name + '.svg?inline');
-  mask-image: url('~@primer/octicons/build/svg/' + $icon-name + '.svg?inline');
+  -webkit-mask-image: url('~@primer/octicons-react/build/svg/' + $icon-name + '.svg?inline');
+  mask-image: url('~@primer/octicons-react/build/svg/' + $icon-name + '.svg?inline');
   -webkit-mask-size: contain;
   mask-size: contain;
   -webkit-mask-position: center;
@@ -129,10 +129,10 @@ $minimal-z-index: max(
         align-items: center;
 
         &::before {
-          width: 10px;
+          width: 16px;
           height: 20px;
           transition: 0.25s ease;
-          @include pseudo-primer-icon('chevron-down');
+          @include pseudo-primer-icon('chevron-down-16');
         }
 
         @include interactive-background-on-before(
@@ -195,7 +195,7 @@ $minimal-z-index: max(
           width: 100%;
           height: 100%;
           display: block;
-          background-image: url('~@primer/octicons-react/build/svg/clippy-16.svg?inline');
+          background-image: url('~@primer/octicons-react/build/svg/copy-16.svg?inline');
           background-position: center;
           background-repeat: no-repeat;
           &.success {
@@ -330,26 +330,6 @@ $minimal-z-index: max(
       cursor: not-allowed;
     }
 
-    .octoface-icon {
-      @include flex-center();
-
-      width: 32px;
-      height: 32px;
-      padding: 4px;
-      border-radius: 6px;
-      @include interactive-frame;
-      color: var(--gitako-fg-default);
-      &:active {
-        color: var(--gitako-fg-subtle);
-      }
-      transition: all ease 0.3s;
-      font-size: 16px;
-      transform: translateX(8px);
-      &:active,
-      &:hover {
-        transform: translateX(12px);
-      }
-    }
     .tentacle {
       width: 40px;
       height: 40px;
@@ -489,7 +469,6 @@ $minimal-z-index: max(
         padding: 6px 10px;
         flex-shrink: 0;
         position: relative; // prevent overlap by outline of other elements
-        border-bottom: 1px solid var(--gitako-border-default);
 
         .user-and-repo {
           display: inline; // would be override by CSS rule of section from @primer/css
@@ -563,6 +542,7 @@ $minimal-z-index: max(
       .loading-indicator-container {
         width: 100%;
         height: 100%;
+        border-top: 1px solid var(--gitako-border-default);
         @include flex-center();
 
         .loading-indicator {
@@ -592,7 +572,14 @@ $minimal-z-index: max(
         flex-direction: column;
         flex-wrap: nowrap;
         &.freeze {
-          filter: blur(1.5px) opacity(0.6) grayscale(0.9);
+          filter: blur(1.5px) opacity(0.6) grayscale(0.9) brightness(0.8);
+          transition: filter 0.25s ease;
+          &:hover {
+            filter: blur(1.5px) opacity(0.6) grayscale(0.9) brightness(0.9);
+          }
+          &:active {
+            filter: blur(1.5px) opacity(0.6) grayscale(0.9) brightness(0.7);
+          }
           cursor: pointer;
 
           > * {
@@ -608,9 +595,9 @@ $minimal-z-index: max(
           .search-input {
             width: 100%;
             box-shadow: none; // stay low
-            border: none; // reset borders on other sides
-            border-bottom: 1px solid var(--gitako-border-default);
+            border: none;
             border-radius: 0;
+            border-top: 1px solid var(--gitako-border-default);
             color: var(--gitako-fg-default);
             background: var(--gitako-bg-default);
             padding-right: 40px; // save space for actions
@@ -649,6 +636,7 @@ $minimal-z-index: max(
 
         .status {
           padding: 4px;
+          background: var(--gitako-bg-subtle);
 
           .lazy-mode {
             cursor: help;
@@ -659,6 +647,7 @@ $minimal-z-index: max(
           position: relative;
           flex: 1;
           overflow: hidden;
+          border-top: 1px solid var(--gitako-border-default);
 
           // Put this inside files will help files to get proper size derived from parents, regardless of its content size
           .magic-size-container {
@@ -954,14 +943,14 @@ $minimal-z-index: max(
                 position: absolute;
                 right: 6px;
                 top: 8px;
-                width: 10px;
+                width: 16px;
                 height: 20px;
 
                 &::before {
-                  width: 10px;
+                  width: 16px;
                   height: 20px;
                   background-color: var(--gitako-fg-subtle);
-                  @include pseudo-primer-icon('chevron-down');
+                  @include pseudo-primer-icon('chevron-down-16');
                 }
               }
             }

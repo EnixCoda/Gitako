@@ -1,9 +1,7 @@
-import { Button, TextInput } from '@primer/components'
-import { Option, SelectInput } from 'components/SelectInput'
+import { Button, TextInput } from '@primer/react'
 import { SimpleToggleField } from 'components/SimpleToggleField'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
-import { Config } from 'utils/config/helper'
 import { friendlyFormatShortcut } from 'utils/general'
 import { useStateIO } from 'utils/hooks/useStateIO'
 import * as keyHelper from 'utils/keyHelper'
@@ -11,19 +9,6 @@ import { Field } from './Field'
 import { SettingsSection } from './SettingsSection'
 
 type Props = {}
-
-const toggleButtonContentOptions: Option<Config['toggleButtonContent']>[] = [
-  {
-    key: 'logo',
-    value: 'logo',
-    label: `Gitako Logo`,
-  },
-  {
-    key: 'octoface',
-    value: 'octoface',
-    label: `The Classic Octoface`,
-  },
-]
 
 export function SidebarSettings(props: React.PropsWithChildren<Props>) {
   const configContext = useConfigs()
@@ -41,7 +26,7 @@ export function SidebarSettings(props: React.PropsWithChildren<Props>) {
         <div className={'toggle-shortcut-input-control'}>
           <TextInput
             id="toggle-sidebar-shortcut"
-            marginRight={1}
+            sx={{ marginRight: 1 }}
             className={'toggle-shortcut-input'}
             onFocus={() => focused.onChange(true)}
             onBlur={() => focused.onChange(false)}
@@ -77,18 +62,6 @@ export function SidebarSettings(props: React.PropsWithChildren<Props>) {
             </Button>
           )}
         </div>
-      </Field>
-      <Field id="toggle-button-content" title="Icon of the toggle button">
-        <SelectInput
-          id="toggle-button-content"
-          options={toggleButtonContentOptions}
-          onChange={v => {
-            configContext.onChange({
-              toggleButtonContent: v,
-            })
-          }}
-          value={configContext.value.toggleButtonContent}
-        />
       </Field>
       <SimpleToggleField
         field={{

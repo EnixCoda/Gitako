@@ -1,5 +1,5 @@
-import { TextInput, TextInputProps } from '@primer/components'
 import { SearchIcon } from '@primer/octicons-react'
+import { TextInput, TextInputProps } from '@primer/react'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { cx } from 'utils/cx'
@@ -24,8 +24,7 @@ export function SearchBar({ onSearch, onFocus, value }: Props) {
   return (
     <div className={'search-input-wrapper'}>
       <TextInput
-        backgroundColor="white"
-        icon={SearchIcon as any}
+        icon={SearchIcon}
         onFocus={e => {
           onFocus(e)
           e.target.select()

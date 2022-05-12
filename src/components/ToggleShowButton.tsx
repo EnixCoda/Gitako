@@ -4,7 +4,6 @@ import * as React from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
 import { cx } from 'utils/cx'
 import { useResizeHandler } from 'utils/hooks/useResizeHandler'
-import { Icon } from './Icon'
 
 type Props = {
   error?: string | null
@@ -67,11 +66,7 @@ export function ToggleShowButton({ error, className, onClick, onHover }: Props) 
         onPointerDown={onPointerDown}
         title={'Gitako (draggable)'}
       >
-        {config.value.toggleButtonContent === 'octoface' ? (
-          <Icon className={'octoface-icon'} type={'octoface'} />
-        ) : (
-          <img className={'tentacle'} draggable={false} src={iconURL} />
-        )}
+        <img className={'tentacle'} draggable={false} src={iconURL} />
       </button>
       {error && <span className={'error-message'}>{error}</span>}
     </div>

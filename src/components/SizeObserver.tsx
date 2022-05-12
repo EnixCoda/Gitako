@@ -6,10 +6,13 @@ type Size = {
   height: number
 }
 
-type Props = {
-  type?: string | React.ComponentType
-  children(size: Partial<Size>): React.ReactNode
-} & React.HTMLAttributes<HTMLElement>
+type Props = Override<
+  React.HTMLAttributes<HTMLElement>,
+  {
+    type?: string | React.ComponentType
+    children(size: Partial<Size>): React.ReactNode
+  }
+>
 
 export function SizeObserver({ type = 'div', children, ...rest }: Props) {
   const ref = React.useRef<any>()
