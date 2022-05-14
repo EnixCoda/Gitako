@@ -224,3 +224,7 @@ export function formatHash(hash?: string) {
   if (hash) return '#' + hash
   return ''
 }
+
+export function isNotFalsy<T>(value: T | undefined | null): value is T {
+  return value !== undefined && value !== null
+}

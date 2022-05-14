@@ -3,7 +3,7 @@ import { platform } from 'platforms'
 import * as React from 'react'
 import { cx } from 'utils/cx'
 import { getFileIconURL, getFolderIconURL } from 'utils/parseIconMapCSV'
-import { Icon } from './Icon'
+import { Icon } from '../Icon'
 
 function getIconType(node: TreeNode) {
   switch (node.type) {

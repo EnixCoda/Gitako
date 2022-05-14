@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { resolveDiffGraphMeta } from 'utils/general'
-import { Icon } from './Icon'
+import { Icon } from '../Icon'
 
 export function DiffStatGraph({
   diff: { status, changes, additions, deletions },
