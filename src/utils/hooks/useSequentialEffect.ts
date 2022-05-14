@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 
 /**
  * This effect addresses such a problem:
@@ -6,14 +6,15 @@ import { useEffect, useRef } from 'react'
  */
 export function useSequentialEffect(
   effect: (checker: () => boolean) => (() => void | undefined) | void,
-  deps: React.DependencyList = [],
 ) {
-  const sequenceCounter = useRef(0)
   useEffect(() => {
-    // The counter is incremented every time a new effect is added.
-    // And the previous effect should stop going forward by finding checker returning false.
-    const counter = ++sequenceCounter.current
-    const checker = () => counter === sequenceCounter.current
-    return effect(checker)
-  }, deps)
+    // The previous effect should stop running when finding checker returning false.
+    let valid = true
+    const checker = () => valid
+    const defect = effect(checker)
+    return () => {
+      valid = false
+      defect?.()
+    }
+  }, [effect])
 }

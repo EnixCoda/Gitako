@@ -15,21 +15,21 @@ type Props = {}
 export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
   const configContext = useConfigs()
   const hasAccessToken = Boolean(configContext.value.accessToken)
-  const useAccessToken = useStateIO('')
+  const $useAccessToken = useStateIO('')
   const useAccessTokenHint = useStateIO<React.ReactNode>('')
   const focusInput = useStateIO(false)
 
   const { value: accessTokenHint } = useAccessTokenHint
-  const { value: accessToken } = useAccessToken
+  const { value: accessToken } = $useAccessToken
 
   React.useEffect(() => {
     // clear input when access token updates
-    useAccessToken.onChange('')
+    $useAccessToken.onChange('')
   }, [configContext.value.accessToken])
 
   const onInputAccessToken = React.useCallback(
     ({ currentTarget: { value } }: React.FormEvent<HTMLInputElement>) => {
-      useAccessToken.onChange(value)
+      $useAccessToken.onChange(value)
       useAccessTokenHint.onChange(
         ACCESS_TOKEN_REGEXP.test(value) ? '' : 'Gitako does not recognize the token.',
       )
@@ -50,7 +50,7 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
     ) => {
       if (accessToken) {
         configContext.onChange({ accessToken })
-        useAccessToken.onChange('')
+        $useAccessToken.onChange('')
         useAccessTokenHint.onChange(hint)
       }
     },

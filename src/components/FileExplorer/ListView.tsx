@@ -1,5 +1,4 @@
 import { useConfigs } from 'containers/ConfigsContext'
-import { ConnectorState, Props } from 'driver/core/FileExplorer'
 import { platform } from 'platforms'
 import * as React from 'react'
 import { Align as ReactWindowAlign, FixedSizeList } from 'react-window'
@@ -12,9 +11,10 @@ type ListViewProps = {
   height: number
   width: number
   nodeRendererContext: NodeRendererContext
-  scrollMode: ReactWindowAlign
-} & Pick<Props, 'metaData'> &
-  Pick<ConnectorState, 'expandTo'>
+  alignMode: ReactWindowAlign
+  metaData: MetaData
+  expandTo: (path: string[]) => void
+}
 
 export function ListView({
   width,
@@ -22,20 +22,22 @@ export function ListView({
   metaData,
   expandTo,
   nodeRendererContext,
-  scrollMode,
+  alignMode,
 }: ListViewProps) {
   const { visibleNodes } = nodeRendererContext
   const { focusedNode, nodes } = visibleNodes
-  const listRef = React.useRef<FixedSizeList>(null)
-  // the change of depths indicates switch into/from search state
+  const listRef = React.useRef<FixedSizeList<NodeRendererContext>>(null)
+
+  // Scroll to focused node
   React.useEffect(() => {
     if (listRef.current && focusedNode?.path) {
       const index = nodes.findIndex(node => node.path === focusedNode.path)
       if (index !== -1) {
-        listRef.current.scrollToItem(index, scrollMode)
+        listRef.current.scrollToItem(index, alignMode)
       }
     }
-  }, [focusedNode?.path, nodes])
+  }, [focusedNode?.path, nodes, alignMode])
+
   // For some reason, removing the deps array above results in bug:
   // If scroll fast and far, then clicking on items would result in redirect
   // Not know the reason :(

@@ -11,7 +11,6 @@ import * as React from 'react'
 import { cx } from 'utils/cx'
 import * as DOMHelper from 'utils/DOMHelper'
 import { detectBrowser, run } from 'utils/general'
-import { useCatchNetworkError } from 'utils/hooks/useCatchNetworkError'
 import { useLoadedContext } from 'utils/hooks/useLoadedContext'
 import { useOnPJAXDone, usePJAX } from 'utils/hooks/usePJAX'
 import { useStateIO } from 'utils/hooks/useStateIO'
@@ -21,7 +20,6 @@ import { SideBarStateContext } from '../containers/SideBarState'
 import { Theme } from '../containers/Theme'
 import { useToggleSideBarWithKeyboard } from '../utils/hooks/useToggleSideBarWithKeyboard'
 import { Icon } from './Icon'
-import { IIFC } from './IIFC'
 import { LoadingIndicator } from './LoadingIndicator'
 import { SettingsBarContent } from './settings/SettingsBar'
 
@@ -189,21 +187,7 @@ export function SideBar() {
                   case 'error-due-to-auth':
                     return <AccessDeniedDescription />
                   default:
-                    return (
-                      metaData && (
-                        <IIFC>
-                          {() => (
-                            <FileExplorer
-                              metaData={metaData}
-                              freeze={showSettings}
-                              accessToken={accessToken}
-                              config={configContext.value}
-                              catchNetworkErrors={useCatchNetworkError()}
-                            />
-                          )}
-                        </IIFC>
-                      )
-                    )
+                    return metaData && <FileExplorer metaData={metaData} freeze={showSettings} />
                 }
               })}
             </div>

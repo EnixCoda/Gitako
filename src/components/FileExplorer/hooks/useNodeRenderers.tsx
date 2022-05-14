@@ -1,10 +1,10 @@
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { isNotFalsy } from 'utils/general'
-import { Icon } from '../Icon'
-import { SearchMode } from '../searchModes'
-import { DiffStatGraph } from './DiffStatGraph'
-import { DiffStatText } from './DiffStatText'
+import { Icon } from '../../Icon'
+import { SearchMode } from '../../searchModes'
+import { DiffStatGraph } from './../DiffStatGraph'
+import { DiffStatText } from './../DiffStatText'
 
 export type NodeRenderer = (node: TreeNode) => React.ReactNode
 
@@ -49,49 +49,56 @@ export function useRenderFileCommentAmounts() {
     ) : null
   }
   const { commentToggle } = useConfigs().value
-  return React.useMemo(() => (commentToggle ? renderFileCommentAmounts : null), [])
+  return React.useMemo(() => (commentToggle ? renderFileCommentAmounts : null), [commentToggle])
 }
 
 export function useRenderFindInFolderButton(
   onSearch: (searchKey: string, searchMode: SearchMode) => void,
 ) {
-  function renderFindInFolderButton(node: TreeNode) {
-    return node.type === 'tree' ? (
-      <button
-        title={'Find in folder...'}
-        className={'find-in-folder-button'}
-        onClick={e => {
-          e.stopPropagation()
-          e.preventDefault()
-          onSearch(node.path + '/', searchMode)
-        }}
-      >
-        <Icon type="search" />
-      </button>
-    ) : null
-  }
   const { searchMode } = useConfigs().value
   return React.useMemo(
-    () => (searchMode === 'fuzzy' ? renderFindInFolderButton : null),
-    [searchMode],
+    () =>
+      searchMode === 'fuzzy'
+        ? function renderFindInFolderButton(node: TreeNode) {
+            return node.type === 'tree' ? (
+              <button
+                title={'Find in folder...'}
+                className={'find-in-folder-button'}
+                onClick={e => {
+                  e.stopPropagation()
+                  e.preventDefault()
+                  onSearch(node.path + '/', searchMode)
+                }}
+              >
+                <Icon type="search" />
+              </button>
+            ) : null
+          }
+        : null,
+    [searchMode, onSearch],
   )
 }
 
 export function useRenderGoToButton(searched: boolean, goTo: (path: string[]) => void) {
-  function renderGoToButton(node: TreeNode): React.ReactNode {
-    return (
-      <button
-        title={'Reveal in file tree'}
-        className={'go-to-button'}
-        onClick={e => {
-          e.stopPropagation()
-          e.preventDefault()
-          goTo(node.path.split('/'))
-        }}
-      >
-        <Icon type="go-to" />
-      </button>
-    )
-  }
-  return React.useMemo(() => (searched ? renderGoToButton : null), [searched])
+  return React.useMemo(
+    () =>
+      searched
+        ? function renderGoToButton(node: TreeNode): React.ReactNode {
+            return (
+              <button
+                title={'Reveal in file tree'}
+                className={'go-to-button'}
+                onClick={e => {
+                  e.stopPropagation()
+                  e.preventDefault()
+                  goTo(node.path.split('/'))
+                }}
+              >
+                <Icon type="go-to" />
+              </button>
+            )
+          }
+        : null,
+    [searched, goTo],
+  )
 }
