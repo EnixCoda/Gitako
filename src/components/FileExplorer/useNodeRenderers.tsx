@@ -31,9 +31,7 @@ export function useRenderFileStatus() {
       )
     )
   }
-  const {
-    value: { showDiffInText },
-  } = useConfigs()
+  const { showDiffInText } = useConfigs().value
   return React.useMemo(() => renderFileStatus, [])
 }
 
@@ -50,9 +48,7 @@ export function useRenderFileCommentAmounts() {
       </span>
     ) : null
   }
-  const {
-    value: { commentToggle },
-  } = useConfigs()
+  const { commentToggle } = useConfigs().value
   return React.useMemo(() => (commentToggle ? renderFileCommentAmounts : null), [])
 }
 
@@ -74,9 +70,7 @@ export function useRenderFindInFolderButton(
       </button>
     ) : null
   }
-  const {
-    value: { searchMode },
-  } = useConfigs()
+  const { searchMode } = useConfigs().value
   return React.useMemo(
     () => (searchMode === 'fuzzy' ? renderFindInFolderButton : null),
     [searchMode],

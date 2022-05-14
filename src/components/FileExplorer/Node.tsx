@@ -67,9 +67,7 @@ const NodeItemIcon = React.memo(function NodeItemIcon({
   open?: boolean
   loading?: boolean
 }) {
-  const {
-    value: { icons },
-  } = useConfigs()
+  const { icons } = useConfigs().value
 
   const src = React.useMemo(
     () => (node.type === 'tree' ? getFolderIconURL(node, open) : getFileIconURL(node)),

@@ -36,9 +36,7 @@ export type NodeRendererContext = {
 
 function useSetupTree(setUpTree: ConnectorState['setUpTree'], metaData: MetaData) {
   const stateContext = useLoadedContext(SideBarStateContext)
-  const {
-    value: { accessToken, compressSingletonFolder },
-  } = useConfigs()
+  const { accessToken, compressSingletonFolder } = useConfigs().value
 
   useSequentialEffect(
     checker => {
@@ -78,9 +76,7 @@ function useOnSearch(
   updateSearchKey: (searchKey: string) => void,
   visibleNodesGenerator: VisibleNodesGenerator | null,
 ) {
-  const {
-    value: { restoreExpandedFolders },
-  } = useConfigs()
+  const { restoreExpandedFolders } = useConfigs().value
   return React.useCallback(
     (searchKey: string, searchMode: SearchMode) => {
       updateSearchKey(searchKey)
@@ -96,9 +92,7 @@ function useOnSearch(
 }
 
 function useRenderLabelText(searchKey: string) {
-  const {
-    value: { searchMode },
-  } = useConfigs()
+  const { searchMode } = useConfigs().value
   return React.useCallback(
     (node: TreeNode) => searchModes[searchMode].renderNodeLabelText(node, searchKey),
     [searchKey, searchMode],
