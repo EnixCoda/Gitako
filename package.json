@@ -58,12 +58,17 @@
     "@types/jest": "^26.0.23",
     "@types/node": "^11.10.4",
     "@types/puppeteer": "^5.4.3",
+    "@typescript-eslint/eslint-plugin": "^5.23.0",
+    "@typescript-eslint/parser": "^5.23.0",
     "babel-loader": "^8.2.5",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
     "copy-webpack-plugin": "^5.0.0",
     "css-loader": "^2.1.0",
     "dotenv": "^6.2.0",
     "dotenv-webpack": "^1.7.0",
+    "eslint": "^8.15.0",
+    "eslint-plugin-react": "^7.29.4",
+    "eslint-plugin-react-hooks": "^4.5.0",
     "file-loader": "^3.0.1",
     "fork-ts-checker-webpack-plugin": "^6.5.0",
     "jest": "^27.0.6",
@@ -88,6 +93,19 @@
     "semi": false,
     "trailingComma": "all",
     "arrowParens": "avoid"
+  },
+  "eslintConfig": {
+    "root": true,
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint"
+    ],
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:react/recommended",
+      "plugin:react-hooks/recommended"
+    ]
   },
   "resolutions": {
     "@types/react": "^18.0.9",
