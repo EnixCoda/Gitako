@@ -351,10 +351,11 @@ export class VisibleNodesGenerator extends FlattenLayer {
 
   onNextUpdate(callback: (visibleNodes: VisibleNodes) => void) {
     const oneTimeSubscription = (visibleNodes: VisibleNodes) => {
+      cancel()
       callback(visibleNodes)
-      this.hub.removeEventListener('emit', oneTimeSubscription)
     }
-    return this.hub.addEventListener('emit', oneTimeSubscription)
+    const cancel = this.hub.addEventListener('emit', oneTimeSubscription)
+    return cancel
   }
 
   update() {
