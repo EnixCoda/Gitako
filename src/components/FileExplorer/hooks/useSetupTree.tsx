@@ -17,6 +17,7 @@ export function useVisibleNodesGenerator(metaData: MetaData) {
   const accessToken = config.accessToken
   const setStateContext = useLoadedContext(SideBarStateContext).onChange
 
+  // Only run when metadata or accessToken changes
   useSequentialEffect(
     useCallback(
       checker => {
@@ -54,7 +55,7 @@ export function useVisibleNodesGenerator(metaData: MetaData) {
           setStateContext('tree-rendered')
         })
       },
-      [metaData, accessToken],
+      [metaData, accessToken], // eslint-disable-line react-hooks/exhaustive-deps
     ),
   )
 

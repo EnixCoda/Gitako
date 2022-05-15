@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Icon } from '../Icon'
 
 export function DiffStatText({
-  diff: { status, changes, additions, deletions },
+  diff: { status, additions, deletions },
 }: {
   diff: Required<TreeNode>['diff']
 }) {

@@ -16,7 +16,7 @@ export function SelectInput<T>({
         onChange={e => {
           const key = e.target.value
           const option = options.find(option => option.key === key)
-          onChange(option!?.value)
+          if (option) onChange(option.value)
         }}
         value={options.find(option => option.value === value)?.key}
         {...selectProps}

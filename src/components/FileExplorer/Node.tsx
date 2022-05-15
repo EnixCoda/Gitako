@@ -47,6 +47,7 @@ export function Node({
       style={{ ...style, paddingLeft: `${10 + (compact ? 10 : 20) * depth}px` }}
       title={node.path}
       target={node.type === 'commit' ? '_blank' : undefined}
+      rel="noopener noreferrer"
       {...platform.delegatePJAXProps?.({ node })}
     >
       <div className={'node-item-label'}>
@@ -71,7 +72,7 @@ const NodeItemIcon = React.memo(function NodeItemIcon({
 
   const src = React.useMemo(
     () => (node.type === 'tree' ? getFolderIconURL(node, open) : getFileIconURL(node)),
-    [open],
+    [node, open],
   )
 
   if (icons === 'native') return <Icon type={getIconType(node)} />

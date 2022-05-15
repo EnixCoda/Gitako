@@ -15,6 +15,8 @@ export function useVisibleNodesGeneratorMethods(
   const goTo = useGoTo(visibleNodesGenerator, updateSearchKey, expandTo)
   const toggleExpansion = useToggleExpansion(visibleNodesGenerator)
   const focusNode = useFocusNode(visibleNodesGenerator)
+
+  // Only run when visibleNodesGenerator changes
   useEffect(() => {
     if (!visibleNodesGenerator) return
 
@@ -26,7 +28,7 @@ export function useVisibleNodesGeneratorMethods(
       const targetPath = getCurrentPath()
       if (targetPath) goTo(targetPath)
     }
-  }, [visibleNodesGenerator])
+  }, [visibleNodesGenerator]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return {
     expandTo,

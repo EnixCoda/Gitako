@@ -10,31 +10,28 @@ import { SettingsSection } from './SettingsSection'
 
 const ACCESS_TOKEN_REGEXP = /^([0-9a-fA-F]+|gh[pousr]_[A-Za-z0-9_]+)$/
 
-type Props = {}
-
-export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
+export function AccessTokenSettings() {
   const configContext = useConfigs()
   const hasAccessToken = Boolean(configContext.value.accessToken)
-  const $useAccessToken = useStateIO('')
+  const [accessToken, setAccessToken] = React.useState('')
   const useAccessTokenHint = useStateIO<React.ReactNode>('')
   const focusInput = useStateIO(false)
 
   const { value: accessTokenHint } = useAccessTokenHint
-  const { value: accessToken } = $useAccessToken
 
   React.useEffect(() => {
     // clear input when access token updates
-    $useAccessToken.onChange('')
+    setAccessToken('')
   }, [configContext.value.accessToken])
 
   const onInputAccessToken = React.useCallback(
     ({ currentTarget: { value } }: React.FormEvent<HTMLInputElement>) => {
-      $useAccessToken.onChange(value)
+      setAccessToken(value)
       useAccessTokenHint.onChange(
         ACCESS_TOKEN_REGEXP.test(value) ? '' : 'Gitako does not recognize the token.',
       )
     },
-    [],
+    [], // eslint-disable-line react-hooks/exhaustive-deps
   )
 
   const saveToken = React.useCallback(
@@ -50,11 +47,11 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
     ) => {
       if (accessToken) {
         configContext.onChange({ accessToken })
-        $useAccessToken.onChange('')
+        setAccessToken('')
         useAccessTokenHint.onChange(hint)
       }
     },
-    [accessToken],
+    [accessToken], // eslint-disable-line react-hooks/exhaustive-deps
   )
 
   const onPressAccessToken = React.useCallback(
@@ -73,6 +70,7 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
             href={wikiLinks.createAccessToken}
             title="A token is required to access private repositories or bypass API rate limits"
             target="_blank"
+            rel="noopener noreferrer"
           >
             (?)
           </a>

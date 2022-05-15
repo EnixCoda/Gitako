@@ -116,9 +116,9 @@ export function FileExplorer({ freeze, metaData }: Props) {
                       )}
                     </>
                   )}
-                  <SizeObserver className={'files'}>
-                    {({ width = 0, height = 0 }) => (
-                      <div className={'magic-size-container'}>
+                  <SizeObserver<HTMLDivElement>>
+                    {({ width = 0, height = 0 }, ref) => (
+                      <div className={'files'} ref={ref}>
                         <ListView
                           height={height}
                           width={width}

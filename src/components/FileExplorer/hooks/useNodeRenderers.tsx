@@ -14,7 +14,7 @@ export function useNodeRenderers(allRenderers: (NodeRenderer | null | undefined)
       ? (node: TreeNode) =>
           renderers.map((render, i) => <React.Fragment key={i}>{render(node)}</React.Fragment>)
       : undefined
-  }, allRenderers)
+  }, allRenderers) // eslint-disable-line react-hooks/exhaustive-deps
 }
 
 export function useRenderFileStatus() {

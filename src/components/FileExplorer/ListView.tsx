@@ -44,7 +44,7 @@ export function ListView({
   const goToCurrentItem = React.useCallback(() => {
     const targetPath = platform.getCurrentPath(metaData.branchName)
     if (targetPath) expandTo(targetPath)
-  }, [metaData.branchName])
+  }, [metaData.branchName, expandTo])
 
   useOnLocationChange(goToCurrentItem)
   useOnPJAXDone(goToCurrentItem)
@@ -52,7 +52,7 @@ export function ListView({
   const { compactFileTree } = useConfigs().value
 
   return (
-    <FixedSizeList
+    <FixedSizeList<NodeRendererContext>
       ref={listRef}
       itemKey={(index, { visibleNodes }) => visibleNodes?.nodes[index]?.path}
       itemData={nodeRendererContext}

@@ -6,16 +6,12 @@ type Size = {
   height: number
 }
 
-type Props = Override<
-  React.HTMLAttributes<HTMLElement>,
-  {
-    type?: string | React.ComponentType
-    children(size: Partial<Size>): React.ReactNode
-  }
->
+type Props<R extends Element> = {
+  children(size: Partial<Size>, ref: React.MutableRefObject<R | null>): React.ReactNode
+}
 
-export function SizeObserver({ type = 'div', children, ...rest }: Props) {
-  const ref = React.useRef<any>()
+export function SizeObserver<R extends Element>({ children }: Props<R>) {
+  const ref = React.useRef<R | null>(null)
 
   const [size, setSize] = React.useState<Partial<Size>>({
     width: undefined,
@@ -42,7 +38,5 @@ export function SizeObserver({ type = 'div', children, ...rest }: Props) {
     }
   }, [])
 
-  const props: any = { ...rest, ref } // :)
-
-  return React.createElement(type, props, children(size))
+  return <>{children(size, ref)}</>
 }

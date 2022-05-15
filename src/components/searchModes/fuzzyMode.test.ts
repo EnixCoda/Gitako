@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { fuzzyMode } from './fuzzyMode'
 
 type TreeNodeSource = {
   [key: string]: true | TreeNodeSource
 }
 
-function createTreeNode(source: TreeNodeSource, name: string = '', paths: string[] = []): TreeNode {
+function createTreeNode(source: TreeNodeSource, name = '', paths: string[] = []): TreeNode {
   const subPaths = paths.concat(name)
   return {
     name,

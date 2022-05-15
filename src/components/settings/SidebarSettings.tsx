@@ -8,9 +8,7 @@ import * as keyHelper from 'utils/keyHelper'
 import { Field } from './Field'
 import { SettingsSection } from './SettingsSection'
 
-type Props = {}
-
-export function SidebarSettings(props: React.PropsWithChildren<Props>) {
+export function SidebarSettings() {
   const configContext = useConfigs()
   const useToggleShowSideBarShortcut = useStateIO(configContext.value.shortcut)
   const { value: toggleShowSideBarShortcut } = useToggleShowSideBarShortcut
@@ -18,7 +16,7 @@ export function SidebarSettings(props: React.PropsWithChildren<Props>) {
 
   React.useEffect(() => {
     useToggleShowSideBarShortcut.onChange(configContext.value.shortcut)
-  }, [configContext.value.shortcut])
+  }, [configContext.value.shortcut]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <SettingsSection title={'Sidebar'}>
@@ -38,7 +36,7 @@ export function SidebarSettings(props: React.PropsWithChildren<Props>) {
               // Clear shortcut with backspace
               const shortcut = e.key === 'Backspace' ? '' : keyHelper.parseEvent(e)
               useToggleShowSideBarShortcut.onChange(shortcut)
-            }, [])}
+            }, [])} // eslint-disable-line react-hooks/exhaustive-deps
             readOnly
           />
           {configContext.value.shortcut === toggleShowSideBarShortcut ? (

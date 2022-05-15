@@ -33,7 +33,12 @@ export function SimpleToggleField<Key extends keyof Config>({ field, onChange }:
         <>
           {field.label}{' '}
           {field.wikiLink ? (
-            <a href={field.wikiLink} title={field.tooltip} target={'_blank'}>
+            <a
+              href={field.wikiLink}
+              title={field.tooltip}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               (?)
             </a>
           ) : field.description ? (

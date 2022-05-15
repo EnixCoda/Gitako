@@ -31,9 +31,8 @@ export function SideBar() {
   const accessToken = configContext.value.accessToken || ''
   const [baseSize] = React.useState(() => configContext.value.sideBarWidth)
 
-  const $showSettings = useStateIO(false)
-  const showSettings = $showSettings.value
-  const toggleShowSettings = React.useCallback(() => $showSettings.onChange(show => !show), [])
+  const [showSettings, setShowSettings] = React.useState(false)
+  const toggleShowSettings = React.useCallback(() => setShowSettings(show => !show), [])
 
   const $logoContainerElement = useStateIO<HTMLElement | null>(null)
 
@@ -41,12 +40,12 @@ export function SideBar() {
   React.useEffect(() => {
     if (hasMetaData) {
       DOMHelper.markGitakoReadyState(true)
-      $showSettings.onChange(false)
+      setShowSettings(false)
       $logoContainerElement.onChange(DOMHelper.insertLogoMountPoint())
     } else {
       DOMHelper.markGitakoReadyState(false)
     }
-  }, [hasMetaData])
+  }, [hasMetaData]) // eslint-disable-line react-hooks/exhaustive-deps
 
   React.useEffect(() => {
     if (detectBrowser() === 'Safari') DOMHelper.markGitakoSafariFlag()
@@ -79,7 +78,7 @@ export function SideBar() {
     if (intelligentToggle !== null) {
       configContext.onChange({ intelligentToggle: shouldShow })
     }
-  }, [shouldShow, intelligentToggle])
+  }, [shouldShow, intelligentToggle]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const error = useLoadedContext(SideBarErrorContext).value
   // Lock shouldShow on error
@@ -87,25 +86,25 @@ export function SideBar() {
     if (error && shouldShow) {
       $shouldShow.onChange(false)
     }
-  }, [error])
+  }, [error]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const setShowSideBar = React.useCallback(
-    (show: typeof $shouldShow.value) => {
+    (show: boolean) => {
       if (!error) $shouldShow.onChange(show)
     },
-    [error],
+    [error], // eslint-disable-line react-hooks/exhaustive-deps
   )
 
   const toggleShowSideBar = React.useCallback(() => {
     if (!error) $shouldShow.onChange(show => !show)
-  }, [error])
+  }, [error]) // eslint-disable-line react-hooks/exhaustive-deps
   useToggleSideBarWithKeyboard(state, configContext, toggleShowSideBar)
 
   const updateSideBarVisibility = React.useCallback(() => {
     if (intelligentToggle === null && sidebarToggleMode === 'persistent') {
       setShowSideBar(platform.shouldShow())
     }
-  }, [intelligentToggle, sidebarToggleMode])
+  }, [intelligentToggle, sidebarToggleMode, setShowSideBar])
 
   useOnPJAXDone(updateSideBarVisibility)
 
@@ -120,7 +119,7 @@ export function SideBar() {
     if (hideSidebarOnInvalidToken) {
       setShowSideBar(false)
     }
-  }, [hideSidebarOnInvalidToken])
+  }, [hideSidebarOnInvalidToken, setShowSideBar])
 
   return (
     <Theme>

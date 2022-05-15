@@ -38,9 +38,7 @@ const recursiveToggleFolderOptions: Option<Config['recursiveToggleFolder']>[] = 
   },
 ]
 
-type Props = {}
-
-export function FileTreeSettings(props: React.PropsWithChildren<Props>) {
+export function FileTreeSettings() {
   const configContext = useConfigs()
   return (
     <SettingsSection title={'File Tree'}>

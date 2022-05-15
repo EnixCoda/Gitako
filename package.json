@@ -96,6 +96,9 @@
   },
   "eslintConfig": {
     "root": true,
+    "env": {
+      "browser": true
+    },
     "parser": "@typescript-eslint/parser",
     "plugins": [
       "@typescript-eslint"
@@ -105,7 +108,10 @@
       "plugin:@typescript-eslint/recommended",
       "plugin:react/recommended",
       "plugin:react-hooks/recommended"
-    ]
+    ],
+    "rules": {
+      "@typescript-eslint/ban-types": "off"
+    }
   },
   "resolutions": {
     "@types/react": "^18.0.9",

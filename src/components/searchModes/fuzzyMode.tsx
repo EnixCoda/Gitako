@@ -57,7 +57,7 @@ function fuzzyMatch(input: string, sample: string) {
   }
 }
 
-function fuzzyMatchIndexes(input: string, sample: string, shift: number = 0) {
+function fuzzyMatchIndexes(input: string, sample: string, shift = 0) {
   const indexes: number[] = []
   let i = 0,
     j = 0

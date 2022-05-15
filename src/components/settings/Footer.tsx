@@ -15,8 +15,9 @@ export function Footer(props: Props) {
       <Link
         className={'version'}
         href={wikiLinks.changeLog}
-        target={'_blank'}
         title={'Check out new features!'}
+        target="_blank"
+        rel="noopener noreferrer"
       >
         {VERSION}
       </Link>

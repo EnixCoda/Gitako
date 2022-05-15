@@ -41,7 +41,7 @@ export function ToggleShowButton({ error, className, onClick, onHover }: Props) 
     if (ref.current) {
       ref.current.style.top = distance + 'px'
     }
-  }, [height])
+  }, [height]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // And this repositions on drag
   const { onPointerDown } = useResizeHandler(

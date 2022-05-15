@@ -72,11 +72,19 @@ export function SettingsBarContent({ toggleShow }: { toggleShow: () => void }) {
           </SettingsSection>
         )}
         <SettingsSection title={'Talk to the author'}>
-          <a href="https://github.com/EnixCoda/Gitako/issues" target="_blank">
+          <a
+            href="https://github.com/EnixCoda/Gitako/issues"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Report bug
           </a>
           {' / '}
-          <a href="https://github.com/EnixCoda/Gitako/discussions" target="_blank">
+          <a
+            href="https://github.com/EnixCoda/Gitako/discussions"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Discuss feature
           </a>
         </SettingsSection>
