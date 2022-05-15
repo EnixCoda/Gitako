@@ -4,7 +4,6 @@ import { isNotFalsy } from 'utils/general'
 import { Icon } from '../../Icon'
 import { SearchMode } from '../../searchModes'
 import { DiffStatGraph } from './../DiffStatGraph'
-import { DiffStatText } from './../DiffStatText'
 
 export type NodeRenderer = (node: TreeNode) => React.ReactNode
 
@@ -26,12 +25,11 @@ export function useRenderFileStatus() {
           className={'node-item-diff'}
           title={`${diff.status}, ${diff.changes} changes: +${diff.additions} & -${diff.deletions}`}
         >
-          {showDiffInText ? <DiffStatText diff={diff} /> : <DiffStatGraph diff={diff} />}
+          <DiffStatGraph diff={diff} />
         </span>
       )
     )
   }
-  const { showDiffInText } = useConfigs().value
   return React.useMemo(() => renderFileStatus, [])
 }
 

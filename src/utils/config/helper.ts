@@ -19,7 +19,6 @@ export type Config = {
   codeFolding: boolean
   compactFileTree: boolean
   restoreExpandedFolders: boolean
-  showDiffInText: boolean
 }
 
 enum configKeys {
@@ -39,7 +38,6 @@ enum configKeys {
   codeFolding = 'codeFolding',
   compactFileTree = 'compactFileTree',
   restoreExpandedFolders = 'restoreExpandedFolders',
-  showDiffInText = 'showDiffInText',
 }
 
 // do NOT use platform name
@@ -62,7 +60,6 @@ export const defaultConfigs: Config = {
   codeFolding: true,
   compactFileTree: false,
   restoreExpandedFolders: true,
-  showDiffInText: false,
 }
 
 const configKeyArray = Object.values(configKeys)
