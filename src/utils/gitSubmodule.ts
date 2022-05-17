@@ -10,7 +10,7 @@ const subModuleURLRegex = {
 function transformModuleGitURL(node: TreeNode, URL: string) {
   const matched = URL.match(subModuleURLRegex.git)
   if (!matched) return
-  const [_, userName, repoName] = matched
+  const [, userName, repoName] = matched
   return appendCommitPath(`https://${window.location.host}/${userName}/${repoName}`, node)
 }
 

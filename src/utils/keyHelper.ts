@@ -46,8 +46,8 @@ export function parseEvent(e: KeyboardEvent | React.KeyboardEvent) {
     const keys = { meta, ctrl, shift, alt, [code]: true }
     const combination = parse(
       Object.entries(keys)
-        .filter(([key, pressed]) => pressed)
-        .map(([key, pressed]) => key)
+        .filter(([, pressed]) => pressed)
+        .map(([key]) => key)
         .join('+'),
     )
     return combination

@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/browser'
 import { Middleware } from 'driver/connect.js'
 import { IN_PRODUCTION_MODE, VERSION } from 'env'
 import { platform } from 'platforms'
+import { forOf } from 'utils/general'
 
 const PUBLIC_KEY = 'd22ec5c9cc874539a51c78388c12e3b0'
 const PROJECT_ID = '1406497'
@@ -69,12 +70,7 @@ export const withErrorLog: Middleware = function withErrorLog(method, args) {
   ]
 }
 
-export function raiseError(
-  error: Error,
-  extra?: {
-    [key: string]: any
-  },
-) {
+export function raiseError(error: Error, extra?: unknown) {
   if (!IN_PRODUCTION_MODE || platform.isEnterprise()) {
     // ignore errors from enterprise to get less noise on Sentry
     console.error(error)
@@ -83,10 +79,8 @@ export function raiseError(
   }
 
   Sentry.withScope(scope => {
-    if (extra) {
-      Object.keys(extra).forEach(key => {
-        scope.setExtra(key, extra[key])
-      })
+    if (typeof extra === 'object' && extra) {
+      forOf(extra, (key, value) => scope.setExtra(key, value))
     }
     Sentry.captureException(error)
   })

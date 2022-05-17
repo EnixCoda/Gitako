@@ -51,10 +51,11 @@ function init() {
     type Level = number // measured by leading whitespace amount
     const stack: [Level, LineNumber][] = []
 
-    function trySeal(lineNumber: number, level: number) {
+    const trySeal = (lineNumber: number, level: number) => {
       let ignoredTheHighestLevelItem = false
       while (stack.length) {
-        const top = stack.pop()! // safe
+        const top = stack.pop()
+        if (top === undefined) throw new Error()
         const [$LineNumber, $level] = top
 
         if ($level < level) {

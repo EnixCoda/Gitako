@@ -15,7 +15,7 @@ export async function getCommitTreeData(
     .map(({ files }) => files)
     .flat()
 
-  const documents = await API.getCommitPageDocuments(userName, repoName, commitSHA)
+  const documents = await API.getCommitPageDocuments(/* userName, repoName, commitSHA */)
 
   const getItemURL = (path: string) => {
     for (const doc of documents) {

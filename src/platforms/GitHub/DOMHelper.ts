@@ -73,7 +73,7 @@ export function getCurrentBranch(passive = false) {
     const commitPathRegex = /^(.*?)\/(.*?)\/find\/(.*?)$/
     const result = urlFromFindFileButton.match(commitPathRegex)
     if (result) {
-      const [_, userName, repoName, branchName] = result
+      const [_, userName, repoName, branchName] = result // eslint-disable-line @typescript-eslint/no-unused-vars
       if (!branchName.includes(' ')) return branchName
     }
   }

@@ -7,11 +7,10 @@ import { GitHub } from '../index'
 export function useGitHubAttachCopySnippetButton(copySnippetButton: boolean) {
   const attachCopySnippetButton = React.useCallback(
     function attachCopySnippetButton() {
-      if (platform !== GitHub) return
-      if (copySnippetButton) return DOMHelper.attachCopySnippet() || undefined // for the sake of react effect
+      if (platform === GitHub && copySnippetButton) DOMHelper.attachCopySnippet()
     },
     [copySnippetButton],
   )
-  React.useEffect(attachCopySnippetButton, [copySnippetButton])
+  React.useEffect(attachCopySnippetButton, [attachCopySnippetButton])
   useOnPJAXDone(attachCopySnippetButton)
 }

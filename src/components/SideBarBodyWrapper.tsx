@@ -7,6 +7,7 @@ import { cx } from 'utils/cx'
 import { setCSSVariable } from 'utils/DOMHelper'
 import * as features from 'utils/features'
 import { detectBrowser } from 'utils/general'
+import { ResizeState } from 'utils/hooks/useResizeHandler'
 import { useConditionalHook } from '../utils/hooks/useConditionalHook'
 
 type Size = number
@@ -107,6 +108,10 @@ export function SideBarBodyWrapper({
   )
 
   const dummySize: [number, number] = React.useMemo(() => [size, size], [size])
+  const onResizeStateChange = React.useCallback((state: ResizeState) => {
+    blockLeaveRef.current = state === 'resizing'
+  }, [])
+
   return (
     <div
       ref={bodyWrapperRef}
@@ -122,9 +127,7 @@ export function SideBarBodyWrapper({
             setSize(defaultConfigs.sideBarWidth)
             applySizeToCSSVariables(sizeVariableMountPoint, defaultConfigs.sideBarWidth)
           }}
-          onResizeStateChange={state => {
-            blockLeaveRef.current = state === 'resizing'
-          }}
+          onResizeStateChange={onResizeStateChange}
           size={dummySize}
         />
       )}

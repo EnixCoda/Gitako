@@ -43,6 +43,6 @@ export function useCatchNetworkError() {
         }
       }
     },
-    [accessToken /* , stateContext.value, errorContext.value */],
+    [accessToken /* , stateContext.value, errorContext.value */], // eslint-disable-line react-hooks/exhaustive-deps
   )
 }

@@ -1,3 +1,4 @@
+import { forOf } from 'utils/general'
 import { dummyPlatformForTypeSafety } from './dummyPlatformForTypeSafety'
 import { Gitea } from './Gitea'
 import { Gitee } from './Gitee'
@@ -17,10 +18,9 @@ function resolvePlatform() {
 }
 
 function getPlatformName() {
-  const keys = Object.keys(platforms) as (keyof typeof platforms)[]
-  for (const key of keys) {
-    if (platform === platforms[key]) return key
-  }
+  return forOf(platforms, (name, $platform) => {
+    if (platform === $platform) return name
+  })
 }
 
 export const platform = resolvePlatform()

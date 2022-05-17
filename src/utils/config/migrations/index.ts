@@ -19,14 +19,14 @@ export async function migrateConfig() {
   }
 }
 
-export async function onConfigOutdated<T extends { [key: string]: any }>(
+export async function onConfigOutdated<T extends JSONObject>(
   configVersion: string,
   runIfOutdated: (config: T) => Async<void>,
 ) {
   const config = await storageHelper.get<Storage>()
 
   if (config && config.configVersion < configVersion) {
-    const { configVersion: $configVersion, ...restConfig } = config
+    const { configVersion: $configVersion, ...restConfig } = config // eslint-disable-line @typescript-eslint/no-unused-vars
     await runIfOutdated(restConfig as T)
     await storageHelper.set({ configVersion })
   }

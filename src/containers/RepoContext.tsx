@@ -38,10 +38,13 @@ function usePartialMetaData(): PartialMetaData | null {
   // sync along URL and DOM
   const $partialMetaData = useStateIO(isGettingAccessToken ? null : resolvePartialMetaData)
   const $committedPartialMetaData = useStateIO($partialMetaData.value)
-  const setPartialMetaData = () => $partialMetaData.onChange(resolvePartialMetaData())
+  const setPartialMetaData = React.useCallback(
+    () => $partialMetaData.onChange(resolvePartialMetaData()),
+    [], // eslint-disable-line react-hooks/exhaustive-deps
+  )
   React.useEffect(() => {
     if (!isGettingAccessToken) setPartialMetaData()
-  }, [isGettingAccessToken])
+  }, [isGettingAccessToken, setPartialMetaData])
   useOnPJAXDone(setPartialMetaData)
   useEffectOnSerializableUpdates(
     $partialMetaData.value,
@@ -52,7 +55,7 @@ function usePartialMetaData(): PartialMetaData | null {
     if (!$partialMetaData.value && !isGettingAccessToken) {
       $state.onChange('disabled')
     }
-  }, [$partialMetaData.value])
+  }, [$partialMetaData.value]) // eslint-disable-line react-hooks/exhaustive-deps
   return $committedPartialMetaData.value
 }
 
@@ -76,7 +79,7 @@ function useDefaultBranch(partialMetaData: PartialMetaData | null) {
       const defaultBranch = await platform.getDefaultBranchName(partialMetaData, accessToken)
       $defaultBranch.onChange(defaultBranch)
     })
-  }, [partialMetaData, accessToken])
+  }, [partialMetaData, accessToken]) // eslint-disable-line react-hooks/exhaustive-deps
   return $defaultBranch.value
 }
 
@@ -102,6 +105,6 @@ function useMetaData(
     } else {
       $metaData.onChange(null)
     }
-  }, [partialMetaData, defaultBranchName, theBranch])
+  }, [partialMetaData, defaultBranchName, theBranch]) // eslint-disable-line react-hooks/exhaustive-deps
   return $metaData.value
 }

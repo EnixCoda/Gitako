@@ -3,8 +3,6 @@ import { cx } from 'utils/cx'
 import { copyElementContent } from 'utils/DOMHelper'
 import { getCodeElement } from './DOMHelper'
 
-type Props = {}
-
 const className = 'gitako-copy-file-button'
 export const copyFileButtonClassName = className
 
@@ -13,7 +11,8 @@ const contents = {
   error: 'Copy failed!',
   normal: 'Copy file',
 }
-export function CopyFileButton(props: React.PropsWithChildren<Props>) {
+
+export function CopyFileButton() {
   const [content, setContent] = React.useState(contents.normal)
   React.useEffect(() => {
     if (content !== contents.normal) {
@@ -31,7 +30,7 @@ export function CopyFileButton(props: React.PropsWithChildren<Props>) {
     // onClick on <a /> won't work when rendered with `renderReact`
     const element = elementRef.current
     if (element) {
-      function copyCode() {
+      const copyCode = () => {
         const codeElement = getCodeElement()
         if (codeElement) {
           setContent(copyElementContent(codeElement, true) ? contents.success : contents.error)

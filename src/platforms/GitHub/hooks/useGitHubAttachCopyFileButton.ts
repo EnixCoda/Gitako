@@ -7,11 +7,10 @@ import { GitHub } from '../index'
 export function useGitHubAttachCopyFileButton(copyFileButton: boolean) {
   const attachCopyFileButton = React.useCallback(
     function attachCopyFileButton() {
-      if (platform !== GitHub) return
-      if (copyFileButton) return DOMHelper.attachCopyFileBtn() || undefined // for the sake of react effect
+      if (platform === GitHub && copyFileButton) DOMHelper.attachCopyFileBtn()
     },
     [copyFileButton],
   )
-  React.useEffect(attachCopyFileButton, [copyFileButton])
+  React.useEffect(attachCopyFileButton, [attachCopyFileButton])
   useOnPJAXDone(attachCopyFileButton)
 }

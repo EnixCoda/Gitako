@@ -61,7 +61,7 @@ function getUrlForRedirect(
   userName: string,
   repoName: string,
   branchName: string,
-  type = 'blob',
+  type = 'blob', // eslint-disable-line @typescript-eslint/no-unused-vars
   path = '',
 ) {
   // Modern browsers have great support for handling unsafe URL,

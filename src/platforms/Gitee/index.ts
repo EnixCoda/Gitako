@@ -184,11 +184,10 @@ export const Gitee: Platform = {
 export function useGiteeAttachCopySnippetButton(copySnippetButton: boolean) {
   const attachCopySnippetButton = React.useCallback(
     function attachCopySnippetButton() {
-      if (platform !== Gitee) return
-      if (copySnippetButton) return DOMHelper.attachCopySnippet() || undefined // for the sake of react effect
+      if (platform === Gitee && copySnippetButton) DOMHelper.attachCopySnippet()
     },
     [copySnippetButton],
   )
-  React.useEffect(attachCopySnippetButton, [copySnippetButton])
+  React.useEffect(attachCopySnippetButton, [attachCopySnippetButton])
   useOnPJAXDone(attachCopySnippetButton)
 }

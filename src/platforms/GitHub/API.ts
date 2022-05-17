@@ -1,17 +1,21 @@
 import { errors } from 'platforms'
 import { isEnterprise } from '.'
+import { is } from '../../utils/is'
 import { continuousLoadPages, getDOM, resolveHeaderLink } from './utils'
 
-function isAPIRateLimitExceeded(content: any /* safe any */) {
-  return content?.['documentation_url'] === 'https://developer.github.com/v3/#rate-limiting'
+function isAPIRateLimitExceeded(content: JSONValue) {
+  return (
+    is.JSON.object(content) &&
+    content?.['documentation_url'] === 'https://developer.github.com/v3/#rate-limiting'
+  )
 }
 
-function isEmptyProject(content: any /* safe any */) {
-  return content?.['message'] === 'Git Repository is empty.'
+function isEmptyProject(content: JSONValue) {
+  return is.JSON.object(content) && content?.['message'] === 'Git Repository is empty.'
 }
 
-function isBlockedProject(content: any /* safe any */) {
-  return content?.['message'] === 'Repository access blocked'
+function isBlockedProject(content: JSONValue) {
+  return is.JSON.object(content) && content?.['message'] === 'Repository access blocked'
 }
 
 export const responseBodyResolvers = {
@@ -151,11 +155,10 @@ export async function getPullPageDocuments(
   )
 }
 
-export async function getCommitPageDocuments(
-  userName: string,
+export async function getCommitPageDocuments(): Promise<Document[]> {
+  /* userName: string,
   repoName: string,
-  commitId: string,
-): Promise<Document[]> {
+  commitId: string, */
   // arguments are not used because info are collected from DOM directly
   return continuousLoadPages(document)
 }
@@ -191,7 +194,7 @@ export async function requestCommitTreeData(
   userName: string,
   repoName: string,
   sha: string,
-  page: number = 1,
+  page = 1,
   accessToken?: string,
 ): Promise<Response> {
   const search = new URLSearchParams({
@@ -205,6 +208,7 @@ export async function requestCommitTreeData(
 export async function getPaginatedData<T>(sendRequest: (page: number) => Promise<Response>) {
   const responses: Response[] = []
   let page = 1
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     const response = await sendRequest(page)
     responses.push(response)

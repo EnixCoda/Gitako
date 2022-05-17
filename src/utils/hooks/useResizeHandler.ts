@@ -31,13 +31,14 @@ export function useResizeHandler(
       if (!pointerDown.current) return
       const [x0, y0] = initialSizeRef.current
       // Allow minor movement, this happened unintentionally for few times when I use track pad
-      pointerMoved.current = pointerMoved.current || (clientX - x0) ** 2 + (clientY - y0) ** 2 > distanceTolerance ** 2
+      pointerMoved.current =
+        pointerMoved.current || (clientX - x0) ** 2 + (clientY - y0) ** 2 > distanceTolerance ** 2
       const [x1, y1] = baseSize.current
       onResize([x1 + clientX - x0, y1 + clientY - y0])
     }
     window.addEventListener('pointermove', onPointerMove)
     return () => window.removeEventListener('pointermove', onPointerMove)
-  }, [onResize])
+  }, [onResize, distanceTolerance])
 
   React.useEffect(() => {
     const onPointerUp = (e: PointerEvent) => {
@@ -53,16 +54,19 @@ export function useResizeHandler(
     }
     window.addEventListener('pointerup', onPointerUp)
     return () => window.removeEventListener('pointerup', onPointerUp)
-  }, [])
+  }, [onClick, onResizeStateChange])
 
-  const onPointerDown = React.useCallback((e: React.PointerEvent) => {
-    e.preventDefault() // Prevent unexpected selection when dragging in Safari
-    const { clientX, clientY } = e
-    pointerDown.current = true
-    initialSizeRef.current = [clientX, clientY]
-    baseSize.current = latestPropSize.current
-    onResizeStateChange?.('resizing')
-  }, [])
+  const onPointerDown = React.useCallback(
+    (e: React.PointerEvent) => {
+      e.preventDefault() // Prevent unexpected selection when dragging in Safari
+      const { clientX, clientY } = e
+      pointerDown.current = true
+      initialSizeRef.current = [clientX, clientY]
+      baseSize.current = latestPropSize.current
+      onResizeStateChange?.('resizing')
+    },
+    [onResizeStateChange],
+  )
 
   return { onPointerDown }
 }

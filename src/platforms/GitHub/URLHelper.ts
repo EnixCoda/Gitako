@@ -4,7 +4,7 @@ export function parse(): Partial<Pick<MetaData, 'userName' | 'repoName' | 'type'
   path: string[]
 } {
   const { pathname } = window.location
-  let [
+  const [
     ,
     // ignore content before the first '/'
     userName,

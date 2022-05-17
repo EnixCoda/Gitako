@@ -1,12 +1,13 @@
 import { raiseError } from 'analytics'
 import { errors } from 'platforms'
+import { is } from 'utils/is'
 
-function isEmptyProject(content: any /* safe any */) {
-  return content?.['message'] === 'Git Repository is empty.'
+function isEmptyProject(content: JSONValue) {
+  return is.JSON.object(content) && content?.['message'] === 'Git Repository is empty.'
 }
 
-function isBlockedProject(content: any /* safe any */) {
-  return content?.['message'] === 'Repository access blocked'
+function isBlockedProject(content: JSONValue) {
+  return is.JSON.object(content) && content?.['message'] === 'Repository access blocked'
 }
 
 async function request(

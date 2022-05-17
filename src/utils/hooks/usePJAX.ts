@@ -22,7 +22,7 @@ const config: Config = {
   },
   link: 'a:not(a)', // this helps fixing the go-back-in-history issue
   form: 'form:not(form)', // prevent blocking form submissions
-  fallback(target, reason) {
+  fallback(/* target, reason */) {
     // prevent unexpected reload
   },
 }

@@ -73,10 +73,7 @@ function applyDefaultConfigs(configs: Partial<Config>) {
 
 export type VersionedConfig<SiteConfig> = Record<string, SiteConfig> & { configVersion: string }
 
-const prepareConfig = new Promise<void>(async resolve => {
-  await migrateConfig()
-  resolve()
-})
+const prepareConfig = new Promise((resolve, reject) => migrateConfig().then(resolve, reject))
 
 async function get(): Promise<Config> {
   await prepareConfig

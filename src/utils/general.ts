@@ -60,21 +60,6 @@ export function friendlyFormatShortcut(shortcut?: string) {
   }
 }
 
-/**
- * if item's name matches path, return the depth of the item
- * else return 0
- */
-function measureDistance(item: TreeNode, path: TreeNode['name'][]): number {
-  const pathString = path.join('/')
-  if (item.name.startsWith(pathString + '/')) {
-    // If accessing a leading item of compressed node, path will be shorter than item.name
-    return path.length
-  } else if (pathString === item.name || pathString.startsWith(item.name + '/')) {
-    return item.name.split('/').length
-  }
-  return 0
-}
-
 export async function traverse<T>(
   range: T[] = [],
   conditionAndEffect: (node: T) => Async<boolean>,
@@ -121,7 +106,11 @@ export function parseURLSearch(search = window.location.search) {
   return new URLSearchParams(search)
 }
 
-export async function JSONRequest(url: string, data: any, extra: RequestInit = { method: 'post' }) {
+export async function JSONRequest<D>(
+  url: string,
+  data: D,
+  extra: RequestInit = { method: 'post' },
+) {
   return (
     await fetch(url, {
       mode: 'cors',
@@ -171,12 +160,12 @@ export function isValidRegexpSource(source: string) {
   return Boolean(safeRegexp(source))
 }
 
-export function withEffect<Method extends (...args: any[]) => any>(
+export function withEffect<Method extends (...args: any[]) => any>( // eslint-disable-line @typescript-eslint/no-explicit-any
   method: Method,
   effect: (payload: ReturnType<Method>) => void,
 ): (...args: Parameters<Method>) => ReturnType<Method> {
   return (...args) => {
-    const returnValue = method.apply(null, args)
+    const returnValue = method(...args)
     Promise.resolve(returnValue).then(effect)
     return returnValue
   }
@@ -184,22 +173,6 @@ export function withEffect<Method extends (...args: any[]) => any>(
 
 export function run<T>(fn: () => T) {
   return fn()
-}
-
-export function createPromiseQueue() {
-  let promise: Promise<void>
-  return {
-    async enter() {
-      let leave: () => void
-      const current = new Promise<void>(resolve => (leave = () => resolve()))
-
-      const lastPromise = promise
-      promise = current!
-      if (lastPromise) await lastPromise
-
-      return leave!
-    },
-  }
 }
 
 export function isOpenInNewWindowClick(event: React.MouseEvent<HTMLElement, MouseEvent>) {
@@ -227,4 +200,12 @@ export function formatHash(hash?: string) {
 
 export function isNotFalsy<T>(value: T | undefined | null): value is T {
   return value !== undefined && value !== null
+}
+
+export function forOf<T, R>(target: T, callback: <K extends keyof T>(key: K, value: T[K]) => R) {
+  for (const key of Object.keys(target)) {
+    const $key = key as keyof typeof target
+    const r = callback($key, target[$key])
+    if (r !== undefined) return r
+  }
 }

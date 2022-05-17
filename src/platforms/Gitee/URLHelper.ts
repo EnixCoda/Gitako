@@ -2,7 +2,7 @@ import { raiseError } from 'analytics'
 
 export function parse(): Partial<MetaData> & { path: string[] } {
   const { pathname } = window.location
-  let [
+  const [
     ,
     // ignore content before the first '/'
     userName,

@@ -47,7 +47,7 @@ export function $<T2>(
   existCallback: undefined | null,
   otherwise: () => T2,
 ): HTMLElement | null | T2
-export function $(selector: string, existCallback?: any, otherwise?: any) {
+export function $(selector: string, existCallback?: any, otherwise?: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
   const element = document.querySelector(selector)
   if (element) {
     return existCallback ? existCallback(element) : element

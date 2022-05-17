@@ -16,6 +16,6 @@ export const dummyPlatformForTypeSafety: Platform = {
   getOAuthLink: dummyPlatformMethod,
 }
 
-function dummyPlatformMethod(): any {
+function dummyPlatformMethod(): any { // eslint-disable-line @typescript-eslint/no-explicit-any
   throw new Error(`Do not call dummy platform methods`)
 }
