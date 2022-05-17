@@ -1,5 +1,4 @@
 import * as Sentry from '@sentry/browser'
-import { Middleware } from 'driver/connect.js'
 import { IN_PRODUCTION_MODE, VERSION } from 'env'
 import { platform } from 'platforms'
 import { forOf } from 'utils/general'
@@ -56,19 +55,6 @@ const sentryOptions: Sentry.BrowserOptions = {
   autoSessionTracking: false, // this avoids the request when calling `init`
 }
 Sentry.init(sentryOptions)
-
-export const withErrorLog: Middleware = function withErrorLog(method, args) {
-  return [
-    async function (...args) {
-      try {
-        await method(...args)
-      } catch (error) {
-        if (error instanceof Error) raiseError(error)
-      }
-    } as typeof method,
-    args,
-  ]
-}
 
 export function raiseError(error: Error, extra?: unknown) {
   if (!IN_PRODUCTION_MODE || platform.isEnterprise()) {

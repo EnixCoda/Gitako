@@ -1,14 +1,10 @@
-import { withErrorLog } from 'analytics'
 import { Gitako } from 'components/Gitako'
-import { addMiddleware } from 'driver/connect'
 import { platform } from 'platforms'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import './content.scss'
 
 if (platform.resolvePartialMetaData()) {
-  addMiddleware(withErrorLog)
-
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init)
   } else {
