@@ -399,9 +399,6 @@ $minimal-z-index: max(
         left: calc(0px - #{$resizeHandlerWidth} - var(--gitako-width));
       }
     }
-
-    .gitako-side-bar-body-wrapper-content {
-    }
   }
   .#{$name}-resize-handler {
     display: flex;
@@ -872,6 +869,7 @@ $minimal-z-index: max(
       flex-direction: column;
       max-height: calc(100vh - 240px);
       min-height: 240px;
+      z-index: 1;
 
       &-header {
         display: flex;
@@ -881,7 +879,7 @@ $minimal-z-index: max(
         padding: 10px;
         box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.2), 0 3px 4px 0 rgba(0, 0, 0, 0.14),
           0 3px 3px -2px rgba(0, 0, 0, 0.12);
-        z-index: 1;
+        z-index: 2;
       }
 
       &-content {
