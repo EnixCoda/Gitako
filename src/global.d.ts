@@ -17,8 +17,8 @@ type TreeNode = {
   sha?: string
   accessDenied?: boolean
   comments?: {
-    active: number,
-    resolved: number,
+    active: number
+    resolved: number
   }
   diff?: {
     status: 'modified' | 'added' | 'removed' | 'renamed'
@@ -43,3 +43,10 @@ type VoidFN<T> = (payload: T) => void
 
 type Async<T> = T | Promise<T>
 type EnumString<S extends string> = S | (string & {})
+
+type JSONPrimitive = string | number | boolean | null | undefined
+type JSONObject = {
+  [key: string]: JSONValue
+}
+type JSONArray = JSONValue[]
+type JSONValue = JSONPrimitive | JSONObject | JSONArray
