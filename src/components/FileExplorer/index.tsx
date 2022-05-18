@@ -23,7 +23,6 @@ import {
 import { useHandleNodeClick } from './hooks/useOnNodeClick'
 import { useOnSearch } from './hooks/useOnSearch'
 import { useVisibleNodesGeneratorMethods } from './hooks/useOnVisibleNodesGeneratorReady'
-import { useReactWindowAlignMode } from './hooks/useReactWindowAlignMode'
 import { useRenderLabelText } from './hooks/useRenderLabelText'
 import { useVisibleNodesGenerator } from './hooks/useSetupTree'
 import { ListView } from './ListView'
@@ -75,7 +74,6 @@ export function FileExplorer({ freeze, metaData }: Props) {
     renderLabelText,
   )
 
-  const alignMode = useReactWindowAlignMode(searched)
   const state = useLoadedContext(SideBarStateContext).value
   useFocusFileExplorerOnFirstRender()
 
@@ -125,7 +123,6 @@ export function FileExplorer({ freeze, metaData }: Props) {
                           nodeRendererContext={nodeRendererContext}
                           expandTo={expandTo}
                           metaData={metaData}
-                          alignMode={alignMode}
                         />
                       </div>
                     )}

@@ -1,7 +1,7 @@
 import { useConfigs } from 'containers/ConfigsContext'
 import { platform } from 'platforms'
 import * as React from 'react'
-import { Align as ReactWindowAlign, FixedSizeList } from 'react-window'
+import { FixedSizeList } from 'react-window'
 import { useOnLocationChange } from 'utils/hooks/useOnLocationChange'
 import { useOnPJAXDone } from 'utils/hooks/usePJAX'
 import { NodeRendererContext } from '.'
@@ -11,7 +11,6 @@ type ListViewProps = {
   height: number
   width: number
   nodeRendererContext: NodeRendererContext
-  alignMode: ReactWindowAlign
   metaData: MetaData
   expandTo: (path: string[]) => void
 }
@@ -22,25 +21,22 @@ export function ListView({
   metaData,
   expandTo,
   nodeRendererContext,
-  alignMode,
 }: ListViewProps) {
   const { visibleNodes } = nodeRendererContext
   const { focusedNode, nodes } = visibleNodes
+
   const listRef = React.useRef<FixedSizeList<NodeRendererContext>>(null)
-
-  // Scroll to focused node
+  const index = React.useMemo(
+    () =>
+      width && height && focusedNode?.path
+        ? nodes.findIndex(node => node.path === focusedNode.path)
+        : -1,
+    [focusedNode?.path, nodes, width, height],
+  )
   React.useEffect(() => {
-    if (listRef.current && focusedNode?.path) {
-      const index = nodes.findIndex(node => node.path === focusedNode.path)
-      if (index !== -1) {
-        listRef.current.scrollToItem(index, alignMode)
-      }
-    }
-  }, [focusedNode?.path, nodes, alignMode])
+    if (listRef.current && index !== -1) listRef.current.scrollToItem(index, 'smart')
+  }, [index])
 
-  // For some reason, removing the deps array above results in bug:
-  // If scroll fast and far, then clicking on items would result in redirect
-  // Not know the reason :(
   const goToCurrentItem = React.useCallback(() => {
     const targetPath = platform.getCurrentPath(metaData.branchName)
     if (targetPath) expandTo(targetPath)
@@ -54,7 +50,7 @@ export function ListView({
   return (
     <FixedSizeList<NodeRendererContext>
       ref={listRef}
-      itemKey={(index, { visibleNodes }) => visibleNodes?.nodes[index]?.path}
+      itemKey={(index, { visibleNodes }) => visibleNodes.nodes[index]?.path}
       itemData={nodeRendererContext}
       itemCount={visibleNodes.nodes.length}
       itemSize={compactFileTree ? 24 : 37}
