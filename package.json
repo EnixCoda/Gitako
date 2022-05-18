@@ -12,7 +12,7 @@
     "dev-safari": "TARGET=safari yarn run dev",
     "debug-firefox": "web-ext run --source-dir=dist --firefox-profile=firefox-profile --profile-create-if-missing --keep-profile-changes --start-url github.com/EnixCoda/Gitako",
     "analyse-bundle": "ANALYSE= NODE_ENV=production webpack",
-    "postinstall": "node scripts/fix-pjax-api",
+    "postinstall": "node scripts/fix-deps",
     "build": "VERSION=v$(node scripts/get-version.js) NODE_ENV=production webpack",
     "roll": "make release",
     "test": "yarn run test:parallel && yarn run test:non-parallel",
@@ -108,6 +108,9 @@
       "plugin:@typescript-eslint/recommended",
       "plugin:react/recommended",
       "plugin:react-hooks/recommended"
+    ],
+    "ignorePatterns": [
+      "scripts"
     ],
     "rules": {
       "@typescript-eslint/ban-types": "off"
