@@ -1,7 +1,7 @@
 import { Gitako } from 'components/Gitako'
 import { platform } from 'platforms'
 import * as React from 'react'
-import * as ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import './content.scss'
 
 if (platform.resolvePartialMetaData()) {
@@ -16,7 +16,7 @@ async function init() {
   await injectStyles(browser.runtime.getURL('content.css'))
   const SideBarElement = document.createElement('div')
   document.body.appendChild(SideBarElement)
-  ReactDOM.render(<Gitako />, SideBarElement)
+  createRoot(SideBarElement).render(<Gitako />)
 }
 
 // injects a copy of stylesheets so that other extensions(e.g. dark reader) could read
