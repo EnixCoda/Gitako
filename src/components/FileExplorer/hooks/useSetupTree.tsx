@@ -20,9 +20,9 @@ export function useVisibleNodesGenerator(metaData: MetaData) {
   // Only run when metadata or accessToken changes
   useSequentialEffect(
     useCallback(
-      checker => {
+      shouldAbort => {
         catchNetworkErrors(async () => {
-          if (!checker()) return
+          if (shouldAbort()) return
 
           setStateContext('tree-loading')
           const { userName, repoName, branchName } = metaData
@@ -36,7 +36,7 @@ export function useVisibleNodesGenerator(metaData: MetaData) {
             true,
             accessToken,
           )
-          if (!checker()) return
+          if (shouldAbort()) return
 
           setStateContext('tree-rendering')
 
