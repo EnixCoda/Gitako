@@ -40,17 +40,17 @@ export function useVisibleNodesGenerator(metaData: MetaData) {
 
           setStateContext('tree-rendering')
 
-          const visibleNodesGenerator = new VisibleNodesGenerator({
-            root: treeRoot,
-            defer,
-            compress: config.compressSingletonFolder,
-            async getTreeData(path) {
-              const { root } = await platform.getTreeData(metaData, path, false, accessToken)
-              return root
-            },
-          })
-
-          setVisibleNodesGenerator(visibleNodesGenerator)
+          setVisibleNodesGenerator(
+            new VisibleNodesGenerator({
+              root: treeRoot,
+              defer,
+              compress: config.compressSingletonFolder,
+              async getTreeData(path) {
+                const { root } = await platform.getTreeData(metaData, path, false, accessToken)
+                return root
+              },
+            }),
+          )
 
           setStateContext('tree-rendered')
         })
