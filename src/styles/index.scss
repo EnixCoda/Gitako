@@ -584,30 +584,18 @@ $minimal-z-index: max(
           }
         }
 
-        /* search input */
-        .search-input-wrapper {
-          position: relative;
+        .search-input {
+          padding-left: 0;
 
-          .search-input {
-            width: 100%;
-            box-shadow: none; // stay low
-            border: none;
-            border-radius: 0;
-            border-top: 1px solid var(--gitako-border-default);
-            color: var(--gitako-fg-default);
-            background: var(--gitako-bg-default);
-            padding-left: 10px;
+          .TextInput-icon {
+            margin-left: 8px;
+          }
 
-            .TextInput-action {
-              font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+          .TextInput-action {
+            font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, Courier, monospace;
 
-              button {
-                font-weight: normal;
-              }
-            }
-
-            &.error {
-              border-color: var(--gitako-danger-emphasis);
+            button {
+              font-weight: normal;
             }
           }
         }
@@ -625,7 +613,6 @@ $minimal-z-index: max(
           position: relative;
           flex: 1;
           overflow: hidden;
-          border-top: 1px solid var(--gitako-border-default);
 
           // Put this inside files will help files to get proper size derived from parents, regardless of its content size
           .magic-size-container {
@@ -876,7 +863,7 @@ $minimal-z-index: max(
           top: 0;
           left: 0;
           background: var(--gitako-bg-subtle);
-          z-index: 1;
+          z-index: 2;
         }
         .settings-section {
           &:not(:last-of-type) {

@@ -114,19 +114,21 @@ export function FileExplorer({ freeze, metaData }: Props) {
                       )}
                     </>
                   )}
-                  <SizeObserver<HTMLDivElement>>
-                    {({ width = 0, height = 0 }, ref) => (
-                      <div className={'files'} ref={ref}>
-                        <ListView
-                          height={height}
-                          width={width}
-                          nodeRendererContext={nodeRendererContext}
-                          expandTo={expandTo}
-                          metaData={metaData}
-                        />
-                      </div>
-                    )}
-                  </SizeObserver>
+                  {visibleNodes.nodes.length > 0 && (
+                    <SizeObserver<HTMLDivElement>>
+                      {({ width = 0, height = 0 }, ref) => (
+                        <div className={'files'} ref={ref}>
+                          <ListView
+                            height={height}
+                            width={width}
+                            nodeRendererContext={nodeRendererContext}
+                            expandTo={expandTo}
+                            metaData={metaData}
+                          />
+                        </div>
+                      )}
+                    </SizeObserver>
+                  )}
                 </>
               )
             )
