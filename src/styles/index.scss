@@ -24,9 +24,9 @@ $minimal-z-index: max(
 }
 
 @mixin interactive-border(
-  $default: var(--gitako-btn-border),
-  $hover: var(--gitako-btn-hover-border),
-  $active: var(--gitako-btn-active-border),
+  $default: var(--color-btn-border),
+  $hover: var(--color-btn-hover-border),
+  $active: var(--color-btn-active-border),
   $focus: $hover
 ) {
   border: 1px solid $default;
@@ -42,9 +42,9 @@ $minimal-z-index: max(
 }
 
 @mixin interactive-background(
-  $default: var(--gitako-btn-bg),
-  $hover: var(--gitako-btn-hover-bg),
-  $active: var(--gitako-btn-active-bg),
+  $default: var(--color-btn-bg),
+  $hover: var(--color-btn-hover-bg),
+  $active: var(--color-btn-active-bg),
   $focus: $hover
 ) {
   background-color: $default;
@@ -136,14 +136,14 @@ $minimal-z-index: max(
         }
 
         @include interactive-background-on-before(
-          var(--gitako-fg-subtle),
-          var(--gitako-fg-default),
-          var(--gitako-fg-muted)
+          var(--color-fg-subtle),
+          var(--color-fg-default),
+          var(--color-fg-muted)
         );
       }
 
       &.gitako-code-fold-active {
-        background-color: var(--gitako-neutral-muted);
+        background-color: var(--color-neutral-muted);
 
         .gitako-code-fold-handler {
           &::before {
@@ -151,14 +151,14 @@ $minimal-z-index: max(
           }
 
           @include interactive-background-on-before(
-            var(--gitako-fg-muted),
-            var(--gitako-fg-default),
-            var(--gitako-fg-subtle)
+            var(--color-fg-muted),
+            var(--color-fg-default),
+            var(--color-fg-subtle)
           );
         }
 
         .blob-code::after {
-          color: var(--gitako-fg-muted);
+          color: var(--color-fg-muted);
           content: '⋯';
           margin: 0.1em 0.2em 0px;
         }
@@ -187,7 +187,7 @@ $minimal-z-index: max(
       .clippy {
         width: 32px;
         height: 32px;
-        border: 1px solid var(--gitako-border-default);
+        border: 1px solid var(--color-border-default);
         border-radius: 4px;
 
         @include interactive-background;
@@ -283,8 +283,8 @@ $minimal-z-index: max(
 
 @mixin icon-button(
   $default: transparent,
-  $hover: var(--gitako-btn-hover-bg),
-  $active: var(--gitako-btn-focus-bg),
+  $hover: var(--color-btn-hover-bg),
+  $active: var(--color-btn-focus-bg),
   $focus: $hover
 ) {
   @include flex-center();
@@ -297,10 +297,10 @@ $minimal-z-index: max(
 
 // Why does not TextInput get theme properly?
 @mixin input {
-  color: var(--gitako-fg-default);
-  background-color: var(--gitako-canvas-default);
-  border-color: var(--gitako-border-default);
-  box-shadow: var(--gitako-primer-shadow-inset);
+  color: var(--color-fg-default);
+  background-color: var(--color-canvas-default);
+  border-color: var(--color-border-default);
+  box-shadow: var(--color-primer-shadow-inset);
 }
 
 .#{$name}-toggle-show-button-wrapper {
@@ -336,13 +336,13 @@ $minimal-z-index: max(
       object-fit: contain;
       transition: all ease 0.4s;
       transform: translateX(-8px);
-      filter: drop-shadow(0 0 1px var(--gitako-primer-canvas-backdrop));
+      filter: drop-shadow(0 0 1px var(--color-primer-canvas-backdrop));
     }
     &:active,
     &:hover {
       .tentacle {
         transform: translateX(-4px);
-        filter: drop-shadow(0 0 2px var(--gitako-primer-canvas-backdrop));
+        filter: drop-shadow(0 0 2px var(--color-primer-canvas-backdrop));
       }
     }
   }
@@ -352,10 +352,10 @@ $minimal-z-index: max(
     margin-left: 4px;
     padding: 2px 4px;
     font-size: 12px;
-    color: var(--gitako-danger-fg);
-    border: 1px solid var(--gitako-border-default);
+    color: var(--color-danger-fg);
+    border: 1px solid var(--color-border-default);
     border-radius: 2px;
-    background-color: var(--gitako-bg-subtle);
+    background-color: var(--color-bg-subtle);
   }
 
   &:hover {
@@ -367,6 +367,7 @@ $minimal-z-index: max(
 
 .#{$name}-side-bar {
   @include hide-for-print();
+  @include enableThemes;
 
   @import '~@primer/css/base/index.scss';
   button {
@@ -374,7 +375,7 @@ $minimal-z-index: max(
     font-weight: 600;
   }
   a {
-    color: var(--gitako-accent-fg);
+    color: var(--color-accent-fg);
   }
 
   $resizeHandlerWidth: 1px;
@@ -406,15 +407,15 @@ $minimal-z-index: max(
     cursor: ew-resize;
     user-select: none;
     width: 0;
-    background: var(--gitako-bg-subtle);
-    border-right: $resizeHandlerWidth solid var(--gitako-border-default);
+    background: var(--color-bg-subtle);
+    border-right: $resizeHandlerWidth solid var(--color-border-default);
     overflow: hidden;
     box-sizing: content-box;
     &:hover,
     &:active {
       width: 16px;
-      background: var(--gitako-bg-subtle);
-      border-left: 1px solid var(--gitako-border-default);
+      background: var(--color-bg-subtle);
+      border-left: 1px solid var(--color-border-default);
     }
 
     .octicon.Grabber {
@@ -431,18 +432,18 @@ $minimal-z-index: max(
     height: 100%;
     display: flex;
     flex-direction: column;
-    background: var(--gitako-bg-subtle);
-    border-left: 1px solid var(--gitako-border-default);
+    background: var(--color-bg-subtle);
+    border-left: 1px solid var(--color-border-default);
 
     .octicon {
       transition: transform 0.3s ease;
-      color: var(--gitako-fg-subtle);
+      color: var(--color-fg-subtle);
       width: 100%;
       height: 100%;
     }
 
     .octicon-color {
-      color: var(--gitako-fg-subtle);
+      color: var(--color-fg-subtle);
     }
 
     .octicon-wrapper {
@@ -461,7 +462,7 @@ $minimal-z-index: max(
       .header {
         position: relative;
         min-height: 62px; // GitHub header height if login
-        background: var(--gitako-bg-subtle);
+        background: var(--color-bg-subtle);
         padding: 6px 10px;
         flex-shrink: 0;
         position: relative; // prevent overlap by outline of other elements
@@ -476,7 +477,7 @@ $minimal-z-index: max(
             padding: 4px 0;
 
             a {
-              color: var(--gitako-accent-fg);
+              color: var(--color-accent-fg);
               white-space: normal;
             }
           }
@@ -485,8 +486,8 @@ $minimal-z-index: max(
         .branch-name {
           margin-left: 4px;
           padding: 4px 6px; // did not align well for some reason :/
-          color: var(--gitako-fg-muted);
-          background-color: var(--gitako-accent-subtle);
+          color: var(--color-fg-muted);
+          background-color: var(--color-accent-subtle);
           word-break: break-word;
         }
 
@@ -506,11 +507,11 @@ $minimal-z-index: max(
             }
 
             &.active .octicon {
-              color: var(--gitako-fg-default);
+              color: var(--color-fg-default);
             }
 
             .action-icon {
-              color: var(--gitako-fg-subtle);
+              color: var(--color-fg-subtle);
               width: 20px;
               height: 20px;
               text-align: center;
@@ -538,13 +539,13 @@ $minimal-z-index: max(
       .loading-indicator-container {
         width: 100%;
         height: 100%;
-        border-top: 1px solid var(--gitako-border-default);
+        border-top: 1px solid var(--color-border-default);
         @include flex-center();
 
         .loading-indicator {
           display: flex;
           align-items: center;
-          color: var(--gitako-fg-subtle);
+          color: var(--color-fg-subtle);
 
           &-icon {
             width: 20px;
@@ -602,7 +603,7 @@ $minimal-z-index: max(
 
         .status {
           padding: 4px;
-          background: var(--gitako-bg-subtle);
+          background: var(--color-bg-subtle);
 
           .lazy-mode {
             cursor: help;
@@ -632,21 +633,21 @@ $minimal-z-index: max(
 
           &.focused {
             @include interactive-background(
-              var(--gitako-canvas-subtle),
-              var(--gitako-canvas-subtle),
-              var(--gitako-canvas-inset)
+              var(--color-canvas-subtle),
+              var(--color-canvas-subtle),
+              var(--color-canvas-inset)
             );
           }
 
           @include interactive-background(
-            var(--gitako-canvas-default),
-            var(--gitako-canvas-subtle),
-            var(--gitako-canvas-inset)
+            var(--color-canvas-default),
+            var(--color-canvas-subtle),
+            var(--color-canvas-inset)
           );
 
           &.disabled {
             pointer-events: none;
-            color: var(--gitako-fg-muted);
+            color: var(--color-fg-muted);
           }
           display: flex;
           justify-content: space-between;
@@ -657,17 +658,17 @@ $minimal-z-index: max(
           white-space: nowrap;
           transition: padding 0.3s ease; // on toggle expansion in search results
 
-          border-bottom: 1px solid var(--gitako-border-muted);
+          border-bottom: 1px solid var(--color-border-muted);
           &.compact {
             border-bottom: none;
             &.focused {
-              border-top: 1px solid var(--gitako-border-muted);
-              border-bottom: 1px solid var(--gitako-border-muted);
+              border-top: 1px solid var(--color-border-muted);
+              border-bottom: 1px solid var(--color-border-muted);
             }
           }
 
           &:not(:hover) {
-            color: var(--gitako-fg-default);
+            color: var(--color-fg-default);
           }
 
           @mixin icon-size() {
@@ -714,7 +715,7 @@ $minimal-z-index: max(
 
           &:not(:hover) {
             .node-item-label .prefix {
-              color: var(--gitako-fg-muted);
+              color: var(--color-fg-muted);
             }
           }
 
@@ -727,7 +728,7 @@ $minimal-z-index: max(
               align-items: center;
               min-width: 36px;
               padding: 0 4px;
-              color: var(--gitako-fg-muted);
+              color: var(--color-fg-muted);
 
               .octicon-wrapper {
                 margin: 2px; // make it closer to the comment amount label
@@ -738,26 +739,26 @@ $minimal-z-index: max(
               display: inline-flex;
               align-items: center;
               padding: 0 4px;
-              color: var(--gitako-fg-muted);
+              color: var(--color-fg-muted);
 
               .octicon-wrapper {
                 margin: 0; // make it closer to the diff details
               }
 
               .added .octicon {
-                color: var(--gitako-success-emphasis);
+                color: var(--color-success-emphasis);
               }
               .removed .octicon {
-                color: var(--gitako-danger-emphasis);
+                color: var(--color-danger-emphasis);
               }
               .renamed .octicon {
-                color: var(--gitako-done-emphasis);
+                color: var(--color-done-emphasis);
               }
               .modified .octicon {
-                color: var(--gitako-accent-emphasis);
+                color: var(--color-accent-emphasis);
               }
               .ignored .octicon {
-                color: var(--gitako-neutral-emphasis);
+                color: var(--color-neutral-emphasis);
               }
 
               .diff-stat-graph {
@@ -769,15 +770,15 @@ $minimal-z-index: max(
                   height: 10px;
                   margin: 0 1px;
                   border-radius: 2px;
-                  background: var(--gitako-neutral-emphasis);
+                  background: var(--color-neutral-emphasis);
                 }
 
                 .diff-stat-graph-addition {
-                  background: var(--gitako-success-emphasis);
+                  background: var(--color-success-emphasis);
                 }
 
                 .diff-stat-graph-deletion {
-                  background: var(--gitako-danger-emphasis);
+                  background: var(--color-danger-emphasis);
                 }
               }
 
@@ -788,13 +789,13 @@ $minimal-z-index: max(
                 font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono,
                   monospace, 'Cascadia Code', 'Courier New', Courier;
                 .additions {
-                  color: var(--gitako-success-emphasis);
+                  color: var(--color-success-emphasis);
                 }
                 .delimiter {
-                  color: var(--gitako-neutral-emphasis);
+                  color: var(--color-neutral-emphasis);
                 }
                 .deletions {
-                  color: var(--gitako-danger-emphasis);
+                  color: var(--color-danger-emphasis);
                 }
               }
             }
@@ -832,18 +833,19 @@ $minimal-z-index: max(
     }
 
     .#{$name}-settings-bar {
-      background: var(--gitako-bg-subtle);
+      background: var(--color-bg-subtle);
       display: flex;
       flex-direction: column;
       max-height: calc(100vh - 240px);
       min-height: 240px;
       z-index: 1;
+      overflow: hidden; // prevent box-shadow of children overflow
 
       &-header {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        border-top: 1px solid var(--gitako-border-muted);
+        border-top: 1px solid var(--color-border-muted);
         padding: 10px;
         box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.2), 0 3px 4px 0 rgba(0, 0, 0, 0.14),
           0 3px 3px -2px rgba(0, 0, 0, 0.12);
@@ -862,7 +864,7 @@ $minimal-z-index: max(
           height: 10px;
           top: 0;
           left: 0;
-          background: var(--gitako-bg-subtle);
+          background: var(--color-bg-subtle);
           z-index: 2;
         }
         .settings-section {
@@ -899,10 +901,10 @@ $minimal-z-index: max(
                 height: 36px;
                 padding: 0 6px;
                 border-radius: 6px;
-                border: 1px solid var(--gitako-border-default);
-                background: var(--gitako-canvas-default);
-                color: var(--gitako-fg-default);
-                box-shadow: var(--gitako-primer-shadow-inset);
+                border: 1px solid var(--color-border-default);
+                background: var(--color-canvas-default);
+                color: var(--color-fg-default);
+                box-shadow: var(--color-primer-shadow-inset);
               }
 
               .chevron {
@@ -915,7 +917,7 @@ $minimal-z-index: max(
                 &::before {
                   width: 16px;
                   height: 20px;
-                  background-color: var(--gitako-fg-subtle);
+                  background-color: var(--color-fg-subtle);
                   @include pseudo-primer-icon('chevron-down-16');
                 }
               }
@@ -943,7 +945,7 @@ $minimal-z-index: max(
         margin-bottom: 4px;
       }
       .hint {
-        color: var(--gitako-fg-subtle);
+        color: var(--color-fg-subtle);
       }
       .access-token-input-control {
         display: flex;
@@ -967,10 +969,10 @@ $minimal-z-index: max(
       justify-content: space-between;
       align-items: center;
       padding: 2px 6px 2px 10px;
-      border-top: 1px solid var(--gitako-border-muted);
+      border-top: 1px solid var(--color-border-muted);
 
       .version {
-        color: var(--gitako-fg-muted);
+        color: var(--color-fg-muted);
       }
     }
 
