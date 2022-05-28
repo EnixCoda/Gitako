@@ -1975,12 +1975,12 @@
   resolved "https://registry.yarnpkg.com/@primer/behaviors/-/behaviors-1.1.1.tgz#51e2f02ebfe297c4c05f503cdc52ae8b4ce5794c"
   integrity sha512-wvF1PYjyxKNTr6+5w4uR5Gkz53t1fsRDgKjWxDKk7wmlh0cwiILBo4dDFjjVhWRF1mBSjaIxxJGB4WGaP7ct2Q==
 
-"@primer/css@^20.0.0":
-  version "20.0.0"
-  resolved "https://registry.yarnpkg.com/@primer/css/-/css-20.0.0.tgz#315075ff9c41c9cf0f09e9a2b962ac86da7e3738"
-  integrity sha512-bzKJEgKM68GqwwLPfXEK1g5xb1sfZ7dKpnMAAWDWl1hVAADrmL0lcQ6xm29DCCi90RTT2bFF2CgU49d0g7PlTg==
+"@primer/css@^20.2.2":
+  version "20.2.2"
+  resolved "https://registry.yarnpkg.com/@primer/css/-/css-20.2.2.tgz#c36b73e9c336651675e51074c5b9e56d13fae3f5"
+  integrity sha512-vUy0vMKpdX9f3rhnm5fEIdcg9yxOdRYvjbZk5QoBXtn32oJPonSvIb/7JwVJA+EdiOHTvhRDx9zDpUwOYX+XrQ==
   dependencies:
-    "@primer/primitives" "^7.7.0"
+    "@primer/primitives" "^7.8.3"
 
 "@primer/octicons-react@16.1.1":
   version "16.1.1"
@@ -1997,15 +1997,15 @@
   resolved "https://registry.yarnpkg.com/@primer/primitives/-/primitives-7.6.0.tgz#942efe38b6e09bf6d0351c045436e628e32c3ddb"
   integrity sha512-cu28QLjectVf2rT4P7m6zS9v4g4yHtErRuPfsgEWEJhbXVIII6vDBm6elJzYixGpTNxpVtSUNezxUXv16l1ejQ==
 
-"@primer/primitives@^7.7.0":
+"@primer/primitives@^7.8.3":
   version "7.8.3"
   resolved "https://registry.yarnpkg.com/@primer/primitives/-/primitives-7.8.3.tgz#de7e03492cf977e99f2417490d76421db9715e9f"
   integrity sha512-04ZwfJhpZ0QFwDrJfCuLX6iOh0BflWDTvuoRA80lQH9xk0RtIg16INbruwwtnbSgnKKXXRSykRRJ5BbxnqufRA==
 
-"@primer/react@^35.2.1":
-  version "35.2.1"
-  resolved "https://registry.yarnpkg.com/@primer/react/-/react-35.2.1.tgz#fe35510b650b249cd36207d4854a60786fd5cc3f"
-  integrity sha512-aa5N0bGgOWPkUCjW5qqVtAxcaUxWe6pT4TjG6YCfoUjuY/OkngENSoBipXhNNThFfE78z7moP7UwxvxY7JW8mA==
+"@primer/react@^35.2.2":
+  version "35.2.2"
+  resolved "https://registry.yarnpkg.com/@primer/react/-/react-35.2.2.tgz#b64c406b4e17a01cb0c850e9b6dea06ad4690393"
+  integrity sha512-JToTi4YwOJ5mlvSBF66Csz35fLeMl6PeGYcXqwE34giGXRrOLRID+eHVPZPWUEDo/Sg389cVYR44ueM03/C56A==
   dependencies:
     "@primer/behaviors" "1.1.1"
     "@primer/octicons-react" "16.1.1"
