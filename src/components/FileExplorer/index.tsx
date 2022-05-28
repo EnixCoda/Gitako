@@ -26,10 +26,12 @@ import { useVisibleNodesGeneratorMethods } from './hooks/useOnVisibleNodesGenera
 import { useRenderLabelText } from './hooks/useRenderLabelText'
 import { useVisibleNodesGenerator } from './hooks/useSetupTree'
 import { ListView } from './ListView'
+import { useHandleNodeFocus } from './useHandleNodeFocus'
 import { useVisibleNodes } from './useVisibleNodes'
 
 export type NodeRendererContext = {
   onNodeClick: (event: React.MouseEvent<HTMLElement, MouseEvent>, node: TreeNode) => void
+  onNodeFocus: (event: React.FocusEvent<HTMLElement, Element>, node: TreeNode) => void
   renderLabelText: NodeRenderer
   renderActions: NodeRenderer | undefined
   visibleNodes: VisibleNodes
@@ -56,6 +58,7 @@ export function FileExplorer({ freeze, metaData }: Props) {
   )
   const { expandTo, goTo, focusNode } = methods
   const handleNodeClick = useHandleNodeClick(methods)
+  const handleNodeFocus = useHandleNodeFocus(methods)
   const handleKeyDown = useHandleKeyDown(visibleNodes, methods, searched)
   const handleFocusSearchBar = () => focusNode(null)
 
@@ -70,6 +73,7 @@ export function FileExplorer({ freeze, metaData }: Props) {
   const nodeRendererContext = useNodeRenderContext(
     visibleNodes,
     handleNodeClick,
+    handleNodeFocus,
     renderActions,
     renderLabelText,
   )

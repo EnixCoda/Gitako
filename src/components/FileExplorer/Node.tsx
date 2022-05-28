@@ -19,6 +19,7 @@ function getIconType(node: TreeNode) {
 type Props = {
   node: TreeNode
   onClick(event: React.MouseEvent<HTMLElement, MouseEvent>, node: TreeNode): void
+  onFocus(event: React.FocusEvent<HTMLElement, Element>, node: TreeNode): void
   depth: number
   expanded: boolean
   focused: boolean
@@ -37,12 +38,14 @@ export function Node({
   renderLabelText,
   style,
   onClick,
+  onFocus,
 }: Props) {
   const { compactFileTree: compact } = useConfigs().value
   return (
     <a
       href={node.url}
       onClick={event => onClick(event, node)}
+      onFocus={event => onFocus(event, node)}
       className={cx(`node-item`, { focused, disabled: node.accessDenied, expanded, compact })}
       style={{ ...style, paddingLeft: `${10 + (compact ? 10 : 20) * depth}px` }}
       title={node.path}

@@ -6,7 +6,7 @@ import { NodeRendererContext } from '.'
 export const VirtualNode = React.memo(function VirtualNode({
   index,
   style,
-  data: { onNodeClick, renderLabelText, renderActions, visibleNodes },
+  data: { onNodeClick, onNodeFocus, renderLabelText, renderActions, visibleNodes },
 }: Override<ListChildComponentProps, { data: NodeRendererContext }>) {
   if (!visibleNodes) return null
 
@@ -23,6 +23,7 @@ export const VirtualNode = React.memo(function VirtualNode({
       loading={loading.has(node.path)}
       expanded={expandedNodes.has(node.path)}
       onClick={onNodeClick}
+      onFocus={onNodeFocus}
       renderLabelText={renderLabelText}
       renderActions={renderActions}
     />
