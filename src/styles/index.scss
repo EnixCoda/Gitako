@@ -433,7 +433,6 @@ $minimal-z-index: max(
     flex-direction: column;
     background: var(--gitako-bg-subtle);
     border-left: 1px solid var(--gitako-border-default);
-    overflow: hidden;
 
     .octicon {
       transition: transform 0.3s ease;
@@ -597,36 +596,18 @@ $minimal-z-index: max(
             border-top: 1px solid var(--gitako-border-default);
             color: var(--gitako-fg-default);
             background: var(--gitako-bg-default);
-            padding-right: 40px; // save space for actions
+            padding-left: 10px;
+
+            .TextInput-action {
+              font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+
+              button {
+                font-weight: normal;
+              }
+            }
 
             &.error {
               border-color: var(--gitako-danger-emphasis);
-            }
-          }
-
-          .actions {
-            position: absolute;
-            top: 0px;
-            right: 0px;
-            height: 100%;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            padding: 0 4px;
-
-            .toggle-search-mode {
-              margin: 0;
-              padding: 2px 4px;
-              min-width: 32px;
-              border: 1px solid var(--gitako-border-muted);
-              border-radius: 8px;
-              color: var(--gitako-fg-muted);
-              font-size: 12px;
-              font-weight: 500;
-              line-height: 1;
-              outline: none;
-
-              @include interactive-frame;
             }
           }
         }

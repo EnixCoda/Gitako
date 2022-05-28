@@ -15,16 +15,15 @@ export function SearchBar({ onSearch, onFocus, value }: Props) {
   const configs = useConfigs()
   const { searchMode } = configs.value
 
-  const toggleButtonDescription = `${
+  const toggleButtonDescription =
     searchMode === 'regex'
       ? 'Match file name with regular expression.'
-      : 'Match file path sequence with input.'
-  } Click to toggle.`
+      : `Match file path sequence with plain input.`
 
   return (
     <div className={'search-input-wrapper'}>
       <TextInput
-        icon={SearchIcon}
+        leadingVisual={SearchIcon}
         onFocus={e => {
           onFocus(e)
           e.target.select()
@@ -37,24 +36,23 @@ export function SearchBar({ onSearch, onFocus, value }: Props) {
         placeholder={`Search files`}
         onChange={({ target: { value } }) => onSearch(value, searchMode)}
         value={value}
+        trailingAction={
+          <TextInput.Action
+            onClick={() => {
+              const newMode = searchMode === 'regex' ? 'fuzzy' : 'regex'
+              configs.onChange({
+                searchMode: newMode,
+              })
+              // Skip search if no input to prevent resetting folder expansions
+              if (value) onSearch(value, newMode)
+            }}
+            aria-label={toggleButtonDescription}
+            sx={{ color: 'fg.subtle' }}
+          >
+            {searchMode === 'regex' ? '.*$' : 'a/b'}
+          </TextInput.Action>
+        }
       />
-      <div className={`actions`}>
-        <button
-          className={`toggle-search-mode`}
-          title={toggleButtonDescription}
-          onClick={() => {
-            const newMode = searchMode === 'regex' ? 'fuzzy' : 'regex'
-            configs.onChange({
-              searchMode: newMode,
-            })
-            // Skip search if no input to prevent resetting folder expansions
-            if (value) onSearch(value, newMode)
-          }}
-          aria-label={toggleButtonDescription}
-        >
-          {searchMode === 'regex' ? '.*' : 'path'}
-        </button>
-      </div>
     </div>
   )
 }
