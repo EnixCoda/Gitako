@@ -33,8 +33,10 @@ export function MetaBar({ metaData }: Props) {
         <BranchName
           href={branchUrl}
           as="a"
-          className={'branch-name'}
           onClick={createAnchorClickHandler(branchUrl)}
+          sx={{
+            color: 'fg.muted',
+          }}
           {...platform.delegatePJAXProps?.()}
         >
           {branchName || '...'}

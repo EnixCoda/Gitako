@@ -1,10 +1,6 @@
-import { ThemeProvider } from '@primer/react'
+import { BaseStyles, ThemeProvider } from '@primer/react'
 import theme from '@primer/react/lib-esm/theme'
 import * as React from 'react'
-
-// <html lang="en" data-color-mode="auto" data-light-theme="light" data-dark-theme="dark" ...
-// <html lang="en" data-color-mode="light" data-light-theme="light" data-dark-theme="dark" ...
-// <html lang="en" data-color-mode="dark" data-light-theme="light" data-dark-theme="dark" ...
 
 const colorModeMap: Record<string, 'night' | 'day'> = {
   dark: 'night',
@@ -27,6 +23,9 @@ const validColorSchemes = Object.keys(theme.colorSchemes) as EnumString<
 // BUT: Do not remove the validation, there might be other themes in future
 
 const getPreferenceFromDOM = () => {
+  // <html lang="en" data-color-mode="auto" data-light-theme="light" data-dark-theme="dark" ...
+  // <html lang="en" data-color-mode="light" data-light-theme="light" data-dark-theme="dark" ...
+  // <html lang="en" data-color-mode="dark" data-light-theme="light" data-dark-theme="dark" ...
   const { colorMode, lightTheme, darkTheme } = document.documentElement.dataset
 
   return {
@@ -49,5 +48,9 @@ function useThemePreference() {
 
 export function Theme({ children }: React.PropsWithChildren<{}>) {
   const themePreference = useThemePreference()
-  return <ThemeProvider {...themePreference} {...{ children }} />
+  return (
+    <ThemeProvider {...themePreference}>
+      <BaseStyles>{children}</BaseStyles>
+    </ThemeProvider>
+  )
 }

@@ -369,15 +369,6 @@ $minimal-z-index: max(
   @include hide-for-print();
   @include enableThemes;
 
-  @import '~@primer/css/base/index.scss';
-  button {
-    border-radius: 6px;
-    font-weight: 600;
-  }
-  a {
-    color: var(--color-accent-fg);
-  }
-
   $resizeHandlerWidth: 1px;
   .#{$name}-side-bar-body-wrapper {
     position: fixed;
@@ -481,14 +472,6 @@ $minimal-z-index: max(
               white-space: normal;
             }
           }
-        }
-
-        .branch-name {
-          margin-left: 4px;
-          padding: 4px 6px; // did not align well for some reason :/
-          color: var(--color-fg-muted);
-          background-color: var(--color-accent-subtle);
-          word-break: break-word;
         }
 
         .close-side-bar-button-position {
@@ -657,6 +640,7 @@ $minimal-z-index: max(
           cursor: pointer;
           white-space: nowrap;
           transition: padding 0.3s ease; // on toggle expansion in search results
+          color: var(--color-accent-fg);
 
           border-bottom: 1px solid var(--color-border-muted);
           &.compact {
