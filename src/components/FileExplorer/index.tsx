@@ -93,7 +93,7 @@ export function FileExplorer({ freeze, metaData }: Props) {
                   {visibleNodesGenerator?.defer && (
                     <div className={'status'}>
                       <Label
-                        title="This repository is large. Gitako has switched to Lazy Mode to improve performance. Folders will be loaded when it gets expanded."
+                        title="This repository is large. Gitako has switched to Lazy Mode to improve performance. Folders will be loaded on demand."
                         className={'lazy-mode'}
                         variant="attention"
                       >
