@@ -2,7 +2,7 @@ import { Button, TextInput } from '@primer/react'
 import { SimpleToggleField } from 'components/SimpleToggleField'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
-import { friendlyFormatShortcut } from 'utils/general'
+import { friendlyFormatShortcut, noop } from 'utils/general'
 import { useStateIO } from 'utils/hooks/useStateIO'
 import * as keyHelper from 'utils/keyHelper'
 import { Field } from './Field'
@@ -30,6 +30,7 @@ export function SidebarSettings() {
             onBlur={() => focused.onChange(false)}
             placeholder={focused.value ? 'Press key combination' : 'Click here to set'}
             value={friendlyFormatShortcut(toggleShowSideBarShortcut)}
+            onChange={noop}
             onKeyDown={React.useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
               e.preventDefault()
               e.stopPropagation()
@@ -37,7 +38,6 @@ export function SidebarSettings() {
               const shortcut = e.key === 'Backspace' ? '' : keyHelper.parseEvent(e)
               useToggleShowSideBarShortcut.onChange(shortcut)
             }, [])} // eslint-disable-line react-hooks/exhaustive-deps
-            readOnly
           />
           {configContext.value.shortcut === toggleShowSideBarShortcut ? (
             <Button

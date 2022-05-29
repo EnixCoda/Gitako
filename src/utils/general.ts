@@ -209,3 +209,6 @@ export function forOf<T, R>(target: T, callback: <K extends keyof T>(key: K, val
     if (r !== undefined) return r
   }
 }
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+export function noop() {}

@@ -301,14 +301,6 @@ $minimal-z-index: max(
   @include interactive-background($default, $hover, $active, $focus);
 }
 
-// Why does not TextInput get theme properly?
-@mixin input {
-  color: var(--color-fg-default);
-  background-color: var(--color-canvas-default);
-  border-color: var(--color-border-default);
-  box-shadow: var(--color-primer-shadow-inset);
-}
-
 .#{$name}-toggle-show-button-wrapper {
   @include hide-for-print();
 
@@ -941,14 +933,12 @@ $minimal-z-index: max(
         display: flex;
         .access-token-input {
           flex: 1;
-          @include input();
         }
       }
       .toggle-shortcut-input-control {
         display: flex;
         .toggle-shortcut-input {
           flex: 1;
-          @include input();
         }
       }
     }
