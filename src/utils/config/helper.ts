@@ -21,6 +21,8 @@ export type Config = {
   restoreExpandedFolders: boolean
 }
 
+export type ConfigKeys = keyof Config
+
 enum configKeys {
   sideBarWidth = 'sideBarWidth',
   shortcut = 'shortcut',

@@ -1,14 +1,13 @@
+import { Checkbox, FormControl } from '@primer/react'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
-import { Config } from 'utils/config/helper'
-import { Field } from './settings/Field'
+import { Config, ConfigKeys } from 'utils/config/helper'
 
-export type SimpleField<Key extends keyof Config> = {
+export type SimpleField<Key extends ConfigKeys> = {
   key: Key
   label: string
   wikiLink?: string
   tooltip?: string
-  description?: string
   disabled?: boolean
   overwrite?: {
     value: (value: Config[Key]) => boolean
@@ -16,59 +15,54 @@ export type SimpleField<Key extends keyof Config> = {
   }
 }
 
-type Props<Key extends keyof Config> = {
+type Props<Key extends ConfigKeys> = {
   field: SimpleField<Key>
-
-  onChange?(): void
 }
 
-export function SimpleToggleField<Key extends keyof Config>({ field, onChange }: Props<Key>) {
+export function SimpleToggleField<Key extends ConfigKeys>({ field }: Props<Key>) {
   const { overwrite } = field
   const configContext = useConfigs()
   const value = configContext.value[field.key]
+
+  const checked = React.useMemo(
+    () => (overwrite ? overwrite.value(value) : Boolean(value)),
+    [overwrite, value],
+  )
+
+  const handleChange = React.useCallback(
+    (checked: boolean) => {
+      const enabled = checked
+      configContext.onChange({ [field.key]: overwrite ? overwrite.onChange(enabled) : enabled })
+    },
+    [field.key, overwrite, configContext],
+  )
+
   return (
-    <Field
-      id={field.key}
-      title={
-        <>
-          {field.label}{' '}
-          {field.wikiLink ? (
-            <a
-              href={field.wikiLink}
-              title={field.tooltip}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              (?)
-            </a>
-          ) : field.description ? (
-            <p className={'note'} title={field.tooltip}>
-              {field.description}
-            </p>
-          ) : (
-            field.tooltip && (
-              <span className={'help'} title={field.tooltip}>
-                (?)
-              </span>
-            )
-          )}
-        </>
-      }
-      className={'field-checkbox'}
-      checkbox
-    >
-      <input
-        id={field.key}
-        name={field.key}
-        disabled={field.disabled}
-        type={'checkbox'}
-        onChange={async e => {
-          const enabled = e.currentTarget.checked
-          configContext.onChange({ [field.key]: overwrite ? overwrite.onChange(enabled) : enabled })
-          if (onChange) onChange()
+    <FormControl>
+      <Checkbox
+        sx={{
+          marginTop: '4px', // align label
         }}
-        checked={overwrite ? overwrite.value(value) : Boolean(value)}
+        value={field.key}
+        disabled={field.disabled}
+        onChange={e => handleChange(e.target.checked)}
+        checked={checked}
       />
-    </Field>
+      <FormControl.Label>
+        {field.label}
+        {(field.wikiLink || field.tooltip) && ' '}
+        {field.wikiLink ? (
+          <a href={field.wikiLink} title={field.tooltip} target="_blank" rel="noopener noreferrer">
+            (?)
+          </a>
+        ) : (
+          field.tooltip && (
+            <span className={'help'} title={field.tooltip}>
+              (?)
+            </span>
+          )
+        )}
+      </FormControl.Label>
+    </FormControl>
   )
 }
