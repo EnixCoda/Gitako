@@ -41,7 +41,8 @@ export function SideBar() {
     if (hasMetaData) {
       DOMHelper.markGitakoReadyState(true)
       setShowSettings(false)
-      $logoContainerElement.onChange(DOMHelper.insertLogoMountPoint())
+      const mountPointElement = DOMHelper.insertLogoMountPoint()
+      if (mountPointElement) $logoContainerElement.onChange(mountPointElement)
     } else {
       DOMHelper.markGitakoReadyState(false)
     }

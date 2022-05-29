@@ -301,6 +301,10 @@ $minimal-z-index: max(
   @include interactive-background($default, $hover, $active, $focus);
 }
 
+##{$name}-root {
+  @include enableThemes;
+}
+
 .#{$name}-toggle-show-button-wrapper {
   @include hide-for-print();
 
@@ -365,7 +369,6 @@ $minimal-z-index: max(
 
 .#{$name}-side-bar {
   @include hide-for-print();
-  @include enableThemes;
 
   $resizeHandlerWidth: 1px;
   .#{$name}-side-bar-body-wrapper {

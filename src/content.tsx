@@ -2,6 +2,7 @@ import { Gitako } from 'components/Gitako'
 import { platform } from 'platforms'
 import * as React from 'react'
 import { createRoot } from 'react-dom/client'
+import { rootElementID } from 'utils/DOMHelper'
 import './content.scss'
 
 if (platform.resolvePartialMetaData()) {
@@ -14,9 +15,10 @@ if (platform.resolvePartialMetaData()) {
 
 async function init() {
   await injectStyles(browser.runtime.getURL('content.css'))
-  const SideBarElement = document.createElement('div')
-  document.body.appendChild(SideBarElement)
-  createRoot(SideBarElement).render(<Gitako />)
+  const sideBarElement = document.createElement('div')
+  sideBarElement.setAttribute('id', rootElementID)
+  document.body.appendChild(sideBarElement)
+  createRoot(sideBarElement).render(<Gitako />)
 }
 
 // injects a copy of stylesheets so that other extensions(e.g. dark reader) could read

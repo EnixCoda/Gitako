@@ -2,6 +2,8 @@
  * this helper helps manipulating DOM
  */
 
+export const rootElementID = 'gitako-root'
+
 export function setGitakoBodyClass(className: string, enable: boolean) {
   const classList = document.body.classList
   if (enable) classList.add(className)
@@ -47,7 +49,8 @@ export function $<T2>(
   existCallback: undefined | null,
   otherwise: () => T2,
 ): HTMLElement | null | T2
-export function $(selector: string, existCallback?: any, otherwise?: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function $(selector: string, existCallback?: any, otherwise?: any) {
   const element = document.querySelector(selector)
   if (element) {
     return existCallback ? existCallback(element) : element
@@ -59,13 +62,14 @@ export function $(selector: string, existCallback?: any, otherwise?: any) { // e
  * add the logo element into DOM
  */
 export function insertLogoMountPoint() {
-  const logoID = 'gitako-logo-mount-point'
-  const logoSelector = formatID(logoID)
-  return $(logoSelector, undefined, function createLogoMountPoint() {
-    const logoMountElement = document.createElement('div')
-    logoMountElement.setAttribute('id', logoID)
-    document.body.appendChild(logoMountElement)
-    return logoMountElement
+  return $(formatID(rootElementID), container => {
+    const logoID = 'gitako-logo-mount-point'
+    return $(formatID(logoID), undefined, function createLogoMountPoint() {
+      const logoMountElement = document.createElement('div')
+      logoMountElement.setAttribute('id', logoID)
+      container.appendChild(logoMountElement)
+      return logoMountElement
+    })
   })
 }
 
