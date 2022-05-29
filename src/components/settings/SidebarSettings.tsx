@@ -8,8 +8,7 @@ import * as keyHelper from 'utils/keyHelper'
 import { SettingsSection } from './SettingsSection'
 
 export function SidebarSettings() {
-  const configContext = useConfigs()
-  const { sidebarToggleMode } = configContext.value
+  const { sidebarToggleMode } = useConfigs().value
 
   return (
     <SettingsSection title={'Sidebar'}>

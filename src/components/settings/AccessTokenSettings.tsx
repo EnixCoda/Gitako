@@ -12,8 +12,9 @@ const ACCESS_TOKEN_REGEXP = /^([0-9a-fA-F]+|gh[pousr]_[A-Za-z0-9_]+)$/
 
 export function AccessTokenSettings() {
   const configContext = useConfigs()
-  const hasAccessToken = Boolean(configContext.value.accessToken)
-  const [accessToken, setAccessToken] = React.useState('')
+  const { accessToken } = configContext.value
+  const hasAccessToken = Boolean(accessToken)
+  const [accessTokenInputValue, setAccessTokenInputValue] = React.useState('')
   const useAccessTokenHint = useStateIO<React.ReactNode>('')
   const focusInput = useStateIO(false)
 
@@ -21,12 +22,12 @@ export function AccessTokenSettings() {
 
   React.useEffect(() => {
     // clear input when access token updates
-    setAccessToken('')
-  }, [configContext.value.accessToken])
+    setAccessTokenInputValue('')
+  }, [accessToken])
 
   const onInputAccessToken = React.useCallback(
     ({ currentTarget: { value } }: React.FormEvent<HTMLInputElement>) => {
-      setAccessToken(value)
+      setAccessTokenInputValue(value)
       useAccessTokenHint.onChange(
         ACCESS_TOKEN_REGEXP.test(value) ? '' : 'Gitako does not recognize the token.',
       )
@@ -45,13 +46,13 @@ export function AccessTokenSettings() {
         </span>
       ),
     ) => {
-      if (accessToken) {
-        configContext.onChange({ accessToken })
-        setAccessToken('')
+      if (accessTokenInputValue) {
+        configContext.onChange({ accessToken: accessTokenInputValue })
+        setAccessTokenInputValue('')
         useAccessTokenHint.onChange(hint)
       }
     },
-    [accessToken], // eslint-disable-line react-hooks/exhaustive-deps
+    [accessTokenInputValue], // eslint-disable-line react-hooks/exhaustive-deps
   )
 
   const onPressAccessToken = React.useCallback(
@@ -109,14 +110,14 @@ export function AccessTokenSettings() {
             <TextInput
               sx={{ marginRight: 1 }}
               className={'access-token-input'}
-              value={accessToken}
+              value={accessTokenInputValue}
               placeholder="Or input here manually"
               onFocus={() => focusInput.onChange(true)}
               onBlur={() => focusInput.onChange(false)}
               onChange={onInputAccessToken}
               onKeyPress={onPressAccessToken}
             />
-            <Button onClick={() => saveToken()} disabled={!accessToken}>
+            <Button onClick={() => saveToken()} disabled={!accessTokenInputValue}>
               Save
             </Button>
           </div>

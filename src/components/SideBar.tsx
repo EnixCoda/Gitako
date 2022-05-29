@@ -28,8 +28,8 @@ export function SideBar() {
   const state = useLoadedContext(SideBarStateContext).value
   const configContext = useConfigs()
 
-  const accessToken = configContext.value.accessToken || ''
-  const [baseSize] = React.useState(() => configContext.value.sideBarWidth)
+  const { sideBarWidth } = configContext.value
+  const [baseSize] = React.useState(() => sideBarWidth)
 
   const [showSettings, setShowSettings] = React.useState(false)
   const toggleShowSettings = React.useCallback(() => setShowSettings(show => !show), [])
@@ -52,8 +52,7 @@ export function SideBar() {
     if (detectBrowser() === 'Safari') DOMHelper.markGitakoSafariFlag()
   }, [])
 
-  const sidebarToggleMode = configContext.value.sidebarToggleMode
-  const intelligentToggle = configContext.value.intelligentToggle
+  const { sidebarToggleMode, intelligentToggle } = configContext.value
   const $shouldShow = useStateIO(() =>
     intelligentToggle === null
       ? sidebarToggleMode === 'persistent'
@@ -99,7 +98,7 @@ export function SideBar() {
   const toggleShowSideBar = React.useCallback(() => {
     if (!error) $shouldShow.onChange(show => !show)
   }, [error]) // eslint-disable-line react-hooks/exhaustive-deps
-  useToggleSideBarWithKeyboard(state, configContext, toggleShowSideBar)
+  useToggleSideBarWithKeyboard(state, toggleShowSideBar)
 
   const updateSideBarVisibility = React.useCallback(() => {
     if (intelligentToggle === null && sidebarToggleMode === 'persistent') {
@@ -114,6 +113,7 @@ export function SideBar() {
   usePJAX()
 
   // Hide sidebar when error due to auth but token is set  #128
+  const { accessToken } = configContext.value
   const hideSidebarOnInvalidToken: boolean =
     intelligentToggle === null && Boolean(state === 'error-due-to-auth' && accessToken)
   React.useEffect(() => {

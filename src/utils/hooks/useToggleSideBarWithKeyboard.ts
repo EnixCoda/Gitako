@@ -1,27 +1,22 @@
-import { ConfigsContextShape } from 'containers/ConfigsContext'
+import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import * as keyHelper from 'utils/keyHelper'
 import { SideBarState } from '../../containers/SideBarState'
 
-export function useToggleSideBarWithKeyboard(
-  state: SideBarState,
-  configContext: ConfigsContextShape,
-  toggleShowSideBar: () => void,
-) {
-  const isDisabled = state === 'disabled'
+export function useToggleSideBarWithKeyboard(state: SideBarState, toggleShowSideBar: () => void) {
+  const { shortcut } = useConfigs().value
+  const isDisabled = state === 'disabled' || !shortcut
   React.useEffect(
     function attachKeyDown() {
-      if (isDisabled || !configContext.value.shortcut) return
+      if (isDisabled) return
 
       function onKeyDown(e: KeyboardEvent) {
         const keys = keyHelper.parseEvent(e)
-        if (keys === configContext.value.shortcut) {
-          toggleShowSideBar()
-        }
+        if (keys === shortcut) toggleShowSideBar()
       }
       window.addEventListener('keydown', onKeyDown)
       return () => window.removeEventListener('keydown', onKeyDown)
     },
-    [toggleShowSideBar, isDisabled, configContext.value.shortcut],
+    [toggleShowSideBar, isDisabled, shortcut],
   )
 }

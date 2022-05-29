@@ -39,6 +39,7 @@ const recursiveToggleFolderOptions: Option<Config['recursiveToggleFolder']>[] = 
 
 export function FileTreeSettings() {
   const configContext = useConfigs()
+  const { recursiveToggleFolder, icons } = configContext.value
   return (
     <SettingsSection title={'File Tree'}>
       <SelectInput
@@ -49,7 +50,7 @@ export function FileTreeSettings() {
             recursiveToggleFolder: v,
           })
         }}
-        value={configContext.value.recursiveToggleFolder}
+        value={recursiveToggleFolder}
       />
 
       <SelectInput<Config['icons']>
@@ -60,7 +61,7 @@ export function FileTreeSettings() {
             icons: v,
           })
         }}
-        value={configContext.value.icons}
+        value={icons}
       />
       <SimpleToggleField
         field={{
