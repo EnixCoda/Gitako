@@ -4,7 +4,6 @@ import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { Config } from 'utils/config/helper'
 import { Option, SelectInput } from '../SelectInput'
-import { Field } from './Field'
 import { SettingsSection } from './SettingsSection'
 
 const iconOptions: Option<Config['icons']>[] = [
@@ -42,30 +41,27 @@ export function FileTreeSettings() {
   const configContext = useConfigs()
   return (
     <SettingsSection title={'File Tree'}>
-      <Field id="recursive-toggle-folder" title="Toggle folders recursively while holding">
-        <SelectInput
-          id="recursive-toggle-folder"
-          options={recursiveToggleFolderOptions}
-          onChange={v => {
-            configContext.onChange({
-              recursiveToggleFolder: v,
-            })
-          }}
-          value={configContext.value.recursiveToggleFolder}
-        />
-      </Field>
-      <Field title="Icons" id="file-tree-icons">
-        <SelectInput<Config['icons']>
-          id="file-tree-icons"
-          options={iconOptions}
-          onChange={v => {
-            configContext.onChange({
-              icons: v,
-            })
-          }}
-          value={configContext.value.icons}
-        />
-      </Field>
+      <SelectInput
+        label="Toggle folders recursively while holding"
+        options={recursiveToggleFolderOptions}
+        onChange={v => {
+          configContext.onChange({
+            recursiveToggleFolder: v,
+          })
+        }}
+        value={configContext.value.recursiveToggleFolder}
+      />
+
+      <SelectInput<Config['icons']>
+        label="Icons"
+        options={iconOptions}
+        onChange={v => {
+          configContext.onChange({
+            icons: v,
+          })
+        }}
+        value={configContext.value.icons}
+      />
       <SimpleToggleField
         field={{
           key: 'compressSingletonFolder',

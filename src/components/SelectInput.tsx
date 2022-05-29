@@ -1,18 +1,44 @@
+import { FormControl, Select, SelectProps } from '@primer/react'
 import * as React from 'react'
+
+export type Option<T> = {
+  key: string
+  label: string
+  value: T
+}
+
 export function SelectInput<T>({
   value,
   onChange,
+  label,
   options,
   ...selectProps
 }: Override<
-  React.DetailedHTMLProps<React.SelectHTMLAttributes<HTMLSelectElement>, HTMLSelectElement>,
+  SelectProps,
   IO<T> & {
+    label: string
     options: Option<T>[]
   }
 >) {
   return (
-    <div className={'select-wrapper'}>
-      <select
+    <FormControl
+      sx={{
+        ':focus-within': {
+          '> span': {
+            // original boxShadow does not look right
+            borderWidth: '2px',
+            boxShadow: 'none',
+            '> select': {
+              paddingLeft: '11px',
+              paddingRight: '11px',
+            },
+          },
+        },
+      }}
+    >
+      <FormControl.Label>{label}</FormControl.Label>
+      <Select
+        block
         onChange={e => {
           const key = e.target.value
           const option = options.find(option => option.key === key)
@@ -22,17 +48,11 @@ export function SelectInput<T>({
         {...selectProps}
       >
         {options.map(option => (
-          <option key={option.key} value={option.key}>
+          <Select.Option key={option.key} value={option.key}>
             {option.label}
-          </option>
+          </Select.Option>
         ))}
-      </select>
-      <span className={'chevron'} />
-    </div>
+      </Select>
+    </FormControl>
   )
-}
-export type Option<T> = {
-  key: string
-  label: string
-  value: T
 }
