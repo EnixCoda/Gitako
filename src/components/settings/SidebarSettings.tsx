@@ -1,5 +1,5 @@
 import { Box, Button, FormControl, TextInput } from '@primer/react'
-import { SimpleToggleField } from 'components/SimpleToggleField'
+import { SimpleConfigFieldCheckbox } from 'components/settings/SimpleConfigField/Checkbox'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { friendlyFormatShortcut, noop } from 'utils/general'
@@ -13,7 +13,7 @@ export function SidebarSettings() {
   return (
     <SettingsSection title={'Sidebar'}>
       <ToggleSidebarShortcutSettings />
-      <SimpleToggleField
+      <SimpleConfigFieldCheckbox
         field={{
           key: 'intelligentToggle',
           label: 'Auto expand',

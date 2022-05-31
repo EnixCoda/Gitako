@@ -3,11 +3,12 @@ import { platform } from 'platforms'
 import { GitHub } from 'platforms/GitHub'
 import * as React from 'react'
 import { useStateIO } from 'utils/hooks/useStateIO'
-import { SimpleField, SimpleToggleField } from '../SimpleToggleField'
 import { AccessTokenSettings } from './AccessTokenSettings'
 import { FileTreeSettings } from './FileTreeSettings'
 import { SettingsSection } from './SettingsSection'
 import { SidebarSettings } from './SidebarSettings'
+import { SimpleConfigField } from './SimpleConfigField'
+import { SimpleConfigFieldCheckbox } from './SimpleConfigField/Checkbox'
 
 const WIKI_HOME_LINK = 'https://github.com/EnixCoda/Gitako/wiki'
 export const wikiLinks = {
@@ -19,7 +20,7 @@ export const wikiLinks = {
   createAccessToken: `${WIKI_HOME_LINK}/Access-token-for-Gitako`,
 }
 
-const moreFields: SimpleField<'copyFileButton' | 'copySnippetButton' | 'codeFolding'>[] =
+const moreFields: SimpleConfigField<'copyFileButton' | 'copySnippetButton' | 'codeFolding'>[] =
   platform === GitHub
     ? [
         {
@@ -64,7 +65,7 @@ export function SettingsBarContent({ toggleShow }: { toggleShow: () => void }) {
           <SettingsSection title={'More'}>
             {moreFields.map(field => (
               <React.Fragment key={field.key}>
-                <SimpleToggleField field={field} />
+                <SimpleConfigFieldCheckbox field={field} />
               </React.Fragment>
             ))}
 
