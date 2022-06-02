@@ -13,15 +13,21 @@ export function ConfigsContextWrapper(props: React.PropsWithChildren<Props>) {
   React.useEffect(() => {
     configHelper.get().then(setConfigs)
   }, [])
+
+  const everUpdatedRef = React.useRef(false)
+  React.useEffect(() => {
+    if (everUpdatedRef.current && configs) configHelper.set(configs)
+  }, [configs])
   const onChange = React.useCallback(
     (updatedConfigs: Partial<Config>) => {
-      const mergedConfigs = { ...configs, ...updatedConfigs } as Config
-      configHelper.set(mergedConfigs)
-      setConfigs(mergedConfigs)
+      everUpdatedRef.current = true
+      setConfigs(configs => (configs ? { ...configs, ...updatedConfigs } : configs))
     },
-    [configs, setConfigs],
+    [setConfigs],
   )
+
   if (configs === null) return null
+
   return (
     <ConfigsContext.Provider value={{ value: configs, onChange }}>
       {props.children}
