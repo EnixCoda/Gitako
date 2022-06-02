@@ -134,23 +134,23 @@ export async function getPullPageDocuments(
   if (!baseSHA || !headSHA) throw new Error(`Cannot fetch SHA for comparison`)
 
   // The SHA used to be retrieved from DOM of the pull page, but they can be unreliable if the PR has conflicts
-  const search = new URLSearchParams(window.location.search)
+  let search = new URLSearchParams(window.location.search)
+  search.set('lines', '0')
   search.set('sha1', baseSHA)
   search.set('sha2', headSHA)
-  let lines = 0
   const diffsDOMs: Document[] = []
   while (true) {
-    search.set('lines', lines.toString())
     const diffsDOM = await getDOM(
       `https://${window.location.host}/${userName}/${repoName}/diffs?${search}`,
     )
     diffsDOMs.push(diffsDOM)
 
-    if (diffsDOM.querySelector('.js-diff-progressive-container')) {
-      lines += 3000
-    } else {
-      break
-    }
+    const src = diffsDOM
+      .querySelector('.js-diff-progressive-container include-fragment')
+      ?.getAttribute('src')
+    if (!src) break
+
+    search = new URL(src, window.location.origin).searchParams
   }
   return diffsDOMs
 }
