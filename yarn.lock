@@ -1992,12 +1992,7 @@
   resolved "https://registry.yarnpkg.com/@primer/octicons-react/-/octicons-react-17.1.0.tgz#a152212e0080b1fda07ceeb3da3f10b467e032ab"
   integrity sha512-LSVCGCdvWvWiU+Yu2iqT2TVLX2EOpLPlU+PY0hoztQ7LFfB9Un5qJi8yooaZ2n6kzetG5FsZLSjwLz3RcMjkjA==
 
-"@primer/primitives@7.6.0":
-  version "7.6.0"
-  resolved "https://registry.yarnpkg.com/@primer/primitives/-/primitives-7.6.0.tgz#942efe38b6e09bf6d0351c045436e628e32c3ddb"
-  integrity sha512-cu28QLjectVf2rT4P7m6zS9v4g4yHtErRuPfsgEWEJhbXVIII6vDBm6elJzYixGpTNxpVtSUNezxUXv16l1ejQ==
-
-"@primer/primitives@^7.8.3":
+"@primer/primitives@7.6.0", "@primer/primitives@^7.8.3":
   version "7.8.3"
   resolved "https://registry.yarnpkg.com/@primer/primitives/-/primitives-7.8.3.tgz#de7e03492cf977e99f2417490d76421db9715e9f"
   integrity sha512-04ZwfJhpZ0QFwDrJfCuLX6iOh0BflWDTvuoRA80lQH9xk0RtIg16INbruwwtnbSgnKKXXRSykRRJ5BbxnqufRA==
