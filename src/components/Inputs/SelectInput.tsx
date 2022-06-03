@@ -33,6 +33,7 @@ export function SelectInput<T>({
             },
           },
         },
+        mb: 1
       }}
     >
       <FormControl.Label>{label}</FormControl.Label>

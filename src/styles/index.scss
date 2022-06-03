@@ -852,11 +852,6 @@ $minimal-z-index: max(
           background: var(--color-bg-subtle);
           z-index: 2;
         }
-        .settings-section {
-          &:not(:last-of-type) {
-            margin-bottom: 30px;
-          }
-        }
       }
       .link-button {
         cursor: pointer;

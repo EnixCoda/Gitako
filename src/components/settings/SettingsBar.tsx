@@ -1,3 +1,4 @@
+import { Box } from '@primer/react'
 import { Icon } from 'components/Icon'
 import { platform } from 'platforms'
 import { GitHub } from 'platforms/GitHub'
@@ -56,7 +57,7 @@ export function SettingsBarContent({ toggleShow }: { toggleShow: () => void }) {
           <Icon type={'chevron-down'} className={'hide-settings-icon'} />
         </button>
       </div>
-      <div className={'gitako-settings-bar-content'}>
+      <Box display="grid" gridGap={4} className={'gitako-settings-bar-content'}>
         <div className={'shadow-shelter'} />
         <AccessTokenSettings />
         <SidebarSettings />
@@ -73,23 +74,25 @@ export function SettingsBarContent({ toggleShow }: { toggleShow: () => void }) {
           </SettingsSection>
         )}
         <SettingsSection title={'Talk to the author'}>
-          <a
-            href="https://github.com/EnixCoda/Gitako/issues"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Report bug
-          </a>
-          {' / '}
-          <a
-            href="https://github.com/EnixCoda/Gitako/discussions"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Discuss feature
-          </a>
+          <div>
+            <a
+              href="https://github.com/EnixCoda/Gitako/issues"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Report bug
+            </a>
+            {' / '}
+            <a
+              href="https://github.com/EnixCoda/Gitako/discussions"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Discuss feature
+            </a>
+          </div>
         </SettingsSection>
-      </div>
+      </Box>
     </div>
   )
 }
