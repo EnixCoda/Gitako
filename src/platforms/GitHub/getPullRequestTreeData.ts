@@ -1,24 +1,42 @@
 import { formatHash } from 'utils/general'
 import * as API from './API'
-import { isInPullFilesPage } from './DOMHelper'
+import { getPRDiffTotalStat, getPullRequestFilesCount, isInPullFilesPage } from './DOMHelper'
 import { processTree } from './index'
 import { getCommentsMap } from './utils'
+
+function checkShouldSafeGet() {
+  const FAST_GET_DIFF_THRESHOLD = 10000
+  const FAST_GET_FILES_THRESHOLD = 200
+  const { added, removed } = getPRDiffTotalStat()
+  const filesCount = getPullRequestFilesCount()
+  return (
+    added === null ||
+    removed === null ||
+    filesCount === null ||
+    (added + removed < FAST_GET_DIFF_THRESHOLD && filesCount < FAST_GET_FILES_THRESHOLD)
+  )
+}
 
 export async function getPullRequestTreeData(
   metaData: Pick<MetaData, 'userName' | 'repoName' | 'branchName'>,
   pullId: string,
   accessToken?: string,
-  useSafeRequest = true,
+  shouldSafeGet = checkShouldSafeGet(),
 ) {
   const { userName, repoName } = metaData
   const [treeData, commentData] = await Promise.all([
-    useSafeRequest
+    shouldSafeGet
       ? safeGetPullRequestTreeData(metaData, pullId, accessToken)
       : fastGetPullRequestTreeData(metaData, pullId, accessToken),
     API.getPullComments(userName, repoName, pullId, accessToken),
   ])
 
-  const docs = await API.getPullPageDocuments(userName, repoName, pullId, isInPullFilesPage() ? document : undefined)
+  const docs = await API.getPullPageDocuments(
+    userName,
+    repoName,
+    pullId,
+    isInPullFilesPage() ? document : undefined,
+  )
   // query all elements at once to make getFileElementHash run faster
   const elementsHavePath = docs.map(doc => doc.querySelectorAll(`[data-path]`))
   const getFileElementHash = (path: string) => {
@@ -87,20 +105,17 @@ async function fastGetPullRequestTreeData(
   pullId: string,
   accessToken?: string,
 ) {
-  const [pullData, treeData] = await Promise.all([
-    API.getPullData(userName, repoName, pullId, accessToken),
-    API.getPullTreeData(
-      userName,
-      repoName,
-      pullId,
-      1,
-      GITHUB_API_RESPONSE_MAX_SIZE_PER_PAGE,
-      accessToken,
-    ),
-  ])
+  const treeData = await API.getPullTreeData(
+    userName,
+    repoName,
+    pullId,
+    1,
+    GITHUB_API_RESPONSE_MAX_SIZE_PER_PAGE,
+    accessToken,
+  )
 
-  const count = pullData.changed_files
-  if (treeData.length < count) {
+  const count = getPullRequestFilesCount()
+  if (count !== null && treeData.length < count) {
     let page = 1
     const restPages = []
     while (page * GITHUB_API_RESPONSE_MAX_SIZE_PER_PAGE < count) {

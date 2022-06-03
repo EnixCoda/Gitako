@@ -154,3 +154,7 @@ export function formatID(id: string) {
 export function formatClass(className: string) {
   return `.${className}`
 }
+
+export function parseIntFromElement(e: HTMLElement): number {
+  return parseInt((e.innerText || '').replace(/[^0-9]/g, ''))
+}

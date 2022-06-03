@@ -96,7 +96,7 @@ export async function getTreeData(
   return await request(url, { accessToken })
 }
 
-export async function getPullData(
+export async function getPullRequest(
   userName: string,
   repoName: string,
   pullId: string,

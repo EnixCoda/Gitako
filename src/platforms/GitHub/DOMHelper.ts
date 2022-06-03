@@ -1,7 +1,7 @@
 import { raiseError } from 'analytics'
 import { Clippy, ClippyClassName } from 'components/Clippy'
 import * as React from 'react'
-import { $, formatClass } from 'utils/DOMHelper'
+import { $, formatClass, parseIntFromElement } from 'utils/DOMHelper'
 import { renderReact, run } from 'utils/general'
 import { CopyFileButton, copyFileButtonClassName } from './CopyFileButton'
 
@@ -32,7 +32,7 @@ export function isInCodePage() {
 }
 
 export function isInPullFilesPage() {
-  return $('#files_tab_counter')
+  return $('.tabnav-tab.selected #files_tab_counter')
 }
 
 export function getIssueTitle() {
@@ -276,4 +276,18 @@ export function isNativePRFileTreeShown() {
 
 export function selectEnterpriseStatHeader() {
   return $('.stats-ui-enabled .server-stats')
+}
+
+export function getPullRequestFilesCount() {
+  return $('#files_tab_counter', parseIntFromElement)
+}
+
+export function getPRDiffTotalStat() {
+  const [added, removed] = [$('#diffstat .color-fg-success'), $('#diffstat .color-fg-danger')].map(
+    e => (e ? parseIntFromElement(e) : null),
+  )
+  return {
+    added,
+    removed,
+  }
 }
