@@ -14,7 +14,6 @@ export function useVisibleNodesGenerator(metaData: MetaData) {
 
   const catchNetworkErrors = useCatchNetworkError()
   const config = useConfigs().value
-  const accessToken = config.accessToken
   const setStateContext = useLoadedContext(SideBarStateContext).onChange
 
   // Only run when metadata or accessToken changes
@@ -34,7 +33,7 @@ export function useVisibleNodesGenerator(metaData: MetaData) {
             },
             '/',
             true,
-            accessToken,
+            config.accessToken,
           )
           if (shouldAbort()) return
 
@@ -46,7 +45,12 @@ export function useVisibleNodesGenerator(metaData: MetaData) {
               defer,
               compress: config.compressSingletonFolder,
               async getTreeData(path) {
-                const { root } = await platform.getTreeData(metaData, path, false, accessToken)
+                const { root } = await platform.getTreeData(
+                  metaData,
+                  path,
+                  false,
+                  config.accessToken,
+                )
                 return root
               },
             }),
@@ -55,7 +59,7 @@ export function useVisibleNodesGenerator(metaData: MetaData) {
           setStateContext('tree-rendered')
         })
       },
-      [metaData, accessToken], // eslint-disable-line react-hooks/exhaustive-deps
+      [metaData, config.accessToken], // eslint-disable-line react-hooks/exhaustive-deps
     ),
   )
 
