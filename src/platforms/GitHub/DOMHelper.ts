@@ -7,8 +7,8 @@ import { CopyFileButton, copyFileButtonClassName } from './CopyFileButton'
 
 export function resolveMeta(): Partial<MetaData> {
   const metaData = {
-    userName: $('[itemprop="author"] > a[rel="author"]', e => e.textContent?.trim()),
-    repoName: $('[itemprop="name"] > a[href]', e => e.textContent?.trim()),
+    userName: $('[itemprop="author"] > a[rel="author"]', e => e.textContent?.trim()) || undefined,
+    repoName: $('[itemprop="name"] > a[href]', e => e.textContent?.trim()) || undefined,
     branchName: getCurrentBranch(true),
   }
   if (!metaData.userName || !metaData.repoName) {
@@ -65,7 +65,7 @@ export function getCurrentBranch(passive = false) {
 
   const findFileButtonSelector =
     '#js-repo-pjax-container .repository-content .file-navigation a[data-hotkey="t"]'
-  const urlFromFindFileButton: string | undefined = $(
+  const urlFromFindFileButton = $(
     findFileButtonSelector,
     element => (element as HTMLAnchorElement).href,
   )
