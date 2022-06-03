@@ -61,14 +61,7 @@ const typeToIconComponentMap: {
 } = {
   search: 'Search',
   loading: 'Clock',
-  hourglass: 'Hourglass',
   submodule: 'Submodule',
-  grabber: 'Grabber',
-  comment: 'Comment',
-  x: 'X',
-  pin: 'Pin',
-  tab: 'Tab',
-  gear: 'Gear',
   diff: 'Diff',
   diffAdded: 'DiffAdded',
   diffIgnored: 'DiffIgnored',
@@ -76,7 +69,6 @@ const typeToIconComponentMap: {
   diffRemoved: 'DiffRemoved',
   diffRenamed: 'DiffRenamed',
   folder: 'ChevronRight',
-  'chevron-down': 'ChevronDown',
   'go-to': 'Reply',
   '.zip': 'FileZip',
   '.rar': 'FileZip',
@@ -99,7 +91,9 @@ const typeToIconComponentMap: {
 }
 
 type Props = {
-  type: string
+  type?: keyof typeof typeToIconComponentMap
+  name?: keyof typeof iconToComponentMap
+  IconComponent?: React.ComponentType<IconProps>
   className?: string
   placeholder?: boolean
   onClick?: (event: React.MouseEvent<HTMLElement>) => void
@@ -107,19 +101,15 @@ type Props = {
 
 export const Icon = React.memo(function Icon({
   type,
-  className = undefined,
   placeholder,
+  className = undefined,
+  name = (type && typeToIconComponentMap[type]) || defaultIcon,
+  IconComponent = iconToComponentMap[name],
   ...otherProps
 }: Props) {
-  let children: React.ReactNode = null
-  if (!placeholder) {
-    const name = typeToIconComponentMap[type] || defaultIcon
-    const IconComponent = iconToComponentMap[name]
-    children = <IconComponent className={cx('octicon', name)} {...otherProps} />
-  }
   return (
-    <div className={cx('octicon-wrapper', className)} {...otherProps}>
-      {children}
-    </div>
+    <span className={cx('octicon-wrapper', className)} {...otherProps}>
+      {placeholder ? null : <IconComponent className={cx('octicon', name)} {...otherProps} />}
+    </span>
   )
 })

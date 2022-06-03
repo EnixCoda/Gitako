@@ -1,3 +1,4 @@
+import { CommentIcon } from '@primer/octicons-react'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { isNotFalsy } from 'utils/general'
@@ -42,7 +43,7 @@ export function useRenderFileCommentAmounts() {
           node.comments.active
         } active, ${node.comments.resolved} resolved`}
       >
-        <Icon type={'comment'} /> {node.comments.active > 9 ? '9+' : node.comments.active}
+        <Icon IconComponent={CommentIcon} /> {node.comments.active > 9 ? '9+' : node.comments.active}
       </span>
     ) : null
   }

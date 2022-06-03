@@ -77,17 +77,18 @@ const NodeItemIcon = React.memo(function NodeItemIcon({
     () => (node.type === 'tree' ? getFolderIconURL(node, open) : getFileIconURL(node)),
     [node, open],
   )
+  const iconType = React.useMemo(() => getIconType(node), [node])
 
-  if (icons === 'native') return <Icon type={getIconType(node)} />
+  if (icons === 'native') return <Icon type={iconType} />
   return (
     <>
       <Icon
         className={'node-item-type-icon'}
         placeholder={node.type !== 'tree'}
-        type={loading ? 'loading' : getIconType(node)}
+        type={loading ? 'loading' : iconType}
       />
       {node.type === 'commit' ? (
-        <Icon type={getIconType(node)} />
+        <Icon type={iconType} />
       ) : (
         <img alt={node.name} className={cx('node-item-icon', { dim: icons === 'dim' })} src={src} />
       )}

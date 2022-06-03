@@ -1,8 +1,9 @@
+import { GearIcon } from '@primer/octicons-react'
 import { Link } from '@primer/react'
-import { Icon } from 'components/Icon'
 import { VERSION } from 'env'
 import * as React from 'react'
-import { wikiLinks } from './SettingsBar'
+import { RoundIconButton } from './RoundIconButton'
+import { wikiLinks } from './settings/SettingsBar'
 
 type Props = {
   toggleShowSettings: () => void
@@ -21,9 +22,12 @@ export function Footer(props: Props) {
       >
         {VERSION}
       </Link>
-      <button className={'settings-button'} onClick={toggleShowSettings}>
-        <Icon type={'gear'} className={'show-settings-icon'} />
-      </button>
+      <RoundIconButton
+        aria-label={'settings'}
+        icon={GearIcon}
+        iconColor="fg.muted"
+        onClick={toggleShowSettings}
+      />
     </div>
   )
 }

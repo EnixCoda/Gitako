@@ -1,5 +1,6 @@
+import { ChevronDownIcon } from '@primer/octicons-react'
 import { Box } from '@primer/react'
-import { Icon } from 'components/Icon'
+import { RoundIconButton } from 'components/RoundIconButton'
 import { platform } from 'platforms'
 import { GitHub } from 'platforms/GitHub'
 import * as React from 'react'
@@ -53,9 +54,13 @@ export function SettingsBarContent({ toggleShow }: { toggleShow: () => void }) {
     <div className={'gitako-settings-bar'}>
       <div className={'gitako-settings-bar-header'}>
         <h2 className={'gitako-settings-bar-title'}>Settings</h2>
-        <button className={'settings-button'} onClick={toggleShow}>
-          <Icon type={'chevron-down'} className={'hide-settings-icon'} />
-        </button>
+        <RoundIconButton
+          aria-label="Close settings"
+          onClick={toggleShow}
+          size="medium"
+          icon={ChevronDownIcon}
+          color="fg.default"
+        />
       </div>
       <Box display="grid" gridGap={4} className={'gitako-settings-bar-content'}>
         <div className={'shadow-shelter'} />

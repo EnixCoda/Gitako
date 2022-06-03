@@ -1,3 +1,4 @@
+import { GrabberIcon } from '@primer/octicons-react'
 import { Icon } from 'components/Icon'
 import * as React from 'react'
 import { ResizeState, useResizeHandler } from '../utils/hooks/useResizeHandler'
@@ -21,7 +22,7 @@ export function ResizeHandler({ onResize, onResetSize, onResizeStateChange, size
       onDoubleClick={onResetSize}
       style={style}
     >
-      <Icon type={'grabber'} className={'grabber-icon'} size={20} />
+      <Icon IconComponent={GrabberIcon} />
     </div>
   )
 }

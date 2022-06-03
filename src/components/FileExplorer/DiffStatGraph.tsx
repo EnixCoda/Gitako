@@ -1,6 +1,21 @@
+import {
+  DiffAddedIcon,
+  DiffIgnoredIcon,
+  DiffModifiedIcon,
+  DiffRemovedIcon,
+  DiffRenamedIcon
+} from '@primer/octicons-react'
 import * as React from 'react'
 import { resolveDiffGraphMeta } from 'utils/general'
 import { Icon } from '../Icon'
+
+const iconMap = {
+  added: DiffAddedIcon,
+  ignored: DiffIgnoredIcon,
+  modified: DiffModifiedIcon,
+  removed: DiffRemovedIcon,
+  renamed: DiffRenamedIcon,
+}
 
 export function DiffStatGraph({
   diff: { status, changes, additions, deletions },
@@ -19,18 +34,7 @@ export function DiffStatGraph({
 
   return (
     <span className={'diff-stat-graph'}>
-      <Icon
-        className={status}
-        type={
-          {
-            added: 'diffAdded',
-            ignored: 'diffIgnored',
-            modified: 'diffModified',
-            removed: 'diffRemoved',
-            renamed: 'diffRenamed',
-          }[status]
-        }
-      />
+      <Icon className={status} IconComponent={iconMap[status]} />
       {children}
     </span>
   )

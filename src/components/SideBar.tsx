@@ -1,8 +1,9 @@
+import { PinIcon, TabIcon } from '@primer/octicons-react'
 import { AccessDeniedDescription } from 'components/AccessDeniedDescription'
 import { FileExplorer } from 'components/FileExplorer'
+import { Footer } from 'components/Footer'
 import { MetaBar } from 'components/MetaBar'
 import { Portal } from 'components/Portal'
-import { Footer } from 'components/settings/Footer'
 import { SideBarBodyWrapper } from 'components/SideBarBodyWrapper'
 import { ToggleShowButton } from 'components/ToggleShowButton'
 import { useConfigs } from 'containers/ConfigsContext'
@@ -19,8 +20,8 @@ import { RepoContext } from '../containers/RepoContext'
 import { SideBarStateContext } from '../containers/SideBarState'
 import { Theme } from '../containers/Theme'
 import { useToggleSideBarWithKeyboard } from '../utils/hooks/useToggleSideBarWithKeyboard'
-import { Icon } from './Icon'
 import { LoadingIndicator } from './LoadingIndicator'
+import { RoundIconButton } from './RoundIconButton'
 import { SettingsBarContent } from './settings/SettingsBar'
 
 export function SideBar() {
@@ -151,27 +152,29 @@ export function SideBar() {
               <div className={'header'}>
                 <div className={'close-side-bar-button-position'}>
                   {sidebarToggleMode === 'persistent' && (
-                    <button
-                      title={'Collapse sidebar'}
-                      className={'close-side-bar-button'}
+                    <RoundIconButton
+                      icon={TabIcon}
+                      aria-label={'Collapse sidebar'}
+                      sx={{
+                        transform: 'rotateY(180deg)',
+                      }}
                       onClick={toggleShowSideBar}
-                    >
-                      <Icon className={'action-icon'} type={'tab'} />
-                    </button>
+                    />
                   )}
-                  <button
-                    title={'Toggle sidebar dock mode between float and persistent'}
-                    className={cx('close-side-bar-button', {
-                      active: sidebarToggleMode === 'persistent',
-                    })}
+                  <RoundIconButton
+                    icon={PinIcon}
+                    aria-label={'Toggle sidebar dock mode between float and persistent'}
+                    iconColor={sidebarToggleMode === 'persistent' ? 'fg.default' : undefined}
+                    sx={{
+                      transform: 'rotateY(180deg)',
+                    }}
                     onClick={() =>
                       configContext.onChange({
-                        sidebarToggleMode: sidebarToggleMode === 'float' ? 'persistent' : 'float',
+                        sidebarToggleMode:
+                          sidebarToggleMode === 'persistent' ? 'float' : 'persistent',
                       })
                     }
-                  >
-                    <Icon className={'action-icon'} type={'pin'} />
-                  </button>
+                  />
                 </div>
                 {metaData && <MetaBar metaData={metaData} />}
               </div>
