@@ -271,7 +271,11 @@ export function getPath() {
 }
 
 export function isNativePRFileTreeShown() {
-  return $('file-tree[data-target="diff-layout.fileTree"]')
+  return $('file-tree[data-target="diff-layout.fileTree"]', ele => {
+    // It would be set `display: hidden;` when collapsed
+    const { width, height } = ele.getBoundingClientRect()
+    return width * height > 0
+  })
 }
 
 export function selectEnterpriseStatHeader() {
