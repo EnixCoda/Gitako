@@ -39,19 +39,16 @@ export async function getPullRequestTreeData(
   )
   // query all elements at once to make getFileElementHash run faster
   const elementsHavePath = docs.map(doc => doc.querySelectorAll(`[data-path]`))
-  const getFileElementHash = (path: string) => {
-    let e
+  const map = new Map<string, string>()
     for (const group of elementsHavePath) {
       for (let i = 0; i < group.length; i++) {
         const element = group[i]
-        if (element.getAttribute('data-path')?.startsWith(path)) {
-          e = element
-          break
-        }
+      const id = element.parentElement?.id
+      if (id) {
+        const path = element.getAttribute('data-path')
+        if (path) map.set(path, id)
       }
-      if (e) break
     }
-    return e?.parentElement?.id
   }
 
   const urlMainPart = `https://${window.location.host}/${userName}/${repoName}/pull/${pullId}/files${window.location.search}`
@@ -61,7 +58,7 @@ export async function getPullRequestTreeData(
       path: filename || '',
       type: 'blob',
       name: filename?.split('/').pop() || '',
-      url: `${urlMainPart}${formatHash(getFileElementHash(filename))}`,
+      url: `${urlMainPart}${formatHash(map.get(filename))}`,
       sha: sha,
       comments: commentsMap.get(filename),
       diff: {
