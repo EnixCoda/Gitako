@@ -1,6 +1,9 @@
 import * as React from 'react'
 
-export function Highlight(props: { text: string; match?: RegExp | string }) {
+export const Highlight = React.memo(function Highlight(props: {
+  text: string
+  match?: RegExp | string
+}) {
   const { text, match } = props
   const $match = React.useMemo(() => {
     if (match) {
@@ -13,23 +16,32 @@ export function Highlight(props: { text: string; match?: RegExp | string }) {
     return null
   }, [match])
 
-  if (!$match) return <>{text}</>
+  const chunks = useChunks(text, $match)
+
+  return <>{chunks.map(([type, text], key) => React.createElement(type, { key }, text))}</>
+})
+
+function useChunks(text: string, $match: RegExp | null) {
+  const contents: [string, string][] = []
+  if ($match === null) return [['span', text]]
 
   const matchedPieces = Array.from(text.matchAll($match)).map(
     ([text, highlightText = text]) => highlightText,
   )
   const preservedPieces = text.split($match)
-  const content = []
 
-  let i = 0
-  while (matchedPieces.length || preservedPieces.length) {
-    if (preservedPieces.length) {
-      content.push(<span key={i++}>{preservedPieces.shift()}</span>)
-    }
-    if (matchedPieces.length) {
-      content.push(<mark key={i++}>{matchedPieces.shift()}</mark>)
-    }
+  const push = (type: string, text: string) => {
+    if (!text) return
+    const last = contents[contents.length - 1]
+    if (last && last[0] === type) last[1] += text
+    else contents.push([type, text])
   }
 
-  return <>{content}</>
+  let i = 0
+  while (i < Math.max(matchedPieces.length, preservedPieces.length)) {
+    push('span', preservedPieces[i])
+    push('mark', matchedPieces[i])
+    ++i
+  }
+  return contents
 }

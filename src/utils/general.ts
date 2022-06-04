@@ -1,5 +1,6 @@
 import { ReactElement } from 'react'
 import * as ReactDOM from 'react-dom'
+import { is } from './is'
 
 export function pick<T>(source: T, keys: string[]): Partial<T> {
   if (keys && typeof keys === 'object') {
@@ -129,11 +130,19 @@ export async function JSONRequest<D>(
   ).json()
 }
 
-export function searchKeyToRegexp(searchKey: string) {
-  if (!searchKey) return null
-
-  return safeRegexp(searchKey, hasUpperCase(searchKey) ? 'g' : 'gi')
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function memoize<Args extends any[], R>(fn: (...args: Args) => R): (...args: Args) => R {
+  let lastArgs: Args | null = null
+  let lastR: R | null = null
+  return (...args) => {
+    if (lastArgs && is.shallowEqual.array(lastArgs, args)) return lastR as R
+    return (lastR = fn(...(lastArgs = args)))
+  }
 }
+
+export const searchKeyToRegexp = memoize((searchKey: string) =>
+  searchKey ? safeRegexp(searchKey, hasUpperCase(searchKey) ? 'g' : 'gi') : null,
+)
 
 export function hasUpperCase(input: string) {
   return /[A-Z]/.test(input)
