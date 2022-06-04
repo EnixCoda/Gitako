@@ -48,7 +48,7 @@ export function $<T2>(
   selector: string,
   existCallback: undefined | null,
   otherwise: () => T2,
-): HTMLElement | T2 | null
+): HTMLElement | T2
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function $(selector: string, existCallback?: any, otherwise?: any) {
   const element = document.querySelector(selector)
@@ -56,6 +56,18 @@ export function $(selector: string, existCallback?: any, otherwise?: any) {
     return existCallback ? existCallback(element) : element
   }
   return otherwise ? otherwise() : null
+}
+
+/**
+ * add the root element into DOM
+ */
+export function insertMountPoint() {
+  return $(formatID(rootElementID), undefined, () => {
+    const rootElement = document.createElement('div')
+    rootElement.setAttribute('id', rootElementID)
+    document.body.appendChild(rootElement)
+    return rootElement
+  })
 }
 
 /**
