@@ -1,9 +1,10 @@
 import { useConfigs } from 'containers/ConfigsContext'
 import { platform } from 'platforms'
 import * as React from 'react'
-import { FixedSizeList } from 'react-window'
+import { Align, FixedSizeList } from 'react-window'
 import { useOnLocationChange } from 'utils/hooks/useOnLocationChange'
 import { useOnPJAXDone } from 'utils/hooks/usePJAX'
+import { useStateIO } from 'utils/hooks/useStateIO'
 import { NodeRendererContext } from '.'
 import { VirtualNode } from './VirtualNode'
 
@@ -33,9 +34,30 @@ export function ListView({
         : -1,
     [focusedNode?.path, nodes, width, height],
   )
+
+  const $mode = useStateIO<Align>('start')
+  const enableScroll = width * height > 0 // these can be 0 on first render
+
   React.useEffect(() => {
-    if (listRef.current && index !== -1) listRef.current.scrollToItem(index, 'smart')
-  }, [index])
+    // - init loading
+    //   - "start"
+    //     - NO immediate call
+    // - jump to file
+    //   - "start"
+    //     - NO immediate call
+    // - click file/folder
+    //   - not invoke
+    // - navigate with keyboard
+    //   - "smart"
+    //     - immediate call
+    if (enableScroll && listRef.current && index !== -1) {
+      listRef.current.scrollToItem(index, $mode.value)
+    }
+  }, [enableScroll, $mode.value, index])
+
+  React.useEffect(() => {
+    if (enableScroll && $mode.value === 'start') $mode.onChange('smart')
+  }, [enableScroll, $mode.value]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const goToCurrentItem = React.useCallback(() => {
     const targetPath = platform.getCurrentPath(metaData.branchName)
