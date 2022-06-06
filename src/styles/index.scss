@@ -418,6 +418,7 @@ $minimal-z-index: max(
   }
   .#{$name}-side-bar-body {
     $button-size: 32px;
+
     position: relative;
     width: var(--gitako-width);
     height: 100%;
@@ -425,6 +426,7 @@ $minimal-z-index: max(
     flex-direction: column;
     background: var(--color-bg-subtle);
     border-left: 1px solid var(--color-border-default);
+
     .octicon-wrapper {
       display: inline-block;
       color: var(--color-fg-subtle);
@@ -501,22 +503,6 @@ $minimal-z-index: max(
         display: flex;
         flex-direction: column;
         flex-wrap: nowrap;
-        &.freeze {
-          filter: blur(1.5px) opacity(0.6) grayscale(0.9) brightness(0.8);
-          transition: filter 0.25s ease;
-          &:hover {
-            filter: blur(1.5px) opacity(0.6) grayscale(0.9) brightness(0.9);
-          }
-          &:active {
-            filter: blur(1.5px) opacity(0.6) grayscale(0.9) brightness(0.7);
-          }
-          cursor: pointer;
-
-          > * {
-            pointer-events: none;
-            user-select: none;
-          }
-        }
 
         .search-input {
           padding-left: 0;
@@ -770,19 +756,19 @@ $minimal-z-index: max(
     }
 
     .#{$name}-settings-bar {
-      background: var(--color-bg-subtle);
+      position: absolute;
+      width: 100%;
+      height: 100%;
       display: flex;
       flex-direction: column;
-      max-height: calc(100vh - 240px);
-      min-height: 240px;
-      z-index: 1;
+      z-index: 2;
       overflow: hidden; // prevent box-shadow of children overflow
+      background: var(--color-bg-subtle);
 
       &-header {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        border-top: 1px solid var(--color-border-muted);
         padding: 10px;
         box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.2), 0 3px 4px 0 rgba(0, 0, 0, 0.14),
           0 3px 3px -2px rgba(0, 0, 0, 0.12);

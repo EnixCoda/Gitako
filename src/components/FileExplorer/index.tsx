@@ -2,7 +2,6 @@ import { Label, Text } from '@primer/react'
 import { LoadingIndicator } from 'components/LoadingIndicator'
 import { SearchBar } from 'components/SearchBar'
 import * as React from 'react'
-import { cx } from 'utils/cx'
 import { run } from 'utils/general'
 import { useLoadedContext } from 'utils/hooks/useLoadedContext'
 import { VisibleNodes } from 'utils/VisibleNodesGenerator'
@@ -39,10 +38,9 @@ export type NodeRendererContext = {
 
 type Props = {
   metaData: MetaData
-  freeze: boolean
 }
 
-export function FileExplorer({ freeze, metaData }: Props) {
+export function FileExplorer({ metaData }: Props) {
   const visibleNodesGenerator = useVisibleNodesGenerator(metaData)
   const visibleNodes = useVisibleNodes(visibleNodesGenerator)
 
@@ -82,7 +80,7 @@ export function FileExplorer({ freeze, metaData }: Props) {
   useFocusFileExplorerOnFirstRender()
 
   return (
-    <div className={cx(`file-explorer`, { freeze })} tabIndex={-1} onKeyDown={handleKeyDown}>
+    <div className={`file-explorer`} tabIndex={-1} onKeyDown={handleKeyDown}>
       {run(() => {
         switch (state) {
           case 'tree-loading':

@@ -190,7 +190,7 @@ export function SideBar() {
                   case 'error-due-to-auth':
                     return <AccessDeniedDescription />
                   default:
-                    return metaData && <FileExplorer metaData={metaData} freeze={showSettings} />
+                    return metaData && <FileExplorer metaData={metaData} />
                 }
               })}
             </div>

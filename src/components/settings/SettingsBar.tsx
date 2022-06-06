@@ -1,5 +1,6 @@
 import { ChevronDownIcon } from '@primer/octicons-react'
 import { Box } from '@primer/react'
+import { Footer } from 'components/Footer'
 import { RoundIconButton } from 'components/RoundIconButton'
 import { platform } from 'platforms'
 import { GitHub } from 'platforms/GitHub'
@@ -98,6 +99,7 @@ export function SettingsBarContent({ toggleShow }: { toggleShow: () => void }) {
           </div>
         </SettingsSection>
       </Box>
+      <Footer toggleShowSettings={toggleShow} />
     </div>
   )
 }
