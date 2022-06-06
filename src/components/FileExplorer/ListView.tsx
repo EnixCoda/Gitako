@@ -58,7 +58,7 @@ export function ListView({ width, height, nodeRendererContext }: ListViewProps) 
       itemCount={visibleNodes.nodes.length}
       itemSize={compactFileTree ? 24 : 37}
       height={height}
-      width={width}
+      width={'100%'}
     >
       {VirtualNode}
     </FixedSizeList>
