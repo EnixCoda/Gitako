@@ -1,17 +1,11 @@
-import * as React from 'react'
+import * as React from 'react';
 
-export const Highlight = React.memo(function Highlight(props: {
-  text: string
-  match?: RegExp | string
-}) {
+export const Highlight = React.memo(function Highlight(props: { text: string; match?: RegExp }) {
   const { text, match } = props
   const $match = React.useMemo(() => {
-    if (match) {
-      if (match instanceof RegExp) {
-        if (match.flags.includes('g')) return match
-        return new RegExp(match.source, 'g' + match.flags)
-      }
-      return new RegExp(match, 'g')
+    if (match instanceof RegExp) {
+      if (match.flags.includes('g')) return match
+      return new RegExp(match.source, 'g' + match.flags)
     }
     return null
   }, [match])
