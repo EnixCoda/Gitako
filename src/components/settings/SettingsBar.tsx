@@ -59,6 +59,7 @@ export function SettingsBarContent({ toggleShow }: { toggleShow: () => void }) {
           aria-label="Close settings"
           onClick={toggleShow}
           size="medium"
+          iconSize={20}
           icon={ChevronDownIcon}
           color="fg.default"
         />
