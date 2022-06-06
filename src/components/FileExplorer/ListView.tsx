@@ -1,9 +1,6 @@
 import { useConfigs } from 'containers/ConfigsContext'
-import { platform } from 'platforms'
 import * as React from 'react'
 import { Align, FixedSizeList } from 'react-window'
-import { useOnLocationChange } from 'utils/hooks/useOnLocationChange'
-import { useOnPJAXDone } from 'utils/hooks/usePJAX'
 import { useStateIO } from 'utils/hooks/useStateIO'
 import { NodeRendererContext } from '.'
 import { VirtualNode } from './VirtualNode'
@@ -12,17 +9,9 @@ type ListViewProps = {
   height: number
   width: number
   nodeRendererContext: NodeRendererContext
-  metaData: MetaData
-  expandTo: (path: string[]) => void
 }
 
-export function ListView({
-  width,
-  height,
-  metaData,
-  expandTo,
-  nodeRendererContext,
-}: ListViewProps) {
+export function ListView({ width, height, nodeRendererContext }: ListViewProps) {
   const { visibleNodes } = nodeRendererContext
   const { focusedNode, nodes } = visibleNodes
 
@@ -58,14 +47,6 @@ export function ListView({
   React.useEffect(() => {
     if (enableScroll && $mode.value === 'start') $mode.onChange('smart')
   }, [enableScroll, $mode.value]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  const goToCurrentItem = React.useCallback(() => {
-    const targetPath = platform.getCurrentPath(metaData.branchName)
-    if (targetPath) expandTo(targetPath)
-  }, [metaData.branchName, expandTo])
-
-  useOnLocationChange(goToCurrentItem)
-  useOnPJAXDone(goToCurrentItem)
 
   const { compactFileTree } = useConfigs().value
 

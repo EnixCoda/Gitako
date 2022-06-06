@@ -1,9 +1,12 @@
 import { Label, Text } from '@primer/react'
 import { LoadingIndicator } from 'components/LoadingIndicator'
 import { SearchBar } from 'components/SearchBar'
+import { platform } from 'platforms'
 import * as React from 'react'
 import { run } from 'utils/general'
 import { useLoadedContext } from 'utils/hooks/useLoadedContext'
+import { useOnLocationChange } from 'utils/hooks/useOnLocationChange'
+import { useOnPJAXDone } from 'utils/hooks/usePJAX'
 import { VisibleNodes } from 'utils/VisibleNodesGenerator'
 import { SideBarStateContext } from '../../containers/SideBarState'
 import { SizeObserver } from '../SizeObserver'
@@ -79,6 +82,14 @@ export function FileExplorer({ metaData }: Props) {
   const state = useLoadedContext(SideBarStateContext).value
   useFocusFileExplorerOnFirstRender()
 
+  const goToCurrentItem = React.useCallback(() => {
+    const targetPath = platform.getCurrentPath(metaData.branchName)
+    if (targetPath) expandTo(targetPath)
+  }, [metaData.branchName, expandTo])
+
+  useOnLocationChange(goToCurrentItem)
+  useOnPJAXDone(goToCurrentItem)
+
   return (
     <div className={`file-explorer`} tabIndex={-1} onKeyDown={handleKeyDown}>
       {run(() => {
@@ -124,8 +135,6 @@ export function FileExplorer({ metaData }: Props) {
                             height={height}
                             width={width}
                             nodeRendererContext={nodeRendererContext}
-                            expandTo={expandTo}
-                            metaData={metaData}
                           />
                         </div>
                       )}
