@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { VisibleNodesGenerator } from 'utils/VisibleNodesGenerator'
 
-export function useToggleExpansion(visibleNodesGenerator: VisibleNodesGenerator | null) {
+export function useToggleExpansion(visibleNodesGenerator: VisibleNodesGenerator) {
   return React.useCallback(
     async (
       node: TreeNode,
@@ -11,8 +11,6 @@ export function useToggleExpansion(visibleNodesGenerator: VisibleNodesGenerator 
         recursive?: boolean
       },
     ) => {
-      if (!visibleNodesGenerator) return
-
       if (node.type === 'tree') {
         visibleNodesGenerator.focusNode(node)
         await visibleNodesGenerator.toggleExpand(node, recursive)

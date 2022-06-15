@@ -1,3 +1,5 @@
+type AnyArray = any[] // eslint-disable-line @typescript-eslint/no-explicit-any
+
 type MetaData = {
   userName: string
   repoName: string

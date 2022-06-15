@@ -1,14 +1,14 @@
 import { GitBranchIcon } from '@primer/octicons-react'
 import { Box, BranchName, Breadcrumbs, Text } from '@primer/react'
+import { RepoContext } from 'containers/RepoContext'
 import { platform } from 'platforms'
 import * as React from 'react'
 import { createAnchorClickHandler } from 'utils/createAnchorClickHandler'
 
-type Props = {
-  metaData: MetaData
-}
+export function MetaBar() {
+  const metaData = React.useContext(RepoContext)
+  if (!metaData) return null
 
-export function MetaBar({ metaData }: Props) {
   const { userName, repoName, branchName } = metaData
   const { repoUrl, userUrl, branchUrl } = platform.resolveUrlFromMetaData(metaData)
   return (

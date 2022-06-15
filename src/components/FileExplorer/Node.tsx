@@ -28,7 +28,8 @@ type Props = {
   renderLabelText(node: TreeNode): React.ReactNode
   style?: React.CSSProperties
 }
-export function Node({
+
+export const Node = React.memo(function Node({
   node,
   depth,
   expanded,
@@ -60,7 +61,7 @@ export function Node({
       {renderActions && <div className={'actions'}>{renderActions(node)}</div>}
     </a>
   )
-}
+})
 
 const NodeItemIcon = React.memo(function NodeItemIcon({
   node,

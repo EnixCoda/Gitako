@@ -7,7 +7,7 @@ import { useSequentialEffect } from 'utils/hooks/useSequentialEffect'
 import { VisibleNodesGenerator } from 'utils/VisibleNodesGenerator'
 import { SideBarStateContext } from '../../../containers/SideBarState'
 
-export function useVisibleNodesGenerator(metaData: MetaData) {
+export function useVisibleNodesGenerator(metaData: MetaData | null) {
   const [visibleNodesGenerator, setVisibleNodesGenerator] = useState<VisibleNodesGenerator | null>(
     null,
   )
@@ -21,6 +21,7 @@ export function useVisibleNodesGenerator(metaData: MetaData) {
     useCallback(
       shouldAbort => {
         catchNetworkErrors(async () => {
+          if (!metaData) return
           if (shouldAbort()) return
 
           setStateContext('tree-loading')

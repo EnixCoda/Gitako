@@ -1,9 +1,9 @@
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
-import { Align, FixedSizeList } from 'react-window'
 import { useStateIO } from 'utils/hooks/useStateIO'
 import { NodeRendererContext } from '.'
-import { VirtualNode } from './VirtualNode'
+import { Node } from './Node'
+import { AlignMode, useVirtualScroll } from './useVirtualScroll'
 
 type ListViewProps = {
   height: number
@@ -12,10 +12,25 @@ type ListViewProps = {
 }
 
 export function ListView({ width, height, nodeRendererContext }: ListViewProps) {
-  const { visibleNodes } = nodeRendererContext
-  const { focusedNode, nodes } = visibleNodes
+  const { onNodeClick, onNodeFocus, renderLabelText, renderActions, visibleNodes } =
+    nodeRendererContext
+  const { focusedNode, nodes, expandedNodes, depths, loading } = visibleNodes
 
-  const listRef = React.useRef<FixedSizeList<NodeRendererContext>>(null)
+  const { compactFileTree } = useConfigs().value
+
+  const rowHeight = compactFileTree ? 24 : 37
+  const totalAmount = visibleNodes.nodes.length
+  const { onScroll, visibleRows, containerStyle, scrollToItem, ref } =
+    useVirtualScroll<HTMLDivElement>({
+      totalAmount,
+      rowHeight,
+      viewportHeight: height,
+      overScan: 10,
+    })
+
+  const $mode = useStateIO<AlignMode>('top')
+  const enableScroll = width * height > 0 // these can be 0 on first render
+
   const index = React.useMemo(
     () =>
       width && height && focusedNode?.path
@@ -24,43 +39,57 @@ export function ListView({ width, height, nodeRendererContext }: ListViewProps) 
     [focusedNode?.path, nodes, width, height],
   )
 
-  const $mode = useStateIO<Align>('start')
-  const enableScroll = width * height > 0 // these can be 0 on first render
-
   React.useEffect(() => {
     // - init loading
-    //   - "start"
+    //   - "top"
     //     - NO immediate call
     // - jump to file
-    //   - "start"
+    //   - "top"
     //     - NO immediate call
     // - click file/folder
     //   - not invoke
     // - navigate with keyboard
-    //   - "smart"
+    //   - "lazy"
     //     - immediate call
-    if (enableScroll && listRef.current && index !== -1) {
-      listRef.current.scrollToItem(index, $mode.value)
+    if (enableScroll && index !== -1) {
+      scrollToItem?.(index, $mode.value)
     }
-  }, [enableScroll, $mode.value, index])
+  }, [enableScroll, $mode.value, index, scrollToItem])
 
   React.useEffect(() => {
-    if (enableScroll && $mode.value === 'start') $mode.onChange('smart')
+    if (enableScroll && $mode.value === 'top') $mode.onChange('lazy')
   }, [enableScroll, $mode.value]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const { compactFileTree } = useConfigs().value
-
   return (
-    <FixedSizeList<NodeRendererContext>
-      ref={listRef}
-      itemKey={(index, { visibleNodes }) => visibleNodes.nodes[index]?.path}
-      itemData={nodeRendererContext}
-      itemCount={visibleNodes.nodes.length}
-      itemSize={compactFileTree ? 24 : 37}
-      height={height}
-      width={'100%'}
+    <div
+      style={{
+        height,
+        width: '100%',
+        overflow: 'auto',
+      }}
+      ref={ref}
+      onScroll={onScroll}
     >
-      {VirtualNode}
-    </FixedSizeList>
+      <div style={containerStyle}>
+        {visibleRows.map(({ row, style }) => {
+          const node = nodes[row]
+          return (
+            <Node
+              key={node.path}
+              node={node}
+              style={style}
+              depth={depths.get(node) || 0}
+              focused={focusedNode?.path === node.path}
+              loading={loading.has(node.path)}
+              expanded={expandedNodes.has(node.path)}
+              onClick={onNodeClick}
+              onFocus={onNodeFocus}
+              renderLabelText={renderLabelText}
+              renderActions={renderActions}
+            />
+          )
+        })}
+      </div>
+    </div>
   )
 }

@@ -16,7 +16,6 @@ import { useLoadedContext } from 'utils/hooks/useLoadedContext'
 import { useOnPJAXDone, usePJAX } from 'utils/hooks/usePJAX'
 import { useStateIO } from 'utils/hooks/useStateIO'
 import { SideBarErrorContext } from '../containers/ErrorContext'
-import { RepoContext } from '../containers/RepoContext'
 import { SideBarStateContext } from '../containers/SideBarState'
 import { Theme } from '../containers/Theme'
 import { useToggleSideBarWithKeyboard } from '../utils/hooks/useToggleSideBarWithKeyboard'
@@ -25,7 +24,6 @@ import { RoundIconButton } from './RoundIconButton'
 import { SettingsBarContent } from './settings/SettingsBar'
 
 export function SideBar() {
-  const metaData = React.useContext(RepoContext)
   const state = useLoadedContext(SideBarStateContext).value
   const configContext = useConfigs()
 
@@ -176,7 +174,7 @@ export function SideBar() {
                     }
                   />
                 </div>
-                {metaData && <MetaBar metaData={metaData} />}
+                <MetaBar />
               </div>
               {run(() => {
                 switch (state) {
@@ -189,8 +187,11 @@ export function SideBar() {
                     return <LoadingIndicator text={'Fetching repo meta...'} />
                   case 'error-due-to-auth':
                     return <AccessDeniedDescription />
-                  default:
-                    return metaData && <FileExplorer metaData={metaData} />
+                  case 'meta-loaded':
+                  case 'tree-loading':
+                  case 'tree-rendering':
+                  case 'tree-rendered':
+                    return <FileExplorer />
                 }
               })}
             </div>

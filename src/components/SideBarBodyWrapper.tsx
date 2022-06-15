@@ -119,7 +119,7 @@ export function SideBarBodyWrapper({
       style={{ height: heightForSafari }}
       onMouseLeave={onMouseLeave}
     >
-      <div className={'gitako-side-bar-body-wrapper-content'}>{children}</div>
+      {children}
       {features.resize && (
         <ResizeHandler
           onResize={onResize}

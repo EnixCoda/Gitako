@@ -132,7 +132,8 @@ export function copyElementContent(element: Element, trimLeadingSpace?: boolean)
 export function focusFileExplorer() {
   const sideBarContentSelector = '.gitako-side-bar .file-explorer'
   $(sideBarContentSelector, sideBarElement => {
-    if (sideBarElement instanceof HTMLElement) sideBarElement.focus()
+    if (document.activeElement !== sideBarElement && sideBarElement instanceof HTMLElement)
+      sideBarElement.focus()
   })
 }
 

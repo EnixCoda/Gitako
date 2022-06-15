@@ -3,7 +3,8 @@ import * as DOMHelper from 'utils/DOMHelper'
 import { OperatingSystems, os } from 'utils/general'
 import { loadWithPJAX } from 'utils/hooks/usePJAX'
 import { VisibleNodes } from 'utils/VisibleNodesGenerator'
-import { VisibleNodesGeneratorMethods } from './useOnVisibleNodesGeneratorReady'
+import { AlignMode } from '../useVirtualScroll'
+import { VisibleNodesGeneratorMethods } from './useVisibleNodesGeneratorMethods'
 
 function wouldBlockHistoryNavigation(event: React.KeyboardEvent) {
   // Cmd + left/right on macOS
@@ -25,17 +26,19 @@ function getVisibleParentNode(nodes: TreeNode[], focusedNode: TreeNode) {
 }
 
 export function useHandleKeyDown(
-  visibleNodes: VisibleNodes | null,
+  visibleNodes: VisibleNodes,
   { focusNode, toggleExpansion, goTo }: VisibleNodesGeneratorMethods,
   searched: boolean,
+  setAlignMode: (mode: AlignMode) => void,
 ) {
   return React.useCallback(
     (event: React.KeyboardEvent<HTMLElement>) => {
-      if (!visibleNodes) return
       const { nodes, focusedNode, expandedNodes } = visibleNodes
-      function handleVerticalMove(index: number) {
+
+      const handleVerticalMove = (index: number) => {
         if (0 <= index && index < nodes.length) {
           DOMHelper.focusFileExplorer()
+          setAlignMode('lazy')
           focusNode(nodes[index])
         } else {
           DOMHelper.focusSearchInput()
@@ -66,11 +69,13 @@ export function useHandleKeyDown(
             }
             if (expandedNodes.has(focusedNode.path)) {
               toggleExpansion(focusedNode, { recursive: event.altKey })
+              setAlignMode('lazy')
             } else {
               // go forward to the start of the list, find the closest node with lower depth
               const parentNode = getVisibleParentNode(nodes, focusedNode)
               if (parentNode) {
                 focusNode(parentNode)
+                setAlignMode('lazy')
               }
             }
             break
@@ -87,6 +92,7 @@ export function useHandleKeyDown(
                 const nextNode = nodes[focusedNodeIndex + 1]
                 if (focusedNode.contents?.includes(nextNode)) {
                   focusNode(nextNode)
+                  setAlignMode('lazy')
                 }
               } else {
                 toggleExpansion(focusedNode, { recursive: event.altKey })
@@ -103,6 +109,7 @@ export function useHandleKeyDown(
             // expand node or redirect to file page
             if (searched) {
               goTo(focusedNode.path.split('/'))
+              setAlignMode('top')
             } else {
               if (focusedNode.type === 'tree') {
                 toggleExpansion(focusedNode, { recursive: event.altKey })
@@ -145,6 +152,6 @@ export function useHandleKeyDown(
         }
       }
     },
-    [visibleNodes, searched, goTo, focusNode, toggleExpansion],
+    [visibleNodes, searched, goTo, focusNode, toggleExpansion, setAlignMode],
   )
 }

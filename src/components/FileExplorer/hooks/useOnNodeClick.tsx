@@ -2,12 +2,17 @@ import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { isOpenInNewWindowClick } from 'utils/general'
 import { loadWithPJAX } from 'utils/hooks/usePJAX'
-import { VisibleNodesGeneratorMethods } from './useOnVisibleNodesGeneratorReady'
+import { AlignMode } from '../useVirtualScroll'
+import { VisibleNodesGeneratorMethods } from './useVisibleNodesGeneratorMethods'
 
-export function useHandleNodeClick({ toggleExpansion, focusNode }: VisibleNodesGeneratorMethods) {
+export function useHandleNodeClick(
+  { toggleExpansion, focusNode }: VisibleNodesGeneratorMethods,
+  setAlignMode: (mode: AlignMode) => void,
+) {
   const { recursiveToggleFolder } = useConfigs().value
   return React.useCallback(
     (event: React.MouseEvent<HTMLElement, MouseEvent>, node: TreeNode) => {
+      setAlignMode('lazy')
       switch (node.type) {
         case 'tree': {
           const recursive =
@@ -40,6 +45,6 @@ export function useHandleNodeClick({ toggleExpansion, focusNode }: VisibleNodesG
         }
       }
     },
-    [toggleExpansion, recursiveToggleFolder, focusNode],
+    [toggleExpansion, recursiveToggleFolder, focusNode, setAlignMode],
   )
 }

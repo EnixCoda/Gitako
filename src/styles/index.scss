@@ -497,12 +497,11 @@ $minimal-z-index: max(
       }
 
       .file-explorer {
-        width: 100%;
-        height: 100%;
         outline: none;
-        display: flex;
+        display: inline-flex;
+        flex: 1;
         flex-direction: column;
-        flex-wrap: nowrap;
+        overflow: hidden; // essential for shrinking `.files` when viewport height reduce
 
         .search-input {
           padding-left: 0;
@@ -533,6 +532,10 @@ $minimal-z-index: max(
           position: relative;
           flex: 1;
           overflow: hidden;
+
+          &.hidden {
+            display: none;
+          }
 
           // Put this inside files will help files to get proper size derived from parents, regardless of its content size
           .magic-size-container {
@@ -607,7 +610,7 @@ $minimal-z-index: max(
 
             .octicon.ChevronRight {
               // smooth rotation animation
-              transition: transform .3s ease;
+              transition: transform 0.3s ease;
             }
 
             & + .octicon-wrapper,

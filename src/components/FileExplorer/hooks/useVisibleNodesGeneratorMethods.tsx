@@ -7,7 +7,7 @@ import { useGoTo } from './useGoTo'
 import { useToggleExpansion } from './useToggleExpansion'
 
 export function useVisibleNodesGeneratorMethods(
-  visibleNodesGenerator: VisibleNodesGenerator | null,
+  visibleNodesGenerator: VisibleNodesGenerator,
   getCurrentPath: () => string[] | null,
   updateSearchKey: React.Dispatch<React.SetStateAction<string>>,
 ) {
@@ -17,9 +17,8 @@ export function useVisibleNodesGeneratorMethods(
   const focusNode = useFocusNode(visibleNodesGenerator)
 
   // Only run when visibleNodesGenerator changes
+  // Confirmed: other items in deps array also only update when that changes
   useEffect(() => {
-    if (!visibleNodesGenerator) return
-
     if (platform.shouldExpandAll?.()) {
       visibleNodesGenerator.onNextUpdate(visibleNodes =>
         visibleNodes.nodes.forEach(node => toggleExpansion(node, { recursive: true })),
@@ -28,7 +27,7 @@ export function useVisibleNodesGeneratorMethods(
       const targetPath = getCurrentPath()
       if (targetPath) goTo(targetPath)
     }
-  }, [visibleNodesGenerator]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [visibleNodesGenerator, getCurrentPath, goTo, toggleExpansion])
 
   return {
     expandTo,
