@@ -8,22 +8,30 @@
 @import '@primer/primitives/dist/scss/colors/_light.scss';
 @import '@primer/primitives/dist/scss/colors/_light_tritanopia.scss';
 
-@mixin theme($themeName) {
-  &[data-color-mode='light'][data-light-theme='#{$themeName}'],
-  &[data-color-mode='dark'][data-dark-theme='#{$themeName}'] {
-    @content;
-  }
-
-  &[data-color-mode='auto'] {
-    &[data-light-theme='#{$themeName}'] {
-      @media (prefers-color-scheme: light) {
+@mixin theme($selector, $themeName) {
+  @at-root {
+    :root[data-color-mode='light'][data-light-theme='#{$themeName}'],
+    :root[data-color-mode='dark'][data-dark-theme='#{$themeName}'] {
+      #{$selector} {
         @content;
       }
     }
 
-    &[data-dark-theme='#{$themeName}'] {
-      @media (prefers-color-scheme: dark) {
-        @content;
+    :root[data-color-mode='auto'] {
+      &[data-light-theme='#{$themeName}'] {
+        @media (prefers-color-scheme: light) {
+          #{$selector} {
+            @content;
+          }
+        }
+      }
+
+      &[data-dark-theme='#{$themeName}'] {
+        @media (prefers-color-scheme: dark) {
+          #{$selector} {
+            @content;
+          }
+        }
       }
     }
   }
@@ -40,31 +48,31 @@
   --color-bg-overlay: var(--color-canvas-overlay);
   --color-bg-subtle: var(--color-canvas-subtle);
 
-  @include theme('dark') {
+  @include theme(&, 'dark') {
     @include primer-colors-dark;
   }
-  @include theme('dark_high_contrast') {
+  @include theme(&, 'dark_high_contrast') {
     @include primer-colors-dark_high_contrast;
   }
-  @include theme('light_colorblind') {
+  @include theme(&, 'light_colorblind') {
     @include primer-colors-light_colorblind;
   }
-  @include theme('dark_colorblind') {
+  @include theme(&, 'dark_colorblind') {
     @include primer-colors-dark_colorblind;
   }
-  @include theme('dark_tritanopia') {
+  @include theme(&, 'dark_tritanopia') {
     @include primer-colors-dark_tritanopia;
   }
-  @include theme('light_high_contrast') {
+  @include theme(&, 'light_high_contrast') {
     @include primer-colors-light_high_contrast;
   }
-  @include theme('dark_dimmed') {
+  @include theme(&, 'dark_dimmed') {
     @include primer-colors-dark_dimmed;
   }
-  @include theme('light') {
+  @include theme(&, 'light') {
     @include primer-colors-light;
   }
-  @include theme('light_tritanopia') {
+  @include theme(&, 'light_tritanopia') {
     @include primer-colors-light_tritanopia;
   }
 }
