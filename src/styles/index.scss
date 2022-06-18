@@ -605,6 +605,11 @@ $minimal-z-index: max(
             width: 16px;
             // not specify height here, it'll break vertical alignment
 
+            .octicon.ChevronRight {
+              // smooth rotation animation
+              transition: transform .3s ease;
+            }
+
             & + .octicon-wrapper,
             & + .node-item-icon {
               margin-right: 6px;
