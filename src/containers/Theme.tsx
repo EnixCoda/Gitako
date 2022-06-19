@@ -1,26 +1,28 @@
+import primitives from '@primer/primitives'
 import { BaseStyles, ThemeProvider } from '@primer/react'
 import theme from '@primer/react/lib-esm/theme'
 import * as React from 'react'
+
+// Temporary color fix for out-of-date embedded @primer/primitives in @primer/react
+// The `*_tritanopia` themes are actually not bundled within @primer/react@35.2.2
+// TODO: Upgrade @primer/react to support these themes
+const fixedTheme = {
+  ...theme,
+  colorSchemes: {
+    ...theme.colorSchemes,
+    light_tritanopia: theme.colorSchemes.light,
+    dark_tritanopia: theme.colorSchemes.dark,
+  },
+}
+
+const validColorSchemes = Object.keys(fixedTheme.colorSchemes) as EnumString<
+  keyof typeof primitives['colors']
+>[]
 
 const colorModeMap: Record<string, 'night' | 'day'> = {
   dark: 'night',
   light: 'day',
 }
-
-const validColorSchemes = Object.keys(theme.colorSchemes) as EnumString<
-  | 'light'
-  | 'light_high_contrast'
-  | 'light_colorblind'
-  | 'light_tritanopia'
-  | 'dark'
-  | 'dark_dimmed'
-  | 'dark_high_contrast'
-  | 'dark_colorblind'
-  | 'dark_tritanopia'
->[]
-// The `*_tritanopia` themes are actually not bundled within @primer/react@35.2.2
-// TODO: Upgrade @primer/react to support these themes
-// BUT: Do not remove the validation, there might be other themes in future
 
 const getPreferenceFromDOM = () => {
   // <html lang="en" data-color-mode="auto" data-light-theme="light" data-dark-theme="dark" ...
@@ -30,8 +32,8 @@ const getPreferenceFromDOM = () => {
 
   return {
     colorMode: (colorMode && colorModeMap[colorMode]) || 'auto',
-    dayScheme: lightTheme && validColorSchemes.includes(lightTheme) ? lightTheme : undefined,
-    nightScheme: darkTheme && validColorSchemes.includes(darkTheme) ? darkTheme : undefined,
+    dayScheme: lightTheme && validColorSchemes.includes(lightTheme) ? lightTheme : 'light',
+    nightScheme: darkTheme && validColorSchemes.includes(darkTheme) ? darkTheme : 'dark',
   } as const
 }
 
@@ -49,7 +51,7 @@ function useThemePreference() {
 export function Theme({ children }: React.PropsWithChildren<{}>) {
   const themePreference = useThemePreference()
   return (
-    <ThemeProvider {...themePreference}>
+    <ThemeProvider {...themePreference} theme={fixedTheme}>
       <BaseStyles>{children}</BaseStyles>
     </ThemeProvider>
   )
