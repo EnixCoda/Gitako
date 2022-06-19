@@ -84,14 +84,10 @@ export const is = {
     string: <T>(d: T | string): d is T => typeof d !== 'string',
   },
   JSON: {
-    object(d: unknown): d is JSONObject {
-      return (typeof d === 'object' && d && !Array.isArray(d)) || false
-    },
-    array(d: unknown): d is JSONArray {
-      return Array.isArray(d)
-    },
-    plain(d: unknown): d is JSONPrimitive {
-      return d === null || d === 'undefined' || is.boolean(d) || is.number(d) || is.string(d)
-    },
+    object: (d: unknown): d is JSONObject =>
+      (typeof d === 'object' && d !== null && !Array.isArray(d)) || false,
+    array: (d: unknown): d is JSONArray => Array.isArray(d),
+    plain: (d: unknown): d is JSONPrimitive =>
+      d === null || d === 'undefined' || is.boolean(d) || is.number(d) || is.string(d),
   },
 }
