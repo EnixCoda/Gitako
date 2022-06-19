@@ -29,7 +29,7 @@ jobs:
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
 
-      - name: Cache deps
+      - name: Cache Dependencies
         uses: actions/cache@v1
         id: yarn-cache
         with:
@@ -38,7 +38,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
-      - name: Install deps
+      - name: Install Dependencies
         env:
           PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: true
         run: |
@@ -48,7 +48,11 @@ jobs:
         run: |
           make build
 
-      - name: Test
+      - name: Unit Test
+        run: |
+          yarn jest src
+
+      - name: E2E Test
         uses: mujo-code/puppeteer-headful@master
         env:
           CI: 'true'
