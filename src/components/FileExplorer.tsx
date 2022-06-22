@@ -309,6 +309,7 @@ function ListView({ width, height, metaData, expandTo, renderNodeContext }: List
       itemSize={compactFileTree ? 24 : 37}
       height={height}
       width={width}
+      overscanCount={20}
     >
       {VirtualNode}
     </FixedSizeList>
