@@ -2,7 +2,7 @@ import { ResizeHandler } from 'components/ResizeHandler'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
-import { defaultConfigs } from 'utils/config/helper'
+import { getDefaultConfigs } from 'utils/config/helper'
 import { cx } from 'utils/cx'
 import { setCSSVariable } from 'utils/DOMHelper'
 import * as features from 'utils/features'
@@ -103,6 +103,9 @@ export function SideBarBodyWrapper({
   )
 
   const dummySize: [number, number] = React.useMemo(() => [size, size], [size])
+
+  const defaultSideBarWidth = React.useMemo(() => getDefaultConfigs().sideBarWidth, []);
+
   return (
     <div
       ref={bodyWrapperRef}
@@ -115,8 +118,8 @@ export function SideBarBodyWrapper({
         <ResizeHandler
           onResize={onResize}
           onResetSize={() => {
-            setSize(defaultConfigs.sideBarWidth)
-            apply(sizeVariableMountPoint, defaultConfigs.sideBarWidth)
+            setSize(defaultSideBarWidth)
+            apply(sizeVariableMountPoint, defaultSideBarWidth)
           }}
           onResizeStateChange={state => {
             blockLeaveRef.current = state === 'resizing'

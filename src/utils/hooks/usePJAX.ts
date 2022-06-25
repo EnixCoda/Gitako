@@ -1,4 +1,5 @@
-import { Config, Pjax } from 'pjax-api'
+import { useConfigs } from 'containers/ConfigsContext'
+import { Config } from 'pjax-api'
 import { platform } from 'platforms'
 import * as React from 'react'
 import { useEvent } from 'react-use'
@@ -28,14 +29,18 @@ const config: Config = {
 }
 
 export function usePJAX() {
+  const { pjaxMode } = useConfigs().value
   // make history travel work
   React.useEffect(() => {
-    new Pjax({
-      ...config,
-      filter() {
-        return false
-      },
-    })
+    if (pjaxMode === 'pjax-api') {
+      const { Pjax } = require('pjax-api')
+      new Pjax({
+        ...config,
+        filter() {
+          return false
+        },
+      })
+    }
   }, [])
 
   // bindings for legacy support
@@ -44,8 +49,7 @@ export function usePJAX() {
 }
 
 export const loadWithPJAX = (url: string, element: HTMLElement) => {
-  if (platform.loadWithPJAX) platform.loadWithPJAX(url, element)
-  else Pjax.assign(url, config)
+  platform.loadWithPJAX?.(url, element) || require('pjax-api').Pjax.assign(url, config)
 }
 
 export function useOnPJAXDone(callback: () => void) {

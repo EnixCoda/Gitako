@@ -1,6 +1,7 @@
 import { useConfigs } from 'containers/ConfigsContext'
 import { GITHUB_OAUTH } from 'env'
 import { Base64 } from 'js-base64'
+import { configRef } from 'utils/config/helper'
 import { run } from 'utils/general'
 import { resolveGitModules } from 'utils/gitSubmodule'
 import { sortFoldersToFront } from 'utils/treeParser'
@@ -169,7 +170,10 @@ export const GitHub: Platform = {
     return await getRepositoryTreeData(metaData, path, recursive, accessToken)
   },
   shouldShow() {
-    return Boolean(DOMHelper.isInCodePage() || (URLHelper.isInPullPage() && !DOMHelper.isNativePRFileTreeShown()))
+    return Boolean(
+      DOMHelper.isInCodePage() ||
+        (URLHelper.isInPullPage() && !DOMHelper.isNativePRFileTreeShown()),
+    )
   },
   shouldExpandAll() {
     return Boolean(URLHelper.isInPullPage())
@@ -205,8 +209,8 @@ export const GitHub: Platform = {
     useGitHubCodeFold(codeFolding)
     useEnterpriseStatBarStyleFix()
   },
-  delegatePJAXProps(options) {
-    if (!options?.node || options.node.type === 'blob')
+  delegatePJAXProps: options => {
+    if (configRef.pjaxMode === 'native' && (!options?.node || options.node.type === 'blob'))
       return {
         'data-pjax': pjaxContainerSelector,
         onClick() {
@@ -214,8 +218,11 @@ export const GitHub: Platform = {
         },
       }
   },
-  loadWithPJAX(url, element) {
-    element.click()
+  loadWithPJAX: (url, element) => {
+    if (configRef.pjaxMode === 'native') {
+      element.click()
+      return true
+    }
   },
 }
 

@@ -108,11 +108,10 @@ export function SideBar() {
     }
   }, [intelligentToggle, sidebarToggleMode])
 
+  usePJAX()
   useOnPJAXDone(updateSideBarVisibility)
 
   platform.usePlatformHooks?.()
-
-  usePJAX()
 
   // Hide sidebar when error due to auth but token is set  #128
   const hideSidebarOnInvalidToken: boolean =

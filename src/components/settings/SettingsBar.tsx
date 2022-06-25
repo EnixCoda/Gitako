@@ -1,9 +1,11 @@
 import { Link } from '@primer/components'
 import { Icon } from 'components/Icon'
+import { useConfigs } from 'containers/ConfigsContext'
 import { VERSION } from 'env'
 import { platform } from 'platforms'
 import { GitHub } from 'platforms/GitHub'
 import * as React from 'react'
+import { useUpdateEffect } from 'react-use'
 import { useStateIO } from 'utils/hooks/useStateIO'
 import { SimpleField, SimpleToggleField } from '../SimpleToggleField'
 import { AccessTokenSettings } from './AccessTokenSettings'
@@ -19,6 +21,7 @@ export const wikiLinks = {
   copyFileButton: `${WIKI_HOME_LINK}/Copy-file-and-snippet`,
   copySnippet: `${WIKI_HOME_LINK}/Copy-file-and-snippet`,
   createAccessToken: `${WIKI_HOME_LINK}/Access-token-for-Gitako`,
+  pjaxMode: `${WIKI_HOME_LINK}/Pjax-Mode`,
 }
 
 type Props = {
@@ -30,7 +33,9 @@ function SettingsBarContent() {
   const useReloadHint = useStateIO<React.ReactNode>('')
   const { value: reloadHint } = useReloadHint
 
-  const moreFields: SimpleField<'copyFileButton' | 'copySnippetButton'|'codeFolding'>[] =
+  const moreFields: SimpleField<
+    'copyFileButton' | 'copySnippetButton' | 'codeFolding' | 'pjaxMode'
+  >[] =
     platform === GitHub
       ? [
           {
@@ -38,6 +43,16 @@ function SettingsBarContent() {
             label: 'Fold source code button',
             wikiLink: wikiLinks.codeFolding,
             tooltip: `Read more in Gitako's Wiki`,
+          },
+          {
+            key: 'pjaxMode',
+            label: 'Native PJAX mode',
+            wikiLink: wikiLinks.pjaxMode,
+            tooltip: 'Please keep it enabled unless Gitako crashes after redirecting',
+            overwrite: {
+              value: pjaxMode => pjaxMode === 'native',
+              onChange: checked => (checked ? 'native' : 'pjax-api'),
+            },
           },
           {
             key: 'copyFileButton',
@@ -53,6 +68,10 @@ function SettingsBarContent() {
           },
         ]
       : []
+
+  useUpdateEffect(() => {
+    window.location.reload()
+  }, [useConfigs().value.pjaxMode])
 
   return (
     <>

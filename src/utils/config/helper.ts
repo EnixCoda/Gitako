@@ -1,4 +1,5 @@
 import { SearchMode } from 'components/searchModes'
+import { platformName } from 'platforms'
 import { storageHelper } from 'utils/storageHelper'
 import { migrateConfig } from './migrations'
 
@@ -21,6 +22,7 @@ export type Config = {
   compactFileTree: boolean
   restoreExpandedFolders: boolean
   showDiffInText: boolean
+  pjaxMode: 'native' | 'pjax-api'
 }
 
 enum configKeys {
@@ -42,18 +44,20 @@ enum configKeys {
   compactFileTree = 'compactFileTree',
   restoreExpandedFolders = 'restoreExpandedFolders',
   showDiffInText = 'showDiffInText',
+  pjaxMode = 'pjaxMode',
 }
 
-// do NOT use platform name
+// NOT use platform name to distinguish GHE from github.com
 const platformStorageKey = `platform_` + window.location.host.toLowerCase()
+const isInGitHub = platformStorageKey === 'platform_github.com'
 
-export const defaultConfigs: Config = {
+export const getDefaultConfigs: () => Config = () => ({
   sideBarWidth: 260,
   shortcut: undefined,
   accessToken: '',
   compressSingletonFolder: true,
-  copyFileButton: platformStorageKey !== 'platform_github.com', // false when on github.com,
-  copySnippetButton: platformStorageKey !== 'platform_github.com', // false when on github.com
+  copyFileButton: !isInGitHub, // disable on github.com
+  copySnippetButton: !isInGitHub, // disable on github.com
   intelligentToggle: null,
   icons: 'rich',
   toggleButtonVerticalDistance: 124, // align with GitHub's navbar items
@@ -66,11 +70,13 @@ export const defaultConfigs: Config = {
   compactFileTree: false,
   restoreExpandedFolders: true,
   showDiffInText: false,
-}
+  pjaxMode: platformName === 'GitHub' ? 'native' : 'pjax-api', // use native on GitHub
+})
 
 const configKeyArray = Object.values(configKeys)
 
 function applyDefaultConfigs(configs: Partial<Config>) {
+  const defaultConfigs = getDefaultConfigs()
   return configKeyArray.reduce((applied, key) => {
     Object.assign(applied, { [key]: key in configs ? configs[key] : defaultConfigs[key] })
     return applied
@@ -79,9 +85,15 @@ function applyDefaultConfigs(configs: Partial<Config>) {
 
 export type VersionedConfig<SiteConfig> = Record<string, SiteConfig> & { configVersion: string }
 
+export const configRef: Partial<Config> = {}
+const updateConfigRef = async (config: Partial<Config>) => {
+  Object.assign(configRef, config)
+}
+
 const prepareConfig = new Promise<void>(async resolve => {
   await migrateConfig()
   resolve()
+  updateConfigRef(await get())
 })
 
 async function get(): Promise<Config> {
@@ -91,6 +103,7 @@ async function get(): Promise<Config> {
 }
 
 async function set(config: Config) {
+  updateConfigRef(config)
   return await storageHelper.set({ [platformStorageKey]: config })
 }
 

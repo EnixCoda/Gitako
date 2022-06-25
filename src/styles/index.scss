@@ -883,6 +883,40 @@ $minimal-z-index: max(
         overflow: auto;
         position: relative;
 
+        .select-wrapper {
+          position: relative;
+
+          select {
+            width: 100%;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            // make it look like text inputs
+            height: 36px;
+            padding: 0 6px;
+            border-radius: 6px;
+            border: 1px solid var(--gitako-border-default);
+            background: var(--gitako-canvas-default);
+            color: var(--gitako-fg-default);
+            box-shadow: var(--gitako-primer-shadow-inset);
+          }
+
+          .chevron {
+            position: absolute;
+            right: 6px;
+            top: 8px;
+            width: 10px;
+            height: 20px;
+
+            &::before {
+              width: 10px;
+              height: 20px;
+              background-color: var(--gitako-fg-subtle);
+              @include pseudo-primer-icon('chevron-down');
+            }
+          }
+        }
+
         .shadow-shelter {
           position: absolute;
           width: 100%;
@@ -912,39 +946,6 @@ $minimal-z-index: max(
             input {
               &:disabled {
                 cursor: not-allowed;
-              }
-            }
-            .select-wrapper {
-              position: relative;
-
-              select {
-                width: 100%;
-                -webkit-appearance: none;
-                -moz-appearance: none;
-                appearance: none;
-                // make it look like text inputs
-                height: 36px;
-                padding: 0 6px;
-                border-radius: 6px;
-                border: 1px solid var(--gitako-border-default);
-                background: var(--gitako-canvas-default);
-                color: var(--gitako-fg-default);
-                box-shadow: var(--gitako-primer-shadow-inset);
-              }
-
-              .chevron {
-                position: absolute;
-                right: 6px;
-                top: 8px;
-                width: 10px;
-                height: 20px;
-
-                &::before {
-                  width: 10px;
-                  height: 20px;
-                  background-color: var(--gitako-fg-subtle);
-                  @include pseudo-primer-icon('chevron-down');
-                }
               }
             }
             &.field-checkbox {
