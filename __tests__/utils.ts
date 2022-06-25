@@ -12,17 +12,14 @@ export function sleep(timeout: number) {
 
 export async function scroll({
   totalDistance,
-  step = 1,
-  duration = 500,
+  stepDistance = 100,
 }: {
   totalDistance: number
-  step?: number
-  duration?: number
+  stepDistance?: number
 }) {
   let distance = 0
-  while ((distance += step) < totalDistance) {
-    await (page.mouse as any).wheel({ deltaY: step })
-    await sleep((duration * step) / totalDistance)
+  while ((distance += stepDistance) < totalDistance) {
+    await (page.mouse as any).wheel({ deltaY: stepDistance })
   }
 }
 
