@@ -4,6 +4,8 @@ import { platform } from 'platforms'
 import * as React from 'react'
 import { useEvent } from 'react-use'
 
+// TODO: rename PJAX
+
 const config: Config = {
   areas: [
     // github
@@ -53,7 +55,10 @@ export const loadWithPJAX = (url: string, element: HTMLElement) => {
 }
 
 export function useOnPJAXDone(callback: () => void) {
-  useEvent('pjax:end', callback, document)
+  useEvent('pjax:end', callback, document) // legacy support
+  // 'turbo:render' should be the best timing but GitHub has attached a mutation observer on body to block that
+  // TODO: fire at turbo:render
+  useEvent('turbo:load', callback, document)
 }
 
 export function useRedirectedEvents(

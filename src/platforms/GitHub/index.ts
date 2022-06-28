@@ -112,6 +112,7 @@ const pathSHAMap = new Map<string, string>()
 const pjaxContainerSelector = ['#repo-content-pjax-container', '#js-repo-pjax-container'].find(
   selector => document.querySelector(selector),
 )
+const turboContainerId = 'repo-content-turbo-frame'
 
 export const GitHub: Platform = {
   isEnterprise,
@@ -213,6 +214,7 @@ export const GitHub: Platform = {
     if (configRef.pjaxMode === 'native' && (!options?.node || options.node.type === 'blob'))
       return {
         'data-pjax': pjaxContainerSelector,
+        'data-turbo-frame': turboContainerId,
         onClick() {
           /* Overwriting default onClick */
         },

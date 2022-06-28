@@ -36,23 +36,32 @@ export function setBodyIndent(shouldShowGitako: boolean) {
 }
 
 export function $(selector: string): HTMLElement | null
-export function $<T1>(selector: string, existCallback: (element: HTMLElement) => T1): T1
+export function $<T1>(selector: string, existCallback: (element: HTMLElement) => T1): T1 | null
 export function $<T1, T2>(
   selector: string,
   existCallback: (element: HTMLElement) => T1,
   otherwise: () => T2,
-): T1 | T2
+): T1 | T2 | null
 export function $<T2>(
   selector: string,
   existCallback: undefined | null,
   otherwise: () => T2,
-): HTMLElement | null | T2
+): HTMLElement | T2
 export function $(selector: string, existCallback?: any, otherwise?: any) {
   const element = document.querySelector(selector)
   if (element) {
     return existCallback ? existCallback(element) : element
   }
   return otherwise ? otherwise() : null
+}
+
+export function insertSideBarMountPoint() {
+  const mountPointID = 'gitako-mount-point-wrapper'
+  const sideBarElement = document.createElement('div')
+  sideBarElement.setAttribute('data-turbo-permanent', '')
+  sideBarElement.setAttribute('id', mountPointID)
+  document.body.appendChild(sideBarElement)
+  return sideBarElement
 }
 
 /**
@@ -64,6 +73,7 @@ export function insertLogoMountPoint() {
   return $(logoSelector, undefined, function createLogoMountPoint() {
     const logoMountElement = document.createElement('div')
     logoMountElement.setAttribute('id', logoID)
+    logoMountElement.setAttribute('data-turbo-permanent', '')
     document.body.appendChild(logoMountElement)
     return logoMountElement
   })
@@ -141,4 +151,47 @@ export function findNodeElement(node: TreeNode, rootElement: HTMLElement): HTMLE
 export function setCSSVariable(name: string, value: string | undefined, element: HTMLElement) {
   if (value === undefined) element.style.removeProperty(name)
   else element.style.setProperty(name, value)
+}
+
+/**
+ * Unlike the good-old-PJAX-time, now GitHub replaces whole body element after redirecting using turbo.
+ * If move Gitako mount point from `body` to `html`, Gitako style would break because it inherits style from GitHub body.
+ * The temporary solution is recovery Gitako elements once the body is removed.
+ */
+export function persistGitakoElements(SideBarElement: HTMLElement, logoElement: HTMLElement) {
+  const observer = new MutationObserver(mutations => {
+    for (const { addedNodes, removedNodes } of mutations) {
+      const [addedBody, removedBody] = [addedNodes, removedNodes].map(findBodyElement)
+      if (addedBody && removedBody) {
+        // hard-coded list due to limited time
+        // TODO: refactor in a better practice
+
+        // migrate gitako attributes, e.g. class
+        const propertiesNeedToMigrate = ['--gitako-width']
+        for (const property of propertiesNeedToMigrate) {
+          const oldValue = removedBody.style.getPropertyValue(property)
+          if (oldValue) addedBody.style.setProperty(property, oldValue)
+        }
+        const cssClassesNeedToMigrate = ['with-gitako-spacing']
+        for (const cssClass of cssClassesNeedToMigrate) {
+          if (removedBody.classList.contains(cssClass)) addedBody.classList.add(cssClass)
+        }
+
+        // move gitako elements
+        if (!addedBody.contains(SideBarElement)) addedBody.appendChild(SideBarElement)
+        if (removedBody.contains(SideBarElement)) removedBody.removeChild(SideBarElement)
+        if (!addedBody.contains(logoElement)) addedBody.appendChild(logoElement)
+        if (removedBody.contains(logoElement)) removedBody.removeChild(logoElement)
+      }
+    }
+
+    function findBodyElement(addedNodes: NodeList) {
+      return Array.from(addedNodes).find(addedNode => addedNode instanceof HTMLBodyElement) as
+        | HTMLBodyElement
+        | undefined
+    }
+  })
+  observer.observe(document.documentElement, {
+    childList: true,
+  })
 }
