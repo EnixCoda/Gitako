@@ -219,3 +219,11 @@ export function resolveDiffGraphMeta(additions: number, deletions: number, chang
     w = 5 - g - r
   return { g, r, w }
 }
+
+export function atomicAsyncFunction<Args extends any[], R>(fn: (...args: Args) => Promise<R>) {
+  let last: Promise<R> | undefined
+  return async (...args: Args) => {
+    last = last ? last.then(() => fn(...args)) : fn(...args)
+    return last
+  }
+}
