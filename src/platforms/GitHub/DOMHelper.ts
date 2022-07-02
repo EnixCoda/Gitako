@@ -38,8 +38,8 @@ export function getIssueTitle() {
 
 export function getCurrentBranch(passive = false) {
   const selectedBranchButtonSelector = [
-    '.repository-content #branch-select-menu summary',
-    '.repository-content .branch-select-menu summary',
+    'main #branch-select-menu summary',
+    'main .branch-select-menu summary',
   ].join()
   const branchButtonElement = $(selectedBranchButtonSelector)
   if (branchButtonElement) {
@@ -55,7 +55,7 @@ export function getCurrentBranch(passive = false) {
   }
 
   const findFileButtonSelector =
-    '#js-repo-pjax-container .repository-content .file-navigation a[data-hotkey="t"]'
+    'main .file-navigation a[data-hotkey="t"]'
   const urlFromFindFileButton: string | null = $(
     findFileButtonSelector,
     element => (element as HTMLAnchorElement).href,
@@ -96,8 +96,8 @@ const PAGE_TYPES = {
  */
 function getCurrentPageType() {
   const blobPathSelector = '#blob-path' // path next to branch switcher
-  const blobWrapperSelector = '.repository-content .blob-wrapper table'
-  const readmeSelector = '.repository-content .readme'
+  const blobWrapperSelector = 'main .blob-wrapper table'
+  const readmeSelector = 'main .readme'
   const searchResultSelector = '.codesearch-results'
   return (
     $(searchResultSelector, () => PAGE_TYPES.SEARCH) ||
@@ -110,7 +110,7 @@ function getCurrentPageType() {
 const REPO_TYPE_PRIVATE = 'private' as const
 const REPO_TYPE_PUBLIC = 'public' as const
 export function getRepoPageType() {
-  const headerSelector = `#js-repo-pjax-container .pagehead.repohead h1`
+  const headerSelector = `main .pagehead.repohead h1`
   return $(headerSelector, header => {
     const repoPageTypes = [REPO_TYPE_PRIVATE, REPO_TYPE_PUBLIC]
     for (const repoPageType of repoPageTypes) {
@@ -127,7 +127,7 @@ export function getRepoPageType() {
  */
 export function getCodeElement() {
   if (getCurrentPageType() === PAGE_TYPES.RAW_TEXT) {
-    const codeContentSelector = '.repository-content .data table'
+    const codeContentSelector = 'main .data table'
     const codeContentElement = $(codeContentSelector)
     if (!codeContentElement) {
       raiseError(new Error('cannot find code content element'))
@@ -158,7 +158,7 @@ export function attachCopyFileBtn() {
     }
 
     if (!buttonGroup) {
-      const buttonGroupSelector = '.repository-content .Box-header .BtnGroup'
+      const buttonGroupSelector = 'main .Box-header .BtnGroup'
       const buttonGroups = document.querySelectorAll(buttonGroupSelector)
       const $buttonGroup = buttonGroups[buttonGroups.length - 1]
       if ($buttonGroup) buttonGroup = $buttonGroup as HTMLElement
@@ -180,9 +180,9 @@ export function attachCopyFileBtn() {
 }
 
 export function attachCopySnippet() {
-  const readmeSelector = '.repository-content div#readme'
+  const readmeSelector = 'main div#readme'
   return $(readmeSelector, () => {
-    const readmeArticleSelector = '.repository-content div#readme article'
+    const readmeArticleSelector = 'main div#readme article'
     return $(
       readmeArticleSelector,
       readmeElement => {
@@ -227,10 +227,10 @@ export function attachCopySnippet() {
       },
       () => {
         // in URL like `/{user}/{repo}/delete/{branch}/path/to/file
-        const deleteReadmeSelector = '.repository-content div#readme del'
+        const deleteReadmeSelector = 'main div#readme del'
         if (!$(deleteReadmeSelector)) {
           // in pages where readme is not markdown, e.g. txt
-          const plainReadmeSelector = '.repository-content div#readme .plain'
+          const plainReadmeSelector = 'main div#readme .plain'
           if (!$(plainReadmeSelector)) {
             raiseError(
               new Error('cannot find mount point for copy snippet button while readme exists'),

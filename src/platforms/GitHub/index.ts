@@ -108,10 +108,7 @@ function resolvePageScope(defaultBranchName?: string) {
 
 const pathSHAMap = new Map<string, string>()
 
-// Try lookup PJAX containers, #js-repo-pjax-container could exist while #repo-content-pjax-container does not.
-const pjaxContainerSelector = ['#repo-content-pjax-container', '#js-repo-pjax-container'].find(
-  selector => document.querySelector(selector),
-)
+const pjaxContainerSelector = 'main'
 const turboContainerId = 'repo-content-turbo-frame'
 
 export const GitHub: Platform = {
