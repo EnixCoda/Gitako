@@ -1,6 +1,6 @@
 import { SearchMode } from 'components/searchModes'
 import { platformName } from 'platforms'
-import { storageHelper } from 'utils/storageHelper'
+import { Storage, storageHelper } from 'utils/storageHelper'
 import { migrateConfig } from './migrations'
 
 export type Config = {
@@ -83,7 +83,7 @@ function applyDefaultConfigs(configs: Partial<Config>) {
   }, {} as Config)
 }
 
-export type VersionedConfig<SiteConfig> = Record<string, SiteConfig> & { configVersion: string }
+export type VersionedConfig<SiteConfig> = Record<string, SiteConfig> & Storage
 
 export const configRef: Partial<Config> = {}
 const updateConfigRef = async (config: Partial<Config>) => {
