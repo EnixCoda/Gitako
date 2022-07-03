@@ -1,6 +1,7 @@
 import { useConfigs } from 'containers/ConfigsContext'
 import { GITHUB_OAUTH } from 'env'
 import { Base64 } from 'js-base64'
+import { configRef } from 'utils/config/helper'
 import { resolveGitModules } from 'utils/gitSubmodule'
 import { sortFoldersToFront } from 'utils/treeParser'
 import * as API from './API'
@@ -85,11 +86,6 @@ export function isEnterprise() {
 }
 
 const pathSHAMap = new Map<string, string>()
-
-// Try lookup PJAX containers, #js-repo-pjax-container could exist while #repo-content-pjax-container does not.
-const pjaxContainerSelector = ['#repo-content-pjax-container', '#js-repo-pjax-container'].find(
-  selector => document.querySelector(selector),
-)
 
 export const GitHub: Platform = {
   isEnterprise,
@@ -196,17 +192,25 @@ export const GitHub: Platform = {
     useGitHubCodeFold(codeFolding)
     useEnterpriseStatBarStyleFix()
   },
-  delegatePJAXProps(options) {
-    if (!options?.node || options.node.type === 'blob')
+  delegatePJAXProps: options => {
+    if (configRef.pjaxMode === 'native' && (!options?.node || options.node.type === 'blob')) {
+      const pjaxContainerSelector = 'main'
+      const turboContainerId = 'repo-content-turbo-frame'
+
       return {
         'data-pjax': pjaxContainerSelector,
+        'data-turbo-frame': turboContainerId,
         onClick() {
           /* Overwriting default onClick */
         },
       }
+    }
   },
-  loadWithPJAX(url, element) {
-    element.click()
+  loadWithPJAX: (url, element) => {
+    if (configRef.pjaxMode === 'native') {
+      element.click()
+      return true
+    }
   },
 }
 

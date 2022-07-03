@@ -60,7 +60,7 @@ export function SideBar() {
       : intelligentToggle,
   )
   const shouldShow = $shouldShow.value
-  React.useEffect(() => {
+  const toggleBodyIndent = React.useCallback(() => {
     if (sidebarToggleMode === 'persistent') {
       DOMHelper.setBodyIndent(shouldShow)
     } else {
@@ -71,6 +71,12 @@ export function SideBar() {
       DOMHelper.focusFileExplorer() // TODO: verify if it works
     }
   }, [shouldShow, sidebarToggleMode])
+
+  React.useEffect(() => {
+    toggleBodyIndent()
+  }, [toggleBodyIndent])
+
+  useOnPJAXDone(toggleBodyIndent)
 
   // Save expand state on toggle if auto expand is off
   React.useEffect(() => {
@@ -105,11 +111,10 @@ export function SideBar() {
     }
   }, [intelligentToggle, sidebarToggleMode, setShowSideBar])
 
+  usePJAX()
   useOnPJAXDone(updateSideBarVisibility)
 
   platform.usePlatformHooks?.()
-
-  usePJAX()
 
   // Hide sidebar when error due to auth but token is set  #128
   const { accessToken } = configContext.value

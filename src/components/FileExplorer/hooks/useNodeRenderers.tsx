@@ -1,7 +1,7 @@
 import { CommentIcon } from '@primer/octicons-react'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
-import { isNotFalsy } from 'utils/general'
+import { is } from 'utils/is'
 import { Icon } from '../../Icon'
 import { SearchMode } from '../../searchModes'
 import { DiffStatGraph } from './../DiffStatGraph'
@@ -10,7 +10,7 @@ export type NodeRenderer = (node: TreeNode) => React.ReactNode
 
 export function useNodeRenderers(allRenderers: (NodeRenderer | null | undefined)[]) {
   return React.useMemo(() => {
-    const renderers: NodeRenderer[] = allRenderers.filter(isNotFalsy)
+    const renderers: NodeRenderer[] = allRenderers.filter(is.not.nil)
     return renderers.length
       ? (node: TreeNode) =>
           renderers.map((render, i) => <React.Fragment key={i}>{render(node)}</React.Fragment>)
@@ -43,7 +43,9 @@ export function useRenderFileCommentAmounts() {
           node.comments.active
         } active, ${node.comments.resolved} resolved`}
       >
-        <Icon IconComponent={CommentIcon} /> {node.comments.active > 9 ? '9+' : node.comments.active}
+        <Icon IconComponent={CommentIcon} />
+        &nbsp;
+        {node.comments.active > 9 ? '9+' : node.comments.active}
       </span>
     ) : null
   }

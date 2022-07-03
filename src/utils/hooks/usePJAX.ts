@@ -1,7 +1,10 @@
-import { Config, Pjax } from 'pjax-api'
+import { useConfigs } from 'containers/ConfigsContext'
+import { Config } from 'pjax-api'
 import { platform } from 'platforms'
 import * as React from 'react'
 import { useEvent } from 'react-use'
+
+// TODO: rename PJAX
 
 const config: Config = {
   areas: [
@@ -28,15 +31,20 @@ const config: Config = {
 }
 
 export function usePJAX() {
+  const { pjaxMode } = useConfigs().value
   // make history travel work
   React.useEffect(() => {
-    new Pjax({
-      ...config,
-      filter() {
-        return false
-      },
-    })
-  }, [])
+    if (pjaxMode === 'pjax-api') {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const { Pjax } = require('pjax-api')
+      new Pjax({
+        ...config,
+        filter() {
+          return false
+        },
+      })
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // bindings for legacy support
   useRedirectedEvents(window, 'pjax:fetch', 'pjax:start', document)
@@ -44,12 +52,15 @@ export function usePJAX() {
 }
 
 export const loadWithPJAX = (url: string, element: HTMLElement) => {
-  if (platform.loadWithPJAX) platform.loadWithPJAX(url, element)
-  else Pjax.assign(url, config)
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  platform.loadWithPJAX?.(url, element) || require('pjax-api').Pjax.assign(url, config)
 }
 
 export function useOnPJAXDone(callback: () => void) {
-  useEvent('pjax:end', callback, document)
+  useEvent('pjax:end', callback, document) // legacy support
+  // 'turbo:render' should be the best timing but GitHub has attached a mutation observer on body to block that
+  // TODO: fire at turbo:render
+  useEvent('turbo:load', callback, document)
 }
 
 export function useRedirectedEvents(

@@ -2,9 +2,11 @@ import { ChevronDownIcon } from '@primer/octicons-react'
 import { Box } from '@primer/react'
 import { Footer } from 'components/Footer'
 import { RoundIconButton } from 'components/RoundIconButton'
+import { useConfigs } from 'containers/ConfigsContext'
 import { platform } from 'platforms'
 import { GitHub } from 'platforms/GitHub'
 import * as React from 'react'
+import { useUpdateEffect } from 'react-use'
 import { useStateIO } from 'utils/hooks/useStateIO'
 import { AccessTokenSettings } from './AccessTokenSettings'
 import { FileTreeSettings } from './FileTreeSettings'
@@ -21,9 +23,12 @@ export const wikiLinks = {
   copyFileButton: `${WIKI_HOME_LINK}/Copy-file-and-snippet`,
   copySnippet: `${WIKI_HOME_LINK}/Copy-file-and-snippet`,
   createAccessToken: `${WIKI_HOME_LINK}/Access-token-for-Gitako`,
+  pjaxMode: `${WIKI_HOME_LINK}/Pjax-Mode`,
 }
 
-const moreFields: SimpleConfigField<'copyFileButton' | 'copySnippetButton' | 'codeFolding'>[] =
+const moreFields: SimpleConfigField<
+  'copyFileButton' | 'copySnippetButton' | 'codeFolding' | 'pjaxMode'
+>[] =
   platform === GitHub
     ? [
         {
@@ -31,6 +36,16 @@ const moreFields: SimpleConfigField<'copyFileButton' | 'copySnippetButton' | 'co
           label: 'Fold source code button',
           wikiLink: wikiLinks.codeFolding,
           tooltip: `Read more in Gitako's Wiki`,
+        },
+        {
+          key: 'pjaxMode',
+          label: 'Native PJAX mode',
+          wikiLink: wikiLinks.pjaxMode,
+          tooltip: 'Please keep it enabled unless Gitako crashes after redirecting',
+          overwrite: {
+            value: pjaxMode => pjaxMode === 'native',
+            onChange: checked => (checked ? 'native' : 'pjax-api'),
+          },
         },
         {
           key: 'copyFileButton',
@@ -50,6 +65,10 @@ const moreFields: SimpleConfigField<'copyFileButton' | 'copySnippetButton' | 'co
 export function SettingsBarContent({ toggleShow }: { toggleShow: () => void }) {
   const useReloadHint = useStateIO<React.ReactNode>('')
   const { value: reloadHint } = useReloadHint
+
+  useUpdateEffect(() => {
+    window.location.reload()
+  }, [useConfigs().value.pjaxMode])
 
   return (
     <div className={'gitako-settings-bar'}>

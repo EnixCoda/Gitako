@@ -26,6 +26,6 @@ type Platform = {
   delegatePJAXProps?(options?: { node?: TreeNode }):
     | (React.DOMAttributes<HTMLElement> & Record<string, unknown>) // support data-* attributes
     | void
-  loadWithPJAX?(url: string, element: HTMLElement): void
+  loadWithPJAX?(url: string, element: HTMLElement): boolean | void
   usePlatformHooks?(): void
 }

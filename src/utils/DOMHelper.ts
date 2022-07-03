@@ -43,7 +43,7 @@ export function $<T1, T2>(
   selector: string,
   existCallback: (element: HTMLElement) => T1,
   otherwise: () => T2,
-): T1 | T2 | null
+): T1 | T2
 export function $<T2>(
   selector: string,
   existCallback: undefined | null,
@@ -59,29 +59,49 @@ export function $(selector: string, existCallback?: any, otherwise?: any) {
 }
 
 /**
- * add the root element into DOM
+ * DOM Structure after calling the `insert*MountPoint` functions
+ *
+ * <html>
+ *   <body>
+ *     <div id={rootElementID}>
+ *       <div id={sidebarMountPointID}>
+ *       </div>
+ *       <div id={logoMountPointID}>
+ *       </div>
+ *     </div>
+ *   </body>
+ * </html>
  */
+
 export function insertMountPoint() {
+  const mountPointContainer = document.body // TODO: when replace this, refactor root of `$`
   return $(formatID(rootElementID), undefined, () => {
-    const rootElement = document.createElement('div')
-    rootElement.setAttribute('id', rootElementID)
-    document.body.appendChild(rootElement)
-    return rootElement
+    const element = document.createElement('div')
+    element.setAttribute('id', rootElementID)
+    mountPointContainer.appendChild(element)
+    return element
   })
 }
 
-/**
- * add the logo element into DOM
- */
+export function insertSideBarMountPoint() {
+  const mountPointElement = insertMountPoint()
+  const sidebarMountPointID = 'gitako-sidebar-mount-point'
+  return $(formatID(sidebarMountPointID), undefined, () => {
+    const sideBarElement = document.createElement('div')
+    sideBarElement.setAttribute('id', sidebarMountPointID)
+    mountPointElement.appendChild(sideBarElement)
+    return sideBarElement
+  })
+}
+
 export function insertLogoMountPoint() {
-  return $(formatID(rootElementID), container => {
-    const logoID = 'gitako-logo-mount-point'
-    return $(formatID(logoID), undefined, function createLogoMountPoint() {
-      const logoMountElement = document.createElement('div')
-      logoMountElement.setAttribute('id', logoID)
-      container.appendChild(logoMountElement)
-      return logoMountElement
-    })
+  const mountPointElement = insertMountPoint()
+  const logoMountPointID = 'gitako-logo-mount-point'
+  return $(formatID(logoMountPointID), undefined, () => {
+    const logoMountElement = document.createElement('div')
+    logoMountElement.setAttribute('id', logoMountPointID)
+    mountPointElement.appendChild(logoMountElement)
+    return logoMountElement
   })
 }
 
@@ -170,4 +190,47 @@ export function formatClass(className: string) {
 
 export function parseIntFromElement(e: HTMLElement): number {
   return parseInt((e.innerText || '').replace(/[^0-9]/g, ''))
+}
+
+/**
+ * Unlike the good-old-PJAX-time, now GitHub replaces whole body element after redirecting using turbo.
+ * If move Gitako mount point from `body` to `html`, Gitako style would break because it inherits style from GitHub body.
+ * The temporary solution is recovery Gitako elements once the body is removed.
+ */
+export function persistGitakoElements(mountPointElement = insertMountPoint()) {
+  mountPointElement.setAttribute('data-turbo-permanent', '')
+
+  const observer = new MutationObserver(mutations => {
+    for (const { addedNodes, removedNodes } of mutations) {
+      const [addedBody, removedBody] = [addedNodes, removedNodes].map(findBodyElement)
+      if (addedBody && removedBody) {
+        // hard-coded list due to limited time
+        // TODO: refactor in a better practice
+
+        // migrate gitako attributes, e.g. class
+        const propertiesNeedToMigrate = ['--gitako-width']
+        for (const property of propertiesNeedToMigrate) {
+          const oldValue = removedBody.style.getPropertyValue(property)
+          if (oldValue) addedBody.style.setProperty(property, oldValue)
+        }
+        const cssClassesNeedToMigrate = [bodySpacingClassName]
+        for (const cssClass of cssClassesNeedToMigrate) {
+          if (removedBody.classList.contains(cssClass)) addedBody.classList.add(cssClass)
+        }
+
+        // move gitako elements
+        if (!addedBody.contains(mountPointElement)) addedBody.appendChild(mountPointElement)
+        if (removedBody.contains(mountPointElement)) removedBody.removeChild(mountPointElement)
+      }
+    }
+
+    function findBodyElement(addedNodes: NodeList) {
+      return Array.from(addedNodes).find(addedNode => addedNode instanceof HTMLBodyElement) as
+        | HTMLBodyElement
+        | undefined
+    }
+  })
+  observer.observe(document.documentElement, {
+    childList: true,
+  })
 }

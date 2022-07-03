@@ -1,8 +1,15 @@
 const localStorage = browser.storage.local
 
+const keys = {
+  configVersion: 'configVersion',
+  raiseErrorCache: 'raiseErrorCache',
+} as const
+
+export const storageKeys = keys
+
 export type Storage = {
-  // save root level `configVersion` for easier future migrating
-  [key in EnumString<'configVersion'>]: string
+  // save root level keys for easier future migrating
+  [key in EnumString<keyof typeof keys>]: string
 
   // separate different platform configs to simplify interactions with browser storage API
   // e.g.

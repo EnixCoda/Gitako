@@ -207,10 +207,6 @@ export function formatHash(hash?: string) {
   return ''
 }
 
-export function isNotFalsy<T>(value: T | undefined | null): value is T {
-  return value !== undefined && value !== null
-}
-
 export function forOf<T, R>(target: T, callback: <K extends keyof T>(key: K, value: T[K]) => R) {
   for (const key of Object.keys(target)) {
     const $key = key as keyof typeof target
@@ -221,3 +217,11 @@ export function forOf<T, R>(target: T, callback: <K extends keyof T>(key: K, val
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export function noop() {}
+
+export function atomicAsyncFunction<Args extends any[], R>(fn: (...args: Args) => Promise<R>) {
+  let last: Promise<R> | undefined
+  return async (...args: Args) => {
+    last = last ? last.then(() => fn(...args)) : fn(...args)
+    return last
+  }
+}

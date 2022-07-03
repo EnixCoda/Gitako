@@ -82,6 +82,7 @@ export const is = {
     false: <T>(d: T | false): d is T => d !== false,
     number: <T>(d: T | number): d is T => typeof d !== 'number',
     string: <T>(d: T | string): d is T => typeof d !== 'string',
+    nil: <T>(d: T | null | undefined): d is T => d !== null && d !== undefined,
   },
   JSON: {
     object: (d: unknown): d is JSONObject =>
