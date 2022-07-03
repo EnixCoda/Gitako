@@ -31,7 +31,6 @@ export function useVirtualScroll<E extends HTMLElement>({
 
   const ref = React.useRef<E | null>(null) // TODO: compare DOM native event listener
   const [scrollTop, setScrollTop] = React.useState(0)
-  const [controlledScrollTop, setControlledScrollTop] = React.useState(0)
 
   const onScroll = React.useCallback((e: React.UIEvent<E, UIEvent>) => {
     setScrollTop(e.currentTarget.scrollTop)
@@ -75,12 +74,6 @@ export function useVirtualScroll<E extends HTMLElement>({
     [indexes, memoizedStyler],
   )
 
-  React.useLayoutEffect(() => {
-    if (ref.current) {
-      ref.current.scrollTop = controlledScrollTop
-    }
-  }, [controlledScrollTop])
-
   const containerStyle: React.CSSProperties = React.useMemo(
     () => ({
       height: totalHeight,
@@ -95,7 +88,11 @@ export function useVirtualScroll<E extends HTMLElement>({
 
     const updateScrollPosition = (scrollTop: number) => {
       setScrollTop(scrollTop)
-      setControlledScrollTop(scrollTop)
+
+      // Note: storing the scrollTop into a state and update DOM element scrollTop inside a layout effect would not work.
+      if (ref.current) {
+        ref.current.scrollTop = scrollTop
+      }
     }
 
     switch (mode) {
