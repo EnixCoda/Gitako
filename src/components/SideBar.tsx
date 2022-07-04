@@ -25,6 +25,7 @@ import { SettingsBarContent } from './settings/SettingsBar'
 
 export function SideBar() {
   const state = useLoadedContext(SideBarStateContext).value
+  const error = useLoadedContext(SideBarErrorContext).value
   const configContext = useConfigs()
 
   const { sideBarWidth } = configContext.value
@@ -59,17 +60,18 @@ export function SideBar() {
         : false
       : intelligentToggle,
   )
-  const shouldShow = $shouldShow.value
-  const toggleBodyIndent = React.useCallback(() => {
-    if (sidebarToggleMode === 'persistent') {
-      DOMHelper.setBodyIndent(shouldShow)
-    } else {
-      DOMHelper.setBodyIndent(false)
-    }
+  // Lock false on error
+  const setShowSideBar = $shouldShow.onChange
 
-    if (shouldShow) {
-      DOMHelper.focusFileExplorer() // TODO: verify if it works
-    }
+  const shouldShow = React.useMemo(
+    () => !error && state !== 'disabled' && $shouldShow.value,
+    [error, state, $shouldShow.value],
+  )
+
+  const toggleBodyIndent = React.useCallback(() => {
+    DOMHelper.setBodyIndent(sidebarToggleMode === 'persistent' ? shouldShow : false)
+
+    if (shouldShow) DOMHelper.focusFileExplorer() // TODO: verify if it works
   }, [shouldShow, sidebarToggleMode])
 
   React.useEffect(() => {
@@ -85,24 +87,7 @@ export function SideBar() {
     }
   }, [shouldShow, intelligentToggle]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const error = useLoadedContext(SideBarErrorContext).value
-  // Lock shouldShow on error
-  React.useEffect(() => {
-    if (error && shouldShow) {
-      $shouldShow.onChange(false)
-    }
-  }, [error]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  const setShowSideBar = React.useCallback(
-    (show: boolean) => {
-      if (!error) $shouldShow.onChange(show)
-    },
-    [error], // eslint-disable-line react-hooks/exhaustive-deps
-  )
-
-  const toggleShowSideBar = React.useCallback(() => {
-    if (!error) $shouldShow.onChange(show => !show)
-  }, [error]) // eslint-disable-line react-hooks/exhaustive-deps
+  const toggleShowSideBar = React.useCallback(() => setShowSideBar(show => !show), [setShowSideBar])
   useToggleSideBarWithKeyboard(state, toggleShowSideBar)
 
   const updateSideBarVisibility = React.useCallback(() => {
@@ -126,22 +111,24 @@ export function SideBar() {
     }
   }, [hideSidebarOnInvalidToken, setShowSideBar])
 
+  if (state === 'disabled') return null
+
   return (
     <Theme>
+      <Portal into={$logoContainerElement.value}>
+        <ToggleShowButton
+          error={error}
+          className={cx({
+            hidden: shouldShow,
+          })}
+          onHover={sidebarToggleMode === 'float' ? () => setShowSideBar(true) : undefined}
+          onClick={toggleShowSideBar}
+        />
+      </Portal>
       <div className={'gitako-side-bar'}>
-        <Portal into={$logoContainerElement.value}>
-          <ToggleShowButton
-            error={error}
-            className={cx({
-              hidden: shouldShow,
-            })}
-            onHover={sidebarToggleMode === 'float' ? () => setShowSideBar(true) : undefined}
-            onClick={toggleShowSideBar}
-          />
-        </Portal>
         <SideBarBodyWrapper
           className={cx(`toggle-mode-${sidebarToggleMode}`, {
-            collapsed: error || !shouldShow,
+            collapsed: !shouldShow,
           })}
           baseSize={baseSize}
           onLeave={sidebarToggleMode === 'float' ? () => setShowSideBar(false) : undefined}
@@ -183,8 +170,6 @@ export function SideBar() {
               </div>
               {run(() => {
                 switch (state) {
-                  case 'disabled':
-                    return null
                   case 'getting-access-token':
                     return <LoadingIndicator text={'Getting access token...'} />
                   case 'after-getting-access-token':

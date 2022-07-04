@@ -1,4 +1,5 @@
 type Platform = {
+  shouldActivate?(): boolean
   isEnterprise(): boolean
   // branch name might not be available when resolving from DOM and URL
   resolvePartialMetaData(): PartialMetaData | null

@@ -2,6 +2,7 @@ import { useConfigs } from 'containers/ConfigsContext'
 import { GITHUB_OAUTH } from 'env'
 import { Base64 } from 'js-base64'
 import { configRef } from 'utils/config/helper'
+import { $ } from 'utils/DOMHelper'
 import { resolveGitModules } from 'utils/gitSubmodule'
 import { sortFoldersToFront } from 'utils/treeParser'
 import * as API from './API'
@@ -82,12 +83,28 @@ function getUrlForRedirect(
 }
 
 export function isEnterprise() {
-  return !window.location.host.endsWith('github.com')
+  return (
+    (window.location.host !== 'github.com' &&
+      /**
+       * <a class="Header-link " href="https://host.com/" data-hotkey="g d" aria-label="Homepage Enterprise">
+       *   <span>Enterprise</span>
+       * </a>
+       */
+      $('a.Header-link[aria-label="Homepage Enterprise"]', e => e.textContent === 'Enterprise')) ||
+    false
+  )
 }
 
 const pathSHAMap = new Map<string, string>()
 
 export const GitHub: Platform = {
+  shouldActivate() {
+    return (
+      window.location.host === 'github.com' ||
+      // <link rel="fluid-icon" href="https://host.com/fluidicon.png" title="GitHub">
+      !!document.querySelector('link[rel="fluid-icon"][title="GitHub"]')
+    )
+  },
   isEnterprise,
   resolvePartialMetaData() {
     if (!DOMHelper.isInRepoPage()) {

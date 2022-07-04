@@ -8,7 +8,10 @@ type MetaData = {
   type?: EnumString<'tree' | 'blob' | 'pull' | 'commit'>
 }
 
-type PartialMetaData = Omit<MakeOptional<MetaData, 'branchName'>, 'defaultBranchName'>
+type PartialMetaData = Omit<
+  MakeOptional<MetaData, 'repoName' | 'userName' | 'branchName'>,
+  'defaultBranchName'
+>
 
 type TreeNode = {
   name: string

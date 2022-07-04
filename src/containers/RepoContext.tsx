@@ -27,9 +27,9 @@ function resolvePartialMetaData() {
       repoName,
       type: type === 'pull' ? type : undefined,
     }
-  } else {
-    return partialMetaData
   }
+
+  return null
 }
 
 function usePartialMetaData(): PartialMetaData | null {
@@ -75,8 +75,10 @@ function useDefaultBranch(partialMetaData: PartialMetaData | null) {
     catchNetworkError(async () => {
       if (!partialMetaData) return
       $state.onChange('meta-loading')
+      const { userName, repoName } = partialMetaData
+      if (!userName || !repoName) return
 
-      const defaultBranch = await platform.getDefaultBranchName(partialMetaData, accessToken)
+      const defaultBranch = await platform.getDefaultBranchName({ userName, repoName }, accessToken)
       $defaultBranch.onChange(defaultBranch)
     })
   }, [partialMetaData, accessToken]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -94,6 +96,8 @@ function useMetaData(
   React.useEffect(() => {
     if (partialMetaData && defaultBranchName && theBranch) {
       const { userName, repoName } = partialMetaData
+      if (!userName || !repoName) return
+
       const safeMetaData: MetaData = {
         userName,
         repoName,

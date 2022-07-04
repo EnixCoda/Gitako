@@ -1,16 +1,13 @@
 import { Gitako } from 'components/Gitako'
-import { platform } from 'platforms'
 import * as React from 'react'
 import { createRoot } from 'react-dom/client'
 import { insertSideBarMountPoint, persistGitakoElements } from 'utils/DOMHelper'
 import './content.scss'
 
-if (platform.resolvePartialMetaData()) {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init)
-  } else {
-    init()
-  }
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init)
+} else {
+  init()
 }
 
 async function init() {

@@ -5,16 +5,18 @@ import { Gitee } from './Gitee'
 import { GitHub } from './GitHub'
 
 const platforms = {
-  GitHub: GitHub,
-  Gitee: Gitee,
-  Gitea: Gitea,
+  GitHub,
+  Gitee,
+  Gitea,
 }
 
 function resolvePlatform() {
-  for (const platform of Object.values(platforms)) {
-    if (platform.resolvePartialMetaData()) return platform
-  }
-  return dummyPlatformForTypeSafety
+  return (
+    forOf(platforms, (platformName, platform) => {
+      const { shouldActivate = () => !!platform.resolvePartialMetaData() } = platform
+      if (shouldActivate()) return platform
+    }) || dummyPlatformForTypeSafety
+  )
 }
 
 function getPlatformName() {
