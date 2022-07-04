@@ -19,11 +19,6 @@ export function markGitakoReadyState(ready: boolean) {
   return setGitakoBodyClass(readyClassName, ready)
 }
 
-export function markGitakoSafariFlag(enable = true) {
-  const className = 'gitako-safari'
-  return setGitakoBodyClass(className, enable)
-}
-
 /**
  * if should show gitako, then move body right to make space for showing gitako
  * otherwise, hide the space

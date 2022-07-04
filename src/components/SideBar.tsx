@@ -11,7 +11,7 @@ import { platform } from 'platforms'
 import * as React from 'react'
 import { cx } from 'utils/cx'
 import * as DOMHelper from 'utils/DOMHelper'
-import { detectBrowser, run } from 'utils/general'
+import { run } from 'utils/general'
 import { useLoadedContext } from 'utils/hooks/useLoadedContext'
 import { useOnPJAXDone, usePJAX } from 'utils/hooks/usePJAX'
 import { useStateIO } from 'utils/hooks/useStateIO'
@@ -47,10 +47,6 @@ export function SideBar() {
       DOMHelper.markGitakoReadyState(false)
     }
   }, [hasMetaData]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  React.useEffect(() => {
-    if (detectBrowser() === 'Safari') DOMHelper.markGitakoSafariFlag()
-  }, [])
 
   const { sidebarToggleMode, intelligentToggle } = configContext.value
   const $shouldShow = useStateIO(() =>
