@@ -111,6 +111,7 @@
       "plugin:react-hooks/recommended"
     ],
     "ignorePatterns": [
+      "webpack.config.js",
       "*jest*",
       "scripts"
     ],
