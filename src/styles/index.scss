@@ -425,7 +425,6 @@ $minimal-z-index: max(
     display: flex;
     flex-direction: column;
     background: var(--color-bg-subtle);
-    border-left: 1px solid var(--color-border-default);
 
     .octicon-wrapper {
       display: inline-block;
