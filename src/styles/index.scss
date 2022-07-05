@@ -221,7 +221,8 @@ $minimal-z-index: max(
   }
 }
 
-.with-gitako-spacing {
+.with-gitako-spacing,
+body[data-with-gitako-spacing='true'] {
   @media screen {
     margin-left: var(--gitako-width);
   }

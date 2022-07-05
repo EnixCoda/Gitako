@@ -28,6 +28,7 @@ export function markGitakoSafariFlag(enable = true) {
  */
 export const bodySpacingClassName = 'with-gitako-spacing'
 export function setBodyIndent(shouldShowGitako: boolean) {
+  document.body.dataset.withGitakoSpacing = shouldShowGitako ? 'true' : 'false'
   if (shouldShowGitako) {
     document.body.classList.add(bodySpacingClassName)
   } else {
@@ -172,7 +173,7 @@ export function persistGitakoElements(SideBarElement: HTMLElement, logoElement: 
           const oldValue = removedBody.style.getPropertyValue(property)
           if (oldValue) addedBody.style.setProperty(property, oldValue)
         }
-        const cssClassesNeedToMigrate = ['with-gitako-spacing']
+        const cssClassesNeedToMigrate = [bodySpacingClassName]
         for (const cssClass of cssClassesNeedToMigrate) {
           if (removedBody.classList.contains(cssClass)) addedBody.classList.add(cssClass)
         }
@@ -182,6 +183,7 @@ export function persistGitakoElements(SideBarElement: HTMLElement, logoElement: 
         if (removedBody.contains(SideBarElement)) removedBody.removeChild(SideBarElement)
         if (!addedBody.contains(logoElement)) addedBody.appendChild(logoElement)
         if (removedBody.contains(logoElement)) removedBody.removeChild(logoElement)
+        addedBody.dataset.withGitakoSpacing = removedBody.dataset.withGitakoSpacing
       }
     }
 
