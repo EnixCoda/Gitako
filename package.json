@@ -17,7 +17,8 @@
     "roll": "make release",
     "test": "yarn run test:parallel && yarn run test:non-parallel",
     "test:parallel": "NODE_ENV=test jest --config __tests__/jest.parallel.config.js",
-    "test:non-parallel": "NODE_ENV=test jest --config __tests__/jest.non-parallel.config.js"
+    "test:non-parallel": "NODE_ENV=test jest --config __tests__/jest.non-parallel.config.js",
+    "format": "prettier --write '**/*.{js,jsx,ts,tsx}'"
   },
   "dependencies": {
     "@primer/components": "^22.0.2",

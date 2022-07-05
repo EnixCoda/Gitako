@@ -104,7 +104,7 @@ export function SideBarBodyWrapper({
 
   const dummySize: [number, number] = React.useMemo(() => [size, size], [size])
 
-  const defaultSideBarWidth = React.useMemo(() => getDefaultConfigs().sideBarWidth, []);
+  const defaultSideBarWidth = React.useMemo(() => getDefaultConfigs().sideBarWidth, [])
 
   return (
     <div

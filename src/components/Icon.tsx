@@ -24,7 +24,7 @@ import {
   ReplyIcon as Reply,
   SearchIcon as Search,
   TabIcon as Tab,
-  XIcon as X
+  XIcon as X,
 } from '@primer/octicons-react'
 import * as React from 'react'
 import { cx } from 'utils/cx'

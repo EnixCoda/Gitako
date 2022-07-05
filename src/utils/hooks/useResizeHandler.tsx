@@ -31,7 +31,8 @@ export function useResizeHandler(
       if (!pointerDown.current) return
       const [x0, y0] = initialSizeRef.current
       // Allow minor movement, this happened unintentionally for few times when I use track pad
-      pointerMoved.current = pointerMoved.current || (clientX - x0) ** 2 + (clientY - y0) ** 2 > distanceTolerance ** 2
+      pointerMoved.current =
+        pointerMoved.current || (clientX - x0) ** 2 + (clientY - y0) ** 2 > distanceTolerance ** 2
       const [x1, y1] = baseSize.current
       onResize([x1 + clientX - x0, y1 + clientY - y0])
     }

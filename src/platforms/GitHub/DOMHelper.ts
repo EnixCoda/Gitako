@@ -54,8 +54,7 @@ export function getCurrentBranch(passive = false) {
     if (title !== defaultTitle && !title.includes(' ')) return title
   }
 
-  const findFileButtonSelector =
-    'main .file-navigation a[data-hotkey="t"]'
+  const findFileButtonSelector = 'main .file-navigation a[data-hotkey="t"]'
   const urlFromFindFileButton: string | null = $(
     findFileButtonSelector,
     element => (element as HTMLAnchorElement).href,

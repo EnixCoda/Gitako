@@ -17,8 +17,8 @@ type TreeNode = {
   sha?: string
   accessDenied?: boolean
   comments?: {
-    active: number,
-    resolved: number,
+    active: number
+    resolved: number
   }
   diff?: {
     status: 'modified' | 'added' | 'removed' | 'renamed'
