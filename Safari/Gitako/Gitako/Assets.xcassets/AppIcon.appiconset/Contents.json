@@ -1,16 +1,19 @@
 {
   "images" : [
     {
+      "filename" : "Gitako-16.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "16x16"
     },
     {
+      "filename" : "Gitako-32.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "16x16"
     },
     {
+      "filename" : "Gitako-33.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "32x32"
@@ -28,6 +31,7 @@
       "size" : "128x128"
     },
     {
+      "filename" : "Gitako-257.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "128x128"
@@ -39,16 +43,19 @@
       "size" : "256x256"
     },
     {
+      "filename" : "Gitako-513.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "256x256"
     },
     {
+      "filename" : "Gitako-512.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "512x512"
     },
     {
+      "filename" : "Gitako-1024.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "512x512"
