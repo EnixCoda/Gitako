@@ -4,7 +4,7 @@ import {
   patientClick,
   selectFileTreeItem,
   sleep,
-  waitForLegacyPJAXRedirect,
+  waitForLegacyPJAXRedirect
 } from '../../utils'
 
 describe(`in Gitako project page`, () => {

@@ -1,4 +1,9 @@
-import { expectToFind, selectFileTreeItem, sleep, waitForLegacyPJAXRedirect } from '../../utils'
+import {
+  expectToFind,
+  selectFileTreeItem,
+  sleep,
+  waitForLegacyPJAXRedirect
+} from '../../utils'
 
 describe(`in Gitako project page`, () => {
   beforeAll(() => page.goto('https://github.com/EnixCoda/Gitako/tree/develop/src'))

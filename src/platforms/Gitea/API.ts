@@ -77,7 +77,8 @@ export async function getTreeData(
 ): Promise<GiteaAPI.TreeData> {
   const search = new URLSearchParams()
   if (recursive) search.set('recursive', '1')
-  const url = `${API_ENDPOINT}/repos/${userName}/${repoName}/git/trees/${branchName}?` + search
+  const url =
+    `${API_ENDPOINT}/repos/${userName}/${repoName}/git/trees/${branchName}?` + search
   return await request(url, { accessToken })
 }
 
@@ -93,14 +94,14 @@ export async function getBlobData(
 
 export async function OAuth(code: string): Promise<string | null> {
   const endpoint = `https://gitako.enix.one/oauth/gitea?`
-  const res = await fetch(endpoint + new URLSearchParams({ code }).toString(), {
-    method: 'post',
-  })
+    const res = await fetch(endpoint + new URLSearchParams({ code }).toString(), {
+      method: 'post',
+    })
 
-  if (res.ok) {
-    const body = await res.json()
-    const accessToken = body?.accessToken
-    if (typeof accessToken === 'string') return accessToken
-  }
-  return null
+    if (res.ok) {
+      const body = await res.json()
+      const accessToken = body?.accessToken
+      if (typeof accessToken === 'string') return accessToken
+    }
+    return null
 }

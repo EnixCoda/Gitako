@@ -3,13 +3,11 @@ import {
   expectToFind,
   expectToNotFind,
   scroll,
-  selectFileTreeItem,
+  selectFileTreeItem
 } from '../../utils'
 
 describe(`in Gitako project page`, () => {
-  beforeAll(() =>
-    page.goto('https://github.com/EnixCoda/Gitako/tree/test/200-changed-files-200-lines-each'),
-  )
+  beforeAll(() => page.goto('https://github.com/EnixCoda/Gitako/tree/test/200-changed-files-200-lines-each'))
 
   it('should render Gitako', async () => {
     await expectToFind('.gitako-side-bar .gitako-side-bar-body-wrapper')

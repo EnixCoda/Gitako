@@ -7,7 +7,7 @@ import * as ReactDOM from 'react-dom'
 import {
   insertLogoMountPoint,
   insertSideBarMountPoint,
-  persistGitakoElements,
+  persistGitakoElements
 } from 'utils/DOMHelper'
 import './content.scss'
 
