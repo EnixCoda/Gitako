@@ -17,7 +17,8 @@
     "roll": "make release",
     "test": "yarn run test:parallel && yarn run test:non-parallel",
     "test:parallel": "NODE_ENV=test jest --config __tests__/jest.parallel.config.js",
-    "test:non-parallel": "NODE_ENV=test jest --config __tests__/jest.non-parallel.config.js"
+    "test:non-parallel": "NODE_ENV=test jest --config __tests__/jest.non-parallel.config.js",
+    "format": "prettier --write '**/*.{js,jsx,ts,tsx}'"
   },
   "dependencies": {
     "@primer/css": "^20.2.2",
@@ -76,6 +77,7 @@
     "jest-puppeteer": "^6.1.0",
     "json-loader": "^0.5.7",
     "mini-css-extract-plugin": "^0.9.0",
+    "prettier": "^2.7.1",
     "puppeteer": "^10.1.0",
     "raw-loader": "^4.0.0",
     "sass": "^1.26.2",
