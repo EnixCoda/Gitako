@@ -216,7 +216,7 @@ export const GitHub: Platform = {
 
       return {
         'data-pjax': pjaxContainerSelector,
-        'data-turbo-frame': turboContainerId,
+        'data-turbo-frame': URLHelper.isInPullPage() ? undefined : turboContainerId,
         onClick() {
           /* Overwriting default onClick */
         },
