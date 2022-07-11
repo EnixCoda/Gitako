@@ -99,7 +99,7 @@ $minimal-z-index: max(
   mask-position: center;
 }
 
-.#{$name}-ready {
+[data-#{$name}-ready='true'] {
   // github
   // code folding start
   .blob-wrapper table .blob-num {
@@ -232,16 +232,18 @@ $minimal-z-index: max(
   }
 }
 
-.with-gitako-spacing {
-  @media screen {
-    margin-left: var(--gitako-width);
-  }
+html[data-with-gitako-spacing='true'] {
+  body {
+    @media screen {
+      margin-left: var(--gitako-width);
+    }
 
-  // gitee
-  &.git-project {
-    width: auto; // shrink width
-    .site-content {
-      min-width: 1040px;
+    // gitee
+    &.git-project {
+      width: auto; // shrink width
+      .site-content {
+        min-width: 1040px;
+      }
     }
   }
 }
@@ -425,6 +427,7 @@ $minimal-z-index: max(
     display: flex;
     flex-direction: column;
     background: var(--color-bg-subtle);
+    font-size: 14px;
 
     .octicon-wrapper {
       display: inline-block;
@@ -638,6 +641,7 @@ $minimal-z-index: max(
             overflow: hidden;
             text-overflow: ellipsis;
             align-items: center;
+            font-size: 14px;
           }
 
           &:not(:hover) {

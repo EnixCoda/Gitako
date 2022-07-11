@@ -58,9 +58,7 @@ export const loadWithPJAX = (url: string, element: HTMLElement) => {
 
 export function useOnPJAXDone(callback: () => void) {
   useEvent('pjax:end', callback, document) // legacy support
-  // 'turbo:render' should be the best timing but GitHub has attached a mutation observer on body to block that
-  // TODO: fire at turbo:render
-  useEvent('turbo:load', callback, document)
+  useEvent('turbo:render', callback, document)
 }
 
 export function useRedirectedEvents(

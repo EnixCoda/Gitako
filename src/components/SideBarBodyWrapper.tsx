@@ -7,6 +7,7 @@ import { cx } from 'utils/cx'
 import { setCSSVariable } from 'utils/DOMHelper'
 import * as features from 'utils/features'
 import { detectBrowser } from 'utils/general'
+import { useOnPJAXDone } from 'utils/hooks/usePJAX'
 import { ResizeState } from 'utils/hooks/useResizeHandler'
 import { useConditionalHook } from '../utils/hooks/useConditionalHook'
 
@@ -53,7 +54,6 @@ export function SideBarBodyWrapper({
     const safeSize = getSafeSize(size, width)
     if (safeSize !== size) setSize(safeSize)
   }, [width, size])
-  const bodyWrapperRef = React.useRef<HTMLDivElement | null>(null)
   useDebounce(() => configContext.onChange({ sideBarWidth: size }), 100, [size])
 
   const applySizeToCSSVariables = React.useCallback(function apply(
@@ -65,13 +65,6 @@ export function SideBarBodyWrapper({
         '--gitako-width',
         sizeVariableMountPoint ? `${size}px` : undefined,
         sizeVariableMountPoint,
-      )
-
-    if (bodyWrapperRef.current)
-      setCSSVariable(
-        '--gitako-width',
-        sizeVariableMountPoint ? undefined : `${size}px`,
-        bodyWrapperRef.current,
       )
   },
   [])
@@ -95,9 +88,15 @@ export function SideBarBodyWrapper({
     }
   }, [width, sizeVariableMountPoint, applySizeToCSSVariables])
 
+  const applyLatestSizeToCSSVariables = React.useCallback(
+    () => applySizeToCSSVariables(sizeVariableMountPoint, size),
+    [sizeVariableMountPoint, size],
+  )
   React.useEffect(() => {
-    applySizeToCSSVariables(sizeVariableMountPoint, size)
-  }, [sizeVariableMountPoint, size, applySizeToCSSVariables])
+    applyLatestSizeToCSSVariables()
+  }, [applyLatestSizeToCSSVariables])
+
+  useOnPJAXDone(applyLatestSizeToCSSVariables)
 
   const onMouseLeave = React.useCallback(
     <E extends HTMLElement>(e: React.MouseEvent<E>) => {
@@ -112,11 +111,10 @@ export function SideBarBodyWrapper({
     blockLeaveRef.current = state === 'resizing'
   }, [])
 
-  const defaultSideBarWidth = React.useMemo(() => getDefaultConfigs().sideBarWidth, []);
+  const defaultSideBarWidth = React.useMemo(() => getDefaultConfigs().sideBarWidth, [])
 
   return (
     <div
-      ref={bodyWrapperRef}
       className={cx('gitako-side-bar-body-wrapper', className)}
       style={{ height: heightForSafari }}
       onMouseLeave={onMouseLeave}

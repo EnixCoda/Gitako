@@ -127,8 +127,11 @@ export function SideBar() {
             collapsed: !shouldShow,
           })}
           baseSize={baseSize}
+          // TODO: move sidebarToggleMode inside
           onLeave={sidebarToggleMode === 'float' ? () => setShowSideBar(false) : undefined}
-          sizeVariableMountPoint={sidebarToggleMode === 'persistent' ? document.body : undefined}
+          sizeVariableMountPoint={
+            sidebarToggleMode === 'persistent' ? DOMHelper.gitakoDescriptionTarget : undefined
+          }
         >
           <div className={'gitako-side-bar-body'}>
             <div

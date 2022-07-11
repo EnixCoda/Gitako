@@ -1,7 +1,7 @@
 import { Gitako } from 'components/Gitako'
 import * as React from 'react'
 import { createRoot } from 'react-dom/client'
-import { insertSideBarMountPoint, persistGitakoElements } from 'utils/DOMHelper'
+import { insertSideBarMountPoint } from 'utils/DOMHelper'
 import './content.scss'
 
 if (document.readyState === 'loading') {
@@ -12,7 +12,6 @@ if (document.readyState === 'loading') {
 
 async function init() {
   await injectStyles(browser.runtime.getURL('content.css'))
-  persistGitakoElements()
   createRoot(insertSideBarMountPoint()).render(<Gitako />)
 }
 
