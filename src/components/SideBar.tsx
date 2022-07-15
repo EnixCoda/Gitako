@@ -4,16 +4,20 @@ import { FileExplorer } from 'components/FileExplorer'
 import { Footer } from 'components/Footer'
 import { MetaBar } from 'components/MetaBar'
 import { Portal } from 'components/Portal'
-import { SideBarBodyWrapper } from 'components/SideBarBodyWrapper'
 import { ToggleShowButton } from 'components/ToggleShowButton'
 import { useConfigs } from 'containers/ConfigsContext'
 import { platform } from 'platforms'
 import * as React from 'react'
 import { IIFC } from 'react-iifc'
+import { useWindowSize } from 'react-use'
 import { cx } from 'utils/cx'
 import * as DOMHelper from 'utils/DOMHelper'
+import * as features from 'utils/features'
+import { detectBrowser } from 'utils/general'
+import { useConditionalHook } from 'utils/hooks/useConditionalHook'
 import { useLoadedContext } from 'utils/hooks/useLoadedContext'
 import { useOnPJAXDone, usePJAX } from 'utils/hooks/usePJAX'
+import { ResizeState } from 'utils/hooks/useResizeHandler'
 import * as keyHelper from 'utils/keyHelper'
 import { SideBarErrorContext } from '../containers/ErrorContext'
 import { SideBarStateContext } from '../containers/SideBarState'
@@ -21,17 +25,33 @@ import { Theme } from '../containers/Theme'
 import { LoadingIndicator } from './LoadingIndicator'
 import { RoundIconButton } from './RoundIconButton'
 import { SettingsBarContent } from './settings/SettingsBar'
+import { SideBarResizeHandler } from './SideBarResizeHandler'
 
 export function SideBar() {
   usePJAX()
   platform.usePlatformHooks?.()
   useMarkGitakoReadyState()
 
+  const error = useLoadedContext(SideBarErrorContext).value
+
   const [shouldExpand, setShouldExpand, toggleShowSideBar] = useShouldExpand()
 
-  const error = useLoadedContext(SideBarErrorContext).value
   const configContext = useConfigs()
+
+  const blockLeaveRef = React.useRef(false)
   const { sidebarToggleMode } = configContext.value
+  const onMouseLeaveSideBar: React.MouseEventHandler<HTMLElement> = React.useCallback(() => {
+    if (blockLeaveRef.current) return
+    if (sidebarToggleMode === 'float') setShouldExpand(false)
+  }, [sidebarToggleMode, setShouldExpand])
+  const onResizeStateChange = React.useCallback((state: ResizeState) => {
+    blockLeaveRef.current = state === 'resizing'
+  }, [])
+
+  const heightForSafari = useConditionalHook(
+    () => detectBrowser() === 'Safari',
+    () => useWindowSize().height, // eslint-disable-line react-hooks/rules-of-hooks
+  )
 
   return (
     <Theme>
@@ -53,16 +73,17 @@ export function SideBar() {
         }}
       </IIFC>
       <div className={'gitako-side-bar'}>
-        <SideBarBodyWrapper
-          className={cx(`toggle-mode-${sidebarToggleMode}`, {
+        <div
+          className={cx('gitako-side-bar-body-wrapper', `toggle-mode-${sidebarToggleMode}`, {
             collapsed: error || !shouldExpand,
           })}
-          onLeave={sidebarToggleMode === 'float' ? () => setShouldExpand(false) : undefined}
+          style={{ height: heightForSafari }}
+          onMouseLeave={onMouseLeaveSideBar}
         >
           <div className={'gitako-side-bar-body'}>
             <div className={'gitako-side-bar-content'}>
               <div className={'header'}>
-                <div className={'close-side-bar-button-position'}>
+                <div className={'side-bar-position-controls'}>
                   {sidebarToggleMode === 'persistent' && (
                     <RoundIconButton
                       icon={TabIcon}
@@ -126,7 +147,8 @@ export function SideBar() {
               }}
             </IIFC>
           </div>
-        </SideBarBodyWrapper>
+          {features.resize && <SideBarResizeHandler onResizeStateChange={onResizeStateChange} />}
+        </div>
       </div>
     </Theme>
   )

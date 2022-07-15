@@ -166,6 +166,10 @@ export function setCSSVariable(name: string, value: string | undefined, element:
   else element.style.setProperty(name, value)
 }
 
+export const setGitakoWidthCSSVariable = (size: number) => {
+  setCSSVariable('--gitako-width', `${size}px`, gitakoDescriptionTarget)
+}
+
 export function formatID(id: string) {
   return `#${id}`
 }

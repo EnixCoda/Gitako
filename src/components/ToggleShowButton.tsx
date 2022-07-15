@@ -41,7 +41,7 @@ export function ToggleShowButton({ error, className, onClick, onHover }: Props) 
   )
 
   // reposition on window height change, but ignores distance change
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     if (ref.current) {
       ref.current.style.top = distance + 'px'
     }

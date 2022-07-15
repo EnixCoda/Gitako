@@ -2,7 +2,7 @@ import { GrabberIcon } from '@primer/octicons-react'
 import { Icon } from 'components/Icon'
 import * as React from 'react'
 import { ResizeState, useResizeHandler } from '../utils/hooks/useResizeHandler'
-import { Size2D } from './SideBarBodyWrapper'
+import { Size2D } from "./Size"
 
 type Props = {
   size: Size2D
