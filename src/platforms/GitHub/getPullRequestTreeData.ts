@@ -40,9 +40,9 @@ export async function getPullRequestTreeData(
   // query all elements at once to make getFileElementHash run faster
   const elementsHavePath = docs.map(doc => doc.querySelectorAll(`[data-path]`))
   const map = new Map<string, string>()
-    for (const group of elementsHavePath) {
-      for (let i = 0; i < group.length; i++) {
-        const element = group[i]
+  for (const group of elementsHavePath) {
+    for (let i = 0; i < group.length; i++) {
+      const element = group[i]
       const id = element.parentElement?.id
       if (id) {
         const path = element.getAttribute('data-path')

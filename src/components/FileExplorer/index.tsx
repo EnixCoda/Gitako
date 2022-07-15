@@ -23,7 +23,7 @@ import {
   useRenderFileCommentAmounts,
   useRenderFileStatus,
   useRenderFindInFolderButton,
-  useRenderGoToButton
+  useRenderGoToButton,
 } from './hooks/useNodeRenderers'
 import { useHandleNodeClick } from './hooks/useOnNodeClick'
 import { useOnSearch } from './hooks/useOnSearch'

@@ -218,6 +218,7 @@ export function forOf<T, R>(target: T, callback: <K extends keyof T>(key: K, val
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export function noop() {}
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function atomicAsyncFunction<Args extends any[], R>(fn: (...args: Args) => Promise<R>) {
   let last: Promise<R> | undefined
   return async (...args: Args) => {

@@ -27,15 +27,12 @@ const nodeModulesPath = path.resolve(__dirname, '../../', `node_modules`)
 exports.fixDep = async function fixDep(targetFilePath, pairs) {
   const filePath = path.resolve(nodeModulesPath, targetFilePath)
   const source = await fs.readFile(filePath, 'utf-8')
-  const modified = modify(source, pairs,)
+  const modified = modify(source, pairs)
   await fs.writeFile(filePath, modified, 'utf-8')
 }
 
 async function fixDeps() {
-  for (const fix of [
-    require('./pjax-api').fix,
-    require('./styled-components').fix,
-  ]) {
+  for (const fix of [require('./pjax-api').fix, require('./styled-components').fix]) {
     await fix()
   }
 }

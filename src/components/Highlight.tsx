@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from 'react'
 
 export const Highlight = React.memo(function Highlight(props: { text: string; match?: RegExp }) {
   const { text, match } = props

@@ -3,7 +3,7 @@ import { Box, merge, SxProp, useTheme } from '@primer/react'
 import { getBaseStyles, getSizeStyles, getVariantStyles } from '@primer/react/lib/Button/styles'
 import {
   IconButtonProps as PrimerIconButtonProps,
-  StyledButton
+  StyledButton,
 } from '@primer/react/lib/Button/types'
 import React from 'react'
 import { is } from 'utils/is'

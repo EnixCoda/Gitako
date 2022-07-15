@@ -35,7 +35,7 @@ function recursiveMarkDiff(
     const [path] = node
     markDiff(path, state)
   } else {
-    const [/* name */, children] = node
+    const [, children] = node
     for (const child of children) {
       recursiveMarkDiff(child, state, markDiff)
     }

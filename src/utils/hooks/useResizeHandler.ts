@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Size2D } from "../../components/Size"
+import { Size2D } from '../../components/Size'
 
 export type ResizeState = 'idle' | 'resizing'
 

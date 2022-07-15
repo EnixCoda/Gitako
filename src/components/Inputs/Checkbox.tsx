@@ -1,9 +1,13 @@
-import { Checkbox as PrimerCheckbox, CheckboxProps, FormControl } from '@primer/react';
-import * as React from 'react';
+import { Checkbox as PrimerCheckbox, CheckboxProps, FormControl } from '@primer/react'
+import * as React from 'react'
 
 export function Checkbox({
-  label, value, onChange, checked = value, ...rest
-}: Override<CheckboxProps, { label: React.ReactNode; } & IO<boolean>>) {
+  label,
+  value,
+  onChange,
+  checked = value,
+  ...rest
+}: Override<CheckboxProps, { label: React.ReactNode } & IO<boolean>>) {
   return (
     <FormControl>
       <PrimerCheckbox
@@ -12,8 +16,9 @@ export function Checkbox({
         }}
         checked={checked}
         onChange={e => onChange(e.target.checked)}
-        {...rest} />
+        {...rest}
+      />
       <FormControl.Label>{label}</FormControl.Label>
     </FormControl>
-  );
+  )
 }

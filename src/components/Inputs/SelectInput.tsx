@@ -7,10 +7,13 @@ export type Option<T> = {
   value: T
 }
 
-export type SelectInputProps<T> = Override<SelectProps, IO<T> & {
-  label: React.ReactNode
-  options: Option<T>[]
-}>
+export type SelectInputProps<T> = Override<
+  SelectProps,
+  IO<T> & {
+    label: React.ReactNode
+    options: Option<T>[]
+  }
+>
 
 export function SelectInput<T>({
   value,
@@ -33,7 +36,7 @@ export function SelectInput<T>({
             },
           },
         },
-        mb: 1
+        mb: 1,
       }}
     >
       <FormControl.Label>{label}</FormControl.Label>

@@ -1,10 +1,7 @@
 import { SelectInput, SelectInputProps } from 'components/Inputs/SelectInput'
 import * as React from 'react'
 import { Config, ConfigKeys } from 'utils/config/helper'
-import {
-  SimpleConfigFieldProps,
-  useSimpleConfigFieldIO
-} from '.'
+import { SimpleConfigFieldProps, useSimpleConfigFieldIO } from '.'
 import { FieldLabel } from './FieldLabel'
 
 export function SimpleConfigFieldSelect<Key extends ConfigKeys>({

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import * as features from 'utils/features'
-import { Size2D } from "../../components/Size"
+import { Size2D } from '../../components/Size'
 
 export function useElementSize<E extends HTMLElement>() {
   const ref = React.useRef<E | null>(null)

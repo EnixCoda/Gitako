@@ -91,7 +91,7 @@ const hasTheErrorBeenReported = atomicAsyncFunction(async function hasTheErrorBe
 export async function raiseError(
   error: Error,
   extra?: {
-    [key: string]: any
+    [key: string]: any // eslint-disable-line @typescript-eslint/no-explicit-any
   },
 ) {
   if (await hasTheErrorBeenReported(error)) return

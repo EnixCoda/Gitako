@@ -89,7 +89,8 @@ export async function continuousLoadPages(doc: Document, onReceivePage?: (doc: D
    */
   const fragmentSelector = 'include-fragment[data-targets="diff-file-filter.progressiveLoaders"]'
   const documents: Document[] = [doc]
-  while (true) { // eslint-disable-line no-constant-condition
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
     const fragment = doc.querySelector(fragmentSelector) as HTMLElement
     if (!fragment) break
     const src = fragment.getAttribute('src')

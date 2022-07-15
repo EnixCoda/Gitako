@@ -1,6 +1,6 @@
 const { fixDep } = require('.')
 
-const targetFilePath = `pjax-api/dist/pjax-api.js`;
+const targetFilePath = `pjax-api/dist/pjax-api.js`
 const pairs = [
   // Firefox
   [
