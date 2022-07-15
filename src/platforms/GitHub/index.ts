@@ -168,7 +168,7 @@ export const GitHub: Platform = {
 
     return getRepositoryTreeData(metaData, path, recursive, accessToken)
   },
-  shouldShow() {
+  shouldExpandSideBar() {
     return Boolean(
       DOMHelper.isInCodePage() ||
         URLHelper.isInCommitPage() ||

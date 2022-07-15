@@ -8,7 +8,7 @@ export const dummyPlatformForTypeSafety: Platform = {
   getDefaultBranchName: dummyPlatformMethod,
   resolveUrlFromMetaData: dummyPlatformMethod,
   getTreeData: dummyPlatformMethod,
-  shouldShow() {
+  shouldExpandSideBar() {
     return false
   },
   getCurrentPath: dummyPlatformMethod,

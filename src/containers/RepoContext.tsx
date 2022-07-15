@@ -14,6 +14,8 @@ export function RepoContextWrapper({ children }: React.PropsWithChildren<{}>) {
   const partialMetaData = usePartialMetaData()
   const defaultBranch = useDefaultBranch(partialMetaData)
   const metaData = useMetaData(partialMetaData, defaultBranch)
+  const state = useLoadedContext(SideBarStateContext).value
+  if (state === 'disabled') return null
 
   return <RepoContext.Provider value={metaData}>{children}</RepoContext.Provider>
 }

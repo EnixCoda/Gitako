@@ -159,7 +159,7 @@ export const Gitea: Platform = {
 
     return { root }
   },
-  shouldShow() {
+  shouldExpandSideBar() {
     return DOMHelper.isInCodePage()
   },
   getCurrentPath(branchName) {

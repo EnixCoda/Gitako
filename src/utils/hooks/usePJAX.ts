@@ -58,7 +58,7 @@ export const loadWithPJAX = (url: string, element: HTMLElement) => {
 
 export function useOnPJAXDone(callback: () => void) {
   useEvent('pjax:end', callback, document) // legacy support
-  useEvent('turbo:render', callback, document)
+  useEvent('turbo:render', callback, document) // prevent page content shift after first redirect to new page via turbo when sidebar is pinned
 }
 
 export function useRedirectedEvents(

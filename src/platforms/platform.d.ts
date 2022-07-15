@@ -19,7 +19,7 @@ type Platform = {
     recursive?: boolean,
     accessToken?: string,
   ): Promise<{ root: TreeNode; defer?: boolean }>
-  shouldShow(): boolean
+  shouldExpandSideBar(): boolean
   shouldExpandAll?(): boolean
   getCurrentPath(branchName: string): string[] | null
   setOAuth(code: string): Promise<string | null>

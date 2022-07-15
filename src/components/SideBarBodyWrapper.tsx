@@ -4,6 +4,7 @@ import * as React from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
 import { getDefaultConfigs } from 'utils/config/helper'
 import { cx } from 'utils/cx'
+import * as DOMHelper from 'utils/DOMHelper'
 import { setCSSVariable } from 'utils/DOMHelper'
 import * as features from 'utils/features'
 import { detectBrowser } from 'utils/general'
@@ -14,10 +15,8 @@ import { useConditionalHook } from '../utils/hooks/useConditionalHook'
 type Size = number
 export type Size2D = [Size, Size]
 type Props = {
-  baseSize: Size
   className?: string
   onLeave?: React.HTMLAttributes<HTMLElement>['onMouseLeave']
-  sizeVariableMountPoint?: HTMLElement
 }
 
 const MINIMAL_CONTENT_VIEWPORT_WIDTH = 100
@@ -29,25 +28,28 @@ function getSafeSize(size: number, width: number) {
   return size
 }
 
+const sizeVariableMountPoint = DOMHelper.gitakoDescriptionTarget
+
 export function SideBarBodyWrapper({
-  baseSize,
   className,
   children,
   onLeave,
-  sizeVariableMountPoint,
 }: React.PropsWithChildren<Props>) {
-  const [size, setSize] = React.useState(baseSize)
   const configContext = useConfigs()
-  const blockLeaveRef = React.useRef(false)
+  const { sideBarWidth: baseSize } = configContext.value
+  const [size, setSize] = React.useState(baseSize)
+
+  // TODO: fix sidebar flash on first load
+
+  // TODO: verify if it is required
+  // React.useEffect(() => {
+  //   setSize(baseSize)
+  // }, [baseSize])
 
   const heightForSafari = useConditionalHook(
     () => detectBrowser() === 'Safari',
     () => useWindowSize().height, // eslint-disable-line react-hooks/rules-of-hooks
   )
-
-  React.useEffect(() => {
-    setSize(baseSize)
-  }, [baseSize])
 
   const { width } = useWindowSize()
   React.useEffect(() => {
@@ -56,18 +58,9 @@ export function SideBarBodyWrapper({
   }, [width, size])
   useDebounce(() => configContext.onChange({ sideBarWidth: size }), 100, [size])
 
-  const applySizeToCSSVariables = React.useCallback(function apply(
-    sizeVariableMountPoint: HTMLElement | undefined,
-    size: number,
-  ) {
-    if (sizeVariableMountPoint)
-      setCSSVariable(
-        '--gitako-width',
-        sizeVariableMountPoint ? `${size}px` : undefined,
-        sizeVariableMountPoint,
-      )
-  },
-  [])
+  const applySizeToCSSVariables = React.useCallback((size: number) => {
+    setCSSVariable('--gitako-width', `${size}px`, sizeVariableMountPoint)
+  }, [])
 
   // Update size using useEffect would cause delay
   const onResize = React.useMemo(() => {
@@ -82,22 +75,20 @@ export function SideBarBodyWrapper({
         applied = false
         requestAnimationFrame(() => {
           applied = true
-          applySizeToCSSVariables(sizeVariableMountPoint, sizeToApply)
+          applySizeToCSSVariables(sizeToApply)
         })
       }
     }
-  }, [width, sizeVariableMountPoint, applySizeToCSSVariables])
+  }, [width, applySizeToCSSVariables])
 
   const applyLatestSizeToCSSVariables = React.useCallback(
-    () => applySizeToCSSVariables(sizeVariableMountPoint, size),
-    [sizeVariableMountPoint, size],
+    () => applySizeToCSSVariables(size),
+    [applySizeToCSSVariables, size],
   )
-  React.useEffect(() => {
-    applyLatestSizeToCSSVariables()
-  }, [applyLatestSizeToCSSVariables])
-
+  React.useLayoutEffect(applyLatestSizeToCSSVariables, [applyLatestSizeToCSSVariables])
   useOnPJAXDone(applyLatestSizeToCSSVariables)
 
+  const blockLeaveRef = React.useRef(false)
   const onMouseLeave = React.useCallback(
     <E extends HTMLElement>(e: React.MouseEvent<E>) => {
       if (blockLeaveRef.current) return
@@ -105,11 +96,11 @@ export function SideBarBodyWrapper({
     },
     [onLeave],
   )
-
-  const dummySize: [number, number] = React.useMemo(() => [size, size], [size])
   const onResizeStateChange = React.useCallback((state: ResizeState) => {
     blockLeaveRef.current = state === 'resizing'
   }, [])
+
+  const dummySize: [number, number] = React.useMemo(() => [size, size], [size])
 
   const defaultSideBarWidth = React.useMemo(() => getDefaultConfigs().sideBarWidth, [])
 
@@ -125,7 +116,7 @@ export function SideBarBodyWrapper({
           onResize={onResize}
           onResetSize={() => {
             setSize(defaultSideBarWidth)
-            applySizeToCSSVariables(sizeVariableMountPoint, defaultSideBarWidth)
+            applySizeToCSSVariables(defaultSideBarWidth)
           }}
           onResizeStateChange={onResizeStateChange}
           size={dummySize}
