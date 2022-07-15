@@ -503,7 +503,6 @@ html[data-with-gitako-spacing='true'] {
         display: inline-flex;
         flex: 1;
         flex-direction: column;
-        overflow: hidden; // essential for shrinking `.files` when viewport height reduce
 
         .search-input {
           padding-left: 0;

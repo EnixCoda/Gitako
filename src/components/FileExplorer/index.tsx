@@ -23,7 +23,7 @@ import {
   useRenderFileCommentAmounts,
   useRenderFileStatus,
   useRenderFindInFolderButton,
-  useRenderGoToButton,
+  useRenderGoToButton
 } from './hooks/useNodeRenderers'
 import { useHandleNodeClick } from './hooks/useOnNodeClick'
 import { useOnSearch } from './hooks/useOnSearch'
@@ -202,6 +202,7 @@ function LoadedFileExplorer({
             height,
             width: '100%',
             overflow: 'auto',
+            position: 'absolute', // This allows reducing `height` on viewport height reduce
           }}
           ref={scrollElementRef}
           onScroll={onScroll}
