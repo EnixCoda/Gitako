@@ -76,7 +76,7 @@ function getUrlForRedirect(
   // Modern browsers have great support for handling unsafe URL,
   // It may be possible to sanitize path with
   // `path => path.includes('#') ? path.replace(/#/g, '%23') : '...'
-  return `https://${window.location.host}/${userName}/${repoName}/${type}/${branchName}/${path
+  return `${window.location.origin}/${userName}/${repoName}/${type}/${branchName}/${path
     .split('/')
     .map(encodeURIComponent)
     .join('/')}`
@@ -144,8 +144,8 @@ export const GitHub: Platform = {
     return (await API.getRepoMeta(userName, repoName, accessToken)).default_branch
   },
   resolveUrlFromMetaData({ userName, repoName, branchName }) {
-    const repoUrl = `https://${window.location.host}/${userName}/${repoName}`
-    const userUrl = `https://${window.location.host}/${userName}`
+    const repoUrl = `${window.location.origin}/${userName}/${repoName}`
+    const userUrl = `${window.location.origin}/${userName}`
     const pullId = URLHelper.isInPullPage()
     const commitId = URLHelper.isInCommitPage()
     const branchUrl = pullId
@@ -200,7 +200,7 @@ export const GitHub: Platform = {
       scope: 'repo',
       redirect_uri: window.location.href,
     })
-    return `https://github.com/login/oauth/authorize?` + params.toString()
+    return `https://github.com/login/oauth/authorize?${params}`
   },
   usePlatformHooks() {
     const { copyFileButton, copySnippetButton, codeFolding } = useConfigs().value

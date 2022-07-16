@@ -1,6 +1,7 @@
 import { raiseError } from 'analytics'
 import { errors } from 'platforms'
 import { is } from 'utils/is'
+import { gitakoServiceHost } from 'utils/networkService'
 
 function isEmptyProject(content: JSONValue) {
   return is.JSON.object(content) && content?.['message'] === 'Git Repository is empty.'
@@ -58,7 +59,7 @@ async function request(
   }
 }
 
-export const API_ENDPOINT = `${window.location.protocol}//${window.location.host}/api/v1`
+export const API_ENDPOINT = `${window.location.origin}/api/v1`
 
 export async function getRepoMeta(
   userName: string,
@@ -78,7 +79,7 @@ export async function getTreeData(
 ): Promise<GiteaAPI.TreeData> {
   const search = new URLSearchParams()
   if (recursive) search.set('recursive', '1')
-  const url = `${API_ENDPOINT}/repos/${userName}/${repoName}/git/trees/${branchName}?` + search
+  const url = `${API_ENDPOINT}/repos/${userName}/${repoName}/git/trees/${branchName}?${search}`
   return await request(url, { accessToken })
 }
 
@@ -93,8 +94,8 @@ export async function getBlobData(
 }
 
 export async function OAuth(code: string): Promise<string | null> {
-  const endpoint = `https://gitako.enix.one/oauth/gitea?`
-  const res = await fetch(endpoint + new URLSearchParams({ code }).toString(), {
+  const endpoint = `https://${gitakoServiceHost}/oauth/gitea?${new URLSearchParams({ code })}`
+  const res = await fetch(endpoint, {
     method: 'post',
   })
 

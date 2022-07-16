@@ -1,4 +1,3 @@
-import { formatHash } from 'utils/general'
 import * as API from './API'
 import { getPRDiffTotalStat, getPullRequestFilesCount, isInPullFilesPage } from './DOMHelper'
 import { processTree } from './index'
@@ -51,23 +50,27 @@ export async function getPullRequestTreeData(
     }
   }
 
-  const urlMainPart = `https://${window.location.host}/${userName}/${repoName}/pull/${pullId}/files${window.location.search}`
+  const url = new URL(window.location.href)
+  url.pathname = `/${userName}/${repoName}/pull/${pullId}/files`
   const commentsMap = getCommentsMap(commentData)
   const nodes: TreeNode[] = treeData.map(
-    ({ filename, sha, additions, deletions, changes, status }) => ({
-      path: filename || '',
-      type: 'blob',
-      name: filename?.split('/').pop() || '',
-      url: `${urlMainPart}${formatHash(map.get(filename))}`,
-      sha: sha,
-      comments: commentsMap.get(filename),
-      diff: {
-        status,
-        additions,
-        deletions,
-        changes,
-      },
-    }),
+    ({ filename, sha, additions, deletions, changes, status }) => {
+      url.hash = map.get(filename) || ''
+      return {
+        path: filename || '',
+        type: 'blob',
+        name: filename?.split('/').pop() || '',
+        url: `${url}`,
+        sha,
+        comments: commentsMap.get(filename),
+        diff: {
+          status,
+          additions,
+          deletions,
+          changes,
+        },
+      }
+    },
   )
 
   const root = processTree(nodes)

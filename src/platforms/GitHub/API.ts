@@ -1,6 +1,7 @@
 import { errors } from 'platforms'
 import { isEnterprise } from '.'
 import { is } from '../../utils/is'
+import { gitakoServiceHost } from '../../utils/networkService'
 import { continuousLoadPages, getDOM, resolveHeaderLink } from './utils'
 
 function isAPIRateLimitExceeded(content: JSONValue) {
@@ -71,14 +72,14 @@ async function request<T>(
   throw new Error(`Unknown message content "${message}"`)
 }
 
-const API_ENDPOINT = isEnterprise() ? `${window.location.host}/api/v3` : 'api.github.com'
+const API_ENDPOINT = isEnterprise() ? `${window.location.origin}/api/v3` : 'https://api.github.com'
 
 export async function getRepoMeta(
   userName: string,
   repoName: string,
   accessToken?: string,
 ): Promise<GitHubAPI.MetaData> {
-  const url = `https://${API_ENDPOINT}/repos/${userName}/${repoName}`
+  const url = `${API_ENDPOINT}/repos/${userName}/${repoName}`
   return await request(url, { accessToken })
 }
 
@@ -91,8 +92,7 @@ export async function getTreeData(
 ): Promise<GitHubAPI.TreeData> {
   const search = new URLSearchParams()
   if (recursive) search.set('recursive', '1')
-  const url =
-    `https://${API_ENDPOINT}/repos/${userName}/${repoName}/git/trees/${branchName}?` + search
+  const url = `${API_ENDPOINT}/repos/${userName}/${repoName}/git/trees/${branchName}?${search}`
   return await request(url, { accessToken })
 }
 
@@ -102,7 +102,7 @@ export async function getPullRequest(
   pullId: string,
   accessToken?: string,
 ): Promise<GitHubAPI.PullData> {
-  const url = `https://${API_ENDPOINT}/repos/${userName}/${repoName}/pulls/${pullId}`
+  const url = `${API_ENDPOINT}/repos/${userName}/${repoName}/pulls/${pullId}`
   return await request(url, { accessToken })
 }
 
@@ -115,7 +115,7 @@ export async function requestPullTreeData(
   accessToken?: string,
 ) {
   const search = new URLSearchParams({ page: page.toString(), per_page: `${pageSize}` })
-  const url = `https://${API_ENDPOINT}/repos/${userName}/${repoName}/pulls/${pullId}/files?${search}`
+  const url = `${API_ENDPOINT}/repos/${userName}/${repoName}/pulls/${pullId}/files?${search}`
   return await request(url, { accessToken }, responseBodyResolvers.asIs)
 }
 
@@ -136,7 +136,7 @@ export async function getPullComments(
   pullId: string,
   accessToken?: string,
 ): Promise<GitHubAPI.PullComments> {
-  const url = `https://${API_ENDPOINT}/repos/${userName}/${repoName}/pulls/${pullId}/comments`
+  const url = `${API_ENDPOINT}/repos/${userName}/${repoName}/pulls/${pullId}/comments`
   return await request(url, { accessToken })
 }
 
@@ -150,7 +150,7 @@ export async function getPullPageDocuments(
   return continuousLoadPages(
     document ||
       (await getDOM(
-        `https://${window.location.host}/${userName}/${repoName}/pull/${pullId}/files?_pjax=%23js-repo-pjax-container`,
+        `${window.location.origin}/${userName}/${repoName}/pull/${pullId}/files?_pjax=%23js-repo-pjax-container`,
       )),
   )
 }
@@ -169,14 +169,14 @@ export async function getBlobData(
   sha: string,
   accessToken?: string,
 ): Promise<GitHubAPI.BlobData> {
-  const url = `https://${API_ENDPOINT}/repos/${userName}/${repoName}/git/blobs/${sha}`
+  const url = `${API_ENDPOINT}/repos/${userName}/${repoName}/git/blobs/${sha}`
   return await request(url, { accessToken })
 }
 
 export async function OAuth(code: string): Promise<string | null> {
   try {
-    const endpoint = `https://gitako.enix.one/oauth/github?`
-    const res = await fetch(endpoint + new URLSearchParams({ code }).toString(), {
+    const endpoint = `https://${gitakoServiceHost}/oauth/github?${new URLSearchParams({ code })}`
+    const res = await fetch(endpoint, {
       method: 'post',
     })
     if (res.ok) {
@@ -201,7 +201,7 @@ export async function requestCommitTreeData(
     per_page: '100',
     page: `${page}`,
   })
-  const url = `https://${API_ENDPOINT}/repos/${userName}/${repoName}/commits/${sha}?` + search
+  const url = `${API_ENDPOINT}/repos/${userName}/${repoName}/commits/${sha}?${search}`
   return await request(url, { accessToken }, responseBodyResolvers.asIs)
 }
 

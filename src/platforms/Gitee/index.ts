@@ -5,6 +5,7 @@ import * as React from 'react'
 import { resolveGitModules } from 'utils/gitSubmodule'
 import { useOnPJAXDone } from 'utils/hooks/usePJAX'
 import { useProgressBar } from 'utils/hooks/useProgressBar'
+import { gitakoServiceHost } from 'utils/networkService'
 import { sortFoldersToFront } from 'utils/treeParser'
 import * as API from './API'
 import * as DOMHelper from './DOMHelper'
@@ -68,7 +69,7 @@ function getUrlForRedirect(
   type = 'blob',
   path = '',
 ) {
-  return `https://gitee.com/${userName}/${repoName}/${type}/${branchName}/${path}`
+  return `${window.location.origin}/${userName}/${repoName}/${type}/${branchName}/${path}`
 }
 
 export const Gitee: Platform = {
@@ -105,8 +106,8 @@ export const Gitee: Platform = {
     return data.default_branch
   },
   resolveUrlFromMetaData({ userName, repoName, branchName }) {
-    const repoUrl = `https://${window.location.host}/${userName}/${repoName}`
-    const userUrl = `https://${window.location.host}/${userName}`
+    const repoUrl = `${window.location.origin}/${userName}/${repoName}`
+    const userUrl = `${window.location.origin}/${userName}`
     const branchUrl = `${repoUrl}/tree/${branchName}`
     return {
       repoUrl,
@@ -167,11 +168,11 @@ export const Gitee: Platform = {
       client_id: GITEE_OAUTH.clientId,
       scope: 'projects',
       response_type: 'code',
-      redirect_uri:
-        'https://gitako.enix.one/redirect/?' +
-        new URLSearchParams({ redirect: window.location.href }).toString(),
+      redirect_uri: `https://${gitakoServiceHost}/redirect/?${new URLSearchParams({
+        redirect: window.location.href,
+      })}`,
     })
-    return `https://gitee.com/oauth/authorize?` + params.toString()
+    return `https://gitee.com/oauth/authorize?${params}`
   },
   setOAuth(code) {
     return API.OAuth(code)

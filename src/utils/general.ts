@@ -202,11 +202,6 @@ export function resolveDiffGraphMeta(additions: number, deletions: number, chang
   return { g, r, w }
 }
 
-export function formatHash(hash?: string) {
-  if (hash) return '#' + hash
-  return ''
-}
-
 export function forOf<T, R>(target: T, callback: <K extends keyof T>(key: K, value: T[K]) => R) {
   for (const key of Object.keys(target)) {
     const $key = key as keyof typeof target

@@ -11,7 +11,7 @@ function transformModuleGitURL(node: TreeNode, URL: string) {
   const matched = URL.match(subModuleURLRegex.git)
   if (!matched) return
   const [, userName, repoName] = matched
-  return appendCommitPath(`https://${window.location.host}/${userName}/${repoName}`, node)
+  return appendCommitPath(`${window.location.origin}/${userName}/${repoName}`, node)
 }
 
 function cutDotGit(URL: string) {

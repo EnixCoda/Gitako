@@ -1,6 +1,7 @@
 import { raiseError } from 'analytics'
 import { errors } from 'platforms'
 import { is } from 'utils/is'
+import { gitakoServiceHost } from 'utils/networkService'
 
 function isEmptyProject(content: JSONValue) {
   return is.JSON.object(content) && content?.['message'] === 'Git Repository is empty.'
@@ -90,8 +91,8 @@ export async function getBlobData(
 }
 
 export async function OAuth(code: string): Promise<string | null> {
-  const endpoint = 'https://gitako.enix.one/oauth/gitee?'
-  const res = await fetch(endpoint + new URLSearchParams({ code }).toString(), {
+  const endpoint = `https://${gitakoServiceHost}/oauth/gitee?${new URLSearchParams({ code })}`
+  const res = await fetch(endpoint, {
     method: 'post',
   })
 
