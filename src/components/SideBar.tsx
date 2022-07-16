@@ -10,6 +10,7 @@ import { platform } from 'platforms'
 import * as React from 'react'
 import { IIFC } from 'react-iifc'
 import { useWindowSize } from 'react-use'
+import { Config } from 'utils/config/helper'
 import { cx } from 'utils/cx'
 import * as DOMHelper from 'utils/DOMHelper'
 import * as features from 'utils/features'
@@ -179,15 +180,20 @@ function useUpdateBodyIndentOnStateUpdate(shouldExpand: boolean) {
   }, [sidebarToggleMode, shouldExpand])
 }
 
+const getDerivedExpansion = ({
+  intelligentToggle,
+  sidebarToggleMode,
+}: Pick<Config, 'intelligentToggle' | 'sidebarToggleMode'>) =>
+  sidebarToggleMode === 'persistent'
+    ? intelligentToggle === null // auto-expand checked
+      ? platform.shouldExpandSideBar()
+      : intelligentToggle // read saved expand state
+    : false // do not expand in float mode
+
 function useGetDerivedExpansion() {
   const { intelligentToggle, sidebarToggleMode } = useConfigs().value
   return React.useCallback(
-    () =>
-      sidebarToggleMode === 'persistent'
-        ? intelligentToggle === null // auto-expand checked
-          ? platform.shouldExpandSideBar()
-          : intelligentToggle // read saved expand state
-        : false, // do not expand in float mode
+    () => getDerivedExpansion({ intelligentToggle, sidebarToggleMode }),
     [intelligentToggle, sidebarToggleMode],
   )
 }
@@ -197,8 +203,12 @@ function useUpdateBodyIndentOnPJAXDone(update: (shouldExpand: boolean) => void) 
   useOnPJAXDone(
     React.useCallback(() => {
       // check and update expand state if pinned and auto-expand checked
-      if (sidebarToggleMode === 'persistent' && intelligentToggle === null)
-        update(platform.shouldExpandSideBar())
+      if (sidebarToggleMode === 'persistent') {
+        const shouldExpand = getDerivedExpansion({ intelligentToggle, sidebarToggleMode })
+        update(shouldExpand)
+        // Below DOM mutation cannot be omitted, if do, body indent may get lost when shouldExpand is true for both before & after redirecting
+        DOMHelper.setBodyIndent(shouldExpand)
+      }
     }, [update, sidebarToggleMode, intelligentToggle]),
   )
 }
