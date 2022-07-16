@@ -95,7 +95,8 @@ export async function continuousLoadPages(doc: Document, onReceivePage?: (doc: D
     if (!fragment) break
     const src = fragment.getAttribute('src')
     if (!src) break
-    doc = await getDOM(src)
+    // Using `src` directly below would fail in Firefox if the src is an absolute path
+    doc = await getDOM(new URL(src, window.location.origin).href)
     documents.push(doc)
     onReceivePage?.(doc)
   }
