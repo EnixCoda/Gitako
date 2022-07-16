@@ -1,11 +1,10 @@
 import * as Sentry from '@sentry/browser'
-import { IN_PRODUCTION_MODE, VERSION } from 'env'
+import { IN_PRODUCTION_MODE, SENTRY, VERSION } from 'env'
 import { platform } from 'platforms'
 import { atomicAsyncFunction, forOf } from 'utils/general'
 import { storageHelper, storageKeys } from 'utils/storageHelper'
 
-const PUBLIC_KEY = 'd22ec5c9cc874539a51c78388c12e3b0'
-const PROJECT_ID = '1406497'
+const { PUBLIC_KEY, PROJECT_ID } = SENTRY
 
 const MAX_REPORT_COUNT = 10 // prevent error overflow
 let countReportedError = 0
