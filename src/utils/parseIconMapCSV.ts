@@ -71,7 +71,7 @@ export function getFileIconURL(node: TreeNode) {
 // 1. swap time with space
 // 2. prevent app crash on when extension context invalidates
 const extensionURL = browser.runtime.getURL('').replace(/\/$/, '')
-export function getIconURL(type: 'folder' | 'file', name: string = 'default', open?: boolean) {
+export function getIconURL(type: 'folder' | 'file', name = 'default', open?: boolean) {
   const filename =
     (name === 'default' ? 'default_' + type : type + '_type_' + name) +
     (open ? '_opened' : '') +

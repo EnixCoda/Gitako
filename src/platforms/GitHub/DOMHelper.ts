@@ -1,7 +1,7 @@
 import { raiseError } from 'analytics'
 import { Clippy, ClippyClassName } from 'components/Clippy'
 import * as React from 'react'
-import { $ } from 'utils/DOMHelper'
+import { $, formatClass, parseIntFromElement } from 'utils/DOMHelper'
 import { renderReact, run } from 'utils/general'
 import { CopyFileButton, copyFileButtonClassName } from './CopyFileButton'
 
@@ -31,8 +31,17 @@ export function isInCodePage() {
   return Boolean($(branchListSelector, e => e.offsetWidth > 0 && e.offsetHeight > 0))
 }
 
+export function isInPullFilesPage() {
+  return $('.tabnav-tab.selected #files_tab_counter')
+}
+
 export function getIssueTitle() {
   const title = $('.gh-header-title')?.textContent
+  return title?.trim().replace(/\n/g, '')
+}
+
+export function getCommitTitle() {
+  const title = $('.commit-title')?.textContent
   return title?.trim().replace(/\n/g, '')
 }
 
@@ -54,9 +63,8 @@ export function getCurrentBranch(passive = false) {
     if (title !== defaultTitle && !title.includes(' ')) return title
   }
 
-  const findFileButtonSelector =
-    'main .file-navigation a[data-hotkey="t"]'
-  const urlFromFindFileButton: string | null = $(
+  const findFileButtonSelector = 'main .file-navigation a[data-hotkey="t"]'
+  const urlFromFindFileButton = $(
     findFileButtonSelector,
     element => (element as HTMLAnchorElement).href,
   )
@@ -64,7 +72,7 @@ export function getCurrentBranch(passive = false) {
     const commitPathRegex = /^(.*?)\/(.*?)\/find\/(.*?)$/
     const result = urlFromFindFileButton.match(commitPathRegex)
     if (result) {
-      const [_, userName, repoName, branchName] = result
+      const [_, userName, repoName, branchName] = result // eslint-disable-line @typescript-eslint/no-unused-vars
       if (!branchName.includes(' ')) return branchName
     }
   }
@@ -142,7 +150,7 @@ export function getCodeElement() {
  */
 export function attachCopyFileBtn() {
   const removeButtons = () => {
-    const buttons = document.querySelectorAll(`.${copyFileButtonClassName}`)
+    const buttons = document.querySelectorAll(formatClass(copyFileButtonClassName))
     buttons.forEach(button => {
       button.parentElement?.removeChild(button)
     })
@@ -214,7 +222,7 @@ export function attachCopySnippet() {
           }
         }
         function removeAttachedOnes() {
-          const buttons = document.querySelectorAll(`.${ClippyClassName}`)
+          const buttons = document.querySelectorAll(formatClass(ClippyClassName))
           buttons.forEach(button => {
             button.parentElement?.removeChild(button)
           })
@@ -262,9 +270,27 @@ export function getPath() {
 }
 
 export function isNativePRFileTreeShown() {
-  return $('file-tree[data-target="diff-layout.fileTree"]')
+  return $('file-tree[data-target="diff-layout.fileTree"]', ele => {
+    // It would be set `display: hidden;` when collapsed
+    const { width, height } = ele.getBoundingClientRect()
+    return width * height > 0
+  })
 }
 
 export function selectEnterpriseStatHeader() {
   return $('.stats-ui-enabled .server-stats')
+}
+
+export function getPullRequestFilesCount() {
+  return $('#files_tab_counter', parseIntFromElement)
+}
+
+export function getPRDiffTotalStat() {
+  const [added, removed] = [$('#diffstat .color-fg-success'), $('#diffstat .color-fg-danger')].map(
+    e => (e ? parseIntFromElement(e) : null),
+  )
+  return {
+    added,
+    removed,
+  }
 }

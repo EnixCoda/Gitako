@@ -8,7 +8,7 @@ export const dummyPlatformForTypeSafety: Platform = {
   getDefaultBranchName: dummyPlatformMethod,
   resolveUrlFromMetaData: dummyPlatformMethod,
   getTreeData: dummyPlatformMethod,
-  shouldShow() {
+  shouldExpandSideBar() {
     return false
   },
   getCurrentPath: dummyPlatformMethod,
@@ -16,6 +16,7 @@ export const dummyPlatformForTypeSafety: Platform = {
   getOAuthLink: dummyPlatformMethod,
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function dummyPlatformMethod(): any {
   throw new Error(`Do not call dummy platform methods`)
 }

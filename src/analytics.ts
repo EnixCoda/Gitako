@@ -1,14 +1,12 @@
 import * as Sentry from '@sentry/browser'
-import { Middleware } from 'driver/connect.js'
-import { IN_PRODUCTION_MODE, VERSION } from 'env'
+import { IN_PRODUCTION_MODE, SENTRY, VERSION } from 'env'
 import { platform } from 'platforms'
-import { atomicAsyncFunction } from 'utils/general'
+import { atomicAsyncFunction, forOf } from 'utils/general'
 import { storageHelper, storageKeys } from 'utils/storageHelper'
 
-const PUBLIC_KEY = 'd22ec5c9cc874539a51c78388c12e3b0'
-const PROJECT_ID = '1406497'
+const { PUBLIC_KEY, PROJECT_ID } = SENTRY
 
-const MAX_REPORT_COUNT = 10 // protect for error leaking
+const MAX_REPORT_COUNT = 10 // prevent error overflow
 let countReportedError = 0
 
 const errorSet = new Set<string>([
@@ -58,19 +56,6 @@ const sentryOptions: Sentry.BrowserOptions = {
 }
 Sentry.init(sentryOptions)
 
-export const withErrorLog: Middleware = function withErrorLog(method, args) {
-  return [
-    async function (...args) {
-      try {
-        await method(...args)
-      } catch (error) {
-        if (error instanceof Error) raiseError(error)
-      }
-    } as typeof method,
-    args,
-  ]
-}
-
 // 1. Only cache errors for current version, so that future errors can still be exposed
 //   - Run migration to clean on every update
 
@@ -89,7 +74,9 @@ const hasTheErrorBeenReported = atomicAsyncFunction(async function hasTheErrorBe
 
   type ErrorCache = string
   const cache: ErrorCache[] =
-    (await storageHelper.get(storageKeys.raiseErrorCache))?.[storageKeys.raiseErrorCache] || []
+    ((await storageHelper.get(storageKeys.raiseErrorCache))?.[
+      storageKeys.raiseErrorCache
+    ] as string[]) || []
   const has = cache.includes(message)
 
   if (!has) {
@@ -103,7 +90,7 @@ const hasTheErrorBeenReported = atomicAsyncFunction(async function hasTheErrorBe
 export async function raiseError(
   error: Error,
   extra?: {
-    [key: string]: any
+    [key: string]: any // eslint-disable-line @typescript-eslint/no-explicit-any
   },
 ) {
   if (await hasTheErrorBeenReported(error)) return
@@ -116,10 +103,8 @@ export async function raiseError(
   }
 
   Sentry.withScope(scope => {
-    if (extra) {
-      Object.keys(extra).forEach(key => {
-        scope.setExtra(key, extra[key])
-      })
+    if (typeof extra === 'object' && extra) {
+      forOf(extra, (key, value) => scope.setExtra(`${key}`, value))
     }
     Sentry.captureException(error)
   })

@@ -18,7 +18,7 @@ export function OAuthWrapper({ children }: React.PropsWithChildren<{}>) {
     if (needGetAccessTokenRef.current) {
       $state.onChange(running ? 'getting-access-token' : 'after-getting-access-token')
     }
-  }, [running])
+  }, [running]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // block children rendering on the first render if setting token
   if (running && $state.value !== 'getting-access-token') return null
@@ -38,7 +38,7 @@ function useGetAccessToken() {
       }
       $block.onChange(false)
     })
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return $block.value
 }

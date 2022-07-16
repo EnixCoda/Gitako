@@ -13,7 +13,6 @@ export type Config = {
   intelligentToggle: boolean | null // `null` stands for intelligent, boolean for sidebar open state
   icons: 'rich' | 'dim' | 'native'
   toggleButtonVerticalDistance: number
-  toggleButtonContent: 'logo' | 'octoface'
   recursiveToggleFolder: 'shift' | 'alt'
   searchMode: SearchMode
   sidebarToggleMode: 'persistent' | 'float'
@@ -21,9 +20,10 @@ export type Config = {
   codeFolding: boolean
   compactFileTree: boolean
   restoreExpandedFolders: boolean
-  showDiffInText: boolean
   pjaxMode: 'native' | 'pjax-api'
 }
+
+export type ConfigKeys = keyof Config
 
 enum configKeys {
   sideBarWidth = 'sideBarWidth',
@@ -35,7 +35,6 @@ enum configKeys {
   intelligentToggle = 'intelligentToggle',
   icons = 'icons',
   toggleButtonVerticalDistance = 'toggleButtonVerticalDistance',
-  toggleButtonContent = 'toggleButtonContent',
   recursiveToggleFolder = 'recursiveToggleFolder',
   searchMode = 'searchMode',
   sidebarToggleMode = 'sidebarToggleMode',
@@ -43,7 +42,6 @@ enum configKeys {
   codeFolding = 'codeFolding',
   compactFileTree = 'compactFileTree',
   restoreExpandedFolders = 'restoreExpandedFolders',
-  showDiffInText = 'showDiffInText',
   pjaxMode = 'pjaxMode',
 }
 
@@ -61,7 +59,6 @@ export const getDefaultConfigs: () => Config = () => ({
   intelligentToggle: null,
   icons: 'rich',
   toggleButtonVerticalDistance: 124, // align with GitHub's navbar items
-  toggleButtonContent: 'logo',
   recursiveToggleFolder: 'shift',
   searchMode: 'fuzzy',
   sidebarToggleMode: 'float',
@@ -69,7 +66,6 @@ export const getDefaultConfigs: () => Config = () => ({
   codeFolding: true,
   compactFileTree: false,
   restoreExpandedFolders: true,
-  showDiffInText: false,
   pjaxMode: platformName === 'GitHub' ? 'native' : 'pjax-api', // use native on GitHub
 })
 
@@ -90,14 +86,11 @@ const updateConfigRef = async (config: Partial<Config>) => {
   Object.assign(configRef, config)
 }
 
-const prepareConfig = new Promise<void>(async resolve => {
-  await migrateConfig()
-  resolve()
-  updateConfigRef(await get())
-})
+const configMigration = migrateConfig()
+configMigration.then(async () => updateConfigRef(await get()))
 
 async function get(): Promise<Config> {
-  await prepareConfig
+  await configMigration
   const config = await storageHelper.get<Record<string, Config>>([platformStorageKey])
   return applyDefaultConfigs(config?.[platformStorageKey] || {})
 }

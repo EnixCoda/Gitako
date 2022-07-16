@@ -5,8 +5,8 @@ import { GitHub } from 'platforms/GitHub'
 import * as React from 'react'
 
 export function AccessDeniedDescription() {
-  const configContext = useConfigs()
-  const hasToken = Boolean(configContext.value.accessToken)
+  const { accessToken } = useConfigs().value
+  const hasToken = Boolean(accessToken)
 
   return (
     <div className={'description-area'}>

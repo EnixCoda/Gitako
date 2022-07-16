@@ -1,5 +1,6 @@
 import { ReactElement } from 'react'
 import * as ReactDOM from 'react-dom'
+import { is } from './is'
 
 export function pick<T>(source: T, keys: string[]): Partial<T> {
   if (keys && typeof keys === 'object') {
@@ -60,21 +61,6 @@ export function friendlyFormatShortcut(shortcut?: string) {
   }
 }
 
-/**
- * if item's name matches path, return the depth of the item
- * else return 0
- */
-function measureDistance(item: TreeNode, path: TreeNode['name'][]): number {
-  const pathString = path.join('/')
-  if (item.name.startsWith(pathString + '/')) {
-    // If accessing a leading item of compressed node, path will be shorter than item.name
-    return path.length
-  } else if (pathString === item.name || pathString.startsWith(item.name + '/')) {
-    return item.name.split('/').length
-  }
-  return 0
-}
-
 export async function traverse<T>(
   range: T[] = [],
   conditionAndEffect: (node: T) => Async<boolean>,
@@ -121,7 +107,11 @@ export function parseURLSearch(search = window.location.search) {
   return new URLSearchParams(search)
 }
 
-export async function JSONRequest(url: string, data: any, extra: RequestInit = { method: 'post' }) {
+export async function JSONRequest<D>(
+  url: string,
+  data: D,
+  extra: RequestInit = { method: 'post' },
+) {
   return (
     await fetch(url, {
       mode: 'cors',
@@ -140,11 +130,19 @@ export async function JSONRequest(url: string, data: any, extra: RequestInit = {
   ).json()
 }
 
-export function searchKeyToRegexp(searchKey: string) {
-  if (!searchKey) return null
-
-  return safeRegexp(searchKey, hasUpperCase(searchKey) ? 'g' : 'gi')
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function memoize<Args extends any[], R>(fn: (...args: Args) => R): (...args: Args) => R {
+  let lastArgs: Args | null = null
+  let lastR: R | null = null
+  return (...args) => {
+    if (lastArgs && is.shallowEqual.array(lastArgs, args)) return lastR as R
+    return (lastR = fn(...(lastArgs = args)))
+  }
 }
+
+export const searchKeyToRegexp = memoize((searchKey: string) =>
+  searchKey ? safeRegexp(searchKey, hasUpperCase(searchKey) ? 'g' : 'gi') : null,
+)
 
 export function hasUpperCase(input: string) {
   return /[A-Z]/.test(input)
@@ -171,12 +169,12 @@ export function isValidRegexpSource(source: string) {
   return Boolean(safeRegexp(source))
 }
 
-export function withEffect<Method extends (...args: any[]) => any>(
+export function withEffect<Method extends (...args: any[]) => any>( // eslint-disable-line @typescript-eslint/no-explicit-any
   method: Method,
   effect: (payload: ReturnType<Method>) => void,
 ): (...args: Parameters<Method>) => ReturnType<Method> {
   return (...args) => {
-    const returnValue = method.apply(null, args)
+    const returnValue = method(...args)
     Promise.resolve(returnValue).then(effect)
     return returnValue
   }
@@ -184,22 +182,6 @@ export function withEffect<Method extends (...args: any[]) => any>(
 
 export function run<T>(fn: () => T) {
   return fn()
-}
-
-export function createPromiseQueue() {
-  let promise: Promise<void>
-  return {
-    async enter() {
-      let leave: () => void
-      const current = new Promise<void>(resolve => (leave = () => resolve()))
-
-      const lastPromise = promise
-      promise = current!
-      if (lastPromise) await lastPromise
-
-      return leave!
-    },
-  }
 }
 
 export function isOpenInNewWindowClick(event: React.MouseEvent<HTMLElement, MouseEvent>) {
@@ -220,6 +202,18 @@ export function resolveDiffGraphMeta(additions: number, deletions: number, chang
   return { g, r, w }
 }
 
+export function forOf<T, R>(target: T, callback: <K extends keyof T>(key: K, value: T[K]) => R) {
+  for (const key of Object.keys(target)) {
+    const $key = key as keyof typeof target
+    const r = callback($key, target[$key])
+    if (r !== undefined) return r
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+export function noop() {}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function atomicAsyncFunction<Args extends any[], R>(fn: (...args: Args) => Promise<R>) {
   let last: Promise<R> | undefined
   return async (...args: Args) => {

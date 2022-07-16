@@ -1,4 +1,4 @@
-import { Button, Text, TextInput } from '@primer/components'
+import { Button, Text, TextInput } from '@primer/react'
 import { wikiLinks } from 'components/settings/SettingsBar'
 import { useConfigs } from 'containers/ConfigsContext'
 import { platform } from 'platforms'
@@ -10,31 +10,29 @@ import { SettingsSection } from './SettingsSection'
 
 const ACCESS_TOKEN_REGEXP = /^([0-9a-fA-F]+|gh[pousr]_[A-Za-z0-9_]+)$/
 
-type Props = {}
-
-export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
+export function AccessTokenSettings() {
   const configContext = useConfigs()
-  const hasAccessToken = Boolean(configContext.value.accessToken)
-  const useAccessToken = useStateIO('')
+  const { accessToken } = configContext.value
+  const hasAccessToken = Boolean(accessToken)
+  const [accessTokenInputValue, setAccessTokenInputValue] = React.useState('')
   const useAccessTokenHint = useStateIO<React.ReactNode>('')
   const focusInput = useStateIO(false)
 
   const { value: accessTokenHint } = useAccessTokenHint
-  const { value: accessToken } = useAccessToken
 
   React.useEffect(() => {
     // clear input when access token updates
-    useAccessToken.onChange('')
-  }, [configContext.value.accessToken])
+    setAccessTokenInputValue('')
+  }, [accessToken])
 
   const onInputAccessToken = React.useCallback(
     ({ currentTarget: { value } }: React.FormEvent<HTMLInputElement>) => {
-      useAccessToken.onChange(value)
+      setAccessTokenInputValue(value)
       useAccessTokenHint.onChange(
         ACCESS_TOKEN_REGEXP.test(value) ? '' : 'Gitako does not recognize the token.',
       )
     },
-    [],
+    [], // eslint-disable-line react-hooks/exhaustive-deps
   )
 
   const saveToken = React.useCallback(
@@ -48,13 +46,13 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
         </span>
       ),
     ) => {
-      if (accessToken) {
-        configContext.onChange({ accessToken })
-        useAccessToken.onChange('')
+      if (accessTokenInputValue) {
+        configContext.onChange({ accessToken: accessTokenInputValue })
+        setAccessTokenInputValue('')
         useAccessTokenHint.onChange(hint)
       }
     },
-    [accessToken],
+    [accessTokenInputValue], // eslint-disable-line react-hooks/exhaustive-deps
   )
 
   const onPressAccessToken = React.useCallback(
@@ -73,6 +71,7 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
             href={wikiLinks.createAccessToken}
             title="A token is required to access private repositories or bypass API rate limits"
             target="_blank"
+            rel="noopener noreferrer"
           >
             (?)
           </a>
@@ -109,16 +108,16 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
           )}
           <div className={'access-token-input-control'}>
             <TextInput
-              marginRight={1}
+              sx={{ marginRight: 1 }}
               className={'access-token-input'}
-              value={accessToken}
+              value={accessTokenInputValue}
               placeholder="Or input here manually"
               onFocus={() => focusInput.onChange(true)}
               onBlur={() => focusInput.onChange(false)}
               onChange={onInputAccessToken}
               onKeyPress={onPressAccessToken}
             />
-            <Button onClick={() => saveToken()} disabled={!accessToken}>
+            <Button onClick={() => saveToken()} disabled={!accessTokenInputValue}>
               Save
             </Button>
           </div>

@@ -4,7 +4,7 @@ export function parse(): Partial<Pick<MetaData, 'userName' | 'repoName' | 'type'
   path: string[]
 } {
   const { pathname } = window.location
-  let [
+  const [
     ,
     // ignore content before the first '/'
     userName,
@@ -24,7 +24,7 @@ export function parse(): Partial<Pick<MetaData, 'userName' | 'repoName' | 'type'
 // cannot handle '/' split branch name, should not use when possibly in branch page
 export function parseSHA() {
   const { type, path } = parse()
-  return type === 'blob' || type === 'tree' ? path[0] : undefined
+  return type === 'blob' || type === 'tree' || type === 'commit' ? path[0] : undefined
 }
 
 export function isInPullPage() {
@@ -32,15 +32,20 @@ export function isInPullPage() {
   return type === 'pull' ? path[0] : false
 }
 
-function isCommitPath(path: string[]) {
+export function isInCommitPage() {
+  const { type, path } = parse()
+  return type === 'commit' ? path[0] : false
+}
+
+export function isCommitPath(path: string[]) {
   return path[0] ? isCompleteCommitSHA(path[0]) : false
 }
 
-function isCompleteCommitSHA(sha: string) {
+export function isCompleteCommitSHA(sha: string) {
   return /^[abcdef0-9]{40}$/i.test(sha)
 }
 
-function isPossiblyCommitSHA(sha: string) {
+export function isPossiblyCommitSHA(sha: string) {
   return /^[abcdef0-9]+$/i.test(sha)
 }
 

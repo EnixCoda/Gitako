@@ -1,19 +1,20 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 
 /**
  * This effect addresses such a problem:
  * the later effect ends earlier than the previous one, and the previous effect overlaps later effect's result.
  */
 export function useSequentialEffect(
-  effect: (checker: () => boolean) => (() => void | undefined) | void,
-  deps: React.DependencyList = [],
+  effect: (shouldAbort: () => boolean) => (() => void | undefined) | void,
 ) {
-  const sequenceCounter = useRef(0)
   useEffect(() => {
-    // The counter is incremented every time a new effect is added.
-    // And the previous effect should stop going forward by finding checker returning false.
-    const counter = ++sequenceCounter.current
-    const checker = () => counter === sequenceCounter.current
-    return effect(checker)
-  }, deps)
+    // The previous effect should stop running if shouldAbort returns true.
+    let end = false
+    const shouldAbort = () => end
+    const defect = effect(shouldAbort)
+    return () => {
+      end = true
+      defect?.()
+    }
+  }, [effect])
 }

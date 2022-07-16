@@ -1,4 +1,5 @@
 type Platform = {
+  shouldActivate?(): boolean
   isEnterprise(): boolean
   // branch name might not be available when resolving from DOM and URL
   resolvePartialMetaData(): PartialMetaData | null
@@ -18,14 +19,14 @@ type Platform = {
     recursive?: boolean,
     accessToken?: string,
   ): Promise<{ root: TreeNode; defer?: boolean }>
-  shouldShow(): boolean
+  shouldExpandSideBar(): boolean
   shouldExpandAll?(): boolean
   getCurrentPath(branchName: string): string[] | null
   setOAuth(code: string): Promise<string | null>
   getOAuthLink(): string
-  delegatePJAXProps?(options?: {
-    node?: TreeNode
-  }): void | (React.DOMAttributes<HTMLElement> & Record<string, any>) // support data-* attributes
-  loadWithPJAX?(url: string, element: HTMLElement): boolean | void
+  delegateFastRedirectAnchorProps?(options?: { node?: TreeNode }):
+    | (React.DOMAttributes<HTMLElement> & Record<string, unknown>) // support data-* attributes
+    | void
+  loadWithFastRedirect?(url: string, element: HTMLElement): boolean | void
   usePlatformHooks?(): void
 }

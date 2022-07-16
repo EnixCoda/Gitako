@@ -1,4 +1,5 @@
 import { useLayoutEffect } from 'react'
+import { setCSSVariable } from 'utils/DOMHelper'
 
 export function useCSSVariable(
   name: string,
@@ -6,6 +7,6 @@ export function useCSSVariable(
   element: HTMLElement = document.documentElement,
 ) {
   useLayoutEffect(() => {
-    element.style.setProperty(name, value)
+    setCSSVariable(name, value, element)
   }, [name, value, element])
 }

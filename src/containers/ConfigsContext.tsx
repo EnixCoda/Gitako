@@ -29,9 +29,9 @@ export function ConfigsContextWrapper(props: React.PropsWithChildren<Props>) {
   )
 }
 
-export const useConfigs = useNonNullContext(ConfigsContext)
+export const useConfigs = createUseNonNullContext(ConfigsContext)
 
-function useNonNullContext<T>(theContext: React.Context<T | null>): () => T {
+function createUseNonNullContext<T>(theContext: React.Context<T | null>): () => T {
   return () => {
     const context = React.useContext(theContext)
     if (context === null) throw new Error(`Empty context`)

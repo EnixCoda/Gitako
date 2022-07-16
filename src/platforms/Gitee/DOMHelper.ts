@@ -1,7 +1,7 @@
 import { raiseError } from 'analytics'
 import { Clippy, ClippyClassName } from 'components/Clippy'
 import * as React from 'react'
-import { $ } from 'utils/DOMHelper'
+import { $, formatClass } from 'utils/DOMHelper'
 import { renderReact } from 'utils/general'
 
 export function isInRepoPage() {
@@ -70,7 +70,7 @@ export function attachCopySnippet() {
       readmeElement.addEventListener('mouseover', mouseOverCallback)
       return () => {
         readmeElement.removeEventListener('mouseover', mouseOverCallback)
-        const buttons = document.querySelectorAll(`.${ClippyClassName}`)
+        const buttons = document.querySelectorAll(formatClass(ClippyClassName))
         buttons.forEach(button => {
           button.parentElement?.removeChild(button)
         })

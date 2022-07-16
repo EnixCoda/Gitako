@@ -2,19 +2,20 @@ import { useConfigs } from 'containers/ConfigsContext'
 import { GITHUB_OAUTH } from 'env'
 import { Base64 } from 'js-base64'
 import { configRef } from 'utils/config/helper'
-import { run } from 'utils/general'
+import { $ } from 'utils/DOMHelper'
 import { resolveGitModules } from 'utils/gitSubmodule'
 import { sortFoldersToFront } from 'utils/treeParser'
 import * as API from './API'
 import * as DOMHelper from './DOMHelper'
+import { getCommitTreeData } from './getCommitTreeData'
+import { getPullRequestTreeData } from './getPullRequestTreeData'
 import { useEnterpriseStatBarStyleFix } from './hooks/useEnterpriseStatBarStyleFix'
 import { useGitHubAttachCopyFileButton } from './hooks/useGitHubAttachCopyFileButton'
 import { useGitHubAttachCopySnippetButton } from './hooks/useGitHubAttachCopySnippetButton'
 import { useGitHubCodeFold } from './hooks/useGitHubCodeFold'
 import * as URLHelper from './URLHelper'
-export { useGitHubCodeFold } from './hooks/useGitHubCodeFold'
 
-function processTree(tree: TreeNode[]): TreeNode {
+export function processTree(tree: TreeNode[]): TreeNode {
   // nodes are created from items and put onto tree
   const pathToItem = new Map<string, TreeNode>()
   tree.forEach(item => pathToItem.set(item.path, item))
@@ -75,43 +76,35 @@ function getUrlForRedirect(
   // Modern browsers have great support for handling unsafe URL,
   // It may be possible to sanitize path with
   // `path => path.includes('#') ? path.replace(/#/g, '%23') : '...'
-  return `https://${window.location.host}/${userName}/${repoName}/${type}/${branchName}/${path
+  return `${window.location.origin}/${userName}/${repoName}/${type}/${branchName}/${path
     .split('/')
     .map(encodeURIComponent)
     .join('/')}`
 }
 
 export function isEnterprise() {
-  return !window.location.host.endsWith('github.com')
-}
-
-function resolvePageScope(defaultBranchName?: string) {
-  const parsed = URLHelper.parse()
-  switch (parsed.type) {
-    case 'blob':
-    case 'tree': {
-      // handle URLs like {user}/{repo}/{'tree'|'blob'}/{sha|branch}, issue #131
-      const branchName = DOMHelper.getCurrentBranch()
-      if (branchName && branchName !== defaultBranchName) return `branch-${branchName}`
-      break
-    }
-    case 'tags':
-      return 'tags'
-    case 'releases':
-      return 'releases'
-    case 'pull':
-      const pullId = URLHelper.isInPullPage()
-      if (pullId) return `pull-${pullId}`
-  }
-  return 'general'
+  return (
+    (window.location.host !== 'github.com' &&
+      /**
+       * <a class="Header-link " href="https://host.com/" data-hotkey="g d" aria-label="Homepage Enterprise">
+       *   <span>Enterprise</span>
+       * </a>
+       */
+      $('a.Header-link[aria-label="Homepage Enterprise"]', e => e.textContent === 'Enterprise')) ||
+    false
+  )
 }
 
 const pathSHAMap = new Map<string, string>()
 
-const pjaxContainerSelector = 'main'
-const turboContainerId = 'repo-content-turbo-frame'
-
 export const GitHub: Platform = {
+  shouldActivate() {
+    return (
+      window.location.host === 'github.com' ||
+      // <link rel="fluid-icon" href="https://host.com/fluidicon.png" title="GitHub">
+      !!document.querySelector('link[rel="fluid-icon"][title="GitHub"]')
+    )
+  },
   isEnterprise,
   resolvePartialMetaData() {
     if (!DOMHelper.isInRepoPage()) {
@@ -130,6 +123,8 @@ export const GitHub: Platform = {
     let branchName
     if (URLHelper.isInPullPage()) {
       branchName = DOMHelper.getIssueTitle()
+    } else if (URLHelper.isInCommitPage()) {
+      branchName = DOMHelper.getCommitTitle() || metaFromURL.path[0]
     } else if (
       DOMHelper.isInCodePage() &&
       !['releases', 'tags'].includes(type || '') // resolve sentry issue #-CK
@@ -149,32 +144,39 @@ export const GitHub: Platform = {
     return (await API.getRepoMeta(userName, repoName, accessToken)).default_branch
   },
   resolveUrlFromMetaData({ userName, repoName, branchName }) {
-    const repoUrl = `https://${window.location.host}/${userName}/${repoName}`
-    const userUrl = `https://${window.location.host}/${userName}`
+    const repoUrl = `${window.location.origin}/${userName}/${repoName}`
+    const userUrl = `${window.location.origin}/${userName}`
     const pullId = URLHelper.isInPullPage()
-    const branchUrl = pullId ? `${repoUrl}/pull/${pullId}` : `${repoUrl}/tree/${branchName}`
+    const commitId = URLHelper.isInCommitPage()
+    const branchUrl = pullId
+      ? `${repoUrl}/pull/${pullId}`
+      : commitId && URLHelper.isPossiblyCommitSHA(commitId)
+      ? `${repoUrl}/tree/${commitId}`
+      : `${repoUrl}/tree/${branchName}`
     return {
       repoUrl,
       userUrl,
       branchUrl,
     }
   },
-  async getTreeData(metaData, path = '/', recursive, accessToken) {
+  getTreeData(metaData, path = '/', recursive, accessToken) {
     const pullId = URLHelper.isInPullPage()
-    if (pullId) {
-      return await getPullRequestTreeData(metaData, pullId, accessToken)
-    }
+    if (pullId) return getPullRequestTreeData(metaData, pullId, accessToken)
 
-    return await getRepositoryTreeData(metaData, path, recursive, accessToken)
+    const commitId = URLHelper.isInCommitPage()
+    if (commitId) return getCommitTreeData(metaData, commitId, accessToken)
+
+    return getRepositoryTreeData(metaData, path, recursive, accessToken)
   },
-  shouldShow() {
+  shouldExpandSideBar() {
     return Boolean(
       DOMHelper.isInCodePage() ||
+        URLHelper.isInCommitPage() ||
         (URLHelper.isInPullPage() && !DOMHelper.isNativePRFileTreeShown()),
     )
   },
   shouldExpandAll() {
-    return Boolean(URLHelper.isInPullPage())
+    return Boolean(URLHelper.isInPullPage() || URLHelper.isInCommitPage())
   },
   getCurrentPath(branchName) {
     const pathFromURL = URLHelper.parse().path.join('/')
@@ -198,7 +200,7 @@ export const GitHub: Platform = {
       scope: 'repo',
       redirect_uri: window.location.href,
     })
-    return `https://github.com/login/oauth/authorize?` + params.toString()
+    return `https://github.com/login/oauth/authorize?${params}`
   },
   usePlatformHooks() {
     const { copyFileButton, copySnippetButton, codeFolding } = useConfigs().value
@@ -207,17 +209,21 @@ export const GitHub: Platform = {
     useGitHubCodeFold(codeFolding)
     useEnterpriseStatBarStyleFix()
   },
-  delegatePJAXProps: options => {
-    if (configRef.pjaxMode === 'native' && (!options?.node || options.node.type === 'blob'))
+  delegateFastRedirectAnchorProps: options => {
+    if (configRef.pjaxMode === 'native' && (!options?.node || options.node.type === 'blob')) {
+      const pjaxContainerSelector = 'main'
+      const turboContainerId = 'repo-content-turbo-frame'
+
       return {
         'data-pjax': pjaxContainerSelector,
-        'data-turbo-frame': turboContainerId,
+        'data-turbo-frame': URLHelper.isInPullPage() ? undefined : turboContainerId,
         onClick() {
           /* Overwriting default onClick */
         },
       }
+    }
   },
-  loadWithPJAX: (url, element) => {
+  loadWithFastRedirect: (url, element) => {
     if (configRef.pjaxMode === 'native') {
       element.click()
       return true
@@ -261,7 +267,7 @@ async function getRepositoryTreeData(
     treeData.tree.map(item => ({
       path: item.path || '',
       type: item.type || 'blob',
-      name: item.path?.replace(/^.*\//, '') || '',
+      name: item.path?.split('/').pop() || '',
       url:
         item.url && item.type && item.path
           ? getUrlForRedirect(userName, repoName, branchName, item.type, item.path)
@@ -283,89 +289,4 @@ async function getRepositoryTreeData(
   }
 
   return { root, defer: treeData.truncated }
-}
-
-async function getPullRequestTreeData(
-  { userName, repoName }: Pick<MetaData, 'userName' | 'repoName' | 'branchName'>,
-  pullId: string,
-  accessToken?: string,
-) {
-  // https://developer.github.com/v3/pulls/#list-pull-requests-files
-  const GITHUB_API_RESPONSE_LENGTH_LIMIT = 3000
-  const GITHUB_API_PAGED_RESPONSE_LENGTH_LIMIT = 30
-  const MAX_PAGE = Math.ceil(
-    GITHUB_API_RESPONSE_LENGTH_LIMIT / GITHUB_API_PAGED_RESPONSE_LENGTH_LIMIT,
-  )
-  let page = 1
-  const [pullData, treeData, commentData] = await Promise.all([
-    API.getPullData(userName, repoName, pullId, accessToken),
-    API.getPullTreeData(userName, repoName, pullId, page, accessToken),
-    API.getPullComments(userName, repoName, pullId, accessToken),
-  ])
-
-  const count = pullData.changed_files
-  if (treeData.length < count) {
-    const restPages = []
-    while (page * GITHUB_API_PAGED_RESPONSE_LENGTH_LIMIT < count) {
-      restPages.push(++page)
-    }
-    if (page > MAX_PAGE) {
-      // TODO: hint
-    }
-    const moreFiles = await Promise.all(
-      restPages.map(page => API.getPullTreeData(userName, repoName, pullId, page, accessToken)),
-    )
-    treeData.push(...([] as GitHubAPI.PullTreeData).concat(...moreFiles))
-  }
-
-  const docs = await API.getPullPageDocuments(userName, repoName, pullId)
-  // query all elements at once to make getFileElementHash run faster
-  const elementsHavePath = docs.map(doc => doc.querySelectorAll(`[data-path]`))
-  const getFileElementHash = (path: string) => {
-    let e
-    for (const group of elementsHavePath) {
-      for (let i = 0; i < group.length; i++) {
-        const element = group[i]
-        if (element.getAttribute('data-path')?.startsWith(path)) {
-          e = element
-          break
-        }
-      }
-      if (e) break
-    }
-    return e?.parentElement?.id
-  }
-
-  const urlMainPart = `https://${window.location.host}/${userName}/${repoName}/pull/${pullId}/files${window.location.search}`
-  const nodes: TreeNode[] = treeData.map(
-    ({ filename, sha, additions, deletions, changes, status }) => ({
-      path: filename || '',
-      type: 'blob',
-      name: filename?.replace(/^.*\//, '') || '',
-      url: `${urlMainPart}${formatHash(getFileElementHash(filename))}`,
-      sha: sha,
-      comments: run(() => {
-        const comments = commentData?.filter(comment => filename === comment.path)
-        if (comments?.length)
-          return {
-            active: comments.filter(comment => comment.position !== null).length,
-            resolved: comments.filter(comment => comment.position === null).length,
-          }
-      }),
-      diff: {
-        status,
-        additions,
-        deletions,
-        changes,
-      },
-    }),
-  )
-
-  const root = processTree(nodes)
-  return { root }
-}
-
-function formatHash(hash?: string) {
-  if (hash) return '#' + hash
-  return ''
 }

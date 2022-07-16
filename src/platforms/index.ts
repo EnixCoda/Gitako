@@ -1,26 +1,28 @@
+import { forOf } from 'utils/general'
 import { dummyPlatformForTypeSafety } from './dummyPlatformForTypeSafety'
 import { Gitea } from './Gitea'
 import { Gitee } from './Gitee'
 import { GitHub } from './GitHub'
 
 const platforms = {
-  GitHub: GitHub,
-  Gitee: Gitee,
-  Gitea: Gitea,
+  GitHub,
+  Gitee,
+  Gitea,
 }
 
 function resolvePlatform() {
-  for (const platform of Object.values(platforms)) {
-    if (platform.resolvePartialMetaData()) return platform
-  }
-  return dummyPlatformForTypeSafety
+  return (
+    forOf(platforms, (platformName, platform) => {
+      const { shouldActivate = () => !!platform.resolvePartialMetaData() } = platform
+      if (shouldActivate()) return platform
+    }) || dummyPlatformForTypeSafety
+  )
 }
 
 function getPlatformName() {
-  const keys = Object.keys(platforms) as (keyof typeof platforms)[]
-  for (const key of keys) {
-    if (platform === platforms[key]) return key
-  }
+  return forOf(platforms, (name, $platform) => {
+    if (platform === $platform) return name
+  })
 }
 
 export const platform = resolvePlatform()

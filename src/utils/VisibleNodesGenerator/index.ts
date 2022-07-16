@@ -80,15 +80,17 @@ class BaseLayer {
   baseRoot: TreeNode
   getTreeData: (path: string) => Async<TreeNode>
   loading: Set<TreeNode['path']> = new Set()
+  defer: boolean
 
   baseHub = new EventHub<{
     emit: BaseLayer['baseRoot']
     loadingChange: BaseLayer['loading']
   }>()
 
-  constructor({ root, getTreeData }: Options) {
+  constructor({ root, getTreeData, defer = false }: Options) {
     this.baseRoot = root
     this.getTreeData = getTreeData
+    this.defer = defer
   }
 
   loadTreeData = async (path: string) => {
@@ -320,6 +322,7 @@ class FlattenLayer extends CompressLayer {
 
 type Options = {
   root: BaseLayer['baseRoot']
+  defer?: BaseLayer['defer']
   getTreeData: BaseLayer['getTreeData']
   compress: CompressLayer['compress']
 }
@@ -351,10 +354,11 @@ export class VisibleNodesGenerator extends FlattenLayer {
 
   onNextUpdate(callback: (visibleNodes: VisibleNodes) => void) {
     const oneTimeSubscription = (visibleNodes: VisibleNodes) => {
+      cancel()
       callback(visibleNodes)
-      this.hub.removeEventListener('emit', oneTimeSubscription)
     }
-    return this.hub.addEventListener('emit', oneTimeSubscription)
+    const cancel = this.hub.addEventListener('emit', oneTimeSubscription)
+    return cancel
   }
 
   update() {

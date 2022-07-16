@@ -18,8 +18,8 @@ export class EventSubscription<Data, Listener extends VoidFN<Data> = VoidFN<Data
 
 export class EventHub<
   Shape extends {
-    [event: string]: any
-  }
+    [event: string]: unknown
+  },
 > {
   ports: {
     [key in keyof Shape]: EventSubscription<Shape[key]>

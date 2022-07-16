@@ -13,12 +13,9 @@ export const migration: Migration = {
 
     await onConfigOutdated(version, async configs => {
       for (const key of Object.keys(configs)) {
-        if (
-          typeof configs[key] === 'object' &&
-          configs[key] !== null &&
-          'access_token' in configs[key]
-        ) {
-          const configBeforeMigrate: ConfigBeforeMigrate = configs[key]
+        const target = configs[key]
+        if (typeof target === 'object' && target !== null && 'access_token' in target) {
+          const configBeforeMigrate: ConfigBeforeMigrate = target
           const { access_token: accessToken, ...rest } = configBeforeMigrate
           const configAfterMigrate: ConfigAfterMigrate = {
             ...rest,

@@ -7,7 +7,9 @@ import {
 } from '../../utils'
 
 describe(`in Gitako project page`, () => {
-  beforeAll(() => page.goto('https://github.com/EnixCoda/Gitako/tree/test/200-changed-files-200-lines-each'))
+  beforeAll(() =>
+    page.goto('https://github.com/EnixCoda/Gitako/tree/test/200-changed-files-200-lines-each'),
+  )
 
   it('should render Gitako', async () => {
     await expectToFind('.gitako-side-bar .gitako-side-bar-body-wrapper')
@@ -26,7 +28,7 @@ describe(`in Gitako project page`, () => {
     const box = await filesEle?.boundingBox()
     if (box) {
       await page.mouse.move(box.x + 40, box.y + 40)
-      await scroll({ totalDistance: 7000, stepDistance: 100 })
+      await scroll({ totalDistance: 10000, stepDistance: 100 })
 
       // node of tsconfig.json should be rendered now
       await expectToFind(selectFileTreeItem('tsconfig.json'))

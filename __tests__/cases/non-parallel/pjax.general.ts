@@ -3,8 +3,7 @@ import {
   expandFloatModeSidebar,
   patientClick,
   selectFileTreeItem,
-  sleep,
-  waitForLegacyPJAXRedirect
+  sleep, waitForRedirect
 } from '../../utils'
 
 describe(`in Gitako project page`, () => {
@@ -15,14 +14,14 @@ describe(`in Gitako project page`, () => {
 
     await expandFloatModeSidebar()
     await patientClick(selectFileTreeItem('src/analytics.ts'))
-    await waitForLegacyPJAXRedirect()
+    await waitForRedirect()
     await collapseFloatModeSidebar()
 
     await page.click('a[data-selected-links^="repo_issues "]')
-    await waitForLegacyPJAXRedirect()
+    await waitForRedirect()
 
     await page.click('a[data-selected-links^="repo_pulls "]')
-    await waitForLegacyPJAXRedirect()
+    await waitForRedirect()
 
     page.goBack()
     await sleep(1000)

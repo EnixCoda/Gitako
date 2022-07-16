@@ -1,32 +1,18 @@
-import { withErrorLog } from 'analytics'
 import { Gitako } from 'components/Gitako'
-import { addMiddleware } from 'driver/connect'
-import { platform } from 'platforms'
 import * as React from 'react'
-import * as ReactDOM from 'react-dom'
-import {
-  insertLogoMountPoint,
-  insertSideBarMountPoint,
-  persistGitakoElements
-} from 'utils/DOMHelper'
+import { createRoot } from 'react-dom/client'
+import { insertSideBarMountPoint } from 'utils/DOMHelper'
 import './content.scss'
 
-if (platform.resolvePartialMetaData()) {
-  addMiddleware(withErrorLog)
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init)
-  } else {
-    init()
-  }
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init)
+} else {
+  init()
 }
 
 async function init() {
   await injectStyles(browser.runtime.getURL('content.css'))
-  const SideBarElement = insertSideBarMountPoint()
-  const logoElement = insertLogoMountPoint()
-  persistGitakoElements(SideBarElement, logoElement)
-  ReactDOM.render(<Gitako />, SideBarElement)
+  createRoot(insertSideBarMountPoint()).render(<Gitako />)
 }
 
 // injects a copy of stylesheets so that other extensions(e.g. dark reader) could read

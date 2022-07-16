@@ -1,4 +1,4 @@
-import { expectToFind, expectToNotFind, sleep, waitForLegacyPJAXRedirect } from '../../utils'
+import { expectToFind, expectToNotFind, sleep, waitForRedirect } from '../../utils'
 
 describe(`in Gitako project page`, () => {
   beforeAll(() => page.goto('https://github.com/EnixCoda/Gitako/commits/develop'))
@@ -10,7 +10,7 @@ describe(`in Gitako project page`, () => {
       )
       if (commitLinks.length < 2) throw new Error(`No enough commits`)
       commitLinks[i].click()
-      await waitForLegacyPJAXRedirect()
+      await waitForRedirect()
       await expectToFind('div.commit')
       await sleep(1000)
 

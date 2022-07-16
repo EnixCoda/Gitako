@@ -40,7 +40,7 @@ export async function listenTo<Args extends any[] = any[]>(
     (event, target, callbackName, oneTime) => {
       const t = target === 'document' ? document : window
       const onEvent = (...args: any[]): void => {
-        ;((window[callbackName as any] as any) as (...args: any[]) => void)(...args)
+        ;(window[callbackName as any] as any as (...args: any[]) => void)(...args)
         if (oneTime) t.removeEventListener(event, onEvent)
       }
       t.addEventListener(event, onEvent)
@@ -71,6 +71,24 @@ export async function waitForLegacyPJAXRedirect(action?: () => void | Promise<vo
   return promise
 }
 
+export async function waitForTurboRedirect(action?: () => void | Promise<void>) {
+  const promise = once('turbo:load', 'document')
+  await action?.()
+  return promise
+}
+
+export async function waitForRedirect(action?: () => void | Promise<void>) {
+  let fired = false
+  const $action =
+    action &&
+    (() => {
+      if (fired) return
+      fired = true
+      return action()
+    })
+  return Promise.race([waitForLegacyPJAXRedirect($action), waitForTurboRedirect($action)])
+}
+
 export function selectFileTreeItem(path: string): string {
   return `.gitako-side-bar .files a[title="${path}"]`
 }
@@ -81,7 +99,9 @@ export async function patientClick(selector: string) {
 }
 
 export async function expandFloatModeSidebar() {
-  const rect = await (await page.$('.gitako-toggle-show-button'))?.evaluate(button => {
+  const rect = await (
+    await page.$('.gitako-toggle-show-button')
+  )?.evaluate(button => {
     const { x, y, width, height } = button.getBoundingClientRect()
     // pass required properties to avoid serialization issues
     return { x, y, width, height }

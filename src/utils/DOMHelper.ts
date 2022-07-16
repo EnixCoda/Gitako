@@ -2,37 +2,25 @@
  * this helper helps manipulating DOM
  */
 
-export function setGitakoBodyClass(className: string, enable: boolean) {
-  const classList = document.body.classList
-  if (enable) classList.add(className)
-  else classList.remove(className)
-}
+export const rootElementID = 'gitako-root'
+export const gitakoDescriptionTarget = document.documentElement
 
 /**
  * when gitako is ready, make page's header narrower
  * or cancel it
  */
 export function markGitakoReadyState(ready: boolean) {
-  const readyClassName = 'gitako-ready'
-  return setGitakoBodyClass(readyClassName, ready)
-}
-
-export function markGitakoSafariFlag(enable = true) {
-  const className = 'gitako-safari'
-  return setGitakoBodyClass(className, enable)
+  const readyAttributeName = 'data-gitako-ready'
+  return gitakoDescriptionTarget.setAttribute(readyAttributeName, `${ready}`)
 }
 
 /**
  * if should show gitako, then move body right to make space for showing gitako
  * otherwise, hide the space
  */
-export const bodySpacingClassName = 'with-gitako-spacing'
+export const spacingAttributeName = 'data-with-gitako-spacing'
 export function setBodyIndent(shouldShowGitako: boolean) {
-  if (shouldShowGitako) {
-    document.body.classList.add(bodySpacingClassName)
-  } else {
-    document.body.classList.remove(bodySpacingClassName)
-  }
+  gitakoDescriptionTarget.setAttribute(spacingAttributeName, `${shouldShowGitako}`)
 }
 
 export function $(selector: string): HTMLElement | null
@@ -41,12 +29,13 @@ export function $<T1, T2>(
   selector: string,
   existCallback: (element: HTMLElement) => T1,
   otherwise: () => T2,
-): T1 | T2 | null
+): T1 | T2
 export function $<T2>(
   selector: string,
   existCallback: undefined | null,
   otherwise: () => T2,
 ): HTMLElement | T2
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function $(selector: string, existCallback?: any, otherwise?: any) {
   const element = document.querySelector(selector)
   if (element) {
@@ -55,26 +44,49 @@ export function $(selector: string, existCallback?: any, otherwise?: any) {
   return otherwise ? otherwise() : null
 }
 
-export function insertSideBarMountPoint() {
-  const mountPointID = 'gitako-mount-point-wrapper'
-  const sideBarElement = document.createElement('div')
-  sideBarElement.setAttribute('data-turbo-permanent', '')
-  sideBarElement.setAttribute('id', mountPointID)
-  document.body.appendChild(sideBarElement)
-  return sideBarElement
+/**
+ * DOM Structure after calling the `insert*MountPoint` functions
+ *
+ *  <html>
+ *    <body>
+ *    </body>
+ *    <div id={rootElementID}>
+ *      <div id={sidebarMountPointID}>
+ *      </div>
+ *      <div id={logoMountPointID}>
+ *      </div>
+ *    </div>
+ *  </html>
+ */
+
+const mountPointContainer = document.documentElement
+export function insertMountPoint() {
+  return $(formatID(rootElementID), undefined, () => {
+    const element = document.createElement('div')
+    element.setAttribute('id', rootElementID)
+    mountPointContainer.appendChild(element)
+    return element
+  })
 }
 
-/**
- * add the logo element into DOM
- */
+export function insertSideBarMountPoint() {
+  const mountPointElement = insertMountPoint()
+  const sidebarMountPointID = 'gitako-sidebar-mount-point'
+  return $(formatID(sidebarMountPointID), undefined, () => {
+    const sideBarElement = document.createElement('div')
+    sideBarElement.setAttribute('id', sidebarMountPointID)
+    mountPointElement.appendChild(sideBarElement)
+    return sideBarElement
+  })
+}
+
 export function insertLogoMountPoint() {
-  const logoID = 'gitako-logo-mount-point'
-  const logoSelector = '#' + logoID
-  return $(logoSelector, undefined, function createLogoMountPoint() {
+  const mountPointElement = insertMountPoint()
+  const logoMountPointID = 'gitako-logo-mount-point'
+  return $(formatID(logoMountPointID), undefined, () => {
     const logoMountElement = document.createElement('div')
-    logoMountElement.setAttribute('id', logoID)
-    logoMountElement.setAttribute('data-turbo-permanent', '')
-    document.body.appendChild(logoMountElement)
+    logoMountElement.setAttribute('id', logoMountPointID)
+    mountPointElement.appendChild(logoMountElement)
     return logoMountElement
   })
 }
@@ -126,7 +138,8 @@ export function copyElementContent(element: Element, trimLeadingSpace?: boolean)
 export function focusFileExplorer() {
   const sideBarContentSelector = '.gitako-side-bar .file-explorer'
   $(sideBarContentSelector, sideBarElement => {
-    if (sideBarElement instanceof HTMLElement) sideBarElement.focus()
+    if (document.activeElement !== sideBarElement && sideBarElement instanceof HTMLElement)
+      sideBarElement.focus()
   })
 }
 
@@ -153,45 +166,18 @@ export function setCSSVariable(name: string, value: string | undefined, element:
   else element.style.setProperty(name, value)
 }
 
-/**
- * Unlike the good-old-PJAX-time, now GitHub replaces whole body element after redirecting using turbo.
- * If move Gitako mount point from `body` to `html`, Gitako style would break because it inherits style from GitHub body.
- * The temporary solution is recovery Gitako elements once the body is removed.
- */
-export function persistGitakoElements(SideBarElement: HTMLElement, logoElement: HTMLElement) {
-  const observer = new MutationObserver(mutations => {
-    for (const { addedNodes, removedNodes } of mutations) {
-      const [addedBody, removedBody] = [addedNodes, removedNodes].map(findBodyElement)
-      if (addedBody && removedBody) {
-        // hard-coded list due to limited time
-        // TODO: refactor in a better practice
+export const setGitakoWidthCSSVariable = (size: number) => {
+  setCSSVariable('--gitako-width', `${size}px`, gitakoDescriptionTarget)
+}
 
-        // migrate gitako attributes, e.g. class
-        const propertiesNeedToMigrate = ['--gitako-width']
-        for (const property of propertiesNeedToMigrate) {
-          const oldValue = removedBody.style.getPropertyValue(property)
-          if (oldValue) addedBody.style.setProperty(property, oldValue)
-        }
-        const cssClassesNeedToMigrate = ['with-gitako-spacing']
-        for (const cssClass of cssClassesNeedToMigrate) {
-          if (removedBody.classList.contains(cssClass)) addedBody.classList.add(cssClass)
-        }
+export function formatID(id: string) {
+  return `#${id}`
+}
 
-        // move gitako elements
-        if (!addedBody.contains(SideBarElement)) addedBody.appendChild(SideBarElement)
-        if (removedBody.contains(SideBarElement)) removedBody.removeChild(SideBarElement)
-        if (!addedBody.contains(logoElement)) addedBody.appendChild(logoElement)
-        if (removedBody.contains(logoElement)) removedBody.removeChild(logoElement)
-      }
-    }
+export function formatClass(className: string) {
+  return `.${className}`
+}
 
-    function findBodyElement(addedNodes: NodeList) {
-      return Array.from(addedNodes).find(addedNode => addedNode instanceof HTMLBodyElement) as
-        | HTMLBodyElement
-        | undefined
-    }
-  })
-  observer.observe(document.documentElement, {
-    childList: true,
-  })
+export function parseIntFromElement(e: HTMLElement): number {
+  return parseInt((e.innerText || '').replace(/[^0-9]/g, ''))
 }
