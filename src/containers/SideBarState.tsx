@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { useStateIO } from 'utils/hooks/useStateIO'
+import { useInspector } from './StateInspector'
 
 export type SideBarState =
   | 'disabled'
@@ -19,6 +20,7 @@ export const SideBarStateContext = React.createContext<SideBarStateContextShape 
 
 export function StateBarStateContextWrapper({ children }: React.PropsWithChildren<{}>) {
   const $state = useStateIO<SideBarState>('disabled')
+  useInspector('SideBarStateContext', $state.value)
 
   return (
     <SideBarStateContext.Provider value={$state}>

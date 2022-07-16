@@ -1,3 +1,4 @@
+import { useInspector } from 'containers/StateInspector'
 import * as React from 'react'
 import { useStateIO } from 'utils/hooks/useStateIO'
 
@@ -7,6 +8,7 @@ export const SideBarErrorContext = React.createContext<SideBarErrorContextShape 
 
 export function StateBarErrorContextWrapper({ children }: React.PropsWithChildren<{}>) {
   const $error = useStateIO<string | null>(null)
+  useInspector('SideBarErrorContext', $error.value)
 
   return <SideBarErrorContext.Provider value={$error}>{children}</SideBarErrorContext.Provider>
 }
