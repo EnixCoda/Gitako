@@ -24,9 +24,9 @@ type Platform = {
   getCurrentPath(branchName: string): string[] | null
   setOAuth(code: string): Promise<string | null>
   getOAuthLink(): string
-  delegatePJAXProps?(options?: { node?: TreeNode }):
+  delegateFastRedirectAnchorProps?(options?: { node?: TreeNode }):
     | (React.DOMAttributes<HTMLElement> & Record<string, unknown>) // support data-* attributes
     | void
-  loadWithPJAX?(url: string, element: HTMLElement): boolean | void
+  loadWithFastRedirect?(url: string, element: HTMLElement): boolean | void
   usePlatformHooks?(): void
 }

@@ -3,7 +3,7 @@ import * as React from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
 import { getDefaultConfigs } from 'utils/config/helper'
 import * as DOMHelper from 'utils/DOMHelper'
-import { useOnPJAXDone } from 'utils/hooks/usePJAX'
+import { useAfterRedirect } from 'utils/hooks/useFastRedirect'
 import { ResizeHandler } from './ResizeHandler'
 import { Size, Size2D } from './Size'
 
@@ -37,7 +37,7 @@ function useSidebarWidth() {
   React.useLayoutEffect(() => DOMHelper.setGitakoWidthCSSVariable(width), [width])
 
   // Keep variable when directing from PR to repo home via meta bar
-  useOnPJAXDone(React.useCallback(() => DOMHelper.setGitakoWidthCSSVariable(width), [width]))
+  useAfterRedirect(React.useCallback(() => DOMHelper.setGitakoWidthCSSVariable(width), [width]))
 
   return [width, setWidth] as const
 }

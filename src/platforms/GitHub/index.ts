@@ -209,7 +209,7 @@ export const GitHub: Platform = {
     useGitHubCodeFold(codeFolding)
     useEnterpriseStatBarStyleFix()
   },
-  delegatePJAXProps: options => {
+  delegateFastRedirectAnchorProps: options => {
     if (configRef.pjaxMode === 'native' && (!options?.node || options.node.type === 'blob')) {
       const pjaxContainerSelector = 'main'
       const turboContainerId = 'repo-content-turbo-frame'
@@ -223,7 +223,7 @@ export const GitHub: Platform = {
       }
     }
   },
-  loadWithPJAX: (url, element) => {
+  loadWithFastRedirect: (url, element) => {
     if (configRef.pjaxMode === 'native') {
       element.click()
       return true

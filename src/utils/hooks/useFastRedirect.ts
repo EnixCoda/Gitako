@@ -1,12 +1,9 @@
 import { useConfigs } from 'containers/ConfigsContext'
-import { Config } from 'pjax-api'
 import { platform } from 'platforms'
 import * as React from 'react'
 import { useEvent } from 'react-use'
 
-// TODO: rename PJAX
-
-const config: Config = {
+const config: import('pjax-api').Config = {
   areas: [
     // github
     '.repository-content',
@@ -30,7 +27,7 @@ const config: Config = {
   },
 }
 
-export function usePJAX() {
+export function usePJAXAPI() {
   const { pjaxMode } = useConfigs().value
   // make history travel work
   React.useEffect(() => {
@@ -51,12 +48,12 @@ export function usePJAX() {
   useRedirectedEvents(document, 'pjax:ready', 'pjax:end')
 }
 
-export const loadWithPJAX = (url: string, element: HTMLElement) => {
+export const loadWithFastRedirect = (url: string, element: HTMLElement) => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  platform.loadWithPJAX?.(url, element) || require('pjax-api').Pjax.assign(url, config)
+  platform.loadWithFastRedirect?.(url, element) || require('pjax-api').Pjax.assign(url, config)
 }
 
-export function useOnPJAXDone(callback: () => void) {
+export function useAfterRedirect(callback: () => void) {
   useEvent('pjax:end', callback, document) // legacy support
   useEvent('turbo:render', callback, document) // prevent page content shift after first redirect to new page via turbo when sidebar is pinned
 }

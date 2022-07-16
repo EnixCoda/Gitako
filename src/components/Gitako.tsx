@@ -3,6 +3,8 @@ import { ConfigsContextWrapper } from 'containers/ConfigsContext'
 import { ReloadContextWrapper } from 'containers/ReloadContext'
 import { InspectorContextWrapper } from 'containers/StateInspector'
 import * as React from 'react'
+import { StyleSheetManager } from 'styled-components'
+import { insertMountPoint } from 'utils/DOMHelper'
 import { ErrorBoundary } from '../containers/ErrorBoundary'
 import { StateBarErrorContextWrapper } from '../containers/ErrorContext'
 import { OAuthWrapper } from '../containers/OAuthWrapper'
@@ -12,21 +14,23 @@ import { StateBarStateContextWrapper } from '../containers/SideBarState'
 export function Gitako() {
   return (
     <InspectorContextWrapper>
-      <ReloadContextWrapper>
-        <ErrorBoundary>
-          <ConfigsContextWrapper>
-            <StateBarStateContextWrapper>
-              <StateBarErrorContextWrapper>
-                <OAuthWrapper>
-                  <RepoContextWrapper>
-                    <SideBar />
-                  </RepoContextWrapper>
-                </OAuthWrapper>
-              </StateBarErrorContextWrapper>
-            </StateBarStateContextWrapper>
-          </ConfigsContextWrapper>
-        </ErrorBoundary>
-      </ReloadContextWrapper>
+      <StyleSheetManager target={insertMountPoint()}>
+        <ReloadContextWrapper>
+          <ErrorBoundary>
+            <ConfigsContextWrapper>
+              <StateBarStateContextWrapper>
+                <StateBarErrorContextWrapper>
+                  <OAuthWrapper>
+                    <RepoContextWrapper>
+                      <SideBar />
+                    </RepoContextWrapper>
+                  </OAuthWrapper>
+                </StateBarErrorContextWrapper>
+              </StateBarStateContextWrapper>
+            </ConfigsContextWrapper>
+          </ErrorBoundary>
+        </ReloadContextWrapper>
+      </StyleSheetManager>
     </InspectorContextWrapper>
   )
 }

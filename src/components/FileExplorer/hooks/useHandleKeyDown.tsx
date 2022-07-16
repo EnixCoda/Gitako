@@ -1,7 +1,7 @@
 import * as React from 'react'
 import * as DOMHelper from 'utils/DOMHelper'
 import { OperatingSystems, os } from 'utils/general'
-import { loadWithPJAX } from 'utils/hooks/usePJAX'
+import { loadWithFastRedirect } from 'utils/hooks/useFastRedirect'
 import { VisibleNodes } from 'utils/VisibleNodesGenerator'
 import { AlignMode } from '../useVirtualScroll'
 import { VisibleNodesGeneratorMethods } from './useVisibleNodesGeneratorMethods'
@@ -100,7 +100,7 @@ export function useHandleKeyDown(
             } else if (focusedNode.type === 'blob') {
               const focusedNodeElement = DOMHelper.findNodeElement(focusedNode, event.currentTarget)
               if (focusedNodeElement && focusedNode.url)
-                loadWithPJAX(focusedNode.url, focusedNodeElement)
+                loadWithFastRedirect(focusedNode.url, focusedNodeElement)
             } else if (focusedNode.type === 'commit') {
               window.open(focusedNode.url)
             }
@@ -119,7 +119,7 @@ export function useHandleKeyDown(
                   event.currentTarget,
                 )
                 if (focusedNodeElement && focusedNode.url)
-                  loadWithPJAX(focusedNode.url, focusedNodeElement)
+                  loadWithFastRedirect(focusedNode.url, focusedNodeElement)
               } else if (focusedNode.type === 'commit') {
                 window.open(focusedNode.url)
               }

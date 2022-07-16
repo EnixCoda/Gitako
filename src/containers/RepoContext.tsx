@@ -2,8 +2,8 @@ import { useConfigs } from 'containers/ConfigsContext'
 import { platform } from 'platforms'
 import * as React from 'react'
 import { useEffectOnSerializableUpdates } from 'utils/hooks/useEffectOnSerializableUpdates'
+import { useAfterRedirect } from 'utils/hooks/useFastRedirect'
 import { useLoadedContext } from 'utils/hooks/useLoadedContext'
-import { useOnPJAXDone } from 'utils/hooks/usePJAX'
 import { useStateIO } from 'utils/hooks/useStateIO'
 import { useCatchNetworkError } from '../utils/hooks/useCatchNetworkError'
 import { SideBarStateContext } from './SideBarState'
@@ -47,7 +47,7 @@ function usePartialMetaData(): PartialMetaData | null {
   React.useEffect(() => {
     if (!isGettingAccessToken) setPartialMetaData()
   }, [isGettingAccessToken, setPartialMetaData])
-  useOnPJAXDone(setPartialMetaData)
+  useAfterRedirect(setPartialMetaData)
   useEffectOnSerializableUpdates(
     $partialMetaData.value,
     JSON.stringify,
@@ -64,7 +64,7 @@ function usePartialMetaData(): PartialMetaData | null {
 function useBranchName(): MetaData['branchName'] | null {
   // sync along URL and DOM
   const $branchName = useStateIO(() => platform.resolvePartialMetaData()?.branchName || null)
-  useOnPJAXDone(() => $branchName.onChange(platform.resolvePartialMetaData()?.branchName || null))
+  useAfterRedirect(() => $branchName.onChange(platform.resolvePartialMetaData()?.branchName || null))
   return $branchName.value
 }
 

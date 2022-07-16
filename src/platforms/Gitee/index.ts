@@ -3,7 +3,7 @@ import { Base64 } from 'js-base64'
 import { platform } from 'platforms'
 import * as React from 'react'
 import { resolveGitModules } from 'utils/gitSubmodule'
-import { useOnPJAXDone } from 'utils/hooks/usePJAX'
+import { useAfterRedirect } from 'utils/hooks/useFastRedirect'
 import { useProgressBar } from 'utils/hooks/useProgressBar'
 import { gitakoServiceHost } from 'utils/networkService'
 import { sortFoldersToFront } from 'utils/treeParser'
@@ -190,5 +190,5 @@ export function useGiteeAttachCopySnippetButton(copySnippetButton: boolean) {
     [copySnippetButton],
   )
   React.useEffect(attachCopySnippetButton, [attachCopySnippetButton])
-  useOnPJAXDone(attachCopySnippetButton)
+  useAfterRedirect(attachCopySnippetButton)
 }

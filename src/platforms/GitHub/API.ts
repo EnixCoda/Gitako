@@ -149,9 +149,7 @@ export async function getPullPageDocuments(
   // Response of this API contains view of few files but is not complete.
   return continuousLoadPages(
     document ||
-      (await getDOM(
-        `${window.location.origin}/${userName}/${repoName}/pull/${pullId}/files?_pjax=%23js-repo-pjax-container`,
-      )),
+      (await getDOM(`${window.location.origin}/${userName}/${repoName}/pull/${pullId}/files`)),
   )
 }
 

@@ -1,7 +1,7 @@
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
 import { isOpenInNewWindowClick } from 'utils/general'
-import { loadWithPJAX } from 'utils/hooks/usePJAX'
+import { loadWithFastRedirect } from 'utils/hooks/useFastRedirect'
 import { AlignMode } from '../useVirtualScroll'
 import { VisibleNodesGeneratorMethods } from './useVisibleNodesGeneratorMethods'
 
@@ -35,7 +35,7 @@ export function useHandleNodeClick(
             const isHashLink = node.url.includes('#')
             if (!isHashLink) {
               event.preventDefault()
-              loadWithPJAX(node.url, event.currentTarget)
+              loadWithFastRedirect(node.url, event.currentTarget)
             }
           }
           break

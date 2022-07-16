@@ -52,7 +52,7 @@ export const Node = React.memo(function Node({
       title={node.path}
       target={node.type === 'commit' ? '_blank' : undefined}
       rel="noopener noreferrer"
-      {...platform.delegatePJAXProps?.({ node })}
+      {...platform.delegateFastRedirectAnchorProps?.({ node })}
     >
       <div className={'node-item-label'}>
         <NodeItemIcon node={node} open={expanded} loading={loading} />

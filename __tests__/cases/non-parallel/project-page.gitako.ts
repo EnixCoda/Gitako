@@ -3,7 +3,7 @@ import {
   expectToFind,
   expectToNotFind,
   scroll,
-  selectFileTreeItem,
+  selectFileTreeItem
 } from '../../utils'
 
 describe(`in Gitako project page`, () => {
@@ -28,7 +28,7 @@ describe(`in Gitako project page`, () => {
     const box = await filesEle?.boundingBox()
     if (box) {
       await page.mouse.move(box.x + 40, box.y + 40)
-      await scroll({ totalDistance: 7000, stepDistance: 100 })
+      await scroll({ totalDistance: 10000, stepDistance: 100 })
 
       // node of tsconfig.json should be rendered now
       await expectToFind(selectFileTreeItem('tsconfig.json'))

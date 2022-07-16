@@ -1,6 +1,6 @@
 import { platform } from 'platforms'
 import { useCallback, useEffect } from 'react'
-import { useOnPJAXDone } from 'utils/hooks/usePJAX'
+import { useAfterRedirect } from 'utils/hooks/useFastRedirect'
 import { GitHub } from '..'
 
 const theCSSClassMark = 'gitako-code-fold-attached'
@@ -164,5 +164,5 @@ export function useGitHubCodeFold(active: boolean) {
     }
   }, [active])
   useEffect(effect, [effect])
-  useOnPJAXDone(effect)
+  useAfterRedirect(effect)
 }

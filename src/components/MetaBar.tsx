@@ -21,7 +21,7 @@ export function MetaBar() {
           className={'repo-name'}
           href={repoUrl}
           onClick={createAnchorClickHandler(repoUrl)}
-          {...platform.delegatePJAXProps?.()}
+          {...platform.delegateFastRedirectAnchorProps?.()}
         >
           <Text fontWeight="bolder">{repoName}</Text>
         </Breadcrumbs.Item>
@@ -37,7 +37,7 @@ export function MetaBar() {
           sx={{
             color: 'fg.muted',
           }}
-          {...platform.delegatePJAXProps?.()}
+          {...platform.delegateFastRedirectAnchorProps?.()}
         >
           {branchName || '...'}
         </BranchName>

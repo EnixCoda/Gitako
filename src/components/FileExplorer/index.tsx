@@ -9,9 +9,9 @@ import { usePrevious } from 'react-use'
 import { cx } from 'utils/cx'
 import { run } from 'utils/general'
 import { useElementSize } from 'utils/hooks/useElementSize'
+import { useAfterRedirect } from 'utils/hooks/useFastRedirect'
 import { useLoadedContext } from 'utils/hooks/useLoadedContext'
 import { useOnLocationChange } from 'utils/hooks/useOnLocationChange'
-import { useOnPJAXDone } from 'utils/hooks/usePJAX'
 import { VisibleNodes, VisibleNodesGenerator } from 'utils/VisibleNodesGenerator'
 import { SideBarStateContext } from '../../containers/SideBarState'
 import { useFocusFileExplorerOnFirstRender } from './hooks/useFocusFileExplorerOnFirstRender'
@@ -161,7 +161,7 @@ function LoadedFileExplorer({
   }, [metaData.branchName, expandTo])
 
   useOnLocationChange(goToCurrentItem)
-  useOnPJAXDone(goToCurrentItem)
+  useAfterRedirect(goToCurrentItem)
 
   return (
     <div className={`file-explorer`} tabIndex={-1} onKeyDown={handleKeyDown}>

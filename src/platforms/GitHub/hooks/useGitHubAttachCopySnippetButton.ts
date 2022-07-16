@@ -1,6 +1,6 @@
 import { platform } from 'platforms'
 import * as React from 'react'
-import { useOnPJAXDone } from 'utils/hooks/usePJAX'
+import { useAfterRedirect } from 'utils/hooks/useFastRedirect'
 import * as DOMHelper from '../DOMHelper'
 import { GitHub } from '../index'
 
@@ -12,5 +12,5 @@ export function useGitHubAttachCopySnippetButton(copySnippetButton: boolean) {
     [copySnippetButton],
   )
   React.useEffect(attachCopySnippetButton, [attachCopySnippetButton])
-  useOnPJAXDone(attachCopySnippetButton)
+  useAfterRedirect(attachCopySnippetButton)
 }

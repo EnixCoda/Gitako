@@ -71,6 +71,24 @@ export async function waitForLegacyPJAXRedirect(action?: () => void | Promise<vo
   return promise
 }
 
+export async function waitForTurboRedirect(action?: () => void | Promise<void>) {
+  const promise = once('turbo:load', 'document')
+  await action?.()
+  return promise
+}
+
+export async function waitForRedirect(action?: () => void | Promise<void>) {
+  let fired = false
+  const $action =
+    action &&
+    (() => {
+      if (fired) return
+      fired = true
+      return action()
+    })
+  return Promise.race([waitForLegacyPJAXRedirect($action), waitForTurboRedirect($action)])
+}
+
 export function selectFileTreeItem(path: string): string {
   return `.gitako-side-bar .files a[title="${path}"]`
 }

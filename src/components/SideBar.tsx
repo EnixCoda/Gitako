@@ -16,8 +16,8 @@ import * as DOMHelper from 'utils/DOMHelper'
 import * as features from 'utils/features'
 import { detectBrowser } from 'utils/general'
 import { useConditionalHook } from 'utils/hooks/useConditionalHook'
+import { useAfterRedirect, usePJAXAPI } from 'utils/hooks/useFastRedirect'
 import { useLoadedContext } from 'utils/hooks/useLoadedContext'
-import { useOnPJAXDone, usePJAX } from 'utils/hooks/usePJAX'
 import { ResizeState } from 'utils/hooks/useResizeHandler'
 import * as keyHelper from 'utils/keyHelper'
 import { SideBarErrorContext } from '../containers/ErrorContext'
@@ -29,7 +29,7 @@ import { SettingsBarContent } from './settings/SettingsBar'
 import { SideBarResizeHandler } from './SideBarResizeHandler'
 
 export function SideBar() {
-  usePJAX()
+  usePJAXAPI()
   platform.usePlatformHooks?.()
   useMarkGitakoReadyState()
 
@@ -198,9 +198,9 @@ function useGetDerivedExpansion() {
   )
 }
 
-function useUpdateBodyIndentOnPJAXDone(update: (shouldExpand: boolean) => void) {
+function useUpdateBodyIndentAfterRedirect(update: (shouldExpand: boolean) => void) {
   const { intelligentToggle, sidebarToggleMode } = useConfigs().value
-  useOnPJAXDone(
+  useAfterRedirect(
     React.useCallback(() => {
       // check and update expand state if pinned and auto-expand checked
       if (sidebarToggleMode === 'persistent') {
@@ -266,7 +266,7 @@ function useShouldExpand() {
 
   useSaveExpandStateOnToggle(shouldExpand)
   useUpdateBodyIndentOnStateUpdate(shouldExpand)
-  useUpdateBodyIndentOnPJAXDone(setShouldExpand)
+  useUpdateBodyIndentAfterRedirect(setShouldExpand)
   useToggleSideBarWithKeyboard(toggleShowSideBar)
   useCollapseOnNoPermissionWhenTokenHasBeenSet(setShouldExpand)
 
