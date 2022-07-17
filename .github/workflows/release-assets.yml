@@ -7,39 +7,23 @@ on:
       - release-*
 
 jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+
   release:
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
-      - name: Get the ref
-        id: get_ref
-        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+      - uses: actions/checkout@v3
 
-      - uses: actions/checkout@v1
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - name: Cache deps
-        uses: actions/cache@v1
-        id: yarn-cache
+      - name: Download a built dist artifact
+        uses: actions/download-artifact@v3
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+          name: dist
 
-      - name: Retrieve vscode icons
-        uses: actions/checkout@v2
-        with:
-          repository: 'vscode-icons/vscode-icons'
-          path: 'vscode-icons'
-
-      - name: Build
-        run: |
-          yarn
-          make build
+      - uses: ./.github/workflows/version.yml
+        id: version
 
       - name: Create Release
         id: create_release
@@ -47,8 +31,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.get_ref.outputs.VERSION }}
-          release_name: ${{ steps.get_ref.outputs.VERSION }}
+          tag_name: ${{ steps.version.outputs.VERSION }}
+          release_name: ${{ steps.version.outputs.VERSION }}
           draft: false
           prerelease: false
 

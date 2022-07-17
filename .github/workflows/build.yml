@@ -1,35 +1,19 @@
-name: CI
-
+name: Generate build for reuse
 on:
-  push:
-    branches:
-      - '**'
-    paths-ignore:
-      - 'server/**'
-  pull_request:
-    branches:
-      - '**'
-    paths-ignore:
-      - 'server/**'
+  workflow_call:
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v1
-
-      - name: Retrieve vscode icons
-        uses: actions/checkout@v2
-        with:
-          repository: 'vscode-icons/vscode-icons'
-          path: 'vscode-icons'
+      - uses: actions/checkout@v3
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
 
-      - name: Cache Dependencies
+      - name: Cache deps
         uses: actions/cache@v1
         id: yarn-cache
         with:
@@ -44,17 +28,19 @@ jobs:
         run: |
           yarn
 
+      - name: Retrieve vscode icons
+        uses: actions/checkout@v3
+        with:
+          repository: 'vscode-icons/vscode-icons'
+          path: 'vscode-icons'
+
       - name: Build
         run: |
           make build
 
-      - name: Unit Test
-        run: |
-          yarn jest src
-
-      - name: E2E Test
-        uses: mujo-code/puppeteer-headful@master
-        env:
-          CI: 'true'
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
         with:
-          args: yarn test
+          name: dist
+          path: |
+            dist

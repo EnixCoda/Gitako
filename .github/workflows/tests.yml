@@ -1,0 +1,95 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - '**'
+    paths-ignore:
+      - 'server/**'
+  pull_request:
+    branches:
+      - '**'
+    paths-ignore:
+      - 'server/**'
+  # Runs everyday to detect GitHub update in time
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+
+  e2e-test:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download a built dist artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: dist
+
+      # Found no way to reuse cache steps
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - name: Cache deps
+        uses: actions/cache@v1
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install Dependencies
+        env:
+          PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: true
+        run: |
+          yarn
+
+      - name: E2E Test
+        uses: mujo-code/puppeteer-headful@master
+        env:
+          CI: 'true'
+        with:
+          args: yarn test
+
+  unit-test:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download a built dist artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: dist
+
+      # Found no way to reuse cache steps
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - name: Cache deps
+        uses: actions/cache@v1
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install Dependencies
+        env:
+          PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: true
+        run: |
+          yarn
+
+      - name: Unit Test
+        run: |
+          yarn jest src
