@@ -45,6 +45,7 @@ release:
 	$(MAKE) compress-source
 	$(MAKE) compress-env
 	$(MAKE) compress-icons-into-source-for-mz-review
+	$(MAKE) copy-build-safari
 
 compress-source:
 	git archive -o dist/source-$(FULL_VERSION).zip HEAD
