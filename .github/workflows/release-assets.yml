@@ -10,8 +10,14 @@ jobs:
   build:
     uses: ./.github/workflows/build.yml
 
+  version:
+    uses: ./.github/workflows/version.yml
+
   release:
-    needs: build
+    needs:
+      - build
+      - version
+
     runs-on: ubuntu-latest
 
     steps:
@@ -22,17 +28,14 @@ jobs:
         with:
           name: dist
 
-      - uses: ./.github/workflows/version.yml
-        id: version
-
       - name: Create Release
         id: create_release
         uses: actions/create-release@latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.version.outputs.VERSION }}
-          release_name: ${{ steps.version.outputs.VERSION }}
+          tag_name: ${{ needs.version.outputs.VERSION }}
+          release_name: ${{ needs.version.outputs.VERSION }}
           draft: false
           prerelease: false
 

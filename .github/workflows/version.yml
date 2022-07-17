@@ -4,10 +4,10 @@ on:
     outputs:
       VERSION:
         description: "The VERSION string"
-        value: ${{ jobs.build.outputs.VERSION }}
+        value: ${{ jobs.version.outputs.VERSION }}
 
 jobs:
-  get-version:
+  version:
     runs-on: ubuntu-latest
 
     outputs:
