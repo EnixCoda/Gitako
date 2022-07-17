@@ -4,8 +4,6 @@ import { platform } from 'platforms'
 import { atomicAsyncFunction, forOf } from 'utils/general'
 import { storageHelper, storageKeys } from 'utils/storageHelper'
 
-const { PUBLIC_KEY, PROJECT_ID } = SENTRY
-
 const MAX_REPORT_COUNT = 10 // prevent error overflow
 let countReportedError = 0
 
@@ -22,39 +20,49 @@ const disabledIntegrations: string[] = [
   'GlobalHandlers',
   'CaptureConsole',
 ]
-const sentryOptions: Sentry.BrowserOptions = {
-  dsn: `https://${PUBLIC_KEY}@sentry.io/${PROJECT_ID}`,
-  release: VERSION,
-  environment: IN_PRODUCTION_MODE ? 'production' : 'development',
-  // Not safe to activate all integrations in non-Chrome environments where Gitako may not run in top context
-  // https://docs.sentry.io/platforms/javascript/#sdk-integrations
-  defaultIntegrations: IN_PRODUCTION_MODE ? undefined : false,
-  integrations: integrations =>
-    integrations.filter(({ name }) => !disabledIntegrations.includes(name)),
-  beforeSend(event) {
-    const message = event.exception?.values?.[0].value || event.message
-    if (message) {
-      if (errorSet.has(message)) return null
-      errorSet.add(message) // prevent reporting duplicated error
-    }
-    if (countReportedError < MAX_REPORT_COUNT) {
-      ++countReportedError
-      return event
-    }
-    return null
-  },
-  beforeBreadcrumb(breadcrumb, hint) {
-    if (breadcrumb.category === 'ui.click') {
-      const ariaLabel = hint?.event?.target?.ariaLabel
-      if (ariaLabel) {
-        breadcrumb.message = ariaLabel
+
+let initiated = false
+function init() {
+  if (initiated) return
+  initiated = true
+
+  const { PUBLIC_KEY, PROJECT_ID } = SENTRY
+  if (!PUBLIC_KEY || !PROJECT_ID) return
+
+  const sentryOptions: Sentry.BrowserOptions = {
+    dsn: `https://${PUBLIC_KEY}@sentry.io/${PROJECT_ID}`,
+    release: VERSION,
+    environment: IN_PRODUCTION_MODE ? 'production' : 'development',
+    // Not safe to activate all integrations in non-Chrome environments where Gitako may not run in top context
+    // https://docs.sentry.io/platforms/javascript/#sdk-integrations
+    defaultIntegrations: IN_PRODUCTION_MODE ? undefined : false,
+    integrations: integrations =>
+      integrations.filter(({ name }) => !disabledIntegrations.includes(name)),
+    beforeSend(event) {
+      const message = event.exception?.values?.[0].value || event.message
+      if (message) {
+        if (errorSet.has(message)) return null
+        errorSet.add(message) // prevent reporting duplicated error
       }
-    }
-    return breadcrumb
-  },
-  autoSessionTracking: false, // this avoids the request when calling `init`
+      if (countReportedError < MAX_REPORT_COUNT) {
+        ++countReportedError
+        return event
+      }
+      return null
+    },
+    beforeBreadcrumb(breadcrumb, hint) {
+      if (breadcrumb.category === 'ui.click') {
+        const ariaLabel = hint?.event?.target?.ariaLabel
+        if (ariaLabel) {
+          breadcrumb.message = ariaLabel
+        }
+      }
+      return breadcrumb
+    },
+    autoSessionTracking: false, // this avoids the request when calling `init`
+  }
+  Sentry.init(sentryOptions)
 }
-Sentry.init(sentryOptions)
 
 // 1. Only cache errors for current version, so that future errors can still be exposed
 //   - Run migration to clean on every update
@@ -102,6 +110,7 @@ export async function raiseError(
     return
   }
 
+  init()
   Sentry.withScope(scope => {
     if (typeof extra === 'object' && extra) {
       forOf(extra, (key, value) => scope.setExtra(`${key}`, value))
