@@ -7,6 +7,7 @@ import { useLoadedContext } from 'utils/hooks/useLoadedContext'
 import { useStateIO } from 'utils/hooks/useStateIO'
 import { useCatchNetworkError } from '../utils/hooks/useCatchNetworkError'
 import { SideBarStateContext } from './SideBarState'
+import { useInspector } from './StateInspector'
 
 export const RepoContext = React.createContext<MetaData | null>(null)
 
@@ -14,6 +15,17 @@ export function RepoContextWrapper({ children }: React.PropsWithChildren<{}>) {
   const partialMetaData = usePartialMetaData()
   const defaultBranch = useDefaultBranch(partialMetaData)
   const metaData = useMetaData(partialMetaData, defaultBranch)
+  useInspector(
+    'RepoContext',
+    React.useMemo(
+      () => ({
+        partialMetaData,
+        defaultBranch,
+        metaData,
+      }),
+      [partialMetaData, defaultBranch, metaData],
+    ),
+  )
   const state = useLoadedContext(SideBarStateContext).value
   if (state === 'disabled') return null
 
@@ -64,7 +76,9 @@ function usePartialMetaData(): PartialMetaData | null {
 function useBranchName(): MetaData['branchName'] | null {
   // sync along URL and DOM
   const $branchName = useStateIO(() => platform.resolvePartialMetaData()?.branchName || null)
-  useAfterRedirect(() => $branchName.onChange(platform.resolvePartialMetaData()?.branchName || null))
+  useAfterRedirect(() =>
+    $branchName.onChange(platform.resolvePartialMetaData()?.branchName || null),
+  )
   return $branchName.value
 }
 

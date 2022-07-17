@@ -19,17 +19,24 @@ export const InspectorContextWrapper = IN_PRODUCTION_MODE
             <div
               style={{
                 position: 'fixed',
+                zIndex: Number.MAX_SAFE_INTEGER,
                 top: '0',
                 right: '0',
                 height: '100vh',
                 width: '360px',
-                overflow: 'auto',
                 background: 'rgba(255, 255, 255, 0.75)',
                 display: 'flex',
                 flexDirection: 'column',
               }}
             >
-              <pre style={{ flex: 1 }}>{JSON.stringify($.value, null, 2)}</pre>
+              <pre
+                style={{
+                  flex: 1,
+                  overflow: 'auto',
+                }}
+              >
+                {JSON.stringify($.value, null, 2)}
+              </pre>
               <div>
                 <button onClick={() => setShow(false)}>❌</button>
               </div>
