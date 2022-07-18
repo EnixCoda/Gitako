@@ -9,6 +9,9 @@ update-icons:
 	node scripts/resolve-languages-map
 	node scripts/generate-icon-index
 
+version-safari:
+	sed -i '' -E 's/MARKETING_VERSION = .*;/MARKETING_VERSION = $(RAW_VERSION);/' Safari/Gitako/Gitako.xcodeproj/project.pbxproj
+
 build:
 	rm -rf dist
 	yarn build
