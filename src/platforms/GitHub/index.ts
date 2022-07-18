@@ -90,7 +90,10 @@ export function isEnterprise() {
        *   <span>Enterprise</span>
        * </a>
        */
-      $('a.Header-link[aria-label="Homepage Enterprise"]', e => e.textContent === 'Enterprise')) ||
+      $(
+        'a.Header-link[aria-label="Homepage Enterprise"]',
+        e => e.textContent?.trim() === 'Enterprise',
+      )) ||
     false
   )
 }
