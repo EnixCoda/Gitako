@@ -4,6 +4,7 @@ import * as React from 'react'
 import { is } from 'utils/is'
 import { Icon } from '../../Icon'
 import { SearchMode } from '../../searchModes'
+import { DiffStatText } from '../DiffStatText'
 import { DiffStatGraph } from './../DiffStatGraph'
 
 export type NodeRenderer = (node: TreeNode) => React.ReactNode
@@ -19,19 +20,22 @@ export function useNodeRenderers(allRenderers: (NodeRenderer | null | undefined)
 }
 
 export function useRenderFileStatus() {
-  function renderFileStatus({ diff }: TreeNode) {
-    return (
-      diff && (
-        <span
-          className={'node-item-diff'}
-          title={`${diff.status}, ${diff.changes} changes: +${diff.additions} & -${diff.deletions}`}
-        >
-          <DiffStatGraph diff={diff} />
-        </span>
+  const { showDiffInText } = useConfigs().value
+  return React.useCallback(
+    function renderFileStatus({ diff }: TreeNode) {
+      return (
+        diff && (
+          <span
+            className={'node-item-diff'}
+            title={`${diff.status}, ${diff.changes} changes: +${diff.additions} & -${diff.deletions}`}
+          >
+            {showDiffInText ? <DiffStatText diff={diff} /> : <DiffStatGraph diff={diff} />}
+          </span>
+        )
       )
-    )
-  }
-  return React.useMemo(() => renderFileStatus, [])
+    },
+    [showDiffInText],
+  )
 }
 
 export function useRenderFileCommentAmounts() {

@@ -21,6 +21,7 @@ export type Config = {
   compactFileTree: boolean
   restoreExpandedFolders: boolean
   pjaxMode: 'native' | 'pjax-api'
+  showDiffInText: boolean
 }
 
 export type ConfigKeys = keyof Config
@@ -43,6 +44,7 @@ enum configKeys {
   compactFileTree = 'compactFileTree',
   restoreExpandedFolders = 'restoreExpandedFolders',
   pjaxMode = 'pjaxMode',
+  showDiffInText = 'showDiffInText',
 }
 
 // NOT use platform name to distinguish GHE from github.com
@@ -67,6 +69,7 @@ export const getDefaultConfigs: () => Config = () => ({
   compactFileTree: false,
   restoreExpandedFolders: true,
   pjaxMode: platformName === 'GitHub' ? 'native' : 'pjax-api', // use native on GitHub
+  showDiffInText: false,
 })
 
 const configKeyArray = Object.values(configKeys)

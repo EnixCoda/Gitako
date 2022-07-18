@@ -78,6 +78,13 @@ export function FileTreeSettings() {
       />
       <SimpleConfigFieldCheckbox
         field={{
+          key: 'showDiffInText',
+          label: 'Show PR file diff in text',
+          tooltip: 'Glance diff stat in a more precise way',
+        }}
+      />
+      <SimpleConfigFieldCheckbox
+        field={{
           key: 'compactFileTree',
           label: 'Compact file tree layout',
           tooltip: 'View file tree structures more effectively.',

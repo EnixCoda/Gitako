@@ -676,19 +676,19 @@ html[data-with-gitako-spacing='true'] {
               }
 
               .added .octicon {
-                color: var(--color-success-emphasis);
+                color: var(--color-success-fg);
               }
               .removed .octicon {
-                color: var(--color-danger-emphasis);
+                color: var(--color-danger-fg);
               }
               .renamed .octicon {
-                color: var(--color-done-emphasis);
+                color: var(--color-fg-muted);
               }
               .modified .octicon {
-                color: var(--color-accent-emphasis);
+                color: var(--color-attention-fg);
               }
               .ignored .octicon {
-                color: var(--color-neutral-emphasis);
+                color: var(--color-fg-muted);
               }
 
               .diff-stat-graph {
@@ -703,15 +703,15 @@ html[data-with-gitako-spacing='true'] {
                 }
 
                 .diff-stat-graph-no-change {
-                  background: var(--color-neutral-emphasis);
+                  background: var(--color-fg-muted);
                 }
 
                 .diff-stat-graph-addition {
-                  background: var(--color-success-emphasis);
+                  background: var(--color-success-fg);
                 }
 
                 .diff-stat-graph-deletion {
-                  background: var(--color-danger-emphasis);
+                  background: var(--color-danger-fg);
                 }
               }
 
