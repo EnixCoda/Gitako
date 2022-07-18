@@ -27,6 +27,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: dist
+          path: dist
 
       - name: Create Release
         id: create_release
