@@ -30,6 +30,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: dist
+          path: dist
 
       # Found no way to reuse cache steps
       - name: Get yarn cache directory path
