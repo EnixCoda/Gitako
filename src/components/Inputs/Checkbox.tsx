@@ -9,7 +9,7 @@ export function Checkbox({
   ...rest
 }: Override<CheckboxProps, { label: React.ReactNode } & IO<boolean>>) {
   return (
-    <FormControl>
+    <FormControl disabled={rest.disabled}>
       <PrimerCheckbox
         sx={{
           marginTop: '4px', // align label

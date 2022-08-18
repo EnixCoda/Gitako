@@ -38,6 +38,7 @@ export function SelectInput<T>({
         },
         mb: 1,
       }}
+      disabled={selectProps.disabled}
     >
       <FormControl.Label>{label}</FormControl.Label>
       <Select
