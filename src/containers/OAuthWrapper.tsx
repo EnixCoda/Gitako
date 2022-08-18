@@ -4,6 +4,7 @@ import * as React from 'react'
 import { parseURLSearch, run } from 'utils/general'
 import { useLoadedContext } from 'utils/hooks/useLoadedContext'
 import { useStateIO } from 'utils/hooks/useStateIO'
+import { sanitizedLocation } from 'utils/URLHelper'
 import { SideBarStateContext } from './SideBarState'
 
 /**
@@ -55,7 +56,7 @@ async function getAccessTokenWithCode(code: string) {
   window.history.replaceState(
     {},
     'removed search param',
-    window.location.pathname.replace(window.location.search, '?' + search.toString()),
+    sanitizedLocation.pathname.replace(window.location.search, '?' + search.toString()),
   )
   return accessToken
 }

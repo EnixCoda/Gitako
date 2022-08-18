@@ -1,3 +1,4 @@
+import { sanitizedLocation } from 'utils/URLHelper'
 import * as API from './API'
 import { getPRDiffTotalStat, getPullRequestFilesCount, isInPullFilesPage } from './DOMHelper'
 import { processTree } from './index'
@@ -50,7 +51,7 @@ export async function getPullRequestTreeData(
     }
   }
 
-  const url = new URL(window.location.href)
+  const url = new URL(sanitizedLocation.href)
   url.pathname = `/${userName}/${repoName}/pull/${pullId}/files`
   const commentsMap = getCommentsMap(commentData)
   const nodes: TreeNode[] = treeData.map(
