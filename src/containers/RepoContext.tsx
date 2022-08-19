@@ -1,3 +1,4 @@
+import { PropsWithChildren } from 'common'
 import { useConfigs } from 'containers/ConfigsContext'
 import { platform } from 'platforms'
 import * as React from 'react'
@@ -11,7 +12,7 @@ import { useInspector } from './StateInspector'
 
 export const RepoContext = React.createContext<MetaData | null>(null)
 
-export function RepoContextWrapper({ children }: React.PropsWithChildren<{}>) {
+export function RepoContextWrapper({ children }: PropsWithChildren) {
   const partialMetaData = usePartialMetaData()
   const defaultBranch = useDefaultBranch(partialMetaData)
   const metaData = useMetaData(partialMetaData, defaultBranch)

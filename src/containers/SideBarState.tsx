@@ -1,3 +1,4 @@
+import { PropsWithChildren } from 'common'
 import * as React from 'react'
 import { useStateIO } from 'utils/hooks/useStateIO'
 import { useInspector } from './StateInspector'
@@ -18,7 +19,7 @@ export type SideBarStateContextShape = IO<SideBarState>
 
 export const SideBarStateContext = React.createContext<SideBarStateContextShape | null>(null)
 
-export function StateBarStateContextWrapper({ children }: React.PropsWithChildren<{}>) {
+export function StateBarStateContextWrapper({ children }: PropsWithChildren) {
   const $state = useStateIO<SideBarState>('disabled')
   useInspector('SideBarStateContext', $state.value)
 

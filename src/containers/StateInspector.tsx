@@ -1,4 +1,4 @@
-import { ReactIO } from 'common'
+import { PropsWithChildren, ReactIO } from 'common'
 import { IN_PRODUCTION_MODE } from 'env'
 import * as React from 'react'
 import { useStateIO } from 'utils/hooks/useStateIO'
@@ -9,7 +9,7 @@ export const InspectorContext = React.createContext<InspectorContextShape | null
 
 export const InspectorContextWrapper = IN_PRODUCTION_MODE
   ? React.Fragment
-  : function InspectorContextWrapper({ children }: React.PropsWithChildren<{}>) {
+  : function InspectorContextWrapper({ children }: PropsWithChildren) {
       const $ = useStateIO<JSONObject>({})
       const [show, setShow] = React.useState(true)
 

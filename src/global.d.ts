@@ -47,6 +47,8 @@ type MakeOptional<Original, keys extends keyof Original> = Override<
 type VoidFN<T> = (payload: T) => void
 
 type Async<T> = T | Promise<T>
+
+// eslint-disable-next-line @typescript-eslint/ban-types
 type EnumString<S extends string> = S | (string & {})
 
 type JSONPrimitive = string | number | boolean | null | undefined

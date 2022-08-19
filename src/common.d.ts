@@ -5,3 +5,5 @@ type ReactIO<T> = {
   value: T
   onChange: Dispatch<SetStateAction<T>>
 }
+
+type PropsWithChildren = React.PropsWithChildren<Record<string, unknown>>

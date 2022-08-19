@@ -1,6 +1,7 @@
 import primitives from '@primer/primitives'
 import { BaseStyles, ThemeProvider } from '@primer/react'
 import theme from '@primer/react/lib-esm/theme'
+import { PropsWithChildren } from 'common'
 import * as React from 'react'
 
 // Temporary color fix for out-of-date embedded @primer/primitives in @primer/react
@@ -48,7 +49,7 @@ function useThemePreference() {
   return prefer
 }
 
-export function Theme({ children }: React.PropsWithChildren<{}>) {
+export function Theme({ children }: PropsWithChildren) {
   const themePreference = useThemePreference()
   return (
     <ThemeProvider {...themePreference} theme={fixedTheme}>

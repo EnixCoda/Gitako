@@ -19,9 +19,9 @@ async function request(
     accessToken?: string
   } = {},
 ) {
-  const headers = {} as HeadersInit & {
+  const headers: HeadersInit & {
     Authorization?: string
-  }
+  } = {}
   if (accessToken) {
     headers.Authorization = `token ${accessToken}`
   }

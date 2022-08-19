@@ -62,8 +62,8 @@
     "@types/jest": "^26.0.23",
     "@types/node": "^11.10.4",
     "@types/puppeteer": "^5.4.3",
-    "@typescript-eslint/eslint-plugin": "^5.23.0",
-    "@typescript-eslint/parser": "^5.23.0",
+    "@typescript-eslint/eslint-plugin": "^5.33.1",
+    "@typescript-eslint/parser": "^5.33.1",
     "babel-loader": "^8.2.5",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
     "copy-webpack-plugin": "^5.0.0",
@@ -101,42 +101,6 @@
     "semi": false,
     "trailingComma": "all",
     "arrowParens": "avoid"
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "browser": true
-    },
-    "parser": "@typescript-eslint/parser",
-    "plugins": [
-      "@typescript-eslint"
-    ],
-    "extends": [
-      "eslint:recommended",
-      "plugin:@typescript-eslint/recommended",
-      "plugin:react/recommended",
-      "plugin:react-hooks/recommended",
-      "prettier"
-    ],
-    "settings": {
-      "react": {
-        "version": "detect"
-      }
-    },
-    "ignorePatterns": [
-      "webpack.config.js",
-      "*jest*",
-      "scripts",
-      "dist",
-      "*-profile",
-      "Safari",
-      "vscode-icons",
-      "__tests__"
-    ],
-    "rules": {
-      "@typescript-eslint/ban-types": "off",
-      "react-hooks/rules-of-hooks": "off"
-    }
   },
   "lint-staged": {
     "*.scss": [

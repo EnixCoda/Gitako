@@ -1,3 +1,4 @@
+import { PropsWithChildren } from 'common'
 import { useConfigs } from 'containers/ConfigsContext'
 import { platform } from 'platforms'
 import * as React from 'react'
@@ -10,7 +11,7 @@ import { SideBarStateContext } from './SideBarState'
 /**
  * Setup access token before sending other requests
  */
-export function OAuthWrapper({ children }: React.PropsWithChildren<{}>) {
+export function OAuthWrapper({ children }: PropsWithChildren) {
   const running = useGetAccessToken()
   const $state = useLoadedContext(SideBarStateContext)
 
