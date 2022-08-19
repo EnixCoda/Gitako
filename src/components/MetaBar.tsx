@@ -36,6 +36,8 @@ export function MetaBar() {
           onClick={createAnchorClickHandler(branchUrl)}
           sx={{
             color: 'fg.muted',
+            wordBreak: 'normal',
+            overflowWrap: 'anywhere',
           }}
           {...platform.delegateFastRedirectAnchorProps?.()}
         >

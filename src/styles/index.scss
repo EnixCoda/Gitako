@@ -463,6 +463,8 @@ html[data-with-gitako-spacing='true'] {
             a {
               color: var(--color-accent-fg);
               white-space: normal;
+              word-break: normal;
+              overflow-wrap: anywhere; // break-word does not break on `_`
             }
           }
         }
