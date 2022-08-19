@@ -12,7 +12,7 @@
     "dev": "VERSION=dev-v$(node scripts/get-version.js) webpack --watch",
     "dev-safari": "TARGET=safari yarn run dev",
     "debug-firefox": "web-ext run --source-dir=dist --firefox-profile=firefox-profile --profile-create-if-missing --keep-profile-changes --start-url https://github.com/EnixCoda/Gitako",
-    "analyse-bundle": "ANALYSE= NODE_ENV=production webpack",
+    "analyze-bundle": "ANALYZE= NODE_ENV=production webpack",
     "postinstall": "node scripts/fix-deps",
     "preversion": "make version-safari && git add .",
     "build": "VERSION=v$(node scripts/get-version.js) NODE_ENV=production webpack",

@@ -72,8 +72,8 @@ const plugins = [
   new MiniCssExtractPlugin(),
 ]
 
-const analyse = process.env.ANALYSE !== undefined
-if (analyse) {
+const analyze = process.env.ANALYZE !== undefined
+if (analyze) {
   plugins.push(new BundleAnalyzerPlugin())
   console.log(`BundleAnalyzerPlugin added`)
 }
