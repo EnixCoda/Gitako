@@ -2,6 +2,18 @@ import { ReactElement } from 'react'
 import * as ReactDOM from 'react-dom'
 import { is } from './is'
 
+export function subIO<T, K extends keyof T>(io: IO<T>, field: K): IO<T[K]> {
+  return {
+    value: io.value[field],
+    onChange(value) {
+      io.onChange({
+        ...io.value,
+        [field]: value,
+      })
+    },
+  }
+}
+
 export function pick<T>(source: T, keys: string[]): Partial<T> {
   if (keys && typeof keys === 'object') {
     return (Array.isArray(keys) ? keys : Object.keys(keys)).reduce((copy, key) => {
