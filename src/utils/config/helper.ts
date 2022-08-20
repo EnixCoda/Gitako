@@ -5,7 +5,8 @@ import { migrateConfig } from './migrations'
 
 export type Config = {
   sideBarWidth: number
-  shortcut: string | undefined
+  shortcut: string | undefined // shortcut for toggling sidebar
+  focusSearchInputShortcut: string | undefined // shortcut for focusing search input
   accessToken: string | undefined
   compressSingletonFolder: boolean
   copyFileButton: boolean
@@ -29,6 +30,7 @@ export type ConfigKeys = keyof Config
 enum configKeys {
   sideBarWidth = 'sideBarWidth',
   shortcut = 'shortcut',
+  focusSearchInputShortcut = 'focusSearchInputShortcut',
   accessToken = 'accessToken',
   compressSingletonFolder = 'compressSingletonFolder',
   copyFileButton = 'copyFileButton',
@@ -54,6 +56,7 @@ const isInGitHub = platformStorageKey === 'platform_github.com'
 export const getDefaultConfigs: () => Config = () => ({
   sideBarWidth: 260,
   shortcut: undefined,
+  focusSearchInputShortcut: undefined,
   accessToken: '',
   compressSingletonFolder: true,
   copyFileButton: !isInGitHub, // disable on github.com

@@ -1,4 +1,5 @@
 import { Label, Text } from '@primer/react'
+import { useFocusOnPendingTarget } from 'components/FocusTarget'
 import { LoadingIndicator } from 'components/LoadingIndicator'
 import { SearchBar } from 'components/SearchBar'
 import { useConfigs } from 'containers/ConfigsContext'
@@ -14,7 +15,6 @@ import { useLoadedContext } from 'utils/hooks/useLoadedContext'
 import { useOnLocationChange } from 'utils/hooks/useOnLocationChange'
 import { VisibleNodes, VisibleNodesGenerator } from 'utils/VisibleNodesGenerator'
 import { SideBarStateContext } from '../../containers/SideBarState'
-import { useFocusFileExplorerOnFirstRender } from './hooks/useFocusFileExplorerOnFirstRender'
 import { useGetCurrentPath } from './hooks/useGetCurrentPath'
 import { useHandleKeyDown } from './hooks/useHandleKeyDown'
 import {
@@ -23,7 +23,7 @@ import {
   useRenderFileCommentAmounts,
   useRenderFileStatus,
   useRenderFindInFolderButton,
-  useRenderGoToButton
+  useRenderGoToButton,
 } from './hooks/useNodeRenderers'
 import { useHandleNodeClick } from './hooks/useOnNodeClick'
 import { useOnSearch } from './hooks/useOnSearch'
@@ -153,8 +153,6 @@ function LoadedFileExplorer({
   ])
   const renderLabelText = useRenderLabelText(searchKey)
 
-  useFocusFileExplorerOnFirstRender()
-
   const goToCurrentItem = React.useCallback(() => {
     const targetPath = platform.getCurrentPath(metaData.branchName)
     if (targetPath) expandTo(targetPath)
@@ -163,8 +161,14 @@ function LoadedFileExplorer({
   useOnLocationChange(goToCurrentItem)
   useAfterRedirect(goToCurrentItem)
 
+  const ref = React.useRef<HTMLDivElement | null>(null)
+  useFocusOnPendingTarget(
+    'files',
+    React.useCallback(() => ref.current?.focus(), []),
+  )
+
   return (
-    <div className={`file-explorer`} tabIndex={-1} onKeyDown={handleKeyDown}>
+    <div ref={ref} className={`file-explorer`} tabIndex={-1} onKeyDown={handleKeyDown}>
       {visibleNodesGenerator?.defer && (
         <div className={'status'}>
           <Label

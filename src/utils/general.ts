@@ -73,6 +73,10 @@ export function friendlyFormatShortcut(shortcut?: string) {
   }
 }
 
+export function formatWithShortcut(prefix: string, shortcut?: string) {
+  return shortcut ? `${prefix} (${friendlyFormatShortcut(shortcut)})` : prefix
+}
+
 export async function traverse<T>(
   range: T[] = [],
   conditionAndEffect: (node: T) => Async<boolean>,

@@ -14,6 +14,10 @@ export function SidebarSettings() {
         label={'Keyboard shortcut to toggle visibility'}
         {...subIO(useConfigs(), 'shortcut')}
       />
+      <KeyboardShortcutSetting
+        label={'Keyboard shortcut to focus search input'}
+        {...subIO(useConfigs(), 'focusSearchInputShortcut')}
+      />
       <SimpleConfigFieldCheckbox
         field={{
           key: 'intelligentToggle',

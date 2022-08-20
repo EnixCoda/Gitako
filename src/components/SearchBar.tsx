@@ -2,7 +2,8 @@ import { SearchIcon } from '@primer/octicons-react'
 import { TextInput, TextInputProps } from '@primer/react'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
-import { isValidRegexpSource } from 'utils/general'
+import { formatWithShortcut, isValidRegexpSource } from 'utils/general'
+import { useFocusOnPendingTarget } from './FocusTarget'
 import { SearchMode } from './searchModes'
 
 type Props = {
@@ -11,8 +12,14 @@ type Props = {
 } & Required<Pick<TextInputProps, 'onFocus'>>
 
 export function SearchBar({ onSearch, onFocus, value }: Props) {
+  const ref = React.useRef<HTMLInputElement | null>(null)
+  useFocusOnPendingTarget(
+    'search',
+    React.useCallback(() => ref.current?.focus(), []),
+  )
+
   const configs = useConfigs()
-  const { searchMode } = configs.value
+  const { searchMode, focusSearchInputShortcut } = configs.value
 
   const toggleButtonDescription =
     searchMode === 'regex'
@@ -26,6 +33,7 @@ export function SearchBar({ onSearch, onFocus, value }: Props) {
 
   return (
     <TextInput
+      ref={ref}
       leadingVisual={SearchIcon}
       onFocus={e => {
         onFocus(e)
@@ -35,7 +43,7 @@ export function SearchBar({ onSearch, onFocus, value }: Props) {
       sx={{ borderRadius: 0 }}
       className={'search-input'}
       aria-label="search files"
-      placeholder={`Search files`}
+      placeholder={formatWithShortcut(`Search files`, focusSearchInputShortcut)}
       onChange={({ target: { value } }) => onSearch(value, searchMode)}
       value={value}
       validationStatus={validationStatus}

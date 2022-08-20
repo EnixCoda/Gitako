@@ -179,3 +179,8 @@ export function formatClass(className: string) {
 export function parseIntFromElement(e: HTMLElement): number {
   return parseInt((e.innerText || '').replace(/[^0-9]/g, ''))
 }
+
+export function cancelEvent(e: KeyboardEvent): void {
+  e.stopPropagation()
+  e.preventDefault()
+}
