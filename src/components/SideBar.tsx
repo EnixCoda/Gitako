@@ -41,10 +41,6 @@ export function SideBar() {
 
   const blockLeaveRef = React.useRef(false)
   const { sidebarToggleMode } = configContext.value
-  const onMouseLeaveSideBar: React.MouseEventHandler<HTMLElement> = React.useCallback(() => {
-    if (blockLeaveRef.current) return
-    if (sidebarToggleMode === 'float') setShouldExpand(false)
-  }, [sidebarToggleMode, setShouldExpand])
   const onResizeStateChange = React.useCallback((state: ResizeState) => {
     blockLeaveRef.current = state === 'resizing'
   }, [])
@@ -79,7 +75,10 @@ export function SideBar() {
             collapsed: error || !shouldExpand,
           })}
           style={{ height: heightForSafari }}
-          onMouseLeave={onMouseLeaveSideBar}
+          onMouseLeave={() => {
+            if (blockLeaveRef.current) return
+            if (sidebarToggleMode === 'float') setShouldExpand(false)
+          }}
         >
           <div className={'gitako-side-bar-body'}>
             <div className={'gitako-side-bar-content'}>

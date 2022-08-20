@@ -56,13 +56,13 @@ function ToggleSidebarShortcutSettings() {
           placeholder={focused.value ? 'Press key combination' : 'Click here to set'}
           value={friendlyFormatShortcut(toggleShowSideBarShortcut)}
           onChange={noop}
-          onKeyDown={React.useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+          onKeyDown={e => {
             e.preventDefault()
             e.stopPropagation()
             // Clear shortcut with backspace
             const shortcut = e.key === 'Backspace' ? '' : keyHelper.parseEvent(e)
             useToggleShowSideBarShortcut.onChange(shortcut)
-          }, [])} // eslint-disable-line react-hooks/exhaustive-deps
+          }}
         />
         {shortcut === toggleShowSideBarShortcut ? (
           <Button

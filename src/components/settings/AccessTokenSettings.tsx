@@ -29,16 +29,6 @@ export function AccessTokenSettings() {
     setAccessTokenInputValue('')
   }, [accessToken])
 
-  const onInputAccessToken = React.useCallback(
-    ({ currentTarget: { value } }: React.FormEvent<HTMLInputElement>) => {
-      setAccessTokenInputValue(value)
-      useAccessTokenHint.onChange(
-        ACCESS_TOKEN_REGEXP.test(value) ? '' : 'Gitako does not recognize the token.',
-      )
-    },
-    [], // eslint-disable-line react-hooks/exhaustive-deps
-  )
-
   const saveToken = React.useCallback(
     async (
       hint: typeof useAccessTokenHint.value = (
@@ -57,13 +47,6 @@ export function AccessTokenSettings() {
       }
     },
     [accessTokenInputValue], // eslint-disable-line react-hooks/exhaustive-deps
-  )
-
-  const onPressAccessToken = React.useCallback(
-    ({ key }: React.KeyboardEvent) => {
-      if (key === 'Enter') saveToken()
-    },
-    [saveToken],
   )
 
   return (
@@ -163,8 +146,15 @@ export function AccessTokenSettings() {
               placeholder="Or input here manually"
               onFocus={() => focusInput.onChange(true)}
               onBlur={() => focusInput.onChange(false)}
-              onChange={onInputAccessToken}
-              onKeyPress={onPressAccessToken}
+              onChange={({ currentTarget: { value } }) => {
+                setAccessTokenInputValue(value)
+                useAccessTokenHint.onChange(
+                  ACCESS_TOKEN_REGEXP.test(value) ? '' : 'Gitako does not recognize the token.',
+                )
+              }}
+              onKeyPress={({ key }) => {
+                if (key === 'Enter') saveToken()
+              }}
             />
             <Button onClick={() => saveToken()} disabled={!accessTokenInputValue}>
               Save
