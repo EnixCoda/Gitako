@@ -70,23 +70,21 @@ export function insertMountPoint() {
 }
 
 export function insertSideBarMountPoint() {
-  const mountPointElement = insertMountPoint()
   const sidebarMountPointID = 'gitako-sidebar-mount-point'
   return $(formatID(sidebarMountPointID), undefined, () => {
     const sideBarElement = document.createElement('div')
     sideBarElement.setAttribute('id', sidebarMountPointID)
-    mountPointElement.appendChild(sideBarElement)
+    insertMountPoint().appendChild(sideBarElement)
     return sideBarElement
   })
 }
 
 export function insertLogoMountPoint() {
-  const mountPointElement = insertMountPoint()
   const logoMountPointID = 'gitako-logo-mount-point'
   return $(formatID(logoMountPointID), undefined, () => {
     const logoMountElement = document.createElement('div')
     logoMountElement.setAttribute('id', logoMountPointID)
-    mountPointElement.appendChild(logoMountElement)
+    insertMountPoint().appendChild(logoMountElement)
     return logoMountElement
   })
 }

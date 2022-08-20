@@ -113,6 +113,15 @@ module.exports = {
         sideEffects: false,
       },
       {
+        test: /\.js$/,
+        loader: 'babel-loader',
+        // Transpile as least files under node_modules
+        include: /node_modules\/(webext-content-scripts|webext-detect-page)\/.*\.js$/,
+        options: {
+          cacheDirectory: true,
+        },
+      },
+      {
         test: /\.scss$/,
         loader: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
         include: [srcPath],
