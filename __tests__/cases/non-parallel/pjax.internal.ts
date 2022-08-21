@@ -4,11 +4,12 @@ import {
   expectToNotFind,
   patientClick,
   selectFileTreeItem,
-  sleep, waitForRedirect
+  sleep,
+  waitForRedirect,
 } from '../../utils'
 
 describe(`in Gitako project page`, () => {
-  beforeAll(() => page.goto('https://github.com/EnixCoda/Gitako'))
+  beforeAll(() => page.goto('https://github.com/EnixCoda/Gitako/tree/test/multiple-changes'))
 
   it('should work with PJAX', async () => {
     await sleep(3000)
