@@ -1,10 +1,13 @@
-import { Button, Text, TextInput } from '@primer/react'
+import { Box, Button, Spinner, Text, TextInput } from '@primer/react'
 import { wikiLinks } from 'components/settings/SettingsBar'
 import { useConfigs } from 'containers/ConfigsContext'
+import { SideBarStateContext } from 'containers/SideBarState'
 import { platform } from 'platforms'
 import { Gitea } from 'platforms/Gitea'
 import { Gitee } from 'platforms/Gitee'
 import * as React from 'react'
+import { IIFC } from 'react-iifc'
+import { useLoadedContext } from 'utils/hooks/useLoadedContext'
 import { useStateIO } from 'utils/hooks/useStateIO'
 import { SettingsSection } from './SettingsSection'
 
@@ -17,6 +20,7 @@ export function AccessTokenSettings() {
   const [accessTokenInputValue, setAccessTokenInputValue] = React.useState('')
   const useAccessTokenHint = useStateIO<React.ReactNode>('')
   const focusInput = useStateIO(false)
+  const sidebarState = useLoadedContext(SideBarStateContext).value
 
   const { value: accessTokenHint } = useAccessTokenHint
 
@@ -78,11 +82,56 @@ export function AccessTokenSettings() {
         </>
       }
     >
-      {hasAccessToken ? (
-        <div>
-          <Text as="p">Your token has been saved.</Text>
-          <Button onClick={() => configContext.onChange({ accessToken: '' })}>Clear</Button>
-        </div>
+      {sidebarState === 'getting-access-token' ? (
+        <Box display="inline-flex" alignItems="center" sx={{ gap: 2 }}>
+          <Spinner size="small" />
+          <Text>Getting access token</Text>
+        </Box>
+      ) : hasAccessToken ? (
+        <IIFC>
+          {() => {
+            const [showConfirmButton, setShowConfirmButton] = React.useState(false)
+            return (
+              <Box>
+                {showConfirmButton ? (
+                  <IIFC>
+                    {() => {
+                      const [allowClear, setAllowClear] = React.useState(false)
+                      const waitForSeconds = 3
+                      const timePast = useTimePast(1000, waitForSeconds * 1000)
+                      React.useEffect(() => {
+                        const timeout = setTimeout(() => setAllowClear(true), waitForSeconds * 1000)
+                        return () => clearTimeout(timeout)
+                      }, [])
+                      const countDown = waitForSeconds - timePast
+
+                      return (
+                        <Box>
+                          <Text as="p">Are you sure to clear the token?</Text>
+                          <Box display="inline-flex" sx={{ gap: 2 }}>
+                            <Button
+                              variant="danger"
+                              disabled={!allowClear}
+                              onClick={() => configContext.onChange({ accessToken: '' })}
+                            >
+                              {countDown ? `Confirm (${countDown}s)` : `Confirm`}
+                            </Button>
+                            <Button onClick={() => setShowConfirmButton(false)}>Cancel</Button>
+                          </Box>
+                        </Box>
+                      )
+                    }}
+                  </IIFC>
+                ) : (
+                  <Box>
+                    <Text as="p">Your token has been saved.</Text>
+                    <Button onClick={() => setShowConfirmButton(true)}>Clear</Button>
+                  </Box>
+                )}
+              </Box>
+            )
+          }}
+        </IIFC>
       ) : (
         <div>
           {platform === Gitea ? (
@@ -126,4 +175,28 @@ export function AccessTokenSettings() {
       {accessTokenHint && <span className={'hint'}>{accessTokenHint}</span>}
     </SettingsSection>
   )
+}
+
+function useTimePast(unit = 1000, max?: number) {
+  const [timePast, setTimePast] = React.useState(0)
+  React.useEffect(() => {
+    const checkInterval = (unit / 10) >> 0 // 10x check times for better accuracy
+    const start = Date.now()
+    let memoLastValue = 0
+    const interval = setInterval(() => {
+      const now = Date.now()
+      const pastInMilliseconds = now - start
+      const pastInSeconds = (pastInMilliseconds / 1000) >> 0
+      if (pastInSeconds !== memoLastValue) {
+        setTimePast(pastInSeconds)
+        memoLastValue = pastInSeconds
+
+        if (max && pastInMilliseconds >= max) clearInterval(interval)
+      }
+    }, checkInterval)
+
+    return () => clearInterval(interval)
+  }, [unit, max])
+
+  return timePast
 }
