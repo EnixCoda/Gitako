@@ -130,29 +130,6 @@ export function copyElementContent(element: Element, trimLeadingSpace?: boolean)
   return isCopySuccessful
 }
 
-/**
- * focus to side bar, user will be able to manipulate it with keyboard
- */
-export function focusFileExplorer() {
-  const sideBarContentSelector = '.gitako-side-bar .file-explorer'
-  $(sideBarContentSelector, sideBarElement => {
-    if (document.activeElement !== sideBarElement && sideBarElement instanceof HTMLElement)
-      sideBarElement.focus()
-  })
-}
-
-export function focusSearchInput() {
-  const searchInputSelector = '.search-input input'
-  $(searchInputSelector, searchInputElement => {
-    if (
-      document.activeElement !== searchInputElement &&
-      searchInputElement instanceof HTMLElement
-    ) {
-      searchInputElement.focus()
-    }
-  })
-}
-
 export function findNodeElement(node: TreeNode, rootElement: HTMLElement): HTMLElement | null {
   const nodeElement = rootElement.querySelector(`a[href="${node.url}"]`)
   if (nodeElement instanceof HTMLElement) return nodeElement

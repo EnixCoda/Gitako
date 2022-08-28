@@ -1,3 +1,4 @@
+import { SidebarContext } from 'components/SidebarContext'
 import * as React from 'react'
 import * as DOMHelper from 'utils/DOMHelper'
 import { OperatingSystems, os } from 'utils/general'
@@ -31,17 +32,19 @@ export function useHandleKeyDown(
   searched: boolean,
   setAlignMode: (mode: AlignMode) => void,
 ) {
+  const { pendingFocusTarget } = React.useContext(SidebarContext)
+  const setPendingFocusTarget = pendingFocusTarget.onChange
   return React.useCallback(
     (event: React.KeyboardEvent<HTMLElement>) => {
       const { nodes, focusedNode, expandedNodes } = visibleNodes
 
       const handleVerticalMove = (index: number) => {
         if (0 <= index && index < nodes.length) {
-          DOMHelper.focusFileExplorer()
+          setPendingFocusTarget('files')
           setAlignMode('lazy')
           focusNode(nodes[index])
         } else {
-          DOMHelper.focusSearchInput()
+          setPendingFocusTarget('search')
           focusNode(null)
         }
       }
@@ -136,11 +139,11 @@ export function useHandleKeyDown(
         if (nodes.length) {
           switch (key) {
             case 'ArrowDown':
-              DOMHelper.focusFileExplorer()
+              setPendingFocusTarget('files')
               focusNode(nodes[0])
               break
             case 'ArrowUp':
-              DOMHelper.focusFileExplorer()
+              setPendingFocusTarget('files')
               focusNode(nodes[nodes.length - 1])
               break
             default:
@@ -152,6 +155,6 @@ export function useHandleKeyDown(
         }
       }
     },
-    [visibleNodes, searched, goTo, focusNode, toggleExpansion, setAlignMode],
+    [visibleNodes, searched, goTo, focusNode, toggleExpansion, setAlignMode, setPendingFocusTarget],
   )
 }
