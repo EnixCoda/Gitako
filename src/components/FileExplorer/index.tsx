@@ -198,7 +198,6 @@ function LoadedFileExplorer({
           // instead of unmounting, hide the element when not needed, so that the ref can be preserved after search result matches nothing
           hidden: visibleNodes.nodes.length === 0,
         })}
-        tabIndex={-1} // prevent getting focus via tab key on GitHub
         ref={filesRef}
       >
         <div
@@ -210,6 +209,7 @@ function LoadedFileExplorer({
           }}
           ref={scrollElementRef}
           onScroll={onScroll}
+          tabIndex={-1} // prevent getting focus via tab key on GitHub
         >
           <div style={containerStyle}>
             {visibleRows.map(({ row, style }) => {
