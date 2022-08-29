@@ -11,11 +11,11 @@ export function SidebarSettings() {
   return (
     <SettingsSection title={'Sidebar'}>
       <KeyboardShortcutSetting
-        label={'Keyboard shortcut to toggle visibility'}
+        label={'Keyboard shortcut for toggle sidebar'}
         {...subIO(useConfigs(), 'shortcut')}
       />
       <KeyboardShortcutSetting
-        label={'Keyboard shortcut to focus search input'}
+        label={'Keyboard shortcut for focus search input'}
         {...subIO(useConfigs(), 'focusSearchInputShortcut')}
       />
       <SimpleConfigFieldCheckbox
