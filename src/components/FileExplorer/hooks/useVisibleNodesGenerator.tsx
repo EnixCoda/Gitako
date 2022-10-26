@@ -1,9 +1,9 @@
 import { useConfigs } from 'containers/ConfigsContext'
 import { platform } from 'platforms'
 import { useCallback, useState } from 'react'
+import { useAbortableEffect } from 'utils/hooks/useAbortableEffect'
 import { useCatchNetworkError } from 'utils/hooks/useCatchNetworkError'
 import { useLoadedContext } from 'utils/hooks/useLoadedContext'
-import { useSequentialEffect } from 'utils/hooks/useSequentialEffect'
 import { VisibleNodesGenerator } from 'utils/VisibleNodesGenerator'
 import { SideBarStateContext } from '../../../containers/SideBarState'
 
@@ -17,12 +17,12 @@ export function useVisibleNodesGenerator(metaData: MetaData | null) {
   const setStateContext = useLoadedContext(SideBarStateContext).onChange
 
   // Only run when metadata or accessToken changes
-  useSequentialEffect(
+  useAbortableEffect(
     useCallback(
-      shouldAbort => {
+      signal => {
         catchNetworkErrors(async () => {
           if (!metaData) return
-          if (shouldAbort()) return
+          if (signal.aborted) return
 
           setStateContext('tree-loading')
           const { userName, repoName, branchName } = metaData
@@ -36,7 +36,7 @@ export function useVisibleNodesGenerator(metaData: MetaData | null) {
             true,
             config.accessToken,
           )
-          if (shouldAbort()) return
+          if (signal.aborted) return
 
           setStateContext('tree-rendering')
 
