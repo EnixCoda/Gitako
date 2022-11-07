@@ -1,4 +1,4 @@
-// `.babelrc` is not loaded by babel-loader for files under node_modules, but `babel.config/js` is
+// `.babelrc` is not loaded by babel-loader for files under node_modules, but `babel.config.js` is
 module.exports = {
   env: {
     test: {
