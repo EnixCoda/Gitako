@@ -3,8 +3,10 @@ import {
   expectToFind,
   expectToNotFind,
   scroll,
-  selectFileTreeItem
+  selectFileTreeItem,
 } from '../../utils'
+
+jest.retryTimes(3)
 
 describe(`in Gitako project page`, () => {
   beforeAll(() =>

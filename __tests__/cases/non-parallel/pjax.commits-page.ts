@@ -1,5 +1,7 @@
 import { expectToFind, expectToNotFind, sleep, waitForRedirect } from '../../utils'
 
+jest.retryTimes(3)
+
 describe(`in Gitako project page`, () => {
   beforeAll(() => page.goto('https://github.com/EnixCoda/Gitako/commits/develop'))
 
