@@ -19,7 +19,7 @@ export async function scroll({
 }) {
   let distance = 0
   while ((distance += stepDistance) < totalDistance) {
-    await (page.mouse as any).wheel({ deltaY: stepDistance })
+    await page.mouse.wheel({ deltaY: stepDistance })
   }
 }
 
@@ -28,19 +28,20 @@ export function assert(condition: boolean, err?: Error | string): asserts condit
 }
 
 let counter = 0
-export async function listenTo<Args extends any[] = any[]>(
+export async function listenTo(
   event: string,
   target: 'document' | 'window',
-  callback: (...args: Args) => void,
+  callback: <Args extends unknown[]>(...args: Args) => void,
   oneTime?: boolean,
 ) {
   const callbackName = 'onEvent' + ++counter
   await page.exposeFunction(callbackName, callback)
   await page.evaluate(
-    (event, target, callbackName, oneTime) => {
+    (event: string, target: 'window' | 'document', callbackName: string, oneTime?: boolean) => {
       const t = target === 'document' ? document : window
-      const onEvent = (...args: any[]): void => {
-        ;(window[callbackName as any] as any as (...args: any[]) => void)(...args)
+      const onEvent = (...args: unknown[]): void => {
+        const method = window[callbackName as keyof Window]
+        method?.(...args)
         if (oneTime) t.removeEventListener(event, onEvent)
       }
       t.addEventListener(event, onEvent)
