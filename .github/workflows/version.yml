@@ -1,0 +1,19 @@
+name: Get VERSION for referencing
+on:
+  workflow_call:
+    outputs:
+      VERSION:
+        description: "The VERSION string"
+        value: ${{ jobs.version.outputs.VERSION }}
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+
+    outputs:
+      VERSION: ${{ steps.get_ref.outputs.VERSION }}
+
+    steps:
+      - name: Get the ref
+        id: get_ref
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)

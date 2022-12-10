@@ -12,38 +12,36 @@ export function sleep(timeout: number) {
 
 export async function scroll({
   totalDistance,
-  step = 1,
-  duration = 500,
+  stepDistance = 100,
 }: {
   totalDistance: number
-  step?: number
-  duration?: number
+  stepDistance?: number
 }) {
   let distance = 0
-  while ((distance += step) < totalDistance) {
-    await (page.mouse as any).wheel({ deltaY: step })
-    await sleep((duration * step) / totalDistance)
+  while ((distance += stepDistance) < totalDistance) {
+    await page.mouse.wheel({ deltaY: stepDistance })
   }
 }
 
-export function assert(condition: boolean, err?: Error | string) {
+export function assert(condition: boolean, err?: Error | string): asserts condition {
   if (!condition) throw typeof err === 'string' ? new Error(err) : err
 }
 
 let counter = 0
-export async function listenTo<Args extends any[] = any[]>(
+export async function listenTo(
   event: string,
   target: 'document' | 'window',
-  callback: (...args: Args) => void,
+  callback: <Args extends unknown[]>(...args: Args) => void,
   oneTime?: boolean,
 ) {
   const callbackName = 'onEvent' + ++counter
   await page.exposeFunction(callbackName, callback)
   await page.evaluate(
-    (event, target, callbackName, oneTime) => {
+    (event: string, target: 'window' | 'document', callbackName: string, oneTime?: boolean) => {
       const t = target === 'document' ? document : window
-      const onEvent = (...args: any[]): void => {
-        ;((window[callbackName as any] as any) as (...args: any[]) => void)(...args)
+      const onEvent = (...args: unknown[]): void => {
+        const method = window[callbackName as keyof Window]
+        method?.(...args)
         if (oneTime) t.removeEventListener(event, onEvent)
       }
       t.addEventListener(event, onEvent)
@@ -74,6 +72,24 @@ export async function waitForLegacyPJAXRedirect(action?: () => void | Promise<vo
   return promise
 }
 
+export async function waitForTurboRedirect(action?: () => void | Promise<void>) {
+  const promise = once('turbo:load', 'document')
+  await action?.()
+  return promise
+}
+
+export async function waitForRedirect(action?: () => void | Promise<void>) {
+  let fired = false
+  const $action =
+    action &&
+    (() => {
+      if (fired) return
+      fired = true
+      return action()
+    })
+  return Promise.race([waitForLegacyPJAXRedirect($action), waitForTurboRedirect($action)])
+}
+
 export function selectFileTreeItem(path: string): string {
   return `.gitako-side-bar .files a[title="${path}"]`
 }
@@ -84,7 +100,9 @@ export async function patientClick(selector: string) {
 }
 
 export async function expandFloatModeSidebar() {
-  const rect = await (await page.$('.gitako-toggle-show-button'))?.evaluate(button => {
+  const rect = await (
+    await page.$('.gitako-toggle-show-button')
+  )?.evaluate(button => {
     const { x, y, width, height } = button.getBoundingClientRect()
     // pass required properties to avoid serialization issues
     return { x, y, width, height }

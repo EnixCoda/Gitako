@@ -1,41 +1,33 @@
-import { Button, Text, TextInput } from '@primer/components'
+import { Box, Button, Spinner, Text, TextInput } from '@primer/react'
 import { wikiLinks } from 'components/settings/SettingsBar'
 import { useConfigs } from 'containers/ConfigsContext'
+import { SideBarStateContext } from 'containers/SideBarState'
 import { platform } from 'platforms'
 import { Gitea } from 'platforms/Gitea'
 import { Gitee } from 'platforms/Gitee'
 import * as React from 'react'
+import { IIFC } from 'react-iifc'
+import { useLoadedContext } from 'utils/hooks/useLoadedContext'
 import { useStateIO } from 'utils/hooks/useStateIO'
 import { SettingsSection } from './SettingsSection'
 
 const ACCESS_TOKEN_REGEXP = /^([0-9a-fA-F]+|gh[pousr]_[A-Za-z0-9_]+)$/
 
-type Props = {}
-
-export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
+export function AccessTokenSettings() {
   const configContext = useConfigs()
-  const hasAccessToken = Boolean(configContext.value.accessToken)
-  const useAccessToken = useStateIO('')
+  const { accessToken } = configContext.value
+  const hasAccessToken = Boolean(accessToken)
+  const [accessTokenInputValue, setAccessTokenInputValue] = React.useState('')
   const useAccessTokenHint = useStateIO<React.ReactNode>('')
   const focusInput = useStateIO(false)
+  const sidebarState = useLoadedContext(SideBarStateContext).value
 
   const { value: accessTokenHint } = useAccessTokenHint
-  const { value: accessToken } = useAccessToken
 
   React.useEffect(() => {
     // clear input when access token updates
-    useAccessToken.onChange('')
-  }, [configContext.value.accessToken])
-
-  const onInputAccessToken = React.useCallback(
-    ({ currentTarget: { value } }: React.FormEvent<HTMLInputElement>) => {
-      useAccessToken.onChange(value)
-      useAccessTokenHint.onChange(
-        ACCESS_TOKEN_REGEXP.test(value) ? '' : 'Gitako does not recognize the token.',
-      )
-    },
-    [],
-  )
+    setAccessTokenInputValue('')
+  }, [accessToken])
 
   const saveToken = React.useCallback(
     async (
@@ -48,20 +40,13 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
         </span>
       ),
     ) => {
-      if (accessToken) {
-        configContext.onChange({ accessToken })
-        useAccessToken.onChange('')
+      if (accessTokenInputValue) {
+        configContext.onChange({ accessToken: accessTokenInputValue })
+        setAccessTokenInputValue('')
         useAccessTokenHint.onChange(hint)
       }
     },
-    [accessToken],
-  )
-
-  const onPressAccessToken = React.useCallback(
-    ({ key }: React.KeyboardEvent) => {
-      if (key === 'Enter') saveToken()
-    },
-    [saveToken],
+    [accessTokenInputValue], // eslint-disable-line react-hooks/exhaustive-deps
   )
 
   return (
@@ -73,17 +58,63 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
             href={wikiLinks.createAccessToken}
             title="A token is required to access private repositories or bypass API rate limits"
             target="_blank"
+            rel="noopener noreferrer"
           >
             (?)
           </a>
         </>
       }
     >
-      {hasAccessToken ? (
-        <div>
-          <Text as="p">Your token has been saved.</Text>
-          <Button onClick={() => configContext.onChange({ accessToken: '' })}>Clear</Button>
-        </div>
+      {sidebarState === 'getting-access-token' ? (
+        <Box display="inline-flex" alignItems="center" sx={{ gap: 2 }}>
+          <Spinner size="small" />
+          <Text>Getting access token</Text>
+        </Box>
+      ) : hasAccessToken ? (
+        <IIFC>
+          {() => {
+            const [showConfirmButton, setShowConfirmButton] = React.useState(false)
+            return (
+              <Box>
+                {showConfirmButton ? (
+                  <IIFC>
+                    {() => {
+                      const [allowClear, setAllowClear] = React.useState(false)
+                      const waitForSeconds = 3
+                      const timePast = useTimePast(1000, waitForSeconds * 1000)
+                      React.useEffect(() => {
+                        const timeout = setTimeout(() => setAllowClear(true), waitForSeconds * 1000)
+                        return () => clearTimeout(timeout)
+                      }, [])
+                      const countDown = waitForSeconds - timePast
+
+                      return (
+                        <Box>
+                          <Text as="p">Are you sure to clear the token?</Text>
+                          <Box display="inline-flex" sx={{ gap: 2 }}>
+                            <Button
+                              variant="danger"
+                              disabled={!allowClear}
+                              onClick={() => configContext.onChange({ accessToken: '' })}
+                            >
+                              {countDown ? `Confirm (${countDown}s)` : `Confirm`}
+                            </Button>
+                            <Button onClick={() => setShowConfirmButton(false)}>Cancel</Button>
+                          </Box>
+                        </Box>
+                      )
+                    }}
+                  </IIFC>
+                ) : (
+                  <Box>
+                    <Text as="p">Your token has been saved.</Text>
+                    <Button onClick={() => setShowConfirmButton(true)}>Clear</Button>
+                  </Box>
+                )}
+              </Box>
+            )
+          }}
+        </IIFC>
       ) : (
         <div>
           {platform === Gitea ? (
@@ -109,16 +140,23 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
           )}
           <div className={'access-token-input-control'}>
             <TextInput
-              marginRight={1}
+              sx={{ marginRight: 1 }}
               className={'access-token-input'}
-              value={accessToken}
+              value={accessTokenInputValue}
               placeholder="Or input here manually"
               onFocus={() => focusInput.onChange(true)}
               onBlur={() => focusInput.onChange(false)}
-              onChange={onInputAccessToken}
-              onKeyPress={onPressAccessToken}
+              onChange={({ currentTarget: { value } }) => {
+                setAccessTokenInputValue(value)
+                useAccessTokenHint.onChange(
+                  ACCESS_TOKEN_REGEXP.test(value) ? '' : 'Gitako does not recognize the token.',
+                )
+              }}
+              onKeyPress={({ key }) => {
+                if (key === 'Enter') saveToken()
+              }}
             />
-            <Button onClick={() => saveToken()} disabled={!accessToken}>
+            <Button onClick={() => saveToken()} disabled={!accessTokenInputValue}>
               Save
             </Button>
           </div>
@@ -127,4 +165,28 @@ export function AccessTokenSettings(props: React.PropsWithChildren<Props>) {
       {accessTokenHint && <span className={'hint'}>{accessTokenHint}</span>}
     </SettingsSection>
   )
+}
+
+function useTimePast(unit = 1000, max?: number) {
+  const [timePast, setTimePast] = React.useState(0)
+  React.useEffect(() => {
+    const checkInterval = (unit / 10) >> 0 // 10x check times for better accuracy
+    const start = Date.now()
+    let memoLastValue = 0
+    const interval = setInterval(() => {
+      const now = Date.now()
+      const pastInMilliseconds = now - start
+      const pastInSeconds = (pastInMilliseconds / 1000) >> 0
+      if (pastInSeconds !== memoLastValue) {
+        setTimePast(pastInSeconds)
+        memoLastValue = pastInSeconds
+
+        if (max && pastInMilliseconds >= max) clearInterval(interval)
+      }
+    }, checkInterval)
+
+    return () => clearInterval(interval)
+  }, [unit, max])
+
+  return timePast
 }

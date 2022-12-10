@@ -2,41 +2,29 @@
  * this helper helps manipulating DOM
  */
 
-export function setGitakoBodyClass(className: string, enable: boolean) {
-  const classList = document.body.classList
-  if (enable) classList.add(className)
-  else classList.remove(className)
-}
+export const rootElementID = 'gitako-root'
+export const gitakoDescriptionTarget = document.documentElement
 
 /**
  * when gitako is ready, make page's header narrower
  * or cancel it
  */
 export function markGitakoReadyState(ready: boolean) {
-  const readyClassName = 'gitako-ready'
-  return setGitakoBodyClass(readyClassName, ready)
-}
-
-export function markGitakoSafariFlag(enable = true) {
-  const className = 'gitako-safari'
-  return setGitakoBodyClass(className, enable)
+  const readyAttributeName = 'data-gitako-ready'
+  return gitakoDescriptionTarget.setAttribute(readyAttributeName, `${ready}`)
 }
 
 /**
  * if should show gitako, then move body right to make space for showing gitako
  * otherwise, hide the space
  */
-export const bodySpacingClassName = 'with-gitako-spacing'
+export const spacingAttributeName = 'data-with-gitako-spacing'
 export function setBodyIndent(shouldShowGitako: boolean) {
-  if (shouldShowGitako) {
-    document.body.classList.add(bodySpacingClassName)
-  } else {
-    document.body.classList.remove(bodySpacingClassName)
-  }
+  gitakoDescriptionTarget.setAttribute(spacingAttributeName, `${shouldShowGitako}`)
 }
 
 export function $(selector: string): HTMLElement | null
-export function $<T1>(selector: string, existCallback: (element: HTMLElement) => T1): T1
+export function $<T1>(selector: string, existCallback: (element: HTMLElement) => T1): T1 | null
 export function $<T1, T2>(
   selector: string,
   existCallback: (element: HTMLElement) => T1,
@@ -46,7 +34,8 @@ export function $<T2>(
   selector: string,
   existCallback: undefined | null,
   otherwise: () => T2,
-): HTMLElement | null | T2
+): HTMLElement | T2
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function $(selector: string, existCallback?: any, otherwise?: any) {
   const element = document.querySelector(selector)
   if (element) {
@@ -56,15 +45,46 @@ export function $(selector: string, existCallback?: any, otherwise?: any) {
 }
 
 /**
- * add the logo element into DOM
+ * DOM Structure after calling the `insert*MountPoint` functions
+ *
+ *  <html>
+ *    <body>
+ *    </body>
+ *    <div id={rootElementID}>
+ *      <div id={sidebarMountPointID}>
+ *      </div>
+ *      <div id={logoMountPointID}>
+ *      </div>
+ *    </div>
+ *  </html>
  */
+
+const mountPointContainer = document.documentElement
+export function insertMountPoint() {
+  return $(formatID(rootElementID), undefined, () => {
+    const element = document.createElement('div')
+    element.setAttribute('id', rootElementID)
+    mountPointContainer.appendChild(element)
+    return element
+  })
+}
+
+export function insertSideBarMountPoint() {
+  const sidebarMountPointID = 'gitako-sidebar-mount-point'
+  return $(formatID(sidebarMountPointID), undefined, () => {
+    const sideBarElement = document.createElement('div')
+    sideBarElement.setAttribute('id', sidebarMountPointID)
+    insertMountPoint().appendChild(sideBarElement)
+    return sideBarElement
+  })
+}
+
 export function insertLogoMountPoint() {
-  const logoID = 'gitako-logo-mount-point'
-  const logoSelector = '#' + logoID
-  return $(logoSelector, undefined, function createLogoMountPoint() {
+  const logoMountPointID = 'gitako-logo-mount-point'
+  return $(formatID(logoMountPointID), undefined, () => {
     const logoMountElement = document.createElement('div')
-    logoMountElement.setAttribute('id', logoID)
-    document.body.appendChild(logoMountElement)
+    logoMountElement.setAttribute('id', logoMountPointID)
+    insertMountPoint().appendChild(logoMountElement)
     return logoMountElement
   })
 }
@@ -110,28 +130,6 @@ export function copyElementContent(element: Element, trimLeadingSpace?: boolean)
   return isCopySuccessful
 }
 
-/**
- * focus to side bar, user will be able to manipulate it with keyboard
- */
-export function focusFileExplorer() {
-  const sideBarContentSelector = '.gitako-side-bar .file-explorer'
-  $(sideBarContentSelector, sideBarElement => {
-    if (sideBarElement instanceof HTMLElement) sideBarElement.focus()
-  })
-}
-
-export function focusSearchInput() {
-  const searchInputSelector = '.search-input input'
-  $(searchInputSelector, searchInputElement => {
-    if (
-      document.activeElement !== searchInputElement &&
-      searchInputElement instanceof HTMLElement
-    ) {
-      searchInputElement.focus()
-    }
-  })
-}
-
 export function findNodeElement(node: TreeNode, rootElement: HTMLElement): HTMLElement | null {
   const nodeElement = rootElement.querySelector(`a[href="${node.url}"]`)
   if (nodeElement instanceof HTMLElement) return nodeElement
@@ -141,4 +139,25 @@ export function findNodeElement(node: TreeNode, rootElement: HTMLElement): HTMLE
 export function setCSSVariable(name: string, value: string | undefined, element: HTMLElement) {
   if (value === undefined) element.style.removeProperty(name)
   else element.style.setProperty(name, value)
+}
+
+export const setGitakoWidthCSSVariable = (size: number) => {
+  setCSSVariable('--gitako-width', `${size}px`, gitakoDescriptionTarget)
+}
+
+export function formatID(id: string) {
+  return `#${id}`
+}
+
+export function formatClass(className: string) {
+  return `.${className}`
+}
+
+export function parseIntFromElement(e: HTMLElement): number {
+  return parseInt((e.innerText || '').replace(/[^0-9]/g, ''))
+}
+
+export function cancelEvent(e: KeyboardEvent): void {
+  e.stopPropagation()
+  e.preventDefault()
 }

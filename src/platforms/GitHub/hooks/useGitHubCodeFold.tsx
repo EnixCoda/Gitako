@@ -1,6 +1,6 @@
 import { platform } from 'platforms'
 import { useCallback, useEffect } from 'react'
-import { useOnPJAXDone } from 'utils/hooks/usePJAX'
+import { useAfterRedirect } from 'utils/hooks/useFastRedirect'
 import { GitHub } from '..'
 
 const theCSSClassMark = 'gitako-code-fold-attached'
@@ -13,6 +13,10 @@ const selectorOfLineContent = `.blob-code`
 
 const theCSSClassForToggleElementOnActive = 'gitako-code-fold-active'
 function init() {
+  document.querySelectorAll(tableSelector).forEach(processTable)
+}
+
+function processTable(table: Element) {
   type LineNumber = number // alias
   const blocks: LineNumber[] = [] // startLine -> exclusiveEndLine
   /**
@@ -34,8 +38,7 @@ function init() {
    * 5
    */
 
-  const table = document.querySelector(tableSelector)
-  const lineElements = Array.from(document.querySelectorAll([tableSelector, 'tr'].join(' ')))
+  const lineElements = Array.from(table.querySelectorAll('tr'))
   if (!table || !lineElements.length) return
   if (table.classList.contains(theCSSClassMark)) {
     if (table.classList.contains(theCSSClassMarkWhenDisabled)) {
@@ -51,10 +54,11 @@ function init() {
     type Level = number // measured by leading whitespace amount
     const stack: [Level, LineNumber][] = []
 
-    function trySeal(lineNumber: number, level: number) {
+    const trySeal = (lineNumber: number, level: number) => {
       let ignoredTheHighestLevelItem = false
       while (stack.length) {
-        const top = stack.pop()! // safe
+        const top = stack.pop()
+        if (top === undefined) throw new Error()
         const [$LineNumber, $level] = top
 
         if ($level < level) {
@@ -123,7 +127,7 @@ function init() {
       if (e.target.classList.contains(theCSSClassForToggleElement)) {
         const tr = e.target.parentElement?.parentElement
         if (tr) {
-          toggleLine(lineElements.indexOf(tr))
+          toggleLine(lineElements.indexOf(tr as HTMLTableRowElement))
           e.stopPropagation()
         }
       }
@@ -132,8 +136,9 @@ function init() {
 }
 
 function cancelToggleFeature() {
-  const table = document.querySelector(tableSelector)
-  table?.classList.add(theCSSClassMarkWhenDisabled)
+  document
+    .querySelectorAll(tableSelector)
+    .forEach(table => table.classList.add(theCSSClassMarkWhenDisabled))
 }
 
 function getTextLevel(text: string) {
@@ -159,5 +164,5 @@ export function useGitHubCodeFold(active: boolean) {
     }
   }, [active])
   useEffect(effect, [effect])
-  useOnPJAXDone(effect)
+  useAfterRedirect(effect)
 }

@@ -1,10 +1,12 @@
+import { SyncIcon } from '@primer/octicons-react'
 import iconURL from 'assets/icons/Gitako.png'
 import { useConfigs } from 'containers/ConfigsContext'
+import { ReloadContext } from 'containers/ReloadContext'
 import * as React from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
 import { cx } from 'utils/cx'
 import { useResizeHandler } from 'utils/hooks/useResizeHandler'
-import { Icon } from './Icon'
+import { RoundIconButton } from './RoundIconButton'
 
 type Props = {
   error?: string | null
@@ -20,6 +22,7 @@ function getSafeDistance(y: number, height: number) {
 }
 
 export function ToggleShowButton({ error, className, onClick, onHover }: Props) {
+  const reload = React.useContext(ReloadContext)
   const ref = React.useRef<HTMLDivElement>(null)
   const config = useConfigs()
   const [distance, setDistance] = React.useState(config.value.toggleButtonVerticalDistance)
@@ -38,11 +41,11 @@ export function ToggleShowButton({ error, className, onClick, onHover }: Props) 
   )
 
   // reposition on window height change, but ignores distance change
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     if (ref.current) {
       ref.current.style.top = distance + 'px'
     }
-  }, [height])
+  }, [height]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // And this repositions on drag
   const { onPointerDown } = useResizeHandler(
@@ -67,13 +70,21 @@ export function ToggleShowButton({ error, className, onClick, onHover }: Props) 
         onPointerDown={onPointerDown}
         title={'Gitako (draggable)'}
       >
-        {config.value.toggleButtonContent === 'octoface' ? (
-          <Icon className={'octoface-icon'} type={'octoface'} />
-        ) : (
-          <img className={'tentacle'} draggable={false} src={iconURL} />
-        )}
+        <img className={'tentacle'} draggable={false} src={iconURL} />
       </button>
-      {error && <span className={'error-message'}>{error}</span>}
+      {error && (
+        <span className={'error-message'}>
+          {error}
+          <RoundIconButton
+            sx={{ ml: 1 }}
+            variant="danger"
+            size="small"
+            aria-label={'Reload Gitako'}
+            icon={SyncIcon}
+            onClick={reload}
+          />
+        </span>
+      )}
     </div>
   )
 }

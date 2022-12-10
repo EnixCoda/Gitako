@@ -9,3 +9,8 @@ export const GITEE_OAUTH = {
 }
 
 export const VERSION = process.env.VERSION
+
+export const SENTRY = {
+  PUBLIC_KEY: process.env.SENTRY_PUBLIC_KEY,
+  PROJECT_ID: process.env.SENTRY_PROJECT_ID,
+}

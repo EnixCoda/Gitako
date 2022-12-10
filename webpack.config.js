@@ -47,7 +47,7 @@ const plugins = [
           Object.assign(manifest, {
             web_accessible_resources: manifest.web_accessible_resources.concat({
               resources: ['*.map'],
-              matches: ['*://*/*']
+              matches: ['*://*/*'],
             }),
           })
         }
@@ -76,8 +76,8 @@ const plugins = [
   new MiniCssExtractPlugin(),
 ]
 
-const analyse = process.env.ANALYSE !== undefined
-if (analyse) {
+const analyze = process.env.ANALYZE !== undefined
+if (analyze) {
   plugins.push(new BundleAnalyzerPlugin())
   console.log(`BundleAnalyzerPlugin added`)
 }
@@ -115,6 +115,15 @@ module.exports = {
         include: [srcPath, packagesPath],
         exclude: /node_modules/,
         sideEffects: false,
+      },
+      {
+        test: /\.js$/,
+        loader: 'babel-loader',
+        // Transpile as least files under node_modules
+        include: /node_modules\/(webext-content-scripts|webext-detect-page)\/.*\.js$/,
+        options: {
+          cacheDirectory: true,
+        },
       },
       {
         test: /\.scss$/,

@@ -64,10 +64,7 @@ module.exports = {
   maxWorkers: 8,
 
   // An array of directory names to be searched recursively up from the requiring module's location
-  moduleDirectories: [
-    "src",
-    "node_modules"
-  ],
+  moduleDirectories: ['src', 'node_modules'],
 
   // An array of file extensions your modules use
   // moduleFileExtensions: [
@@ -133,7 +130,7 @@ module.exports = {
   // snapshotSerializers: [],
 
   // The test environment that will be used for testing
-  // testEnvironment: 'node',
+  testEnvironment: 'jsdom',
 
   // Options that will be passed to the testEnvironment
   // testEnvironmentOptions: {},

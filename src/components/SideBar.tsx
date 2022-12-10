@@ -1,215 +1,313 @@
+import { PinIcon, TabIcon } from '@primer/octicons-react'
 import { AccessDeniedDescription } from 'components/AccessDeniedDescription'
 import { FileExplorer } from 'components/FileExplorer'
+import { Footer } from 'components/Footer'
 import { MetaBar } from 'components/MetaBar'
 import { Portal } from 'components/Portal'
-import { SettingsBar } from 'components/settings/SettingsBar'
-import { SideBarBodyWrapper } from 'components/SideBarBodyWrapper'
 import { ToggleShowButton } from 'components/ToggleShowButton'
 import { useConfigs } from 'containers/ConfigsContext'
 import { platform } from 'platforms'
 import * as React from 'react'
+import { IIFC } from 'react-iifc'
+import { useWindowSize } from 'react-use'
+import { Config } from 'utils/config/helper'
 import { cx } from 'utils/cx'
 import * as DOMHelper from 'utils/DOMHelper'
-import { detectBrowser, run } from 'utils/general'
-import { useCatchNetworkError } from 'utils/hooks/useCatchNetworkError'
+import * as features from 'utils/features'
+import { detectBrowser, formatWithShortcut } from 'utils/general'
+import { useConditionalHook } from 'utils/hooks/useConditionalHook'
+import { useAfterRedirect, usePJAXAPI } from 'utils/hooks/useFastRedirect'
 import { useLoadedContext } from 'utils/hooks/useLoadedContext'
-import { useOnPJAXDone, usePJAX } from 'utils/hooks/usePJAX'
+import { ResizeState } from 'utils/hooks/useResizeHandler'
 import { useStateIO } from 'utils/hooks/useStateIO'
 import { SideBarErrorContext } from '../containers/ErrorContext'
-import { RepoContext } from '../containers/RepoContext'
 import { SideBarStateContext } from '../containers/SideBarState'
 import { Theme } from '../containers/Theme'
-import { useToggleSideBarWithKeyboard } from '../utils/hooks/useToggleSideBarWithKeyboard'
-import { Icon } from './Icon'
-import { IIFC } from './IIFC'
+import { useOnShortcutPressed } from '../utils/hooks/useOnShortcutPressed'
+import { FocusTarget } from './FocusTarget'
 import { LoadingIndicator } from './LoadingIndicator'
+import { RoundIconButton } from './RoundIconButton'
+import { SettingsBarContent } from './settings/SettingsBar'
+import { SidebarContext } from './SidebarContext'
+import { SideBarResizeHandler } from './SideBarResizeHandler'
 
 export function SideBar() {
-  const metaData = React.useContext(RepoContext)
-  const state = useLoadedContext(SideBarStateContext).value
-  const configContext = useConfigs()
-
-  const accessToken = configContext.value.accessToken || ''
-  const [baseSize] = React.useState(() => configContext.value.sideBarWidth)
-
-  const $showSettings = useStateIO(false)
-  const showSettings = $showSettings.value
-  const toggleShowSettings = React.useCallback(() => $showSettings.onChange(show => !show), [])
-
-  const $logoContainerElement = useStateIO<HTMLElement | null>(null)
-
-  const hasMetaData = state !== 'disabled' // will be true since retrieving data, cannot use Boolean(metaData)
-  React.useEffect(() => {
-    if (hasMetaData) {
-      DOMHelper.markGitakoReadyState(true)
-      $showSettings.onChange(false)
-      $logoContainerElement.onChange(DOMHelper.insertLogoMountPoint())
-    } else {
-      DOMHelper.markGitakoReadyState(false)
-    }
-  }, [hasMetaData])
-
-  React.useEffect(() => {
-    if (detectBrowser() === 'Safari') DOMHelper.markGitakoSafariFlag()
-  }, [])
-
-  const sidebarToggleMode = configContext.value.sidebarToggleMode
-  const intelligentToggle = configContext.value.intelligentToggle
-  const $shouldShow = useStateIO(() =>
-    intelligentToggle === null
-      ? sidebarToggleMode === 'persistent'
-        ? platform.shouldShow()
-        : false
-      : intelligentToggle,
-  )
-  const shouldShow = $shouldShow.value
-  React.useEffect(() => {
-    if (sidebarToggleMode === 'persistent') {
-      DOMHelper.setBodyIndent(shouldShow)
-    } else {
-      DOMHelper.setBodyIndent(false)
-    }
-
-    if (shouldShow) {
-      DOMHelper.focusFileExplorer() // TODO: verify if it works
-    }
-  }, [shouldShow, sidebarToggleMode])
-
-  // Save expand state on toggle if auto expand is off
-  React.useEffect(() => {
-    if (intelligentToggle !== null) {
-      configContext.onChange({ intelligentToggle: shouldShow })
-    }
-  }, [shouldShow, intelligentToggle])
+  usePJAXAPI()
+  platform.usePlatformHooks?.()
+  useMarkGitakoReadyState()
 
   const error = useLoadedContext(SideBarErrorContext).value
-  // Lock shouldShow on error
-  React.useEffect(() => {
-    if (error && shouldShow) {
-      $shouldShow.onChange(false)
-    }
-  }, [error])
 
-  const setShowSideBar = React.useCallback(
-    (show: typeof $shouldShow.value) => {
-      if (!error) $shouldShow.onChange(show)
-    },
-    [error],
+  const [shouldExpand, setShouldExpand, toggleShowSideBar] = useShouldExpand()
+  useFocusSidebarOnExpand(shouldExpand)
+  const pendingFocusTarget = useStateIO<FocusTarget>(null)
+  useShowSidebarKeyboard(
+    shouldExpand,
+    setShouldExpand,
+    toggleShowSideBar,
+    pendingFocusTarget.onChange,
   )
 
-  const toggleShowSideBar = React.useCallback(() => {
-    if (!error) $shouldShow.onChange(show => !show)
-  }, [error])
-  useToggleSideBarWithKeyboard(state, configContext, toggleShowSideBar)
+  const configContext = useConfigs()
 
-  const updateSideBarVisibility = React.useCallback(() => {
-    if (intelligentToggle === null && sidebarToggleMode === 'persistent') {
-      setShowSideBar(platform.shouldShow())
-    }
-  }, [intelligentToggle, sidebarToggleMode])
+  const blockLeaveRef = React.useRef(false)
+  const { sidebarToggleMode, shortcut, focusSearchInputShortcut } = configContext.value
+  const onResizeStateChange = React.useCallback((state: ResizeState) => {
+    blockLeaveRef.current = state === 'resizing'
+  }, [])
 
-  useOnPJAXDone(updateSideBarVisibility)
+  const heightForSafari = useConditionalHook(
+    () => detectBrowser() === 'Safari',
+    () => useWindowSize().height, // eslint-disable-line react-hooks/rules-of-hooks
+  )
 
-  platform.usePlatformHooks?.()
-
-  usePJAX()
-
-  // Hide sidebar when error due to auth but token is set  #128
-  const hideSidebarOnInvalidToken: boolean =
-    intelligentToggle === null && Boolean(state === 'error-due-to-auth' && accessToken)
-  React.useEffect(() => {
-    if (hideSidebarOnInvalidToken) {
-      setShowSideBar(false)
-    }
-  }, [hideSidebarOnInvalidToken])
+  const sidebarContextValue = React.useMemo(() => ({ pendingFocusTarget }), [pendingFocusTarget])
 
   return (
     <Theme>
-      <div className={'gitako-side-bar'}>
-        <Portal into={$logoContainerElement.value}>
-          <ToggleShowButton
-            error={error}
-            className={cx({
-              hidden: shouldShow,
+      <SidebarContext.Provider value={sidebarContextValue}>
+        <IIFC>
+          {() => {
+            const logoContainerElement = useLogoContainerElement()
+            return (
+              <Portal into={logoContainerElement}>
+                <ToggleShowButton
+                  error={error}
+                  className={cx({
+                    hidden: shouldExpand,
+                  })}
+                  onHover={sidebarToggleMode === 'float' ? () => setShouldExpand(true) : undefined}
+                  onClick={toggleShowSideBar}
+                />
+              </Portal>
+            )
+          }}
+        </IIFC>
+        <div className={'gitako-side-bar'}>
+          <div
+            className={cx('gitako-side-bar-body-wrapper', `toggle-mode-${sidebarToggleMode}`, {
+              collapsed: error || !shouldExpand,
             })}
-            onHover={sidebarToggleMode === 'float' ? () => setShowSideBar(true) : undefined}
-            onClick={toggleShowSideBar}
-          />
-        </Portal>
-        <SideBarBodyWrapper
-          className={cx(`toggle-mode-${sidebarToggleMode}`, {
-            collapsed: error || !shouldShow,
-          })}
-          baseSize={baseSize}
-          onLeave={sidebarToggleMode === 'float' ? () => setShowSideBar(false) : undefined}
-          sizeVariableMountPoint={sidebarToggleMode === 'persistent' ? document.body : undefined}
-        >
-          <div className={'gitako-side-bar-body'}>
-            <div
-              className={'gitako-side-bar-content'}
-              onClick={showSettings ? toggleShowSettings : undefined}
-            >
-              <div className={'header'}>
-                <div className={'close-side-bar-button-position'}>
-                  {sidebarToggleMode === 'persistent' && (
-                    <button
-                      title={'Collapse sidebar'}
-                      className={'close-side-bar-button'}
-                      onClick={toggleShowSideBar}
-                    >
-                      <Icon className={'action-icon'} type={'tab'} />
-                    </button>
-                  )}
-                  <button
-                    title={'Toggle sidebar dock mode between float and persistent'}
-                    className={cx('close-side-bar-button', {
-                      active: sidebarToggleMode === 'persistent',
-                    })}
-                    onClick={() =>
-                      configContext.onChange({
-                        sidebarToggleMode: sidebarToggleMode === 'float' ? 'persistent' : 'float',
-                      })
-                    }
-                  >
-                    <Icon className={'action-icon'} type={'pin'} />
-                  </button>
+            style={{ height: heightForSafari }}
+            onMouseLeave={() => {
+              if (blockLeaveRef.current) return
+              if (sidebarToggleMode === 'float') setShouldExpand(false)
+            }}
+          >
+            <div className={'gitako-side-bar-body'}>
+              <div className={'gitako-side-bar-content'}>
+                <div className={'header'}>
+                  <div className={'side-bar-position-controls'}>
+                    {sidebarToggleMode === 'persistent' && (
+                      <RoundIconButton
+                        icon={TabIcon}
+                        aria-label={formatWithShortcut('Collapse sidebar', shortcut)}
+                        sx={{
+                          transform: 'rotateY(180deg)',
+                        }}
+                        onClick={toggleShowSideBar}
+                      />
+                    )}
+                    <RoundIconButton
+                      icon={PinIcon}
+                      aria-label={'Toggle sidebar dock mode between float and persistent'}
+                      iconColor={sidebarToggleMode === 'persistent' ? 'fg.default' : undefined}
+                      sx={{
+                        transform: 'rotateY(180deg)',
+                      }}
+                      onClick={() =>
+                        configContext.onChange({
+                          sidebarToggleMode:
+                            sidebarToggleMode === 'persistent' ? 'float' : 'persistent',
+                        })
+                      }
+                    />
+                  </div>
+                  <MetaBar />
                 </div>
-                {metaData && <MetaBar metaData={metaData} />}
+                <IIFC>
+                  {() => {
+                    switch (useLoadedContext(SideBarStateContext).value) {
+                      case 'getting-access-token':
+                        return <LoadingIndicator text={'Getting access token...'} />
+                      case 'after-getting-access-token':
+                      case 'meta-loading':
+                        return <LoadingIndicator text={'Fetching repo meta...'} />
+                      case 'error-due-to-auth':
+                        return <AccessDeniedDescription />
+                      case 'meta-loaded':
+                      case 'tree-loading':
+                      case 'tree-rendering':
+                      case 'tree-rendered':
+                        return <FileExplorer />
+                    }
+                  }}
+                </IIFC>
               </div>
-              {run(() => {
-                switch (state) {
-                  case 'disabled':
-                    return null
-                  case 'getting-access-token':
-                    return <LoadingIndicator text={'Getting access token...'} />
-                  case 'after-getting-access-token':
-                  case 'meta-loading':
-                    return <LoadingIndicator text={'Fetching repo meta...'} />
-                  case 'error-due-to-auth':
-                    return <AccessDeniedDescription />
-                  default:
-                    return (
-                      metaData && (
-                        <IIFC>
-                          {() => (
-                            <FileExplorer
-                              metaData={metaData}
-                              freeze={showSettings}
-                              accessToken={accessToken}
-                              config={configContext.value}
-                              catchNetworkErrors={useCatchNetworkError()}
-                            />
-                          )}
-                        </IIFC>
-                      )
-                    )
-                }
-              })}
+              <IIFC>
+                {() => {
+                  const [showSettings, setShowSettings] = React.useState(false)
+                  const toggleShowSettings = React.useCallback(
+                    () => setShowSettings(show => !show),
+                    [],
+                  )
+
+                  useOnShortcutPressed(
+                    focusSearchInputShortcut,
+                    React.useCallback(() => setShowSettings(false), []),
+                  )
+
+                  return (
+                    <>
+                      {showSettings && <SettingsBarContent toggleShow={toggleShowSettings} />}
+                      <Footer toggleShowSettings={toggleShowSettings} />
+                    </>
+                  )
+                }}
+              </IIFC>
             </div>
-            <SettingsBar toggleShowSettings={toggleShowSettings} activated={showSettings} />
+            {features.resize && <SideBarResizeHandler onResizeStateChange={onResizeStateChange} />}
           </div>
-        </SideBarBodyWrapper>
-      </div>
+        </div>
+      </SidebarContext.Provider>
     </Theme>
+  )
+}
+
+function useFocusSidebarOnExpand(shouldExpand: boolean) {
+  React.useEffect(() => {
+    // prevent keeping focus within Gitako
+    if (!shouldExpand) document.body.focus()
+  }, [shouldExpand])
+}
+
+function useMarkGitakoReadyState() {
+  React.useEffect(() => {
+    DOMHelper.markGitakoReadyState(true)
+    return () => DOMHelper.markGitakoReadyState(false)
+  }, [])
+}
+
+function useLogoContainerElement() {
+  const [logoContainerElement, setLogoContainerElement] = React.useState<HTMLElement | null>(null)
+  React.useEffect(() => {
+    setLogoContainerElement(DOMHelper.insertLogoMountPoint())
+  }, [])
+  return logoContainerElement
+}
+
+function useUpdateBodyIndentOnStateUpdate(shouldExpand: boolean) {
+  const { sidebarToggleMode } = useConfigs().value
+  React.useEffect(() => {
+    if (sidebarToggleMode === 'persistent' && shouldExpand) {
+      DOMHelper.setBodyIndent(true)
+      return () => DOMHelper.setBodyIndent(false)
+    }
+  }, [sidebarToggleMode, shouldExpand])
+}
+
+const getDerivedExpansion = ({
+  intelligentToggle,
+  sidebarToggleMode,
+}: Pick<Config, 'intelligentToggle' | 'sidebarToggleMode'>) =>
+  sidebarToggleMode === 'persistent'
+    ? intelligentToggle === null // auto-expand checked
+      ? platform.shouldExpandSideBar()
+      : intelligentToggle // read saved expand state
+    : false // do not expand in float mode
+
+function useGetDerivedExpansion() {
+  const { intelligentToggle, sidebarToggleMode } = useConfigs().value
+  return React.useCallback(
+    () => getDerivedExpansion({ intelligentToggle, sidebarToggleMode }),
+    [intelligentToggle, sidebarToggleMode],
+  )
+}
+
+function useUpdateBodyIndentAfterRedirect(update: (shouldExpand: boolean) => void) {
+  const { intelligentToggle, sidebarToggleMode } = useConfigs().value
+  useAfterRedirect(
+    React.useCallback(() => {
+      // check and update expand state if pinned and auto-expand checked
+      if (sidebarToggleMode === 'persistent') {
+        const shouldExpand = getDerivedExpansion({ intelligentToggle, sidebarToggleMode })
+        update(shouldExpand)
+        // Below DOM mutation cannot be omitted, if do, body indent may get lost when shouldExpand is true for both before & after redirecting
+        DOMHelper.setBodyIndent(shouldExpand)
+      }
+    }, [update, sidebarToggleMode, intelligentToggle]),
+  )
+}
+
+// Save expand state on toggle if auto expand is off
+function useSaveExpandStateOnToggle(shouldExpand: boolean) {
+  const configContext = useConfigs()
+  const { intelligentToggle } = configContext.value
+  React.useEffect(() => {
+    if (intelligentToggle !== null) configContext.onChange({ intelligentToggle: shouldExpand })
+  }, [shouldExpand, intelligentToggle]) // eslint-disable-line react-hooks/exhaustive-deps
+}
+
+function useCollapseOnNoPermissionWhenTokenHasBeenSet(
+  setShowSideBar: React.Dispatch<React.SetStateAction<boolean>>,
+) {
+  const { accessToken, intelligentToggle, sidebarToggleMode } = useConfigs().value
+  const state = useLoadedContext(SideBarStateContext).value
+  const hideSidebarOnInvalidToken =
+    sidebarToggleMode === 'persistent' &&
+    intelligentToggle === null &&
+    !!accessToken &&
+    state === 'error-due-to-auth'
+  React.useEffect(() => {
+    if (hideSidebarOnInvalidToken) setShowSideBar(false)
+  }, [hideSidebarOnInvalidToken, setShowSideBar])
+}
+
+function useShouldExpand() {
+  const getDerivedExpansion = useGetDerivedExpansion()
+  const [shouldExpand, setShouldExpand] = React.useState(getDerivedExpansion)
+  const toggleShowSideBar = React.useCallback(
+    () => setShouldExpand(show => !show),
+    [setShouldExpand],
+  )
+
+  useSaveExpandStateOnToggle(shouldExpand)
+  useUpdateBodyIndentOnStateUpdate(shouldExpand)
+  useUpdateBodyIndentAfterRedirect(setShouldExpand)
+  useCollapseOnNoPermissionWhenTokenHasBeenSet(setShouldExpand)
+
+  return [shouldExpand, setShouldExpand, toggleShowSideBar] as const
+}
+
+function useShowSidebarKeyboard(
+  shouldExpand: boolean,
+  setShouldExpand: React.Dispatch<React.SetStateAction<boolean>>,
+  toggleShowSideBar: () => void,
+  setFocusTarget: React.Dispatch<React.SetStateAction<FocusTarget>>,
+) {
+  const config = useConfigs().value
+
+  useOnShortcutPressed(
+    config.shortcut,
+    React.useCallback(
+      e => {
+        DOMHelper.cancelEvent(e)
+        toggleShowSideBar()
+        if (!shouldExpand) setFocusTarget('files')
+      },
+      [shouldExpand, toggleShowSideBar, setFocusTarget],
+    ),
+  )
+
+  useOnShortcutPressed(
+    config.focusSearchInputShortcut,
+    React.useCallback(
+      e => {
+        DOMHelper.cancelEvent(e)
+        if (!shouldExpand) setShouldExpand(true)
+        setFocusTarget('search')
+      },
+      [shouldExpand, setShouldExpand, setFocusTarget],
+    ),
   )
 }

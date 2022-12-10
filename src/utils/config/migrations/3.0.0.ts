@@ -16,7 +16,7 @@ export const migration: Migration = {
       const key = 'platform_github.com'
       const config = configs[key]
       if (typeof config === 'object' && config !== null && 'copySnippetButton' in config) {
-        const configBeforeMigrate: ConfigBeforeMigrate = config
+        const configBeforeMigrate = config as ConfigBeforeMigrate
         const { copySnippetButton, ...rest } = configBeforeMigrate
         if (copySnippetButton) {
           const configAfterMigrate: ConfigAfterMigrate = {

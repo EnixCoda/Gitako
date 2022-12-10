@@ -1,3 +1,4 @@
+import { is } from 'utils/is'
 import { storageHelper } from 'utils/storageHelper'
 import { Migration } from '.'
 import { Storage } from '../../storageHelper'
@@ -5,7 +6,7 @@ import { Storage } from '../../storageHelper'
 export const migration: Migration = {
   version: '1.0.1',
   async migrate(version) {
-    const config: any | void = await storageHelper.get<Storage>([
+    const config: JSONObject | void = await storageHelper.get<Storage>([
       'configVersion',
       'sideBarWidth',
       'shortcut',
@@ -20,6 +21,7 @@ export const migration: Migration = {
       config &&
       (!('configVersion' in config) ||
         config.configVersion === null ||
+        !is.string(config.configVersion) ||
         config.configVersion < version)
     ) {
       await storageHelper.set({ platform_GitHub: config, configVersion: version })

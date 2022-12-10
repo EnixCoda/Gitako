@@ -1,15 +1,19 @@
-import { Link } from '@primer/components'
-import { Icon } from 'components/Icon'
-import { VERSION } from 'env'
+import { ChevronDownIcon } from '@primer/octicons-react'
+import { Box } from '@primer/react'
+import { Footer } from 'components/Footer'
+import { RoundIconButton } from 'components/RoundIconButton'
+import { useConfigs } from 'containers/ConfigsContext'
 import { platform } from 'platforms'
 import { GitHub } from 'platforms/GitHub'
 import * as React from 'react'
+import { useUpdateEffect } from 'react-use'
 import { useStateIO } from 'utils/hooks/useStateIO'
-import { SimpleField, SimpleToggleField } from '../SimpleToggleField'
 import { AccessTokenSettings } from './AccessTokenSettings'
 import { FileTreeSettings } from './FileTreeSettings'
 import { SettingsSection } from './SettingsSection'
 import { SidebarSettings } from './SidebarSettings'
+import { SimpleConfigField } from './SimpleConfigField'
+import { SimpleConfigFieldCheckbox } from './SimpleConfigField/Checkbox'
 
 const WIKI_HOME_LINK = 'https://github.com/EnixCoda/Gitako/wiki'
 export const wikiLinks = {
@@ -19,45 +23,67 @@ export const wikiLinks = {
   copyFileButton: `${WIKI_HOME_LINK}/Copy-file-and-snippet`,
   copySnippet: `${WIKI_HOME_LINK}/Copy-file-and-snippet`,
   createAccessToken: `${WIKI_HOME_LINK}/Access-token-for-Gitako`,
+  pjaxMode: `${WIKI_HOME_LINK}/Pjax-Mode`,
 }
 
-type Props = {
-  activated: boolean
-  toggleShowSettings: () => void
-}
+const moreFields: SimpleConfigField<
+  'copyFileButton' | 'copySnippetButton' | 'codeFolding' | 'pjaxMode'
+>[] =
+  platform === GitHub
+    ? [
+        {
+          key: 'codeFolding',
+          label: 'Fold source code button',
+          wikiLink: wikiLinks.codeFolding,
+          tooltip: `Read more in Gitako's Wiki`,
+        },
+        {
+          key: 'pjaxMode',
+          label: 'Native PJAX mode',
+          wikiLink: wikiLinks.pjaxMode,
+          tooltip: 'Please keep it enabled unless Gitako crashes after redirecting',
+          overwrite: {
+            value: pjaxMode => pjaxMode === 'native',
+            onChange: checked => (checked ? 'native' : 'pjax-api'),
+          },
+        },
+        {
+          key: 'copyFileButton',
+          label: 'Copy file button',
+          wikiLink: wikiLinks.copyFileButton,
+          tooltip: `Read more in Gitako's Wiki`,
+        },
+        {
+          key: 'copySnippetButton',
+          label: 'Copy snippet button',
+          wikiLink: wikiLinks.copySnippet,
+          tooltip: `Read more in Gitako's Wiki`,
+        },
+      ]
+    : []
 
-function SettingsBarContent() {
+export function SettingsBarContent({ toggleShow }: { toggleShow: () => void }) {
   const useReloadHint = useStateIO<React.ReactNode>('')
   const { value: reloadHint } = useReloadHint
 
-  const moreFields: SimpleField<'copyFileButton' | 'copySnippetButton'|'codeFolding'>[] =
-    platform === GitHub
-      ? [
-          {
-            key: 'codeFolding',
-            label: 'Fold source code button',
-            wikiLink: wikiLinks.codeFolding,
-            tooltip: `Read more in Gitako's Wiki`,
-          },
-          {
-            key: 'copyFileButton',
-            label: 'Copy file button',
-            wikiLink: wikiLinks.copyFileButton,
-            tooltip: `Read more in Gitako's Wiki`,
-          },
-          {
-            key: 'copySnippetButton',
-            label: 'Copy snippet button',
-            wikiLink: wikiLinks.copySnippet,
-            tooltip: `Read more in Gitako's Wiki`,
-          },
-        ]
-      : []
+  useUpdateEffect(() => {
+    window.location.reload()
+  }, [useConfigs().value.pjaxMode])
 
   return (
-    <>
-      <h2 className={'gitako-settings-bar-title'}>Settings</h2>
-      <div className={'gitako-settings-bar-content'}>
+    <div className={'gitako-settings-bar'}>
+      <div className={'gitako-settings-bar-header'}>
+        <h2 className={'gitako-settings-bar-title'}>Settings</h2>
+        <RoundIconButton
+          aria-label="Close settings"
+          onClick={toggleShow}
+          size="medium"
+          iconSize={20}
+          icon={ChevronDownIcon}
+          color="fg.default"
+        />
+      </div>
+      <Box display="grid" gridGap={4} className={'gitako-settings-bar-content'}>
         <div className={'shadow-shelter'} />
         <AccessTokenSettings />
         <SidebarSettings />
@@ -66,7 +92,7 @@ function SettingsBarContent() {
           <SettingsSection title={'More'}>
             {moreFields.map(field => (
               <React.Fragment key={field.key}>
-                <SimpleToggleField field={field} />
+                <SimpleConfigFieldCheckbox field={field} />
               </React.Fragment>
             ))}
 
@@ -74,44 +100,26 @@ function SettingsBarContent() {
           </SettingsSection>
         )}
         <SettingsSection title={'Talk to the author'}>
-          <a href="https://github.com/EnixCoda/Gitako/issues" target="_blank">
-            Report bug
-          </a>
-          {' / '}
-          <a href="https://github.com/EnixCoda/Gitako/discussions" target="_blank">
-            Discuss feature
-          </a>
+          <div>
+            <a
+              href="https://github.com/EnixCoda/Gitako/issues"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Report bug
+            </a>
+            {' / '}
+            <a
+              href="https://github.com/EnixCoda/Gitako/discussions"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Discuss feature
+            </a>
+          </div>
         </SettingsSection>
-      </div>
-    </>
-  )
-}
-
-export function SettingsBar(props: Props) {
-  const { toggleShowSettings, activated } = props
-  return (
-    <div className={'gitako-settings-bar'}>
-      {activated && <SettingsBarContent />}
-      <div className={'header-row'}>
-        <Link
-          className={'version'}
-          fontSize={14}
-          href={wikiLinks.changeLog}
-          target={'_blank'}
-          title={'Check out new features!'}
-        >
-          {VERSION}
-        </Link>
-        <div className={'header-right'}>
-          <button className={'settings-button'} onClick={toggleShowSettings}>
-            {activated ? (
-              <Icon type={'chevron-down'} className={'hide-settings-icon'} />
-            ) : (
-              <Icon type={'gear'} className={'show-settings-icon'} />
-            )}
-          </button>
-        </div>
-      </div>
+      </Box>
+      <Footer toggleShowSettings={toggleShow} />
     </div>
   )
 }

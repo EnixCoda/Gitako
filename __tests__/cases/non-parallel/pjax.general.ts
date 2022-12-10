@@ -4,8 +4,10 @@ import {
   patientClick,
   selectFileTreeItem,
   sleep,
-  waitForLegacyPJAXRedirect
+  waitForRedirect,
 } from '../../utils'
+
+jest.retryTimes(3)
 
 describe(`in Gitako project page`, () => {
   beforeAll(() => page.goto('https://github.com/EnixCoda/Gitako/tree/develop/src'))
@@ -15,14 +17,14 @@ describe(`in Gitako project page`, () => {
 
     await expandFloatModeSidebar()
     await patientClick(selectFileTreeItem('src/analytics.ts'))
-    await waitForLegacyPJAXRedirect()
+    await waitForRedirect()
     await collapseFloatModeSidebar()
 
     await page.click('a[data-selected-links^="repo_issues "]')
-    await waitForLegacyPJAXRedirect()
+    await waitForRedirect()
 
     await page.click('a[data-selected-links^="repo_pulls "]')
-    await waitForLegacyPJAXRedirect()
+    await waitForRedirect()
 
     page.goBack()
     await sleep(1000)

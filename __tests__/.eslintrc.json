@@ -1,0 +1,12 @@
+{
+  "env": {
+    "jest": true
+  },
+  "overrides": [
+    {
+      "files": ["*.ts"],
+      "excludedFiles": ["*.d.ts"],
+      "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "prettier"]
+    }
+  ]
+}

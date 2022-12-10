@@ -1,4 +1,4 @@
-import { Icon } from 'components/Icon'
+import { HourglassIcon } from '@primer/octicons-react'
 import * as React from 'react'
 
 type Props = {
@@ -8,7 +8,7 @@ export function LoadingIndicator({ text }: Props) {
   return (
     <div className={'loading-indicator-container'}>
       <div className={'loading-indicator'}>
-        <Icon className={'loading-indicator-icon'} type={'hourglass'} />
+        <HourglassIcon className={'loading-indicator-icon'} />
         {text}
       </div>
     </div>

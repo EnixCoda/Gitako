@@ -1,19 +1,34 @@
+import { PropsWithChildren } from 'common'
 import { useConfigs } from 'containers/ConfigsContext'
 import { platform } from 'platforms'
 import * as React from 'react'
 import { useEffectOnSerializableUpdates } from 'utils/hooks/useEffectOnSerializableUpdates'
+import { useAfterRedirect } from 'utils/hooks/useFastRedirect'
 import { useLoadedContext } from 'utils/hooks/useLoadedContext'
-import { useOnPJAXDone } from 'utils/hooks/usePJAX'
 import { useStateIO } from 'utils/hooks/useStateIO'
 import { useCatchNetworkError } from '../utils/hooks/useCatchNetworkError'
 import { SideBarStateContext } from './SideBarState'
+import { useInspector } from './StateInspector'
 
 export const RepoContext = React.createContext<MetaData | null>(null)
 
-export function RepoContextWrapper({ children }: React.PropsWithChildren<{}>) {
+export function RepoContextWrapper({ children }: PropsWithChildren) {
   const partialMetaData = usePartialMetaData()
   const defaultBranch = useDefaultBranch(partialMetaData)
   const metaData = useMetaData(partialMetaData, defaultBranch)
+  useInspector(
+    'RepoContext',
+    React.useMemo(
+      () => ({
+        partialMetaData,
+        defaultBranch,
+        metaData,
+      }),
+      [partialMetaData, defaultBranch, metaData],
+    ),
+  )
+  const state = useLoadedContext(SideBarStateContext).value
+  if (state === 'disabled') return null
 
   return <RepoContext.Provider value={metaData}>{children}</RepoContext.Provider>
 }
@@ -27,9 +42,9 @@ function resolvePartialMetaData() {
       repoName,
       type: type === 'pull' ? type : undefined,
     }
-  } else {
-    return partialMetaData
   }
+
+  return null
 }
 
 function usePartialMetaData(): PartialMetaData | null {
@@ -38,11 +53,14 @@ function usePartialMetaData(): PartialMetaData | null {
   // sync along URL and DOM
   const $partialMetaData = useStateIO(isGettingAccessToken ? null : resolvePartialMetaData)
   const $committedPartialMetaData = useStateIO($partialMetaData.value)
-  const setPartialMetaData = () => $partialMetaData.onChange(resolvePartialMetaData())
+  const setPartialMetaData = React.useCallback(
+    () => $partialMetaData.onChange(resolvePartialMetaData()),
+    [], // eslint-disable-line react-hooks/exhaustive-deps
+  )
   React.useEffect(() => {
     if (!isGettingAccessToken) setPartialMetaData()
-  }, [isGettingAccessToken])
-  useOnPJAXDone(setPartialMetaData)
+  }, [isGettingAccessToken, setPartialMetaData])
+  useAfterRedirect(setPartialMetaData)
   useEffectOnSerializableUpdates(
     $partialMetaData.value,
     JSON.stringify,
@@ -52,14 +70,16 @@ function usePartialMetaData(): PartialMetaData | null {
     if (!$partialMetaData.value && !isGettingAccessToken) {
       $state.onChange('disabled')
     }
-  }, [$partialMetaData.value])
+  }, [$partialMetaData.value]) // eslint-disable-line react-hooks/exhaustive-deps
   return $committedPartialMetaData.value
 }
 
 function useBranchName(): MetaData['branchName'] | null {
   // sync along URL and DOM
   const $branchName = useStateIO(() => platform.resolvePartialMetaData()?.branchName || null)
-  useOnPJAXDone(() => $branchName.onChange(platform.resolvePartialMetaData()?.branchName || null))
+  useAfterRedirect(() =>
+    $branchName.onChange(platform.resolvePartialMetaData()?.branchName || null),
+  )
   return $branchName.value
 }
 
@@ -72,11 +92,13 @@ function useDefaultBranch(partialMetaData: PartialMetaData | null) {
     catchNetworkError(async () => {
       if (!partialMetaData) return
       $state.onChange('meta-loading')
+      const { userName, repoName } = partialMetaData
+      if (!userName || !repoName) return
 
-      const defaultBranch = await platform.getDefaultBranchName(partialMetaData, accessToken)
+      const defaultBranch = await platform.getDefaultBranchName({ userName, repoName }, accessToken)
       $defaultBranch.onChange(defaultBranch)
     })
-  }, [partialMetaData, accessToken])
+  }, [partialMetaData, accessToken]) // eslint-disable-line react-hooks/exhaustive-deps
   return $defaultBranch.value
 }
 
@@ -91,6 +113,8 @@ function useMetaData(
   React.useEffect(() => {
     if (partialMetaData && defaultBranchName && theBranch) {
       const { userName, repoName } = partialMetaData
+      if (!userName || !repoName) return
+
       const safeMetaData: MetaData = {
         userName,
         repoName,
@@ -102,6 +126,6 @@ function useMetaData(
     } else {
       $metaData.onChange(null)
     }
-  }, [partialMetaData, defaultBranchName, theBranch])
+  }, [partialMetaData, defaultBranchName, theBranch]) // eslint-disable-line react-hooks/exhaustive-deps
   return $metaData.value
 }

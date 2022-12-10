@@ -1,12 +1,14 @@
 import { raiseError } from 'analytics'
 import { errors } from 'platforms'
+import { is } from 'utils/is'
+import { gitakoServiceHost } from 'utils/networkService'
 
-function isEmptyProject(content: any /* safe any */) {
-  return content?.['message'] === 'Git Repository is empty.'
+function isEmptyProject(content: JSONValue) {
+  return is.JSON.object(content) && content?.['message'] === 'Git Repository is empty.'
 }
 
-function isBlockedProject(content: any /* safe any */) {
-  return content?.['message'] === 'Repository access blocked'
+function isBlockedProject(content: JSONValue) {
+  return is.JSON.object(content) && content?.['message'] === 'Repository access blocked'
 }
 
 async function request(
@@ -89,8 +91,8 @@ export async function getBlobData(
 }
 
 export async function OAuth(code: string): Promise<string | null> {
-  const endpoint = 'https://gitako.now.sh/oauth/gitee?'
-  const res = await fetch(endpoint + new URLSearchParams({ code }).toString(), {
+  const endpoint = `https://${gitakoServiceHost}/oauth/gitee?${new URLSearchParams({ code })}`
+  const res = await fetch(endpoint, {
     method: 'post',
   })
 

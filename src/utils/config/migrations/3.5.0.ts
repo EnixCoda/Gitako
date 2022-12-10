@@ -9,14 +9,14 @@ export const migration: Migration = {
       copyFileButton: boolean
     }
     type ConfigAfterMigrate = {
-      copyFileButton: boolean
+      copyFileButton: false
     }
 
     await onConfigOutdated(version, async configs => {
       const key = 'platform_github.com'
       const config = configs[key]
       if (typeof config === 'object' && config !== null && 'copyFileButton' in config) {
-        const configBeforeMigrate: ConfigBeforeMigrate = config
+        const configBeforeMigrate = config as ConfigBeforeMigrate
         const { copyFileButton, ...rest } = configBeforeMigrate
         if (copyFileButton) {
           const configAfterMigrate: ConfigAfterMigrate = {

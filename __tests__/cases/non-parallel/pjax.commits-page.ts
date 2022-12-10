@@ -1,4 +1,6 @@
-import { expectToFind, expectToNotFind, sleep, waitForLegacyPJAXRedirect } from '../../utils'
+import { expectToFind, expectToNotFind, sleep, waitForRedirect } from '../../utils'
+
+jest.retryTimes(3)
 
 describe(`in Gitako project page`, () => {
   beforeAll(() => page.goto('https://github.com/EnixCoda/Gitako/commits/develop'))
@@ -6,11 +8,11 @@ describe(`in Gitako project page`, () => {
   it('should not break go back in history', async () => {
     for (let i = 0; i < 3; i++) {
       const commitLinks = await page.$$(
-        `#js-repo-pjax-container .TimelineItem-body ol li > div:nth-child(1) a[href*="/commit/"]`,
+        `main .TimelineItem-body ol li > div:nth-child(1) a[href*="/commit/"]`,
       )
       if (commitLinks.length < 2) throw new Error(`No enough commits`)
       commitLinks[i].click()
-      await waitForLegacyPJAXRedirect()
+      await waitForRedirect()
       await expectToFind('div.commit')
       await sleep(1000)
 

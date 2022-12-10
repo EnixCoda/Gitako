@@ -25,13 +25,13 @@ export function Clippy({ codeSnippetElement }: Props) {
   React.useEffect(() => {
     const element = elementRef.current
     if (element) {
-      function onClippyClick() {
+      const onClippyClick = () =>
         setState(copyElementContent(codeSnippetElement) ? 'success' : 'fail')
-      }
+
       element.addEventListener('click', onClippyClick)
       return () => element.removeEventListener('click', onClippyClick)
     }
-  }, [])
+  }, [codeSnippetElement])
 
   return (
     <div className={className}>

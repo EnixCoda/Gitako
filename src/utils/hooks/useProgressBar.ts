@@ -11,7 +11,6 @@ const progressBar = {
   },
 }
 
-// use native progress bar on GitHub
 export function useProgressBar() {
   React.useEffect(() => {
     NProgress.configure({ showSpinner: false })

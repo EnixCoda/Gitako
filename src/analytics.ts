@@ -1,12 +1,10 @@
 import * as Sentry from '@sentry/browser'
-import { Middleware } from 'driver/connect.js'
-import { IN_PRODUCTION_MODE, VERSION } from 'env'
+import { IN_PRODUCTION_MODE, SENTRY, VERSION } from 'env'
 import { platform } from 'platforms'
+import { atomicAsyncFunction, forOf } from 'utils/general'
+import { storageHelper, storageKeys } from 'utils/storageHelper'
 
-const PUBLIC_KEY = 'd22ec5c9cc874539a51c78388c12e3b0'
-const PROJECT_ID = '1406497'
-
-const MAX_REPORT_COUNT = 10 // protect for error leaking
+const MAX_REPORT_COUNT = 10 // prevent error overflow
 let countReportedError = 0
 
 const errorSet = new Set<string>([
@@ -22,59 +20,89 @@ const disabledIntegrations: string[] = [
   'GlobalHandlers',
   'CaptureConsole',
 ]
-const sentryOptions: Sentry.BrowserOptions = {
-  dsn: `https://${PUBLIC_KEY}@sentry.io/${PROJECT_ID}`,
-  release: VERSION,
-  environment: IN_PRODUCTION_MODE ? 'production' : 'development',
-  // Not safe to activate all integrations in non-Chrome environments where Gitako may not run in top context
-  // https://docs.sentry.io/platforms/javascript/#sdk-integrations
-  defaultIntegrations: IN_PRODUCTION_MODE ? undefined : false,
-  integrations: integrations =>
-    integrations.filter(({ name }) => !disabledIntegrations.includes(name)),
-  beforeSend(event) {
-    const message = event.exception?.values?.[0].value || event.message
-    if (message) {
-      if (errorSet.has(message)) return null
-      errorSet.add(message) // prevent reporting duplicated error
-    }
-    if (countReportedError < MAX_REPORT_COUNT) {
-      ++countReportedError
-      return event
-    }
-    return null
-  },
-  beforeBreadcrumb(breadcrumb, hint) {
-    if (breadcrumb.category === 'ui.click') {
-      const ariaLabel = hint?.event?.target?.ariaLabel
-      if (ariaLabel) {
-        breadcrumb.message = ariaLabel
-      }
-    }
-    return breadcrumb
-  },
-  autoSessionTracking: false, // this avoids the request when calling `init`
-}
-Sentry.init(sentryOptions)
 
-export const withErrorLog: Middleware = function withErrorLog(method, args) {
-  return [
-    async function () {
-      try {
-        await method.apply(null, arguments as any)
-      } catch (error) {
-        raiseError(error)
+let initiated = false
+function init() {
+  if (initiated) return
+  initiated = true
+
+  const { PUBLIC_KEY, PROJECT_ID } = SENTRY
+  if (!PUBLIC_KEY || !PROJECT_ID) return
+
+  const sentryOptions: Sentry.BrowserOptions = {
+    dsn: `https://${PUBLIC_KEY}@sentry.io/${PROJECT_ID}`,
+    release: VERSION,
+    environment: IN_PRODUCTION_MODE ? 'production' : 'development',
+    // Not safe to activate all integrations in non-Chrome environments where Gitako may not run in top context
+    // https://docs.sentry.io/platforms/javascript/#sdk-integrations
+    defaultIntegrations: IN_PRODUCTION_MODE ? undefined : false,
+    integrations: integrations =>
+      integrations.filter(({ name }) => !disabledIntegrations.includes(name)),
+    beforeSend(event) {
+      const message = event.exception?.values?.[0].value || event.message
+      if (message) {
+        if (errorSet.has(message)) return null
+        errorSet.add(message) // prevent reporting duplicated error
       }
-    } as any, // TO FIX: not sure how to fix this yet
-    args,
-  ]
+      if (countReportedError < MAX_REPORT_COUNT) {
+        ++countReportedError
+        return event
+      }
+      return null
+    },
+    beforeBreadcrumb(breadcrumb, hint) {
+      if (breadcrumb.category === 'ui.click') {
+        const ariaLabel = hint?.event?.target?.ariaLabel
+        if (ariaLabel) {
+          breadcrumb.message = ariaLabel
+        }
+      }
+      return breadcrumb
+    },
+    autoSessionTracking: false, // this avoids the request when calling `init`
+  }
+  Sentry.init(sentryOptions)
 }
 
-export function raiseError(
+// 1. Only cache errors for current version, so that future errors can still be exposed
+//   - Run migration to clean on every update
+
+// 2. Only cache the top 2 levels of stack, e.g.
+// ```
+// Error: cannot get current branch
+//    at Module.getCurrentBranch (chrome-extension://______id______/index.js:1:1)"
+// ```
+// So that different initial callees would not result in multiple records
+const MAX_STACK_LEVEL = 2
+const hasTheErrorBeenReported = atomicAsyncFunction(async function hasTheErrorBeenReported(
+  error: Error,
+) {
+  const message = error.stack?.split('\n').slice(0, MAX_STACK_LEVEL).join('\n')
+  if (!message) return true // ignore errors that has no stack
+
+  type ErrorCache = string
+  const cache: ErrorCache[] =
+    ((await storageHelper.get(storageKeys.raiseErrorCache))?.[
+      storageKeys.raiseErrorCache
+    ] as string[]) || []
+  const has = cache.includes(message)
+
+  if (!has) {
+    cache.push(message)
+    await storageHelper.set({ [storageKeys.raiseErrorCache]: cache })
+  }
+
+  return has
+})
+
+export async function raiseError(
   error: Error,
   extra?: {
-    [key: string]: any
+    [key: string]: any // eslint-disable-line @typescript-eslint/no-explicit-any
   },
 ) {
+  if (await hasTheErrorBeenReported(error)) return
+
   if (!IN_PRODUCTION_MODE || platform.isEnterprise()) {
     // ignore errors from enterprise to get less noise on Sentry
     console.error(error)
@@ -82,11 +110,10 @@ export function raiseError(
     return
   }
 
+  init()
   Sentry.withScope(scope => {
-    if (extra) {
-      Object.keys(extra).forEach(key => {
-        scope.setExtra(key, extra[key])
-      })
+    if (typeof extra === 'object' && extra) {
+      forOf(extra, (key, value) => scope.setExtra(`${key}`, value))
     }
     Sentry.captureException(error)
   })

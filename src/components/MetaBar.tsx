@@ -1,45 +1,49 @@
-import { BranchName, Breadcrumb, Flex, Text } from '@primer/components'
 import { GitBranchIcon } from '@primer/octicons-react'
+import { Box, BranchName, Breadcrumbs, Text } from '@primer/react'
+import { RepoContext } from 'containers/RepoContext'
 import { platform } from 'platforms'
 import * as React from 'react'
-import { createAnchorClickHandler } from "utils/createAnchorClickHandler"
+import { createAnchorClickHandler } from 'utils/createAnchorClickHandler'
 
-type Props = {
-  metaData: MetaData
-}
+export function MetaBar() {
+  const metaData = React.useContext(RepoContext)
+  if (!metaData) return null
 
-export function MetaBar({ metaData }: Props) {
   const { userName, repoName, branchName } = metaData
   const { repoUrl, userUrl, branchUrl } = platform.resolveUrlFromMetaData(metaData)
   return (
     <>
-      <Breadcrumb className={'user-and-repo'}>
-        <Breadcrumb.Item className={'user-name'} href={userUrl}>
+      <Breadcrumbs className={'user-and-repo'}>
+        <Breadcrumbs.Item className={'user-name'} href={userUrl}>
           {userName}
-        </Breadcrumb.Item>
-        <Breadcrumb.Item
+        </Breadcrumbs.Item>
+        <Breadcrumbs.Item
           className={'repo-name'}
           href={repoUrl}
           onClick={createAnchorClickHandler(repoUrl)}
-          {...platform.delegatePJAXProps?.()}
+          {...platform.delegateFastRedirectAnchorProps?.()}
         >
           <Text fontWeight="bolder">{repoName}</Text>
-        </Breadcrumb.Item>
-      </Breadcrumb>
-      <Flex paddingTop={1} flexWrap="nowrap" alignItems="flex-start">
+        </Breadcrumbs.Item>
+      </Breadcrumbs>
+      <Box display="flex" paddingTop={1} flexWrap="nowrap" alignItems="flex-start">
         <div className={'octicon-wrapper'}>
           <GitBranchIcon size="small" />
         </div>
         <BranchName
           href={branchUrl}
           as="a"
-          className={'branch-name'}
           onClick={createAnchorClickHandler(branchUrl)}
-          {...platform.delegatePJAXProps?.()}
+          sx={{
+            color: 'fg.muted',
+            wordBreak: 'normal',
+            overflowWrap: 'anywhere',
+          }}
+          {...platform.delegateFastRedirectAnchorProps?.()}
         >
           {branchName || '...'}
         </BranchName>
-      </Flex>
+      </Box>
     </>
   )
 }

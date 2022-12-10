@@ -1,12 +1,17 @@
+type AnyArray = any[] // eslint-disable-line @typescript-eslint/no-explicit-any
+
 type MetaData = {
   userName: string
   repoName: string
   defaultBranchName: string
   branchName: string
-  type?: EnumString<'tree' | 'blob' | 'pull'>
+  type?: EnumString<'tree' | 'blob' | 'pull' | 'commit'>
 }
 
-type PartialMetaData = Omit<MakeOptional<MetaData, 'branchName'>, 'defaultBranchName'>
+type PartialMetaData = Omit<
+  MakeOptional<MetaData, 'repoName' | 'userName' | 'branchName'>,
+  'defaultBranchName'
+>
 
 type TreeNode = {
   name: string
@@ -17,8 +22,8 @@ type TreeNode = {
   sha?: string
   accessDenied?: boolean
   comments?: {
-    active: number,
-    resolved: number,
+    active: number
+    resolved: number
   }
   diff?: {
     status: 'modified' | 'added' | 'removed' | 'renamed'
@@ -42,4 +47,13 @@ type MakeOptional<Original, keys extends keyof Original> = Override<
 type VoidFN<T> = (payload: T) => void
 
 type Async<T> = T | Promise<T>
+
+// eslint-disable-next-line @typescript-eslint/ban-types
 type EnumString<S extends string> = S | (string & {})
+
+type JSONPrimitive = string | number | boolean | null | undefined
+type JSONObject = {
+  [key: string]: JSONValue
+}
+type JSONArray = JSONValue[]
+type JSONValue = JSONPrimitive | JSONObject | JSONArray

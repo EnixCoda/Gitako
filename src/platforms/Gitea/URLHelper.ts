@@ -1,15 +1,15 @@
 import { raiseError } from 'analytics'
+import { sanitizedLocation } from 'utils/URLHelper'
 
 export function parse(): Partial<MetaData> & { path: string[] } {
-  const { pathname } = window.location
-  let [
+  const [
     ,
     // ignore content before the first '/'
     userName,
     repoName,
     type,
     ...path // should be [...branchName.split('/'), ...filePath.split('/')]
-  ] = unescape(decodeURIComponent(pathname)).split('/')
+  ] = unescape(decodeURIComponent(sanitizedLocation.pathname)).split('/')
   return {
     userName,
     repoName,

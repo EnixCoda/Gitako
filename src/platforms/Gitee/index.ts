@@ -1,9 +1,11 @@
 import { GITEE_OAUTH } from 'env'
+import { Base64 } from 'js-base64'
 import { platform } from 'platforms'
 import * as React from 'react'
 import { resolveGitModules } from 'utils/gitSubmodule'
-import { useOnPJAXDone } from 'utils/hooks/usePJAX'
+import { useAfterRedirect } from 'utils/hooks/useFastRedirect'
 import { useProgressBar } from 'utils/hooks/useProgressBar'
+import { gitakoServiceHost } from 'utils/networkService'
 import { sortFoldersToFront } from 'utils/treeParser'
 import * as API from './API'
 import * as DOMHelper from './DOMHelper'
@@ -67,7 +69,7 @@ function getUrlForRedirect(
   type = 'blob',
   path = '',
 ) {
-  return `https://gitee.com/${userName}/${repoName}/${type}/${branchName}/${path}`
+  return `${window.location.origin}/${userName}/${repoName}/${type}/${branchName}/${path}`
 }
 
 export const Gitee: Platform = {
@@ -104,8 +106,8 @@ export const Gitee: Platform = {
     return data.default_branch
   },
   resolveUrlFromMetaData({ userName, repoName, branchName }) {
-    const repoUrl = `https://${window.location.host}/${userName}/${repoName}`
-    const userUrl = `https://${window.location.host}/${userName}`
+    const repoUrl = `${window.location.origin}/${userName}/${repoName}`
+    const userUrl = `${window.location.origin}/${userName}`
     const branchUrl = `${repoUrl}/tree/${branchName}`
     return {
       repoUrl,
@@ -155,7 +157,7 @@ export const Gitee: Platform = {
 
     return { root }
   },
-  shouldShow() {
+  shouldExpandSideBar() {
     return DOMHelper.isInCodePage()
   },
   getCurrentPath(branchName) {
@@ -166,11 +168,11 @@ export const Gitee: Platform = {
       client_id: GITEE_OAUTH.clientId,
       scope: 'projects',
       response_type: 'code',
-      redirect_uri:
-        'https://gitako.now.sh/redirect/?' +
-        new URLSearchParams({ redirect: window.location.href }).toString(),
+      redirect_uri: `https://${gitakoServiceHost}/redirect/?${new URLSearchParams({
+        redirect: window.location.href,
+      })}`,
     })
-    return `https://gitee.com/oauth/authorize?` + params.toString()
+    return `https://gitee.com/oauth/authorize?${params}`
   },
   setOAuth(code) {
     return API.OAuth(code)
@@ -183,11 +185,10 @@ export const Gitee: Platform = {
 export function useGiteeAttachCopySnippetButton(copySnippetButton: boolean) {
   const attachCopySnippetButton = React.useCallback(
     function attachCopySnippetButton() {
-      if (platform !== Gitee) return
-      if (copySnippetButton) return DOMHelper.attachCopySnippet() || undefined // for the sake of react effect
+      if (platform === Gitee && copySnippetButton) DOMHelper.attachCopySnippet()
     },
     [copySnippetButton],
   )
-  React.useEffect(attachCopySnippetButton, [copySnippetButton])
-  useOnPJAXDone(attachCopySnippetButton)
+  React.useEffect(attachCopySnippetButton, [attachCopySnippetButton])
+  useAfterRedirect(attachCopySnippetButton)
 }

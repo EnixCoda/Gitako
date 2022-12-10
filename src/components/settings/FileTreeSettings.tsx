@@ -1,11 +1,10 @@
 import { wikiLinks } from 'components/settings/SettingsBar'
-import { SimpleToggleField } from 'components/SimpleToggleField'
-import { useConfigs } from 'containers/ConfigsContext'
+import { SimpleConfigFieldCheckbox } from 'components/settings/SimpleConfigField/Checkbox'
 import * as React from 'react'
 import { Config } from 'utils/config/helper'
-import { Option, SelectInput } from '../SelectInput'
-import { Field } from './Field'
+import { Option } from '../Inputs/SelectInput'
 import { SettingsSection } from './SettingsSection'
+import { SimpleConfigFieldSelect } from './SimpleConfigField/SelectInput'
 
 const iconOptions: Option<Config['icons']>[] = [
   {
@@ -38,37 +37,24 @@ const recursiveToggleFolderOptions: Option<Config['recursiveToggleFolder']>[] = 
   },
 ]
 
-type Props = {}
-
-export function FileTreeSettings(props: React.PropsWithChildren<Props>) {
-  const configContext = useConfigs()
+export function FileTreeSettings() {
   return (
     <SettingsSection title={'File Tree'}>
-      <Field id="recursive-toggle-folder" title="Toggle folders recursively while holding">
-        <SelectInput
-          id="recursive-toggle-folder"
-          options={recursiveToggleFolderOptions}
-          onChange={v => {
-            configContext.onChange({
-              recursiveToggleFolder: v,
-            })
-          }}
-          value={configContext.value.recursiveToggleFolder}
-        />
-      </Field>
-      <Field title="Icons" id="file-tree-icons">
-        <SelectInput<Config['icons']>
-          id="file-tree-icons"
-          options={iconOptions}
-          onChange={v => {
-            configContext.onChange({
-              icons: v,
-            })
-          }}
-          value={configContext.value.icons}
-        />
-      </Field>
-      <SimpleToggleField
+      <SimpleConfigFieldSelect
+        field={{
+          key: 'recursiveToggleFolder',
+          label: 'Toggle folders recursively while holding',
+        }}
+        options={recursiveToggleFolderOptions}
+      />
+      <SimpleConfigFieldSelect
+        field={{
+          key: 'icons',
+          label: 'Icons',
+        }}
+        options={iconOptions}
+      />
+      <SimpleConfigFieldCheckbox
         field={{
           key: 'compressSingletonFolder',
           label: 'Compress singleton folder',
@@ -76,28 +62,28 @@ export function FileTreeSettings(props: React.PropsWithChildren<Props>) {
           tooltip: 'Merge folders and their only child folder to make UI more compact.',
         }}
       />
-      <SimpleToggleField
+      <SimpleConfigFieldCheckbox
         field={{
           key: 'restoreExpandedFolders',
           label: 'Restore expanded folders',
           tooltip: 'Folders will be expanded again when clear search input',
         }}
       />
-      <SimpleToggleField
+      <SimpleConfigFieldCheckbox
         field={{
           key: 'commentToggle',
           label: 'Show PR file comments',
           tooltip: 'Show number of comments next to file names in Pull Requests.',
         }}
       />
-      <SimpleToggleField
+      <SimpleConfigFieldCheckbox
         field={{
           key: 'showDiffInText',
           label: 'Show PR file diff in text',
-          tooltip: 'Glance diff in a more precise way.',
+          tooltip: 'Glance diff stat in a more precise way',
         }}
       />
-      <SimpleToggleField
+      <SimpleConfigFieldCheckbox
         field={{
           key: 'compactFileTree',
           label: 'Compact file tree layout',

@@ -18,13 +18,10 @@ export const fuzzyMode: ModeShape = {
     }
   },
   renderNodeLabelText(node, searchKey) {
-    const { name, path } = node
+    const { name } = node
+    const path = hasUpperCase(searchKey) ? node.path : node.path.toLowerCase()
 
-    const indexes = fuzzyMatchIndexes(
-      searchKey.toLowerCase(),
-      path.toLowerCase(),
-      path.length - name.length,
-    )
+    const indexes = fuzzyMatchIndexes(searchKey, path, path.length - name.length)
     const chunks = name.split('/')
     let progress = 0
     return chunks.map((chunk, index, chunks) => {
@@ -57,7 +54,7 @@ function fuzzyMatch(input: string, sample: string) {
   }
 }
 
-function fuzzyMatchIndexes(input: string, sample: string, shift: number = 0) {
+function fuzzyMatchIndexes(input: string, sample: string, shift = 0) {
   const indexes: number[] = []
   let i = 0,
     j = 0

@@ -1,3 +1,4 @@
+import { Base64 } from 'js-base64'
 import { resolveGitModules } from 'utils/gitSubmodule'
 import { useProgressBar } from 'utils/hooks/useProgressBar'
 import { sortFoldersToFront } from 'utils/treeParser'
@@ -60,15 +61,13 @@ function getUrlForRedirect(
   userName: string,
   repoName: string,
   branchName: string,
-  type = 'blob',
+  type = 'blob', // eslint-disable-line @typescript-eslint/no-unused-vars
   path = '',
 ) {
   // Modern browsers have great support for handling unsafe URL,
   // It may be possible to sanitize path with
   // `path => path.includes('#') ? path.replace(/#/g, '%23') : '...'
-  return `${window.location.protocol}//${
-    window.location.host
-  }/${userName}/${repoName}/src/branch/${branchName}/${path
+  return `${window.location.origin}/${userName}/${repoName}/src/branch/${branchName}/${path
     .split('/')
     .map(encodeURIComponent)
     .join('/')}`
@@ -107,8 +106,8 @@ export const Gitea: Platform = {
     return data.default_branch
   },
   resolveUrlFromMetaData({ userName, repoName, branchName }) {
-    const repoUrl = `${window.location.protocol}//${window.location.host}/${userName}/${repoName}`
-    const userUrl = `${window.location.protocol}//${window.location.host}/${userName}`
+    const repoUrl = `${window.location.origin}/${userName}/${repoName}`
+    const userUrl = `${window.location.origin}/${userName}`
     const branchUrl = `${repoUrl}/src/branch/${branchName}`
     return {
       repoUrl,
@@ -158,7 +157,7 @@ export const Gitea: Platform = {
 
     return { root }
   },
-  shouldShow() {
+  shouldExpandSideBar() {
     return DOMHelper.isInCodePage()
   },
   getCurrentPath(branchName) {
@@ -168,7 +167,7 @@ export const Gitea: Platform = {
     return API.OAuth(code)
   },
   getOAuthLink() {
-    return `${window.location.protocol}//${window.location.host}/api/v1/user/applications/oauth2`
+    return `${window.location.origin}/api/v1/user/applications/oauth2`
   },
   usePlatformHooks() {
     useProgressBar()
