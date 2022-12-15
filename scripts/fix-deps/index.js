@@ -13,10 +13,6 @@ function modify(source = '', pairs = []) {
     } else {
       throw new Error(`Original string not found: ${JSON.stringify(original)}`)
     }
-
-    if (source.includes(original)) {
-      throw new Error(`More than one original string found`, JSON.stringify(original))
-    }
   }
 
   return source
@@ -24,15 +20,26 @@ function modify(source = '', pairs = []) {
 
 const nodeModulesPath = path.resolve(__dirname, '../../', `node_modules`)
 
+const MODIFIED_MARK = `\n/* This file has been modified */\n`
+
 exports.fixDep = async function fixDep(targetFilePath, pairs) {
   const filePath = path.resolve(nodeModulesPath, targetFilePath)
   const source = await fs.readFile(filePath, 'utf-8')
-  const modified = modify(source, pairs)
+  if (source.includes(MODIFIED_MARK)) {
+    console.log(`${filePath} has been fixed, skipping.`)
+    return
+  }
+  console.log(`Fixing ${targetFilePath}`)
+  const modified = modify(source, pairs) + MODIFIED_MARK
   await fs.writeFile(filePath, modified, 'utf-8')
 }
 
 async function fixDeps() {
-  for (const fix of [require('./pjax-api').fix, require('./styled-components').fix]) {
+  for (const fix of [
+    require('./pjax-api').fix,
+    require('./styled-components').fix,
+    require('./@primer__behaviors').fix,
+  ]) {
     await fix()
   }
 }
