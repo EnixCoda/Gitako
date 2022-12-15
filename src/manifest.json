@@ -6,14 +6,9 @@
     "128": "icons/Gitako-128.png",
     "256": "icons/Gitako-256.png"
   },
-  "permissions": ["storage", "contextMenus", "activeTab"],
-  "host_permissions": [
-    "*://*.github.com/*",
-    "*://gitako.enix.one/*",
-    "*://*.sentry.io/*",
-    "https://*/*",
-    "http://*/*"
-  ],
+  "permissions": ["scripting", "storage", "contextMenus", "activeTab"],
+  "host_permissions": ["*://*.github.com/*", "*://gitako.enix.one/*", "*://*.sentry.io/*"],
+  "optional_host_permissions": ["*://*/*"],
   "web_accessible_resources": [
     {
       "resources": ["icons/vscode/*"],
@@ -25,12 +20,10 @@
     }
   ],
   "background": {
-    "scripts": ["background.js"]
+    "service_worker": "background.js"
   },
   "action": {
-    "browser": {
-      "default_icon": "icons/Gitako.png"
-    }
+    "default_icon": "icons/Gitako.png"
   },
   "content_scripts": [
     {

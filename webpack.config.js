@@ -120,7 +120,8 @@ module.exports = {
         test: /\.js$/,
         loader: 'babel-loader',
         // Transpile as least files under node_modules
-        include: /node_modules\/(webext-content-scripts|webext-detect-page)\/.*\.js$/,
+        include:
+          /node_modules\/(webext-content-scripts|webext-detect-page|webext-dynamic-content-scripts)\/.*\.js$/,
         options: {
           cacheDirectory: true,
         },
