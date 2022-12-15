@@ -24,15 +24,25 @@ function modify(source = '', pairs = []) {
 
 const nodeModulesPath = path.resolve(__dirname, '../../', `node_modules`)
 
+const MODIFIED_MARK = `\n/* This file has been modified */\n`
+
 exports.fixDep = async function fixDep(targetFilePath, pairs) {
   const filePath = path.resolve(nodeModulesPath, targetFilePath)
   const source = await fs.readFile(filePath, 'utf-8')
-  const modified = modify(source, pairs)
+  if (source.includes(MODIFIED_MARK)) {
+    console.log(`${filePath} has been fixed, skipping.`)
+    return
+  }
+  const modified = modify(source, pairs) + MODIFIED_MARK
   await fs.writeFile(filePath, modified, 'utf-8')
 }
 
 async function fixDeps() {
-  for (const fix of [require('./pjax-api').fix, require('./styled-components').fix]) {
+  for (const fix of [
+    require('./pjax-api').fix,
+    require('./styled-components').fix,
+    require('./webext-domain-permission-toggle').fix,
+  ]) {
     await fix()
   }
 }
