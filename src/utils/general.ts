@@ -14,16 +14,14 @@ export function subIO<T, K extends keyof T>(io: IO<T>, field: K): IO<T[K]> {
   }
 }
 
-export function pick<T>(source: T, keys: string[]): Partial<T> {
-  if (keys && typeof keys === 'object') {
-    return (Array.isArray(keys) ? keys : Object.keys(keys)).reduce((copy, key) => {
-      if (key in source) {
-        copy[key as keyof T] = source[key as keyof T]
-      }
-      return copy
-    }, {} as Partial<T>)
-  }
-  return {} as Partial<T>
+export function pick<T extends Record<string, unknown>, Key extends keyof T>(
+  source: T,
+  keys: Key[],
+): Partial<T> {
+  return keys.reduce((copy, key) => {
+    if (key in source) copy[key] = source[key]
+    return copy
+  }, {} as Partial<T>)
 }
 
 export enum OperatingSystems {
@@ -218,7 +216,10 @@ export function resolveDiffGraphMeta(additions: number, deletions: number, chang
   return { g, r, w }
 }
 
-export function forOf<T, R>(target: T, callback: <K extends keyof T>(key: K, value: T[K]) => R) {
+export function forOf<T extends Record<string, unknown>, R>(
+  target: T,
+  callback: <K extends keyof T>(key: K, value: T[K]) => R,
+) {
   for (const key of Object.keys(target)) {
     const $key = key as keyof typeof target
     const r = callback($key, target[$key])
