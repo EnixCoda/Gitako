@@ -20,7 +20,7 @@ async function get<T extends JSONObject>(mapping: string | string[] | null = nul
   return (await localStorage.get(mapping || undefined)) as T | undefined
 }
 
-function set<T>(value: T): Promise<void> | void {
+function set<T extends Record<string, unknown>>(value: T): Promise<void> | void {
   return localStorage.set(value)
 }
 

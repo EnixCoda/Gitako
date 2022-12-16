@@ -1,7 +1,7 @@
 import { IN_PRODUCTION_MODE } from 'env'
 import * as React from 'react'
 
-export function useUpdateReason<P>(props: P) {
+export function useUpdateReason<P extends Record<string, unknown>>(props: P) {
   const lastPropsRef = React.useRef<P>(props)
   React.useEffect(() => {
     if (IN_PRODUCTION_MODE) return
