@@ -1,11 +1,11 @@
 import { IconProps } from '@primer/octicons-react'
 import { Box, merge, SxProp, useTheme } from '@primer/react'
-import { getBaseStyles, getSizeStyles, getVariantStyles } from '@primer/react/lib/Button/styles'
+import { getBaseStyles, getSizeStyles, getVariantStyles } from '@primer/react/lib-esm/Button/styles'
 import {
   IconButtonProps as PrimerIconButtonProps,
   StyledButton,
-} from '@primer/react/lib/Button/types'
-import React from 'react'
+} from '@primer/react/lib-esm/Button/types'
+import React, { forwardRef } from 'react'
 import { is } from 'utils/is'
 
 export type IconButtonProps = PrimerIconButtonProps & {
@@ -13,10 +13,13 @@ export type IconButtonProps = PrimerIconButtonProps & {
   iconColor?: string
 }
 
-// Modified version of @primer/react/lib/Button/Button.tsx
+// Modified version of @primer/react/lib-esm/Button/Button.tsx
 // Added better support of colors & size
 
-export function IconButton(props: IconButtonProps) {
+export const IconButton = forwardRef(function IconButton(
+  props: IconButtonProps,
+  ref: React.ForwardedRef<HTMLButtonElement>,
+) {
   const {
     variant = 'default',
     size = 'medium',
@@ -40,10 +43,10 @@ export function IconButton(props: IconButtonProps) {
     ].filter(is.not.undefined),
   )
   return (
-    <StyledButton sx={sxStyles} {...rest}>
+    <StyledButton sx={sxStyles} ref={ref} {...rest}>
       <Box as="span" sx={{ display: 'inline-block' }}>
         <Icon size={iconSize} />
       </Box>
     </StyledButton>
   )
-}
+})

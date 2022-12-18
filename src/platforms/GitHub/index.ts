@@ -66,22 +66,6 @@ export function processTree(tree: TreeNode[]): TreeNode {
   return root
 }
 
-function getUrlForRedirect(
-  userName: string,
-  repoName: string,
-  branchName: string,
-  type = 'blob',
-  path = '',
-) {
-  // Modern browsers have great support for handling unsafe URL,
-  // It may be possible to sanitize path with
-  // `path => path.includes('#') ? path.replace(/#/g, '%23') : '...'
-  return `${window.location.origin}/${userName}/${repoName}/${type}/${branchName}/${path
-    .split('/')
-    .map(encodeURIComponent)
-    .join('/')}`
-}
-
 export function isEnterprise() {
   return (
     (window.location.host !== 'github.com' &&
@@ -212,19 +196,19 @@ export const GitHub: Platform = {
     useGitHubCodeFold(codeFolding)
     useEnterpriseStatBarStyleFix()
   },
-  delegateFastRedirectAnchorProps: options => {
-    if (configRef.pjaxMode === 'native' && (!options?.node || options.node.type === 'blob')) {
-      const pjaxContainerSelector = 'main'
-      const turboContainerId = 'repo-content-turbo-frame'
+  delegateFastRedirectAnchorProps() {
+    if (configRef.pjaxMode !== 'native') return
 
-      return {
-        'data-pjax': pjaxContainerSelector,
-        'data-turbo-frame':
-          URLHelper.isInPullPage() || URLHelper.isInCommitPage() ? undefined : turboContainerId,
-        onClick() {
-          /* Overwriting default onClick */
-        },
-      }
+    const pjaxContainerSelector = 'main'
+    const turboContainerId = 'repo-content-turbo-frame'
+
+    return {
+      'data-pjax': pjaxContainerSelector,
+      'data-turbo-frame':
+        URLHelper.isInPullPage() || URLHelper.isInCommitPage() ? undefined : turboContainerId,
+      onClick() {
+        /* Overwriting default onClick */
+      },
     }
   },
   loadWithFastRedirect: (url, element) => {
@@ -274,7 +258,12 @@ async function getRepositoryTreeData(
       name: item.path?.split('/').pop() || '',
       url:
         item.url && item.type && item.path
-          ? getUrlForRedirect(userName, repoName, branchName, item.type, item.path)
+          ? URLHelper.getItemUrl(userName, repoName, branchName, item.type, item.path)
+          : undefined,
+      permalink: URLHelper.getItemUrl(userName, repoName, treeData.sha, item.type, item.path),
+      rawLink:
+        item.url && item.type === 'blob' && item.path
+          ? URLHelper.getItemUrl(userName, repoName, branchName, 'raw', item.path)
           : undefined,
       contents: item.type === 'tree' ? [] : undefined,
       sha: item.sha,

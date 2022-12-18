@@ -92,3 +92,19 @@ export function getCurrentPath(branchName = '') {
   }
   return []
 }
+
+export function getItemUrl(
+  userName: string,
+  repoName: string,
+  branchName: string,
+  type = 'blob',
+  path = '',
+) {
+  // Modern browsers have great support for handling unsafe URL,
+  // It may be possible to sanitize path with
+  // `path => path.includes('#') ? path.replace(/#/g, '%23') : '...'
+  return `${window.location.origin}/${userName}/${repoName}/${type}/${branchName}/${path
+    .split('/')
+    .map(encodeURIComponent)
+    .join('/')}`
+}

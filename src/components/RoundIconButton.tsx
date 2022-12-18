@@ -1,9 +1,13 @@
-import React from 'react'
+import React, { ForwardedRef, forwardRef } from 'react'
 import { IconButton, IconButtonProps } from './IconButton'
 
-export function RoundIconButton(props: IconButtonProps) {
+export const RoundIconButton = forwardRef(function RoundIconButton(
+  props: IconButtonProps,
+  ref: ForwardedRef<HTMLButtonElement>,
+) {
   return (
     <IconButton
+      ref={ref}
       variant="invisible"
       title={props['aria-label']}
       {...props}
@@ -13,4 +17,4 @@ export function RoundIconButton(props: IconButtonProps) {
       }}
     />
   )
-}
+})

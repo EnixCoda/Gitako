@@ -157,7 +157,14 @@ export function parseIntFromElement(e: HTMLElement): number {
   return parseInt((e.innerText || '').replace(/[^0-9]/g, ''))
 }
 
-export function cancelEvent(e: KeyboardEvent): void {
+export function cancelEvent(e: Event | React.BaseSyntheticEvent): void {
   e.stopPropagation()
   e.preventDefault()
+}
+
+export function onEnterKeyDown<E extends HTMLElement>(
+  e: React.KeyboardEvent<E>,
+  callback: (e: React.KeyboardEvent<E>) => void,
+) {
+  if (e.key === 'Enter') callback(e)
 }

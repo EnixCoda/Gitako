@@ -735,6 +735,7 @@ html[data-with-gitako-spacing='true'] {
               }
             }
 
+            .context-menu,
             .go-to-button,
             .find-in-folder-button {
               @include icon-button();
@@ -749,6 +750,7 @@ html[data-with-gitako-spacing='true'] {
           }
 
           &.compact {
+            .context-menu,
             .go-to-button,
             .find-in-folder-button {
               border-radius: 4px;
@@ -758,6 +760,7 @@ html[data-with-gitako-spacing='true'] {
           }
 
           &:not(:hover) {
+            .context-menu:not(.active),
             .go-to-button,
             .find-in-folder-button {
               display: none;

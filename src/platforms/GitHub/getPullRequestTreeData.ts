@@ -55,13 +55,24 @@ export async function getPullRequestTreeData(
   url.pathname = `/${userName}/${repoName}/pull/${pullId}/files`
   const commentsMap = getCommentsMap(commentData)
   const nodes: TreeNode[] = treeData.map(
-    ({ filename, sha, additions, deletions, changes, status }) => {
+    ({
+      filename,
+      sha,
+      additions,
+      deletions,
+      changes,
+      status,
+      raw_url: rawLink,
+      blob_url: permalink,
+    }) => {
       url.hash = map.get(filename) || ''
       return {
         path: filename || '',
         type: 'blob',
         name: filename?.split('/').pop() || '',
         url: `${url}`,
+        permalink,
+        rawLink,
         sha,
         comments: commentsMap.get(filename),
         diff: {

@@ -1,6 +1,17 @@
-import { CommentIcon } from '@primer/octicons-react'
+import {
+  CheckIcon,
+  CommentIcon,
+  CrossReferenceIcon,
+  KebabHorizontalIcon,
+} from '@primer/octicons-react'
+import { ActionList, AnchoredOverlay } from '@primer/react'
 import { useConfigs } from 'containers/ConfigsContext'
+import { PortalContext } from 'containers/PortalContext'
+import { platform } from 'platforms'
 import * as React from 'react'
+import { useCopyToClipboard } from 'react-use'
+import { cx } from 'utils/cx'
+import { cancelEvent, onEnterKeyDown } from 'utils/DOMHelper'
 import { is } from 'utils/is'
 import { Icon } from '../../Icon'
 import { SearchMode } from '../../searchModes'
@@ -38,6 +49,146 @@ export function useRenderFileStatus() {
   )
 }
 
+function renderNodeContextMenu(node: TreeNode) {
+  return <NodeContextMenu node={node} />
+}
+export function useRenderMoreActions() {
+  return renderNodeContextMenu
+}
+
+function NodeContextMenu({ node }: { node: TreeNode }) {
+  const [isOpen, setIsOpen] = React.useState(false)
+  const [copied, setCopied] = React.useState<string | null>(null)
+  const [copyState, copyToClipboard] = useCopyToClipboard()
+  const portalName = React.useContext(PortalContext)
+  const actionElements = {
+    copyPermalink:
+      node.permalink &&
+      (() => {
+        const mark = 'permalink'
+        const onTrigger = (e: React.SyntheticEvent) => {
+          cancelEvent(e)
+          if (node.permalink) {
+            copyToClipboard(node.permalink)
+            setCopied(mark)
+          }
+        }
+        return (
+          <ActionList.Item {...getTriggerProps(onTrigger)}>
+            Copy permalink
+            {copyState.value && copied === mark ? (
+              <ActionList.TrailingVisual>
+                <CheckIcon />
+              </ActionList.TrailingVisual>
+            ) : null}
+          </ActionList.Item>
+        )
+      })(),
+    copyLink:
+      node.url &&
+      (() => {
+        const mark = 'link'
+        const onTrigger = (e: React.SyntheticEvent) => {
+          cancelEvent(e)
+          if (node.url) {
+            copyToClipboard(node.url)
+            setCopied(mark)
+          }
+        }
+        return (
+          <ActionList.Item {...getTriggerProps(onTrigger)}>
+            Copy link
+            {copyState.value && copied === mark ? (
+              <ActionList.TrailingVisual>
+                <CheckIcon />
+              </ActionList.TrailingVisual>
+            ) : null}
+          </ActionList.Item>
+        )
+      })(),
+    copyRelativePath: (() => {
+      const mark = 'path'
+      const onTrigger = (e: React.SyntheticEvent) => {
+        cancelEvent(e)
+        setCopied(mark)
+        copyToClipboard(node.path)
+      }
+      return (
+        <ActionList.Item {...getTriggerProps(onTrigger)}>
+          Copy relative path
+          {copyState.value && copied === mark ? (
+            <ActionList.TrailingVisual>
+              <CheckIcon />
+            </ActionList.TrailingVisual>
+          ) : null}
+        </ActionList.Item>
+      )
+    })(),
+    openRawContent: node.rawLink && (
+      <ActionList.LinkItem
+        onKeyDown={e =>
+          onEnterKeyDown(e, () => e.target instanceof HTMLElement && e.target.click())
+        }
+        href={node.rawLink}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={() => setIsOpen(false)}
+      >
+        Open raw content
+        <ActionList.TrailingVisual>
+          <CrossReferenceIcon />
+        </ActionList.TrailingVisual>
+      </ActionList.LinkItem>
+    ),
+    goToDirectory: node.type === 'tree' && node.url && (
+      <ActionList.LinkItem
+        onKeyDown={e =>
+          onEnterKeyDown(e, () => e.target instanceof HTMLElement && e.target.click())
+        }
+        href={node.url}
+        data-gitako-bypass-click
+        rel="noopener noreferrer"
+        {...platform.delegateFastRedirectAnchorProps?.({ node })}
+        onClick={() => setIsOpen(false)}
+      >
+        Go to directory
+      </ActionList.LinkItem>
+    ),
+  }
+
+  return (
+    <AnchoredOverlay
+      renderAnchor={anchorProps => (
+        <button
+          {...anchorProps}
+          aria-label={`More actions`}
+          className={cx('context-menu', anchorProps.className, { active: isOpen })}
+        >
+          <Icon IconComponent={KebabHorizontalIcon} />
+        </button>
+      )}
+      open={isOpen}
+      onOpen={() => setIsOpen(true)}
+      onClose={() => setIsOpen(false)}
+      overlayProps={{
+        portalContainerName: portalName || undefined,
+        onKeyDown: e => cancelEvent(e),
+      }}
+    >
+      <ActionList>
+        {actionElements.copyPermalink}
+        {actionElements.copyLink}
+        {actionElements.copyRelativePath}
+
+        {(actionElements.openRawContent || actionElements.goToDirectory) && <ActionList.Divider />}
+
+        {actionElements.openRawContent}
+        {actionElements.goToDirectory}
+      </ActionList>
+    </AnchoredOverlay>
+  )
+}
+
 export function useRenderFileCommentAmounts() {
   function renderFileCommentAmounts(node: TreeNode) {
     return node.comments?.active ? (
@@ -69,11 +220,7 @@ export function useRenderFindInFolderButton(
               <button
                 title={'Find in folder...'}
                 className={'find-in-folder-button'}
-                onClick={e => {
-                  e.stopPropagation()
-                  e.preventDefault()
-                  onSearch(node.path + '/', searchMode)
-                }}
+                onClick={() => onSearch(node.path + '/', searchMode)}
               >
                 <Icon type="search" />
               </button>
@@ -93,11 +240,7 @@ export function useRenderGoToButton(searched: boolean, goTo: (path: string[]) =>
               <button
                 title={'Reveal in file tree'}
                 className={'go-to-button'}
-                onClick={e => {
-                  e.stopPropagation()
-                  e.preventDefault()
-                  goTo(node.path.split('/'))
-                }}
+                onClick={() => goTo(node.path.split('/'))}
               >
                 <Icon type="go-to" />
               </button>
@@ -107,3 +250,8 @@ export function useRenderGoToButton(searched: boolean, goTo: (path: string[]) =>
     [searched, goTo],
   )
 }
+
+const getTriggerProps = (onTrigger: (e: React.SyntheticEvent) => void) => ({
+  onClick: onTrigger,
+  onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => onEnterKeyDown(e, onTrigger),
+})

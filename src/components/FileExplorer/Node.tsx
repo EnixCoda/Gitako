@@ -2,6 +2,7 @@ import { useConfigs } from 'containers/ConfigsContext'
 import { platform } from 'platforms'
 import * as React from 'react'
 import { cx } from 'utils/cx'
+import { cancelEvent } from 'utils/DOMHelper'
 import { getFileIconURL, getFolderIconURL } from 'utils/parseIconMapCSV'
 import { Icon } from '../Icon'
 
@@ -42,6 +43,7 @@ export const Node = React.memo(function Node({
   onFocus,
 }: Props) {
   const { compactFileTree: compact } = useConfigs().value
+  const ref = React.useRef<HTMLDivElement>(null)
   return (
     <a
       href={node.url}
@@ -52,13 +54,24 @@ export const Node = React.memo(function Node({
       title={node.path}
       target={node.type === 'commit' ? '_blank' : undefined}
       rel="noopener noreferrer"
-      {...platform.delegateFastRedirectAnchorProps?.({ node })}
+      {...(node.type === 'blob' ? platform.delegateFastRedirectAnchorProps?.({ node }) : null)}
     >
       <div className={'node-item-label'}>
         <NodeItemIcon node={node} open={expanded} loading={loading} />
         {renderLabelText(node)}
       </div>
-      {renderActions && <div className={'actions'}>{renderActions(node)}</div>}
+      {renderActions && (
+        <div
+          ref={ref}
+          className={'actions'}
+          onClick={e => {
+            // exclude elements mounted outside but still bubbles event through react to here
+            if (e.target instanceof Element && ref.current?.contains(e.target)) cancelEvent(e)
+          }}
+        >
+          {renderActions(node)}
+        </div>
+      )}
     </a>
   )
 })

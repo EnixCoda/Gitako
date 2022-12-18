@@ -1,8 +1,9 @@
-import { Label, Text } from '@primer/react'
+import { Label, registerPortalRoot, Text } from '@primer/react'
 import { useFocusOnPendingTarget } from 'components/FocusTarget'
 import { LoadingIndicator } from 'components/LoadingIndicator'
 import { SearchBar } from 'components/SearchBar'
 import { useConfigs } from 'containers/ConfigsContext'
+import { PortalContext } from 'containers/PortalContext'
 import { RepoContext } from 'containers/RepoContext'
 import { platform } from 'platforms'
 import * as React from 'react'
@@ -24,6 +25,7 @@ import {
   useRenderFileStatus,
   useRenderFindInFolderButton,
   useRenderGoToButton,
+  useRenderMoreActions,
 } from './hooks/useNodeRenderers'
 import { useHandleNodeClick } from './hooks/useOnNodeClick'
 import { useOnSearch } from './hooks/useOnSearch'
@@ -107,6 +109,12 @@ function LoadedFileExplorer({
     overScan: 10,
   })
 
+  const portalName = React.useMemo(() => `${Math.random()}`, [])
+  React.useEffect(() => {
+    const current = scrollElementRef.current
+    if (current) registerPortalRoot(current, portalName)
+  }, [scrollElementRef, portalName])
+
   // - init loading
   //   - "top"
   // - jump to file
@@ -149,6 +157,7 @@ function LoadedFileExplorer({
     useRenderGoToButton(searched, goTo),
     useRenderFindInFolderButton(onSearch),
     useRenderFileCommentAmounts(),
+    useRenderMoreActions(),
     useRenderFileStatus(),
   ])
   const renderLabelText = useRenderLabelText(searchKey)
@@ -211,26 +220,30 @@ function LoadedFileExplorer({
           onScroll={onScroll}
           tabIndex={-1} // prevent getting focus via tab key on GitHub
         >
-          <div style={containerStyle}>
-            {visibleRows.map(({ row, style }) => {
-              const node = nodes[row]
-              return (
-                <Node
-                  key={node.path}
-                  node={node}
-                  style={style}
-                  depth={depths.get(node) || 0}
-                  focused={focusedNode?.path === node.path}
-                  loading={loading.has(node.path)}
-                  expanded={expandedNodes.has(node.path)}
-                  onClick={handleNodeClick}
-                  onFocus={handleNodeFocus}
-                  renderLabelText={renderLabelText}
-                  renderActions={renderActions}
-                />
-              )
-            })}
-          </div>
+          <PortalContext.Provider value={portalName}>
+            <div style={containerStyle}>
+              {visibleRows
+                .map(({ row, style }) => ({
+                  node: nodes[row],
+                  style,
+                }))
+                .map(({ node, style }) => (
+                  <Node
+                    key={node.path}
+                    node={node}
+                    style={style}
+                    depth={depths.get(node) || 0}
+                    focused={focusedNode?.path === node.path}
+                    loading={loading.has(node.path)}
+                    expanded={expandedNodes.has(node.path)}
+                    onClick={handleNodeClick}
+                    onFocus={handleNodeFocus}
+                    renderLabelText={renderLabelText}
+                    renderActions={renderActions}
+                  />
+                ))}
+            </div>
+          </PortalContext.Provider>
         </div>
       </div>
     </div>
