@@ -1,4 +1,4 @@
-import { SearchIcon } from '@primer/octicons-react'
+import { SearchIcon, XIcon } from '@primer/octicons-react'
 import { TextInput, TextInputProps } from '@primer/react'
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
@@ -48,20 +48,26 @@ export function SearchBar({ onSearch, onFocus, value }: Props) {
       value={value}
       validationStatus={validationStatus}
       trailingAction={
-        <TextInput.Action
-          aria-label={toggleButtonDescription}
-          sx={{ color: 'fg.subtle' }}
-          onClick={() => {
-            const newMode = searchMode === 'regex' ? 'fuzzy' : 'regex'
-            configs.onChange({
-              searchMode: newMode,
-            })
-            // Skip search if no input to prevent resetting folder expansions
-            if (value) onSearch(value, newMode)
-          }}
-        >
-          {searchMode === 'regex' ? '.*$' : 'a/b'}
-        </TextInput.Action>
+        <>
+          <TextInput.Action
+            disabled={!value}
+            onClick={() => onSearch('', searchMode)}
+            icon={XIcon}
+            aria-label="Clear"
+          />
+          <TextInput.Action
+            aria-label={toggleButtonDescription}
+            sx={{ color: 'fg.subtle' }}
+            onClick={() => {
+              const newMode = searchMode === 'regex' ? 'fuzzy' : 'regex'
+              configs.onChange({ searchMode: newMode })
+              // Skip search if no input to prevent resetting folder expansions
+              if (value) onSearch(value, newMode)
+            }}
+          >
+            {searchMode === 'regex' ? '.*$' : 'a/b'}
+          </TextInput.Action>
+        </>
       }
     />
   )
