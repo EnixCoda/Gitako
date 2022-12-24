@@ -1,5 +1,5 @@
 import { raiseError } from 'analytics'
-import { $ } from 'utils/DOMHelper'
+import { $ } from 'utils/$'
 
 export function isInRepoPage() {
   const repoHeaderSelector = '.repo-header'

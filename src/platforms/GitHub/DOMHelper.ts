@@ -1,7 +1,8 @@
 import { raiseError } from 'analytics'
 import { Clippy, ClippyClassName } from 'components/Clippy'
 import * as React from 'react'
-import { $, formatClass, parseIntFromElement } from 'utils/DOMHelper'
+import { $ } from 'utils/$'
+import { formatClass, parseIntFromElement } from 'utils/DOMHelper'
 import { renderReact, run } from 'utils/general'
 import { CopyFileButton, copyFileButtonClassName } from './CopyFileButton'
 

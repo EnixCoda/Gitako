@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { $ } from 'utils/DOMHelper'
+import { $ } from 'utils/$'
 import * as DOMHelper from '../DOMHelper'
 import { GitHub } from '../index'
 
