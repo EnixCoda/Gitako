@@ -183,8 +183,12 @@ function useFocusSidebarOnExpand(shouldExpand: boolean) {
 
 function useMarkGitakoReadyState() {
   React.useEffect(() => {
+    const detach = DOMHelper.attachStickyGitakoReadyState()
     DOMHelper.markGitakoReadyState(true)
-    return () => DOMHelper.markGitakoReadyState(false)
+    return () => {
+      detach()
+      DOMHelper.markGitakoReadyState(false)
+    }
   }, [])
 }
 
@@ -199,9 +203,13 @@ function useLogoContainerElement() {
 function useUpdateBodyIndentOnStateUpdate(shouldExpand: boolean) {
   const { sidebarToggleMode } = useConfigs().value
   React.useEffect(() => {
-    if (sidebarToggleMode === 'persistent' && shouldExpand) {
-      DOMHelper.setBodyIndent(true)
-      return () => DOMHelper.setBodyIndent(false)
+    if (!(sidebarToggleMode === 'persistent' && shouldExpand)) return
+
+    const detach = DOMHelper.attachStickyBodyIndent()
+    DOMHelper.setBodyIndent(true)
+    return () => {
+      detach()
+      DOMHelper.setBodyIndent(false)
     }
   }, [sidebarToggleMode, shouldExpand])
 }
