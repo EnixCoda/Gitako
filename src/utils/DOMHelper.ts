@@ -2,6 +2,7 @@
  * this helper helps manipulating DOM
  */
 
+import { platformName } from 'platforms'
 import { $ } from './$'
 
 export const rootElementID = 'gitako-root'
@@ -59,6 +60,19 @@ export const attachStickyGitakoReadyState = () =>
   )
 export function markGitakoReadyState(ready: boolean) {
   return gitakoDescriptionTarget.setAttribute(readyDataAttributeName, `${ready}`)
+}
+
+/**
+ * indicate current platform to activate specific CSS styles
+ */
+const platformDataAttributeName = 'data-gitako-platform'
+export const attachStickyGitakoPlatform = () =>
+  attachStickyDataAttribute(gitakoDescriptionTarget, platformDataAttributeName, () =>
+    markGitakoPlatform(),
+  )
+export function markGitakoPlatform() {
+  if (platformName)
+    return gitakoDescriptionTarget.setAttribute(platformDataAttributeName, platformName)
 }
 
 /**

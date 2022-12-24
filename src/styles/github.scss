@@ -1,0 +1,9 @@
+@mixin github($github-content-width) {
+  [data-gitako-platform='GitHub'] {
+    @media (min-width: $github-content-width) {
+      body {
+        min-width: $github-content-width;
+      }
+    }
+  }
+}

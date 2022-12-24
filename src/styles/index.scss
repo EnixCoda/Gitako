@@ -6,6 +6,7 @@
 @import './code-folding.scss';
 @import './clippy.scss';
 @import './gitee.scss';
+@import './github.scss';
 @import './keyframes.scss';
 
 $name: gitako;
@@ -32,7 +33,7 @@ $minimal-z-index: max(
 }
 
 [data-#{$name}-ready='true'] {
-  @include github-code-folding;
+  @include code-folding;
 
   .markdown-body {
     @include clippy;
@@ -47,24 +48,9 @@ html[data-with-gitako-spacing='true'] {
   }
 }
 
-@media (min-width: $github-content-width) {
-  // github
-  body.env-production {
-    min-width: $github-content-width;
-  }
-}
-
-// TODO: use react to render the button content and set color with CSS variables
-@media (prefers-color-scheme: dark) {
-  :root[data-color-mode='auto'] .markdown-body .clippy .icon {
-    filter: invert(0.7); // hack to make it looks like a normal color :P
-  }
-}
-:root[data-color-mode='dark'] {
-  .markdown-body .clippy .icon {
-    filter: invert(0.7); // hack to make it looks like a normal color :P
-  }
-}
+// platform-specific overrides
+@include gitee($name);
+@include github($github-content-width);
 
 .progress-pjax-loader.is-loading {
   left: 0; /* reposition progress bar of GitHub */
@@ -591,7 +577,7 @@ html[data-with-gitako-spacing='true'] {
       }
     }
 
-    .gitako-footer {
+    .#{$name}-footer {
       flex-shrink: 0;
       display: flex;
       justify-content: space-between;

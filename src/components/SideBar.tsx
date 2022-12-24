@@ -34,7 +34,7 @@ import { SideBarResizeHandler } from './SideBarResizeHandler'
 export function SideBar() {
   usePJAXAPI()
   platform.usePlatformHooks?.()
-  useMarkGitakoReadyState()
+  useMarkGitakoGlobalAttributes()
 
   const error = useLoadedContext(SideBarErrorContext).value
 
@@ -181,7 +181,12 @@ function useFocusSidebarOnExpand(shouldExpand: boolean) {
   }, [shouldExpand])
 }
 
-function useMarkGitakoReadyState() {
+function useMarkGitakoGlobalAttributes() {
+  React.useEffect(() => {
+    const detach = DOMHelper.attachStickyGitakoPlatform()
+    DOMHelper.markGitakoPlatform()
+    return () => detach()
+  }, [])
   React.useEffect(() => {
     const detach = DOMHelper.attachStickyGitakoReadyState()
     DOMHelper.markGitakoReadyState(true)

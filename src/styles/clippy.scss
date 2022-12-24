@@ -31,3 +31,15 @@
     }
   }
 }
+
+// TODO: use react to render the button content and set color with CSS variables
+@media (prefers-color-scheme: dark) {
+  :root[data-color-mode='auto'] .markdown-body .clippy .icon {
+    filter: invert(0.7); // hack to make it looks like a normal color :P
+  }
+}
+:root[data-color-mode='dark'] {
+  .markdown-body .clippy .icon {
+    filter: invert(0.7); // hack to make it looks like a normal color :P
+  }
+}
