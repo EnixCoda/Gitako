@@ -1,6 +1,12 @@
 @import '~nprogress/nprogress.css';
 
 @import './themes.scss';
+@import './layout.scss';
+@import './primer-like.scss';
+@import './code-folding.scss';
+@import './clippy.scss';
+@import './gitee.scss';
+@import './keyframes.scss';
 
 $name: gitako;
 
@@ -13,72 +19,11 @@ $github-header-z-index: 32;
 $github-pull-request-float-header-z-index: 110;
 $github-notifications-center-header-z-index: 999;
 $minimal-z-index: max(
+    $gitee-header-z-index,
     $github-header-z-index,
     $github-pull-request-float-header-z-index,
     $github-notifications-center-header-z-index
   ) + 1;
-
-@mixin interactive-frame() {
-  @include interactive-border;
-  @include interactive-background;
-}
-
-@mixin interactive-border(
-  $default: var(--color-btn-border),
-  $hover: var(--color-btn-hover-border),
-  $active: var(--color-btn-active-border),
-  $focus: $hover
-) {
-  border: 1px solid $default;
-  &:hover {
-    border: 1px solid $hover;
-  }
-  &:focus {
-    border: 1px solid $focus;
-  }
-  &:active {
-    border: 1px solid $active;
-  }
-}
-
-@mixin interactive-background(
-  $default: var(--color-btn-bg),
-  $hover: var(--color-btn-hover-bg),
-  $active: var(--color-btn-active-bg),
-  $focus: $hover
-) {
-  background-color: $default;
-  &:hover {
-    background-color: $hover;
-  }
-  &:focus {
-    background-color: $focus;
-  }
-  &:active {
-    background-color: $active;
-  }
-}
-
-@mixin interactive-background-on-before($default, $hover, $active, $focus: $hover) {
-  &::before {
-    background-color: $default;
-  }
-  &:hover {
-    &::before {
-      background-color: $hover;
-    }
-  }
-  &:active {
-    &::before {
-      background-color: $active;
-    }
-  }
-  &:hover {
-    &::before {
-      background-color: $hover;
-    }
-  }
-}
 
 @mixin hide-for-print {
   @media print {
@@ -86,149 +31,11 @@ $minimal-z-index: max(
   }
 }
 
-@mixin pseudo-primer-icon($icon-name) {
-  content: '';
-  display: block;
-  cursor: pointer;
-  user-select: none;
-  -webkit-mask-image: url('~@primer/octicons-react/build/svg/' + $icon-name + '.svg?inline');
-  mask-image: url('~@primer/octicons-react/build/svg/' + $icon-name + '.svg?inline');
-  -webkit-mask-size: contain;
-  mask-size: contain;
-  -webkit-mask-position: center;
-  mask-position: center;
-}
-
 [data-#{$name}-ready='true'] {
-  // github
-  // code folding start
-  .blob-wrapper table .blob-num {
-    position: relative; // for positioning
-    min-width: 60px;
-    padding-right: 20px;
-  }
+  @include github-code-folding;
 
-  // hide code fold handler if not enabled
-  .gitako-code-fold-handler {
-    display: none;
-  }
-
-  .gitako-code-fold-attached:not(.gitako-code-fold-attached-disabled) {
-    tr {
-      .gitako-code-fold-handler {
-        @include hide-for-print();
-
-        display: initial;
-        position: absolute;
-        top: 0px;
-        right: 0px;
-        width: 20px;
-        height: 20px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        &::before {
-          width: 16px;
-          height: 20px;
-          transition: 0.25s ease;
-          @include pseudo-primer-icon('chevron-down-16');
-        }
-
-        @include interactive-background-on-before(
-          var(--color-fg-subtle),
-          var(--color-fg-default),
-          var(--color-fg-muted)
-        );
-      }
-
-      &.gitako-code-fold-active {
-        background-color: var(--color-neutral-muted);
-
-        .gitako-code-fold-handler {
-          &::before {
-            transform: rotate(-90deg);
-          }
-
-          @include interactive-background-on-before(
-            var(--color-fg-muted),
-            var(--color-fg-default),
-            var(--color-fg-subtle)
-          );
-        }
-
-        .blob-code::after {
-          color: var(--color-fg-muted);
-          content: '⋯';
-          margin: 0.1em 0.2em 0px;
-        }
-      }
-
-      // hide folded sections, except for print
-      &.gitako-code-fold-hidden {
-        @media screen {
-          display: none;
-        }
-      }
-    }
-  }
-  // code folding end
-
-  // clippy button
   .markdown-body {
-    .clippy-wrapper {
-      position: relative;
-      width: 0;
-      height: 0;
-      top: 8px;
-      left: calc(100% - 40px);
-      z-index: 1;
-
-      .clippy {
-        width: 32px;
-        height: 32px;
-        border: 1px solid var(--color-border-default);
-        border-radius: 4px;
-
-        @include interactive-background;
-        .icon {
-          width: 100%;
-          height: 100%;
-          display: block;
-          background-image: url('~@primer/octicons-react/build/svg/copy-16.svg?inline');
-          background-position: center;
-          background-repeat: no-repeat;
-          &.success {
-            background-image: url('~@primer/octicons-react/build/svg/check-16.svg?inline');
-          }
-          &.fail {
-            background-image: url('~@primer/octicons-react/build/svg/x-16.svg?inline');
-          }
-        }
-      }
-    }
-  }
-
-  // gitee
-  &.git-project {
-    #git-header-nav {
-      position: static;
-      padding-left: 0;
-      padding-right: 0;
-    }
-
-    padding-top: 0;
-
-    .#{$name}-side-bar {
-      h1,
-      h2,
-      h3,
-      h4,
-      h5,
-      h6 {
-        margin: 0;
-      }
-    }
+    @include clippy;
   }
 }
 
@@ -236,14 +43,6 @@ html[data-with-gitako-spacing='true'] {
   body {
     @media screen {
       margin-left: var(--gitako-width);
-    }
-
-    // gitee
-    &.git-project {
-      width: auto; // shrink width
-      .site-content {
-        min-width: 1040px;
-      }
     }
   }
 }
@@ -273,39 +72,6 @@ html[data-with-gitako-spacing='true'] {
 
 %hidden {
   display: none;
-}
-
-@mixin flex($justify: center, $align: center, $inline: true) {
-  @if $inline {
-    display: inline-flex;
-  } @else {
-    display: flex;
-  }
-
-  @if $justify {
-    justify-content: $justify;
-  }
-  @if $align {
-    align-items: $align;
-  }
-}
-
-@mixin flex-center {
-  @include flex();
-}
-
-@mixin icon-button(
-  $default: transparent,
-  $hover: var(--color-btn-hover-bg),
-  $active: var(--color-btn-focus-bg),
-  $focus: $hover
-) {
-  @include flex-center();
-  cursor: pointer;
-  padding: 0;
-  border: none;
-
-  @include interactive-background($default, $hover, $active, $focus);
 }
 
 ##{$name}-root {
@@ -837,53 +603,5 @@ html[data-with-gitako-spacing='true'] {
         color: var(--color-fg-muted);
       }
     }
-  }
-}
-
-// gitee
-.git-project {
-  // reset styles
-  .#{$name}-side-bar {
-    input[type='text'],
-    input[type='password'],
-    .ui-autocomplete-input,
-    textarea,
-    .uneditable-input {
-      padding: initial;
-      border: none;
-    }
-  }
-}
-
-@keyframes rotate {
-  from {
-    transform: rotateZ(0);
-  }
-  to {
-    transform: rotateZ(360deg);
-  }
-}
-
-@keyframes pulse-rotate {
-  0% {
-    transform: rotateZ(0);
-  }
-  20% {
-    transform: rotateZ(190deg);
-  }
-  30% {
-    transform: rotateZ(175deg);
-  }
-  50% {
-    transform: rotateZ(180deg);
-  }
-  70% {
-    transform: rotateZ(370deg);
-  }
-  80% {
-    transform: rotateZ(355deg);
-  }
-  100% {
-    transform: rotateZ(360deg);
   }
 }

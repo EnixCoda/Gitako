@@ -1,0 +1,72 @@
+@mixin github-code-folding {
+  .blob-wrapper table .blob-num {
+    position: relative; // for positioning
+    min-width: 60px;
+    padding-right: 20px;
+  }
+
+  // hide code fold handler if not enabled
+  .gitako-code-fold-handler {
+    display: none;
+  }
+
+  .gitako-code-fold-attached:not(.gitako-code-fold-attached-disabled) {
+    tr {
+      .gitako-code-fold-handler {
+        @include hide-for-print();
+
+        display: initial;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        &::before {
+          width: 16px;
+          height: 20px;
+          transition: 0.25s ease;
+          @include pseudo-primer-icon('chevron-down-16');
+        }
+
+        @include interactive-background-on-before(
+          var(--color-fg-subtle),
+          var(--color-fg-default),
+          var(--color-fg-muted)
+        );
+      }
+
+      &.gitako-code-fold-active {
+        background-color: var(--color-neutral-muted);
+
+        .gitako-code-fold-handler {
+          &::before {
+            transform: rotate(-90deg);
+          }
+
+          @include interactive-background-on-before(
+            var(--color-fg-muted),
+            var(--color-fg-default),
+            var(--color-fg-subtle)
+          );
+        }
+
+        .blob-code::after {
+          color: var(--color-fg-muted);
+          content: '⋯';
+          margin: 0.1em 0.2em 0px;
+        }
+      }
+
+      // hide folded sections, except for print
+      &.gitako-code-fold-hidden {
+        @media screen {
+          display: none;
+        }
+      }
+    }
+  }
+}

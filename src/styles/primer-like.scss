@@ -1,0 +1,91 @@
+// primer-like styles
+@import './themes.scss';
+
+@mixin interactive-frame() {
+  @include interactive-border;
+  @include interactive-background;
+}
+
+@mixin interactive-border(
+  $default: var(--color-btn-border),
+  $hover: var(--color-btn-hover-border),
+  $active: var(--color-btn-active-border),
+  $focus: $hover
+) {
+  border: 1px solid $default;
+  &:hover {
+    border: 1px solid $hover;
+  }
+  &:focus {
+    border: 1px solid $focus;
+  }
+  &:active {
+    border: 1px solid $active;
+  }
+}
+
+@mixin interactive-background(
+  $default: var(--color-btn-bg),
+  $hover: var(--color-btn-hover-bg),
+  $active: var(--color-btn-active-bg),
+  $focus: $hover
+) {
+  background-color: $default;
+  &:hover {
+    background-color: $hover;
+  }
+  &:focus {
+    background-color: $focus;
+  }
+  &:active {
+    background-color: $active;
+  }
+}
+
+@mixin interactive-background-on-before($default, $hover, $active, $focus: $hover) {
+  &::before {
+    background-color: $default;
+  }
+  &:hover {
+    &::before {
+      background-color: $hover;
+    }
+  }
+  &:active {
+    &::before {
+      background-color: $active;
+    }
+  }
+  &:hover {
+    &::before {
+      background-color: $hover;
+    }
+  }
+}
+
+@mixin pseudo-primer-icon($icon-name) {
+  content: '';
+  display: block;
+  cursor: pointer;
+  user-select: none;
+  -webkit-mask-image: url('~@primer/octicons-react/build/svg/' + $icon-name + '.svg?inline');
+  mask-image: url('~@primer/octicons-react/build/svg/' + $icon-name + '.svg?inline');
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
+@mixin icon-button(
+  $default: transparent,
+  $hover: var(--color-btn-hover-bg),
+  $active: var(--color-btn-focus-bg),
+  $focus: $hover
+) {
+  @include flex-center();
+  cursor: pointer;
+  padding: 0;
+  border: none;
+
+  @include interactive-background($default, $hover, $active, $focus);
+}

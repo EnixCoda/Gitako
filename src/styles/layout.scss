@@ -1,0 +1,18 @@
+@mixin flex($justify: center, $align: center, $inline: true) {
+  @if $inline {
+    display: inline-flex;
+  } @else {
+    display: flex;
+  }
+
+  @if $justify {
+    justify-content: $justify;
+  }
+  @if $align {
+    align-items: $align;
+  }
+}
+
+@mixin flex-center {
+  @include flex();
+}

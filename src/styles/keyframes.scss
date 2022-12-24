@@ -1,0 +1,32 @@
+@keyframes rotate {
+  from {
+    transform: rotateZ(0);
+  }
+  to {
+    transform: rotateZ(360deg);
+  }
+}
+
+@keyframes pulse-rotate {
+  0% {
+    transform: rotateZ(0);
+  }
+  20% {
+    transform: rotateZ(190deg);
+  }
+  30% {
+    transform: rotateZ(175deg);
+  }
+  50% {
+    transform: rotateZ(180deg);
+  }
+  70% {
+    transform: rotateZ(370deg);
+  }
+  80% {
+    transform: rotateZ(355deg);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
+}
