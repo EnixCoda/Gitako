@@ -2,7 +2,6 @@ import { PropsWithChildren } from 'common'
 import { useConfigs } from 'containers/ConfigsContext'
 import { platform } from 'platforms'
 import * as React from 'react'
-import { run } from 'utils/general'
 import { useAbortableEffect } from 'utils/hooks/useAbortableEffect'
 import { useEffectOnSerializableUpdates } from 'utils/hooks/useEffectOnSerializableUpdates'
 import { useAfterRedirect } from 'utils/hooks/useFastRedirect'
@@ -36,10 +35,11 @@ export function RepoContextWrapper({ children }: PropsWithChildren) {
 function resolvePartialMetaData(): PartialMetaData | null {
   const partialMetaData = platform.resolvePartialMetaData()
   if (partialMetaData) {
-    const { userName, repoName, type } = partialMetaData
+    const { userName, repoName, branchName, type } = partialMetaData
     return {
       userName,
       repoName,
+      branchName,
       type: type === 'pull' ? type : undefined,
     }
   }
@@ -76,59 +76,56 @@ function usePartialMetaData(): PartialMetaData | null {
 }
 
 function useMetaData(partialMetaData: PartialMetaData | null) {
-  const $state = useLoadedContext(SideBarStateContext)
-  const $metaData = useStateIO<MetaData | null>(null)
+  const [metaData, changeMetaData] = React.useState<MetaData | null>(null)
+  const changeLoadedState = useLoadedContext(SideBarStateContext).onChange
+  const handleNetworkError = useHandleNetworkError()
 
   const { accessToken } = useConfigs().value
-  const handleNetworkError = useHandleNetworkError()
+  const loadRepoMetaData = React.useCallback(
+    async function* loadRepoMetaData() {
+      if (!partialMetaData) return
+
+      const { userName, repoName } = partialMetaData
+      if (!userName || !repoName) return
+
+      changeLoadedState('meta-loading')
+      let { branchName } = partialMetaData
+      if (!branchName) {
+        try {
+          const defaultBranchName = yield await platform.getDefaultBranchName(
+            { userName, repoName },
+            accessToken,
+          )
+          branchName = defaultBranchName as string
+        } catch (err) {
+          // state will be updated in the network error handler
+          if (err instanceof Error) return handleNetworkError(err)
+          else throw err
+        }
+      }
+
+      changeMetaData({
+        userName,
+        repoName,
+        branchName,
+      })
+      changeLoadedState('meta-loaded')
+    },
+    [partialMetaData, changeLoadedState, accessToken, handleNetworkError],
+  )
+
   useAbortableEffect(
     React.useCallback(
-      signal => {
-        // get default branch
-        run(async () => {
-          if (!partialMetaData) return
-
-          const { userName, repoName } = partialMetaData
-          if (!userName || !repoName) return
-
-          $state.onChange('meta-loading')
-          let { branchName } = partialMetaData
-          if (!branchName) {
-            try {
-              const defaultBranchName = await platform.getDefaultBranchName(
-                { userName, repoName },
-                accessToken,
-              )
-              if (signal.aborted) return
-              branchName = defaultBranchName
-            } catch (err) {
-              // state will be updated in the network error handler
-              if (err instanceof Error) {
-                handleNetworkError(err)
-                return
-              }
-
-              throw err
-            }
-          }
-
-          $metaData.onChange({
-            userName,
-            repoName,
-            branchName,
-          })
-          $state.onChange('meta-loaded')
-        })
-
-        return () => {
-          $state.onChange('disabled')
-          $metaData.onChange(null)
-        }
-      },
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      [partialMetaData, accessToken],
+      () => ({
+        getAsyncGenerator: loadRepoMetaData,
+        cancel: () => {
+          changeLoadedState('disabled')
+          changeMetaData(null)
+        },
+      }),
+      [loadRepoMetaData, changeLoadedState, changeMetaData],
     ),
   )
 
-  return $metaData.value
+  return metaData
 }
