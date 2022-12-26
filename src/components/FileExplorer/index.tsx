@@ -7,7 +7,7 @@ import { PortalContext } from 'containers/PortalContext'
 import { RepoContext } from 'containers/RepoContext'
 import { platform } from 'platforms'
 import * as React from 'react'
-import { usePrevious } from 'react-use'
+import { usePrevious, useUpdateEffect } from 'react-use'
 import { cx } from 'utils/cx'
 import { run } from 'utils/general'
 import { useElementSize } from 'utils/hooks/useElementSize'
@@ -86,16 +86,24 @@ function LoadedFileExplorer({
   visibleNodesGenerator: VisibleNodesGenerator
   visibleNodes: VisibleNodes
 }) {
+  const config = useConfigs().value
+
   const [searchKey, updateSearchKey] = React.useState('')
   const searched = !!searchKey
   const onSearch = useOnSearch(updateSearchKey, visibleNodesGenerator)
   const { focusedNode, nodes, expandedNodes, depths, loading } = visibleNodes
 
+  // re-search when the compress option update
+  const { compressSingletonFolder } = config
+  useUpdateEffect(() => {
+    visibleNodesGenerator.setCompression(compressSingletonFolder)
+  }, [compressSingletonFolder])
+
   const {
     ref: filesRef,
     size: [, height],
   } = useElementSize<HTMLDivElement>()
-  const { compactFileTree } = useConfigs().value
+  const { compactFileTree } = config
   const {
     ref: scrollElementRef,
     onScroll,
