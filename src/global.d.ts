@@ -3,15 +3,11 @@ type AnyArray = any[] // eslint-disable-line @typescript-eslint/no-explicit-any
 type MetaData = {
   userName: string
   repoName: string
-  defaultBranchName: string
   branchName: string
   type?: EnumString<'tree' | 'blob' | 'pull' | 'commit'>
 }
 
-type PartialMetaData = Omit<
-  MakeOptional<MetaData, 'repoName' | 'userName' | 'branchName'>,
-  'defaultBranchName'
->
+type PartialMetaData = MakeOptional<MetaData, 'repoName' | 'userName' | 'branchName'>
 
 type TreeNode = {
   name: string
