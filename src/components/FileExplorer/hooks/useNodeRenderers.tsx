@@ -17,6 +17,7 @@ import { Icon } from '../../Icon'
 import { SearchMode } from '../../searchModes'
 import { DiffStatText } from '../DiffStatText'
 import { DiffStatGraph } from './../DiffStatGraph'
+import { VisibleNodesGeneratorMethods } from './useVisibleNodesGeneratorMethods'
 
 export type NodeRenderer = (node: TreeNode) => React.ReactNode
 
@@ -49,14 +50,20 @@ export function useRenderFileStatus() {
   )
 }
 
-function renderNodeContextMenu(node: TreeNode) {
-  return <NodeContextMenu node={node} />
+function renderNodeContextMenu(node: TreeNode, methods: VisibleNodesGeneratorMethods) {
+  return <NodeContextMenu node={node} visibleNodesGeneratorMethods={methods} />
 }
-export function useRenderMoreActions() {
-  return renderNodeContextMenu
+export function useRenderMoreActions(methods: VisibleNodesGeneratorMethods) {
+  return (node: TreeNode) => renderNodeContextMenu(node, methods)
 }
 
-function NodeContextMenu({ node }: { node: TreeNode }) {
+function NodeContextMenu({
+  node,
+  visibleNodesGeneratorMethods: { toggleExpansion },
+}: {
+  node: TreeNode
+  visibleNodesGeneratorMethods: VisibleNodesGeneratorMethods
+}) {
   const [isOpen, setIsOpen] = React.useState(false)
   const [copied, setCopied] = React.useState<string | null>(null)
   const [copyState, copyToClipboard] = useCopyToClipboard()
@@ -154,6 +161,24 @@ function NodeContextMenu({ node }: { node: TreeNode }) {
         Go to directory
       </ActionList.LinkItem>
     ),
+    toggleFolderRecursively:
+      node.type === 'tree' &&
+      (() => {
+        const trigger = (e: React.SyntheticEvent) => {
+          cancelEvent(e)
+          toggleExpansion(node, { recursive: true })
+          setIsOpen(false)
+        }
+        return (
+          <ActionList.LinkItem
+            {...getTriggerProps(trigger)}
+            href={node.url}
+            rel="noopener noreferrer"
+          >
+            Toggle folder recursively
+          </ActionList.LinkItem>
+        )
+      })(),
   }
 
   return (
@@ -180,10 +205,13 @@ function NodeContextMenu({ node }: { node: TreeNode }) {
         {actionElements.copyLink}
         {actionElements.copyRelativePath}
 
-        {(actionElements.openRawContent || actionElements.goToDirectory) && <ActionList.Divider />}
+        {(actionElements.openRawContent ||
+          actionElements.goToDirectory ||
+          actionElements.toggleFolderRecursively) && <ActionList.Divider />}
 
         {actionElements.openRawContent}
         {actionElements.goToDirectory}
+        {actionElements.toggleFolderRecursively}
       </ActionList>
     </AnchoredOverlay>
   )

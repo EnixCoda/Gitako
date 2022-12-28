@@ -165,7 +165,7 @@ function LoadedFileExplorer({
     useRenderGoToButton(searched, goTo),
     useRenderFindInFolderButton(onSearch),
     useRenderFileCommentAmounts(),
-    useRenderMoreActions(),
+    useRenderMoreActions(methods),
     useRenderFileStatus(),
   ])
   const renderLabelText = useRenderLabelText(searchKey)
