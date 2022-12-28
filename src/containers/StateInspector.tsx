@@ -29,6 +29,9 @@ export const InspectorContextWrapper = IN_PRODUCTION_MODE
                 flexDirection: 'column',
               }}
             >
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <button onClick={() => setShow(false)}>❌</button>
+              </div>
               <pre
                 style={{
                   flex: 1,
@@ -37,15 +40,12 @@ export const InspectorContextWrapper = IN_PRODUCTION_MODE
               >
                 {JSON.stringify($.value, null, 2)}
               </pre>
-              <div>
-                <button onClick={() => setShow(false)}>❌</button>
-              </div>
             </div>
           ) : (
             <div
               style={{
                 position: 'fixed',
-                bottom: '0',
+                top: '0',
                 right: '0',
               }}
             >
