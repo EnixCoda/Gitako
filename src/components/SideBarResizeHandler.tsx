@@ -1,21 +1,12 @@
 import { useConfigs } from 'containers/ConfigsContext'
 import * as React from 'react'
-import { useDebounce, useWindowSize } from 'react-use'
+import { useDebounce, useLatest, useWindowSize } from 'react-use'
 import { getDefaultConfigs } from 'utils/config/helper'
 import * as DOMHelper from 'utils/DOMHelper'
 import { useAfterRedirect } from 'utils/hooks/useFastRedirect'
+import { getSafeWidth } from '../utils/getSafeWidth'
 import { ResizeHandler } from './ResizeHandler'
 import { Size, Size2D } from './Size'
-
-const MINIMAL_CONTENT_VIEWPORT_WIDTH = 100
-const MINIMAL_WIDTH = 240
-
-function getSafeWidth(width: Size, windowWidth: number) {
-  if (width > windowWidth - MINIMAL_CONTENT_VIEWPORT_WIDTH)
-    return windowWidth - MINIMAL_CONTENT_VIEWPORT_WIDTH
-  if (width < MINIMAL_WIDTH) return MINIMAL_WIDTH
-  return width
-}
 
 function useSidebarWidth() {
   const configContext = useConfigs()
@@ -35,6 +26,12 @@ function useSidebarWidth() {
   useDebounce(() => configContext.onChange({ sideBarWidth: width }), 100, [width])
 
   React.useLayoutEffect(() => DOMHelper.setGitakoWidthCSSVariable(width), [width])
+
+  const widthRef = useLatest(width)
+  React.useEffect(() => {
+    const detach = DOMHelper.attachStickyGitakoWidthCSSVariable(() => widthRef.current)
+    return () => detach()
+  }, [widthRef])
 
   // Keep variable when directing from PR to repo home via meta bar
   useAfterRedirect(React.useCallback(() => DOMHelper.setGitakoWidthCSSVariable(width), [width]))

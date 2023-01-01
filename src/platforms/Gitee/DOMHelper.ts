@@ -1,7 +1,8 @@
 import { raiseError } from 'analytics'
 import { Clippy, ClippyClassName } from 'components/Clippy'
 import * as React from 'react'
-import { $, formatClass } from 'utils/DOMHelper'
+import { $ } from 'utils/$'
+import { formatClass } from 'utils/DOMHelper'
 import { renderReact } from 'utils/general'
 
 export function isInRepoPage() {

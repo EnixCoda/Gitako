@@ -1,12 +1,13 @@
-import { Label, Text } from '@primer/react'
+import { Label, registerPortalRoot, Text } from '@primer/react'
 import { useFocusOnPendingTarget } from 'components/FocusTarget'
 import { LoadingIndicator } from 'components/LoadingIndicator'
 import { SearchBar } from 'components/SearchBar'
 import { useConfigs } from 'containers/ConfigsContext'
+import { PortalContext } from 'containers/PortalContext'
 import { RepoContext } from 'containers/RepoContext'
 import { platform } from 'platforms'
 import * as React from 'react'
-import { usePrevious } from 'react-use'
+import { usePrevious, useUpdateEffect } from 'react-use'
 import { cx } from 'utils/cx'
 import { run } from 'utils/general'
 import { useElementSize } from 'utils/hooks/useElementSize'
@@ -24,6 +25,7 @@ import {
   useRenderFileStatus,
   useRenderFindInFolderButton,
   useRenderGoToButton,
+  useRenderMoreActions,
 } from './hooks/useNodeRenderers'
 import { useHandleNodeClick } from './hooks/useOnNodeClick'
 import { useOnSearch } from './hooks/useOnSearch'
@@ -84,16 +86,24 @@ function LoadedFileExplorer({
   visibleNodesGenerator: VisibleNodesGenerator
   visibleNodes: VisibleNodes
 }) {
+  const config = useConfigs().value
+
   const [searchKey, updateSearchKey] = React.useState('')
   const searched = !!searchKey
   const onSearch = useOnSearch(updateSearchKey, visibleNodesGenerator)
   const { focusedNode, nodes, expandedNodes, depths, loading } = visibleNodes
 
+  // re-search when the compress option update
+  const { compressSingletonFolder } = config
+  useUpdateEffect(() => {
+    visibleNodesGenerator.setCompression(compressSingletonFolder)
+  }, [compressSingletonFolder])
+
   const {
     ref: filesRef,
     size: [, height],
   } = useElementSize<HTMLDivElement>()
-  const { compactFileTree } = useConfigs().value
+  const { compactFileTree } = config
   const {
     ref: scrollElementRef,
     onScroll,
@@ -106,6 +116,12 @@ function LoadedFileExplorer({
     viewportHeight: height,
     overScan: 10,
   })
+
+  const portalName = React.useMemo(() => `${Math.random()}`, [])
+  React.useEffect(() => {
+    const current = scrollElementRef.current
+    if (current) registerPortalRoot(current, portalName)
+  }, [scrollElementRef, portalName])
 
   // - init loading
   //   - "top"
@@ -149,6 +165,7 @@ function LoadedFileExplorer({
     useRenderGoToButton(searched, goTo),
     useRenderFindInFolderButton(onSearch),
     useRenderFileCommentAmounts(),
+    useRenderMoreActions(methods),
     useRenderFileStatus(),
   ])
   const renderLabelText = useRenderLabelText(searchKey)
@@ -211,26 +228,30 @@ function LoadedFileExplorer({
           onScroll={onScroll}
           tabIndex={-1} // prevent getting focus via tab key on GitHub
         >
-          <div style={containerStyle}>
-            {visibleRows.map(({ row, style }) => {
-              const node = nodes[row]
-              return (
-                <Node
-                  key={node.path}
-                  node={node}
-                  style={style}
-                  depth={depths.get(node) || 0}
-                  focused={focusedNode?.path === node.path}
-                  loading={loading.has(node.path)}
-                  expanded={expandedNodes.has(node.path)}
-                  onClick={handleNodeClick}
-                  onFocus={handleNodeFocus}
-                  renderLabelText={renderLabelText}
-                  renderActions={renderActions}
-                />
-              )
-            })}
-          </div>
+          <PortalContext.Provider value={portalName}>
+            <div style={containerStyle}>
+              {visibleRows
+                .map(({ row, style }) => ({
+                  node: nodes[row],
+                  style,
+                }))
+                .map(({ node, style }) => (
+                  <Node
+                    key={node.path}
+                    node={node}
+                    style={style}
+                    depth={depths.get(node) || 0}
+                    focused={focusedNode?.path === node.path}
+                    loading={loading.has(node.path)}
+                    expanded={expandedNodes.has(node.path)}
+                    onClick={handleNodeClick}
+                    onFocus={handleNodeFocus}
+                    renderLabelText={renderLabelText}
+                    renderActions={renderActions}
+                  />
+                ))}
+            </div>
+          </PortalContext.Provider>
         </div>
       </div>
     </div>

@@ -2,46 +2,90 @@
  * this helper helps manipulating DOM
  */
 
+import { platformName } from 'platforms'
+import { $ } from './$'
+
 export const rootElementID = 'gitako-root'
 export const gitakoDescriptionTarget = document.documentElement
 
+// Some custom attributes added to GitHub html would be removed by GitHub when some events happen
+function attachStickyAttribute(
+  target: Node,
+  shouldAttach: (mutation: MutationRecord) => boolean,
+  attach: (mutation: MutationRecord) => void,
+  mutationOptions?: MutationObserverInit,
+) {
+  const observer = new MutationObserver(mutations => {
+    for (const mutation of mutations) if (shouldAttach(mutation)) attach(mutation)
+  })
+
+  observer.observe(target, {
+    attributeOldValue: true,
+    attributes: true,
+    ...mutationOptions,
+  })
+
+  return () => observer.disconnect()
+}
+
+export const attachStickyDataAttribute = (
+  target: HTMLElement,
+  attributeName: string,
+  attach: (mutation: MutationRecord) => void,
+) =>
+  attachStickyAttribute(target, () => !target.getAttribute(attributeName), attach, {
+    attributeFilter: [attributeName],
+  })
+
+export const attachStickyStyle = (
+  target: HTMLElement,
+  styleName: string,
+  attach: (mutation: MutationRecord) => void,
+) =>
+  attachStickyAttribute(
+    target,
+    () => !target.style.getPropertyValue(styleName), // `''` if not exist
+    attach,
+    { attributeFilter: ['style'] },
+  )
+
 /**
- * when gitako is ready, make page's header narrower
- * or cancel it
+ * when gitako is ready, attach attribute to activate CSS selectors
+ * e.g. make page's header narrower on pin sidebar
  */
+const readyDataAttributeName = 'data-gitako-ready'
+export const attachStickyGitakoReadyState = () =>
+  attachStickyDataAttribute(gitakoDescriptionTarget, readyDataAttributeName, ({ oldValue }) =>
+    markGitakoReadyState(oldValue === 'true'),
+  )
 export function markGitakoReadyState(ready: boolean) {
-  const readyAttributeName = 'data-gitako-ready'
-  return gitakoDescriptionTarget.setAttribute(readyAttributeName, `${ready}`)
+  return gitakoDescriptionTarget.setAttribute(readyDataAttributeName, `${ready}`)
+}
+
+/**
+ * indicate current platform to activate specific CSS styles
+ */
+const platformDataAttributeName = 'data-gitako-platform'
+export const attachStickyGitakoPlatform = () =>
+  attachStickyDataAttribute(gitakoDescriptionTarget, platformDataAttributeName, () =>
+    markGitakoPlatform(),
+  )
+export function markGitakoPlatform() {
+  if (platformName)
+    return gitakoDescriptionTarget.setAttribute(platformDataAttributeName, platformName)
 }
 
 /**
  * if should show gitako, then move body right to make space for showing gitako
  * otherwise, hide the space
  */
-export const spacingAttributeName = 'data-with-gitako-spacing'
+const spacingAttributeName = 'data-with-gitako-spacing'
+export const attachStickyBodyIndent = () =>
+  attachStickyDataAttribute(gitakoDescriptionTarget, spacingAttributeName, ({ oldValue }) =>
+    setBodyIndent(oldValue === 'true'),
+  )
 export function setBodyIndent(shouldShowGitako: boolean) {
   gitakoDescriptionTarget.setAttribute(spacingAttributeName, `${shouldShowGitako}`)
-}
-
-export function $(selector: string): HTMLElement | null
-export function $<T1>(selector: string, existCallback: (element: HTMLElement) => T1): T1 | null
-export function $<T1, T2>(
-  selector: string,
-  existCallback: (element: HTMLElement) => T1,
-  otherwise: () => T2,
-): T1 | T2
-export function $<T2>(
-  selector: string,
-  existCallback: undefined | null,
-  otherwise: () => T2,
-): HTMLElement | T2
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function $(selector: string, existCallback?: any, otherwise?: any) {
-  const element = document.querySelector(selector)
-  if (element) {
-    return existCallback ? existCallback(element) : element
-  }
-  return otherwise ? otherwise() : null
 }
 
 /**
@@ -141,8 +185,13 @@ export function setCSSVariable(name: string, value: string | undefined, element:
   else element.style.setProperty(name, value)
 }
 
+const gitakoWidthVariable = '--gitako-width'
+export const attachStickyGitakoWidthCSSVariable = (getLatestSize: () => number) =>
+  attachStickyStyle(gitakoDescriptionTarget, gitakoWidthVariable, () => {
+    setGitakoWidthCSSVariable(getLatestSize())
+  })
 export const setGitakoWidthCSSVariable = (size: number) => {
-  setCSSVariable('--gitako-width', `${size}px`, gitakoDescriptionTarget)
+  setCSSVariable(gitakoWidthVariable, `${size}px`, gitakoDescriptionTarget)
 }
 
 export function formatID(id: string) {
@@ -157,7 +206,14 @@ export function parseIntFromElement(e: HTMLElement): number {
   return parseInt((e.innerText || '').replace(/[^0-9]/g, ''))
 }
 
-export function cancelEvent(e: KeyboardEvent): void {
+export function cancelEvent(e: Event | React.BaseSyntheticEvent): void {
   e.stopPropagation()
   e.preventDefault()
+}
+
+export function onEnterKeyDown<E extends HTMLElement>(
+  e: React.KeyboardEvent<E>,
+  callback: (e: React.KeyboardEvent<E>) => void,
+) {
+  if (e.key === 'Enter') callback(e)
 }

@@ -34,7 +34,7 @@ import { SideBarResizeHandler } from './SideBarResizeHandler'
 export function SideBar() {
   usePJAXAPI()
   platform.usePlatformHooks?.()
-  useMarkGitakoReadyState()
+  useMarkGitakoGlobalAttributes()
 
   const error = useLoadedContext(SideBarErrorContext).value
 
@@ -181,10 +181,19 @@ function useFocusSidebarOnExpand(shouldExpand: boolean) {
   }, [shouldExpand])
 }
 
-function useMarkGitakoReadyState() {
+function useMarkGitakoGlobalAttributes() {
   React.useEffect(() => {
+    const detach = DOMHelper.attachStickyGitakoPlatform()
+    DOMHelper.markGitakoPlatform()
+    return () => detach()
+  }, [])
+  React.useEffect(() => {
+    const detach = DOMHelper.attachStickyGitakoReadyState()
     DOMHelper.markGitakoReadyState(true)
-    return () => DOMHelper.markGitakoReadyState(false)
+    return () => {
+      detach()
+      DOMHelper.markGitakoReadyState(false)
+    }
   }, [])
 }
 
@@ -199,9 +208,13 @@ function useLogoContainerElement() {
 function useUpdateBodyIndentOnStateUpdate(shouldExpand: boolean) {
   const { sidebarToggleMode } = useConfigs().value
   React.useEffect(() => {
-    if (sidebarToggleMode === 'persistent' && shouldExpand) {
-      DOMHelper.setBodyIndent(true)
-      return () => DOMHelper.setBodyIndent(false)
+    if (!(sidebarToggleMode === 'persistent' && shouldExpand)) return
+
+    const detach = DOMHelper.attachStickyBodyIndent()
+    DOMHelper.setBodyIndent(true)
+    return () => {
+      detach()
+      DOMHelper.setBodyIndent(false)
     }
   }, [sidebarToggleMode, shouldExpand])
 }

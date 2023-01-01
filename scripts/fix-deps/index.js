@@ -13,10 +13,6 @@ function modify(source = '', pairs = []) {
     } else {
       throw new Error(`Original string not found: ${JSON.stringify(original)}`)
     }
-
-    if (source.includes(original)) {
-      throw new Error(`More than one original string found`, JSON.stringify(original))
-    }
   }
 
   return source
@@ -33,6 +29,7 @@ exports.fixDep = async function fixDep(targetFilePath, pairs) {
     console.log(`${filePath} has been fixed, skipping.`)
     return
   }
+  console.log(`Fixing ${targetFilePath}`)
   const modified = modify(source, pairs) + MODIFIED_MARK
   await fs.writeFile(filePath, modified, 'utf-8')
 }
@@ -42,6 +39,7 @@ async function fixDeps() {
     require('./pjax-api').fix,
     require('./styled-components').fix,
     require('./webext-domain-permission-toggle').fix,
+    require('./@primer__behaviors').fix,
   ]) {
     await fix()
   }

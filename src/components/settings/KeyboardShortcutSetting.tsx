@@ -1,6 +1,7 @@
 import { Box, Button, FormControl, TextInput } from '@primer/react'
 import * as React from 'react'
 import { useUpdateEffect } from 'react-use'
+import { cancelEvent } from 'utils/DOMHelper'
 import { friendlyFormatShortcut, noop } from 'utils/general'
 import { useStateIO } from 'utils/hooks/useStateIO'
 import * as keyHelper from 'utils/keyHelper'
@@ -39,8 +40,7 @@ export function KeyboardShortcutSetting({ label, value, onChange }: Props) {
                 $shortcut.onChange(undefined)
                 return
               default:
-                e.preventDefault()
-                e.stopPropagation()
+                cancelEvent(e)
             }
             $shortcut.onChange(keyHelper.parseEvent(e))
           }}

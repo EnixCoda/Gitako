@@ -163,7 +163,7 @@ export function hasUpperCase(input: string) {
 }
 
 export async function renderReact(element: ReactElement) {
-  return new Promise<Node>(resolve => {
+  return new Promise<ChildNode>(resolve => {
     const mount = document.createElement('div')
     ReactDOM.render(element, mount, () => {
       resolve(mount.childNodes[0])

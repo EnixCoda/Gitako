@@ -23,6 +23,15 @@ export function useHandleNodeClick(
           // giving recursive toggle action higher priority than default action
           if (!recursive && isOpenInNewWindowClick(event)) return
 
+          // check if clicked inside an element which has `data-gitako-bypass-click` set
+          if (event.target instanceof HTMLElement) {
+            let e = event.target
+            while (e.parentElement) {
+              if (e.dataset.gitakoBypassClick) return
+              e = e.parentElement
+            }
+          }
+
           event.preventDefault()
           toggleExpansion(node, { recursive })
           break

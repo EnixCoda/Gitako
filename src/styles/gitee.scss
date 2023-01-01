@@ -1,0 +1,47 @@
+$gitee-header-z-index: 1002;
+
+@mixin gitee($name) {
+  [data-gitako-platform='Gitee'] {
+    &[data-#{$name}-ready='true'] {
+      #git-header-nav {
+        position: static;
+        padding-left: 0;
+        padding-right: 0;
+      }
+
+      // reset styles
+      .#{$name}-side-bar {
+        input[type='text'],
+        input[type='password'],
+        .ui-autocomplete-input,
+        textarea,
+        .uneditable-input {
+          padding: initial;
+          border: none;
+        }
+      }
+
+      padding-top: 0;
+
+      .#{$name}-side-bar {
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+          margin: 0;
+        }
+      }
+    }
+
+    &[data-with-gitako-spacing='true'] {
+      body {
+        width: auto; // shrink width
+        .site-content {
+          min-width: 1040px;
+        }
+      }
+    }
+  }
+}
