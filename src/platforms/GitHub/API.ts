@@ -1,7 +1,7 @@
 import { errors } from 'platforms'
 import { isEnterprise } from '.'
 import { is } from '../../utils/is'
-import { gitakoServiceHost } from '../../utils/networkService'
+import { gitakoServiceHost, responseBodyResolvers } from '../../utils/networkService'
 import { continuousLoadPages, getDOM, resolveHeaderLink } from './utils'
 
 function isAPIRateLimitExceeded(content: JSONValue) {
@@ -17,15 +17,6 @@ function isEmptyProject(content: JSONValue) {
 
 function isBlockedProject(content: JSONValue) {
   return is.JSON.object(content) && content?.['message'] === 'Repository access blocked'
-}
-
-export const responseBodyResolvers = {
-  asIs: (response: Response) => response,
-  json(response: Response) {
-    const contentType = response.headers.get('Content-Type') || response.headers.get('content-type')
-    if (contentType?.includes('application/json')) return response.json()
-    throw new Error(`Response content type is "${contentType}"`)
-  },
 }
 
 async function request<T>(
@@ -203,7 +194,10 @@ export async function requestCommitTreeData(
   return await request(url, { accessToken }, responseBodyResolvers.asIs)
 }
 
-export async function getPaginatedData<T>(sendRequest: (page: number) => Promise<Response>) {
+export async function getPaginatedData<T>(
+  // TODO: refactor, update sendRequest arguments with URLs in response header `link`
+  sendRequest: (page: number) => Promise<Response>,
+) {
   const responses: Response[] = []
   let page = 1
   // eslint-disable-next-line no-constant-condition
@@ -237,5 +231,5 @@ export async function getPaginatedData<T>(sendRequest: (page: number) => Promise
       break
     }
   }
-  return Promise.all(responses.map(responseBodyResolvers.json)) as Promise<T[]>
+  return Promise.all(responses.map(responseBodyResolvers.json) as T[])
 }

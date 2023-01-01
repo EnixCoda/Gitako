@@ -3,11 +3,13 @@ import { dummyPlatformForTypeSafety } from './dummyPlatformForTypeSafety'
 import { Gitea } from './Gitea'
 import { Gitee } from './Gitee'
 import { GitHub } from './GitHub'
+import { GitLab } from './GitLab'
 
 const platforms = {
   GitHub,
   Gitee,
   Gitea,
+  GitLab,
 }
 
 function resolvePlatform() {
