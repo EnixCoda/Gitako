@@ -1,15 +1,16 @@
 import { SyncIcon } from '@primer/octicons-react'
 import iconURL from 'assets/icons/Gitako.png'
 import { useConfigs } from 'containers/ConfigsContext'
+import { SideBarErrorContext } from 'containers/ErrorContext'
 import { ReloadContext } from 'containers/ReloadContext'
 import * as React from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
 import { cx } from 'utils/cx'
+import { useLoadedContext } from 'utils/hooks/useLoadedContext'
 import { useResizeHandler } from 'utils/hooks/useResizeHandler'
 import { RoundIconButton } from './RoundIconButton'
 
 type Props = {
-  error?: string | null
   className?: React.HTMLAttributes<HTMLButtonElement>['className']
   onHover?: React.HTMLAttributes<HTMLButtonElement>['onMouseEnter']
   onClick?: (e: PointerEvent) => void
@@ -21,8 +22,10 @@ function getSafeDistance(y: number, height: number) {
   return Math.max(0, Math.min(y, height - buttonHeight))
 }
 
-export function ToggleShowButton({ error, className, onClick, onHover }: Props) {
+export function ToggleShowButton({ className, onClick, onHover }: Props) {
   const reload = React.useContext(ReloadContext)
+  const error = useLoadedContext(SideBarErrorContext).value
+
   const ref = React.useRef<HTMLDivElement>(null)
   const config = useConfigs()
   const [distance, setDistance] = React.useState(config.value.toggleButtonVerticalDistance)

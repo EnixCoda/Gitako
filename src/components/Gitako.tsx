@@ -18,15 +18,15 @@ export function Gitako() {
         <ReloadContextWrapper>
           <ErrorBoundary>
             <ConfigsContextWrapper>
-              <StateBarStateContextWrapper>
-                <StateBarErrorContextWrapper>
+              <StateBarErrorContextWrapper>
+                <StateBarStateContextWrapper>
                   <OAuthWrapper>
                     <RepoContextWrapper>
                       <SideBar />
                     </RepoContextWrapper>
                   </OAuthWrapper>
-                </StateBarErrorContextWrapper>
-              </StateBarStateContextWrapper>
+                </StateBarStateContextWrapper>
+              </StateBarErrorContextWrapper>
             </ConfigsContextWrapper>
           </ErrorBoundary>
         </ReloadContextWrapper>
