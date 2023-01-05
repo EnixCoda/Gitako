@@ -119,3 +119,7 @@ export async function collapseFloatModeSidebar() {
   })
   await sleep(500)
 }
+
+export function getTextContent(query: string) {
+  return page.evaluate(query => document.querySelector(query)?.textContent, query)
+}

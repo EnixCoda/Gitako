@@ -1,6 +1,7 @@
 import {
   collapseFloatModeSidebar,
   expandFloatModeSidebar,
+  getTextContent,
   patientClick,
   selectFileTreeItem,
   sleep,
@@ -32,10 +33,6 @@ describe(`in Gitako project page`, () => {
     page.goBack()
     await sleep(1000)
 
-    expect(
-      await page.evaluate(
-        () => document.querySelector('.final-path')?.textContent === 'analytics.ts',
-      ),
-    ).toBe(true)
+    expect(await getTextContent('.final-path')).toBe('analytics.ts')
   })
 })
