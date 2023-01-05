@@ -278,18 +278,21 @@ function useCollapseOnNoPermissionWhenTokenHasBeenSet(
 
 function useShouldExpand() {
   const getDerivedExpansion = useGetDerivedExpansion()
+  const error = useLoadedContext(SideBarErrorContext).value
   const [shouldExpand, setShouldExpand] = React.useState(getDerivedExpansion)
   const toggleShowSideBar = React.useCallback(
     () => setShouldExpand(show => !show),
     [setShouldExpand],
   )
 
-  useSaveExpandStateOnToggle(shouldExpand)
-  useUpdateBodyIndentOnStateUpdate(shouldExpand)
+  const $shouldExpand = error ? false : shouldExpand
+
+  useSaveExpandStateOnToggle($shouldExpand)
+  useUpdateBodyIndentOnStateUpdate($shouldExpand)
   useUpdateBodyIndentAfterRedirect(setShouldExpand)
   useCollapseOnNoPermissionWhenTokenHasBeenSet(setShouldExpand)
 
-  return [shouldExpand, setShouldExpand, toggleShowSideBar] as const
+  return [$shouldExpand, setShouldExpand, toggleShowSideBar] as const
 }
 
 function useShowSidebarKeyboard(
