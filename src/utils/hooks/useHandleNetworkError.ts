@@ -1,5 +1,5 @@
 import { useConfigs } from 'containers/ConfigsContext'
-import { errors, platformName } from 'platforms'
+import { errors, platform, platformName } from 'platforms'
 import { useCallback } from 'react'
 import { useLoadedContext } from 'utils/hooks/useLoadedContext'
 import { SideBarErrorContext } from '../../containers/ErrorContext'
@@ -12,33 +12,34 @@ export function useHandleNetworkError() {
 
   return useCallback(
     function handleNetworkError(err: Error) {
-      if (err.message === errors.EMPTY_PROJECT) {
+      const message = platform.mapErrorMessage?.(err) || err.message
+      if (message === errors.EMPTY_PROJECT) {
         changeErrorContext('This project seems to be empty.')
         return
       }
 
-      if (err.message === errors.BLOCKED_PROJECT) {
+      if (message === errors.BLOCKED_PROJECT) {
         changeErrorContext('Access to the project is blocked.')
         return
       }
 
       if (
-        err.message === errors.NOT_FOUND ||
-        err.message === errors.BAD_CREDENTIALS ||
-        err.message === errors.API_RATE_LIMIT
+        message === errors.NOT_FOUND ||
+        message === errors.BAD_CREDENTIALS ||
+        message === errors.API_RATE_LIMIT
       ) {
         changeStateContext('error-due-to-auth')
         return
       }
 
-      if (err.message === errors.CONNECTION_BLOCKED) {
+      if (message === errors.CONNECTION_BLOCKED) {
         if (accessToken) changeErrorContext(`Cannot connect to ${platformName}.`)
         else changeStateContext('error-due-to-auth')
 
         return
       }
 
-      if (err.message === errors.SERVER_FAULT) {
+      if (message === errors.SERVER_FAULT) {
         changeErrorContext(`${platformName} server went down.`)
         return
       }

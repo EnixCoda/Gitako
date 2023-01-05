@@ -1,6 +1,6 @@
 import { GITEE_OAUTH } from 'env'
 import { Base64 } from 'js-base64'
-import { platform } from 'platforms'
+import { errors, platform } from 'platforms'
 import * as React from 'react'
 import { resolveGitModules } from 'utils/gitSubmodule'
 import { useAfterRedirect } from 'utils/hooks/useFastRedirect'
@@ -180,6 +180,10 @@ export const Gitee: Platform = {
   usePlatformHooks() {
     useProgressBar()
   },
+  mapErrorMessage: (error: Error) =>
+    ({
+      ['Only signed in user is allowed to call APIs.']: errors.BAD_CREDENTIALS,
+    }[error.message]),
 }
 
 export function useGiteeAttachCopySnippetButton(copySnippetButton: boolean) {

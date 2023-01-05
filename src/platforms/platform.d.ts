@@ -29,4 +29,5 @@ type Platform = {
     | void
   loadWithFastRedirect?(url: string, element: HTMLElement): boolean | void
   usePlatformHooks?(): void
+  mapErrorMessage?: (error: Error) => string | void
 }
