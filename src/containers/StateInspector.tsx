@@ -1,6 +1,7 @@
 import { PropsWithChildren, ReactIO } from 'common'
 import { IN_PRODUCTION_MODE } from 'env'
 import * as React from 'react'
+import { noop } from 'utils/general'
 import { useStateIO } from 'utils/hooks/useStateIO'
 
 export type InspectorContextShape = ReactIO<JSONObject>
@@ -57,9 +58,11 @@ export const InspectorContextWrapper = IN_PRODUCTION_MODE
       )
     }
 
-export function useInspector(key: string, value: JSONValue) {
-  const $ = React.useContext(InspectorContext)
-  React.useEffect(() => {
-    $?.onChange(prev => ({ ...prev, [key]: value }))
-  }, [key, value]) // eslint-disable-line react-hooks/exhaustive-deps
-}
+export const useInspector = IN_PRODUCTION_MODE
+  ? noop
+  : function useInspector(key: string, value: JSONValue) {
+      const $ = React.useContext(InspectorContext)
+      React.useEffect(() => {
+        $?.onChange(prev => ({ ...prev, [key]: value }))
+      }, [key, value]) // eslint-disable-line react-hooks/exhaustive-deps
+    }
