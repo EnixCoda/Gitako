@@ -3,8 +3,9 @@ import { GITHUB_OAUTH } from 'env'
 import { Base64 } from 'js-base64'
 import { $ } from 'utils/$'
 import { configRef } from 'utils/config/helper'
+import { resolveGitAttributes } from 'utils/gitAttributes'
 import { resolveGitModules } from 'utils/gitSubmodule'
-import { sortFoldersToFront } from 'utils/treeParser'
+import { findGitAttributes, findGitModules, sortFoldersToFront } from 'utils/treeParser'
 import * as API from './API'
 import * as DOMHelper from './DOMHelper'
 import { getCommitTreeData } from './getCommitTreeData'
@@ -270,14 +271,22 @@ async function getRepositoryTreeData(
     })),
   )
 
-  const gitModules = root.contents?.find(
-    item => item.type === 'blob' && item.name === '.gitmodules',
-  )
+  // TODO: cache
+  const gitModules = findGitModules(root)
   if (gitModules?.sha) {
     const blobData = await API.getBlobData(userName, repoName, gitModules.sha, accessToken)
 
     if (blobData && blobData.encoding === 'base64' && blobData.content) {
       await resolveGitModules(root, Base64.decode(blobData.content))
+    }
+  }
+
+  const gitAttributes = findGitAttributes(root)
+  if (gitAttributes?.sha) {
+    const blobData = await API.getBlobData(userName, repoName, gitAttributes.sha, accessToken)
+
+    if (blobData && blobData.encoding === 'base64' && blobData.content) {
+      resolveGitAttributes(root, Base64.decode(blobData.content))
     }
   }
 

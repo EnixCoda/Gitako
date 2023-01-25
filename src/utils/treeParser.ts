@@ -11,10 +11,22 @@ export function sortFoldersToFront(root: TreeNode) {
 
 export function findGitModules(root: TreeNode) {
   if (root.contents) {
-    const modulesFile = root.contents.find(content => content.name === '.gitmodules')
+    const modulesFile = root.contents.find(
+      content => content.type === 'blob' && content.name === '.gitmodules',
+    )
     if (modulesFile) {
       return modulesFile
     }
   }
-  return null
+}
+
+export function findGitAttributes(root: TreeNode) {
+  if (root.contents) {
+    const attributesFile = root.contents.find(
+      content => content.type === 'blob' && content.name === '.gitattributes',
+    )
+    if (attributesFile) {
+      return attributesFile
+    }
+  }
 }
