@@ -84,7 +84,7 @@
     "json-loader": "^0.5.7",
     "lint-staged": "^13.0.3",
     "mini-css-extract-plugin": "^0.9.0",
-    "prettier": "^2.7.1",
+    "prettier": "^2.8.3",
     "puppeteer": "^10.1.0",
     "raw-loader": "^4.0.0",
     "sass": "^1.26.2",
