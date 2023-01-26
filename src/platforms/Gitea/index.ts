@@ -117,7 +117,7 @@ export const Gitea: Platform = {
   },
   async getTreeData(metaData, path, recursive, accessToken) {
     const { userName, repoName, branchName } = metaData
-    const treeData = await API.getTreeData(userName, repoName, branchName, recursive)
+    const treeData = await API.getTreeData(userName, repoName, branchName, recursive, accessToken)
 
     const root = processTree(
       treeData.tree.map(item => ({
