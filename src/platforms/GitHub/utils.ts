@@ -78,7 +78,7 @@ export async function getDOM(url: string) {
   return new DOMParser().parseFromString(await (await fetch(url)).text(), 'text/html')
 }
 
-export async function continuousLoadPages(doc: Document, onReceivePage?: (doc: Document) => void) {
+export async function continuousLoadFragmentedPages(doc: Document) {
   /**
    *  <include-fragment
    *    src="..."
@@ -91,17 +91,21 @@ export async function continuousLoadPages(doc: Document, onReceivePage?: (doc: D
     'include-fragment[data-targets="diff-file-filter.progressiveLoaders"]',
     '.js-diff-progressive-container include-fragment[src]', // legacy support
   ]
+
   const documents: Document[] = [doc]
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-    const fragment = doc.querySelector(fragmentSelectors.join()) as HTMLElement
-    if (!fragment) break
-    const src = fragment.getAttribute('src')
-    if (!src) break
-    // Using `src` directly below would fail in Firefox if the src is an absolute path
-    doc = await getDOM(new URL(src, window.location.origin).href)
-    documents.push(doc)
-    onReceivePage?.(doc)
+
+  const selector = fragmentSelectors.find(selector => doc.querySelector(selector))
+  if (selector) {
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const fragment = doc.querySelector(selector)
+      if (!(fragment instanceof HTMLElement)) break
+      const src = fragment.getAttribute('src')
+      if (!src) break
+      // Using `src` without origin below would fail in Firefox if the src is an absolute path
+      doc = await getDOM(new URL(src, window.location.origin).href)
+      documents.push(doc)
+    }
   }
   return documents
 }
