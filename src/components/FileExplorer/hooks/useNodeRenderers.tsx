@@ -266,7 +266,7 @@ export function useRenderGoToButton(searched: boolean, goTo: (path: string[]) =>
         ? function renderGoToButton(node: TreeNode): React.ReactNode {
             return (
               <button
-                title={'Reveal in file tree'}
+                title={'Reveal in file tree (⏎)'}
                 className={'go-to-button'}
                 onClick={() => goTo(node.path.split('/'))}
               >
