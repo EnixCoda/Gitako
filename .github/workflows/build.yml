@@ -35,7 +35,7 @@ jobs:
 
       - name: Build
         run: |
-          make build
+          NODE_OPTIONS=--openssl-legacy-provider make build
 
       - name: Archive production artifacts
         uses: actions/upload-artifact@v3
