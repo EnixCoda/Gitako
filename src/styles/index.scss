@@ -41,7 +41,9 @@ $minimal-z-index: max(
 }
 
 html[data-with-gitako-spacing='true'] {
-  body {
+  body,
+  .AppHeader deferred-side-panel div[data-modal-dialog-overlay] // side panel opened via clicking github top-left icon in global navigation mode
+  {
     @media screen {
       margin-left: var(--gitako-width);
     }
