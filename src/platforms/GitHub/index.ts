@@ -75,7 +75,10 @@ export function isEnterprise() {
        * </a>
        */
       $(
-        'a.Header-link[aria-label="Homepage Enterprise"]',
+        [
+          'a.Header-link[aria-label="Homepage Enterprise"]',
+          'a.Header-link[aria-label="Homepage"]', // legacy support
+        ].join(),
         e => e.textContent?.trim() === 'Enterprise',
       )) ||
     false
