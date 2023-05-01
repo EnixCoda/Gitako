@@ -6,10 +6,34 @@ import { formatClass, parseIntFromElement } from 'utils/DOMHelper'
 import { renderReact, run } from 'utils/general'
 import { CopyFileButton, copyFileButtonClassName } from './CopyFileButton'
 
+const selectors = {
+  globalNavigation: {
+    navbar: {
+      repositoryOwner: [
+        '.AppHeader-context-item[data-hovercard-type="user"]',
+        '.AppHeader-context-item[data-hovercard-type="organization"]',
+      ].join(),
+      // its meant to be the element visually next to the `repositoryOwner` element
+      repositoryName:
+        'nav[role="navigation"] ul[role="list"] li:nth-child(2) .AppHeader-context-item',
+    },
+  },
+}
+
 export function resolveMeta(): Partial<MetaData> {
   const metaData = {
-    userName: $('[itemprop="author"] > a[rel="author"]', e => e.textContent?.trim()) || undefined,
-    repoName: $('[itemprop="name"] > a[href]', e => e.textContent?.trim()) || undefined,
+    userName:
+      $(
+        '[itemprop="author"] > a[rel="author"]',
+        e => e.textContent?.trim(),
+        () => $(selectors.globalNavigation.navbar.repositoryOwner, e => e.textContent?.trim()),
+      ) || undefined,
+    repoName:
+      $(
+        '[itemprop="name"] > a[href]',
+        e => e.textContent?.trim(),
+        () => $(selectors.globalNavigation.navbar.repositoryName, e => e.textContent?.trim()),
+      ) || undefined,
     branchName: getCurrentBranch(true),
   }
   if (!metaData.userName || !metaData.repoName) {
@@ -19,15 +43,15 @@ export function resolveMeta(): Partial<MetaData> {
 }
 
 export function isInRepoPage() {
-  const repoHeadSelector = '.repohead' // legacy
+  const repoHeadSelector = '.repohead'
   const authorNameSelector = '.author[itemprop="author"]'
-  const globalNavigationSelectors = [
-    '.AppHeader-context-item[data-hovercard-type="user"]',
-    '.AppHeader-context-item[data-hovercard-type="organization"]',
-  ].join()
   return Boolean(
     document.querySelector(
-      [repoHeadSelector, authorNameSelector, globalNavigationSelectors].join(),
+      [
+        repoHeadSelector,
+        authorNameSelector,
+        selectors.globalNavigation.navbar.repositoryOwner,
+      ].join(),
     ),
   )
 }
