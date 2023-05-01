@@ -21,7 +21,10 @@ export function resolveMeta(): Partial<MetaData> {
 export function isInRepoPage() {
   const repoHeadSelector = '.repohead' // legacy
   const authorNameSelector = '.author[itemprop="author"]'
-  const globalNavigationSelectors = '.AppHeader-context-item[data-hovercard-type="user"]'
+  const globalNavigationSelectors = [
+    '.AppHeader-context-item[data-hovercard-type="user"]',
+    '.AppHeader-context-item[data-hovercard-type="organization"]',
+  ].join()
   return Boolean(
     document.querySelector(
       [repoHeadSelector, authorNameSelector, globalNavigationSelectors].join(),
