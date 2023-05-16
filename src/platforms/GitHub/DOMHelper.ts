@@ -57,7 +57,7 @@ export function isInRepoPage() {
 }
 
 export function isInCodePage() {
-  const branchListSelector = ['#branch-select-menu', '.branch-select-menu'].join()
+  const branchListSelector = ['#branch-select-menu', '.branch-select-menu', 'button[id^=branch-picker]'].join()
   // The element may still exist in DOM for PR pages, but not visible
   return Boolean($(branchListSelector, e => e.offsetWidth > 0 && e.offsetHeight > 0))
 }
