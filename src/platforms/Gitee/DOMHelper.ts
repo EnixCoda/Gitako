@@ -26,17 +26,6 @@ export function getCurrentBranch() {
   raiseError(new Error('cannot get current branch'))
 }
 
-const REPO_TYPE_PRIVATE = 'private' as const
-const REPO_TYPE_PUBLIC = 'public' as const
-export function getRepoPageType() {
-  const headerSelector = `.git-project-title .icon-lock`
-  return $(
-    headerSelector,
-    () => REPO_TYPE_PRIVATE,
-    () => REPO_TYPE_PUBLIC,
-  )
-}
-
 export function attachCopySnippet() {
   const readmeSelector = '.file_content.markdown-body'
   return $(readmeSelector, () => {

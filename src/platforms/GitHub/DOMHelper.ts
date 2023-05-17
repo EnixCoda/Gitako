@@ -17,10 +17,43 @@ const selectors = {
       repositoryName:
         'nav[role="navigation"] ul[role="list"] li:nth-child(2) .AppHeader-context-item',
     },
+    branchSelector: 'button[id^="branch-picker-"]',
   },
 }
 
+export function resolveMetaFromDOMJSON(): { defaultBranch: string; metaData: MetaData } | void {
+  // in code page, there is a JSON script tag in DOM with meta data
+  const json = $('script[type="application/json"][data-target="react-app.embeddedData"]', e => {
+    try {
+      return JSON.parse(e.textContent || '')
+    } catch (error) {
+      return null
+    }
+  })
+  if (!json) return
+
+  const { payload } = json
+  if (!payload) return
+
+  const { repo, refInfo } = payload
+  if (!repo || !refInfo) return
+
+  const { defaultBranch, name: repoName, ownerLogin: userName } = repo
+  const { name: branchName } = refInfo
+  return {
+    defaultBranch,
+    metaData: {
+      userName,
+      repoName,
+      branchName,
+    },
+  }
+}
+
 export function resolveMeta(): Partial<MetaData> {
+  const dataFromJSON = resolveMetaFromDOMJSON()
+  if (dataFromJSON) return dataFromJSON.metaData
+
   const metaData = {
     userName:
       $(
@@ -57,7 +90,11 @@ export function isInRepoPage() {
 }
 
 export function isInCodePage() {
-  const branchListSelector = ['#branch-select-menu', '.branch-select-menu', 'button[id^=branch-picker]'].join()
+  const branchListSelector = [
+    '#branch-select-menu',
+    '.branch-select-menu',
+    selectors.globalNavigation.branchSelector,
+  ].join()
   // The element may still exist in DOM for PR pages, but not visible
   return Boolean($(branchListSelector, e => e.offsetWidth > 0 && e.offsetHeight > 0))
 }
@@ -80,12 +117,13 @@ export function getCurrentBranch(passive = false) {
   const selectedBranchButtonSelector = [
     'main #branch-select-menu summary',
     'main .branch-select-menu summary',
+    selectors.globalNavigation.branchSelector,
   ].join()
   const branchButtonElement = $(selectedBranchButtonSelector)
   if (branchButtonElement) {
     const branchNameSpanElement = branchButtonElement.querySelector('span')
     if (branchNameSpanElement) {
-      const partialBranchNameFromInnerText = branchNameSpanElement.textContent || ''
+      const partialBranchNameFromInnerText = branchNameSpanElement.textContent?.trim() || ''
       if (partialBranchNameFromInnerText && !partialBranchNameFromInnerText.includes('…'))
         return partialBranchNameFromInnerText
     }
@@ -134,31 +172,15 @@ const PAGE_TYPES = {
  * TODO: distinguish type 'preview'
  */
 function getCurrentPageType() {
-  const blobPathSelector = '#blob-path' // path next to branch switcher
-  const blobWrapperSelector = 'main .blob-wrapper table'
-  const readmeSelector = 'main .readme'
-  const searchResultSelector = '.codesearch-results'
+  const searchResultSelector = '.search-sub-header'
+  const blobPathSelector = '[aria-label="file content"]'
+  const readmeSelector = 'main #readme'
   return (
     $(searchResultSelector, () => PAGE_TYPES.SEARCH) ||
-    $(blobWrapperSelector, () => $(blobPathSelector, () => PAGE_TYPES.RAW_TEXT)) ||
+    $(blobPathSelector, () => PAGE_TYPES.RAW_TEXT) ||
     $(readmeSelector, () => PAGE_TYPES.RENDERED) ||
     PAGE_TYPES.OTHERS
   )
-}
-
-const REPO_TYPE_PRIVATE = 'private' as const
-const REPO_TYPE_PUBLIC = 'public' as const
-export function getRepoPageType() {
-  const headerSelector = `main .pagehead.repohead h1`
-  return $(headerSelector, header => {
-    const repoPageTypes = [REPO_TYPE_PRIVATE, REPO_TYPE_PUBLIC]
-    for (const repoPageType of repoPageTypes) {
-      if (header.classList.contains(repoPageType)) {
-        return repoPageType
-      }
-    }
-    raiseError(new Error('cannot get repo page type'))
-  })
 }
 
 /**
