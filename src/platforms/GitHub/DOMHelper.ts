@@ -17,6 +17,9 @@ const selectors = {
         'nav[role="navigation"] ul[role="list"] li:nth-child(2) .AppHeader-context-item',
     },
     branchSelector: 'button[id^="branch-picker-"]',
+    pathContext: '[data-testid="breadcrumbs"]',
+    pathContextFileName: '[data-testid="breadcrumbs-filename"]',
+    pathContextScreenReaderHeading: '[data-testid="screen-reader-heading"]',
   },
 }
 
@@ -265,17 +268,31 @@ export function getPath() {
   const pathElement =
     document.querySelector(blobPathElementSelector) ||
     document.querySelector(folderPathElementSelector)?.nextElementSibling
-  if (!pathElement?.querySelector('.js-repo-root')) {
-    return []
+  if (pathElement?.querySelector('.js-repo-root')) {
+    const path = (pathElement.textContent || '')
+      .replace(/\n/g, '')
+      .replace(/\/\s+Jump to.*/m, '')
+      .trim()
+      .split('/')
+      .filter(Boolean)
+      .slice(1) // the first is the repo's name
+    return path
   }
-  const path = ((pathElement as HTMLDivElement).textContent || '')
-    .replace(/\n/g, '')
-    .replace(/\/\s+Jump to.*/m, '')
-    .trim()
-    .split('/')
-    .filter(Boolean)
-    .slice(1) // the first is the repo's name
-  return path
+
+  const pathContextElement = document.querySelector(
+    selectors.globalNavigation.pathContext,
+  )?.parentElement
+  let path = pathContextElement?.textContent?.trim()
+  if (path) {
+    // [Breadcrumbs]:repoName/:path
+    const screenReader = pathContextElement?.querySelector(
+      selectors.globalNavigation.pathContextScreenReaderHeading,
+    )
+    if (screenReader) path = path.replace(screenReader.textContent || '', '')
+    return path.split('/').slice(1)
+  }
+
+  return []
 }
 
 export function isNativePRFileTreeShown() {
