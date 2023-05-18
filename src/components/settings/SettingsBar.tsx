@@ -20,15 +20,12 @@ export const wikiLinks = {
   compressSingletonFolder: `${WIKI_HOME_LINK}/Compress-Singleton-Folder`,
   changeLog: `${WIKI_HOME_LINK}/Change-Log`,
   codeFolding: `${WIKI_HOME_LINK}/Code-folding`,
-  copyFileButton: `${WIKI_HOME_LINK}/Copy-file-and-snippet`,
   copySnippet: `${WIKI_HOME_LINK}/Copy-file-and-snippet`,
   createAccessToken: `${WIKI_HOME_LINK}/Access-token-for-Gitako`,
   pjaxMode: `${WIKI_HOME_LINK}/Pjax-Mode`,
 }
 
-const moreFields: SimpleConfigField<
-  'copyFileButton' | 'copySnippetButton' | 'codeFolding' | 'pjaxMode'
->[] =
+const moreFields: SimpleConfigField<'copySnippetButton' | 'codeFolding' | 'pjaxMode'>[] =
   platform === GitHub
     ? [
         {
@@ -46,12 +43,6 @@ const moreFields: SimpleConfigField<
             value: pjaxMode => pjaxMode === 'native',
             onChange: checked => (checked ? 'native' : 'pjax-api'),
           },
-        },
-        {
-          key: 'copyFileButton',
-          label: 'Copy file button',
-          wikiLink: wikiLinks.copyFileButton,
-          tooltip: `Read more in Gitako's Wiki`,
         },
         {
           key: 'copySnippetButton',

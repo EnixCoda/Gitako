@@ -10,7 +10,6 @@ import * as DOMHelper from './DOMHelper'
 import { getCommitTreeData } from './getCommitTreeData'
 import { getPullRequestTreeData } from './getPullRequestTreeData'
 import { useEnterpriseStatBarStyleFix } from './hooks/useEnterpriseStatBarStyleFix'
-import { useGitHubAttachCopyFileButton } from './hooks/useGitHubAttachCopyFileButton'
 import { useGitHubAttachCopySnippetButton } from './hooks/useGitHubAttachCopySnippetButton'
 import { useGitHubCodeFold } from './hooks/useGitHubCodeFold'
 import * as URLHelper from './URLHelper'
@@ -196,8 +195,7 @@ export const GitHub: Platform = {
     return `https://github.com/login/oauth/authorize?${params}`
   },
   usePlatformHooks() {
-    const { copyFileButton, copySnippetButton, codeFolding } = useConfigs().value
-    useGitHubAttachCopyFileButton(copyFileButton)
+    const { copySnippetButton, codeFolding } = useConfigs().value
     useGitHubAttachCopySnippetButton(copySnippetButton)
     useGitHubCodeFold(codeFolding)
     useEnterpriseStatBarStyleFix()

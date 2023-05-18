@@ -3,8 +3,7 @@ import { Clippy, ClippyClassName } from 'components/Clippy'
 import * as React from 'react'
 import { $ } from 'utils/$'
 import { formatClass, parseIntFromElement } from 'utils/DOMHelper'
-import { renderReact, run } from 'utils/general'
-import { CopyFileButton, copyFileButtonClassName } from './CopyFileButton'
+import { renderReact } from 'utils/general'
 
 const selectors = {
   globalNavigation: {
@@ -195,49 +194,6 @@ export function getCodeElement() {
     }
     return codeContentElement
   }
-}
-
-/**
- * add copy file content buttons to button groups
- * click these buttons will copy file content to clipboard
- */
-export function attachCopyFileBtn() {
-  const removeButtons = () => {
-    const buttons = document.querySelectorAll(formatClass(copyFileButtonClassName))
-    buttons.forEach(button => {
-      button.parentElement?.removeChild(button)
-    })
-  }
-
-  if (getCurrentPageType() === PAGE_TYPES.RAW_TEXT) {
-    let buttonGroup: HTMLElement | null = null
-
-    if (!buttonGroup) {
-      const rawUrlButtonSelector = '#raw-url'
-      const $buttonGroup = document.querySelector(rawUrlButtonSelector)?.parentElement
-      if ($buttonGroup) buttonGroup = $buttonGroup
-    }
-
-    if (!buttonGroup) {
-      const buttonGroupSelector = 'main .Box-header .BtnGroup'
-      const buttonGroups = document.querySelectorAll(buttonGroupSelector)
-      const $buttonGroup = buttonGroups[buttonGroups.length - 1]
-      if ($buttonGroup) buttonGroup = $buttonGroup as HTMLElement
-    }
-
-    run(async () => {
-      if (!buttonGroup) raiseError(new Error(`No button groups found`))
-      else if (!buttonGroup.lastElementChild) return
-      else {
-        removeButtons() // prevent duplicated buttons
-        const button = await renderReact(React.createElement(CopyFileButton))
-        if (button instanceof HTMLElement) buttonGroup.appendChild(button)
-      }
-    })
-  }
-
-  // return callback so that disabling after redirecting from file page to non-page works properly
-  return removeButtons
 }
 
 export function attachCopySnippet() {

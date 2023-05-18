@@ -9,7 +9,6 @@ export type Config = {
   focusSearchInputShortcut: string | undefined // shortcut for focusing search input
   accessToken: string | undefined
   compressSingletonFolder: boolean
-  copyFileButton: boolean
   copySnippetButton: boolean
   intelligentToggle: boolean | null // `null` stands for intelligent, boolean for sidebar open state
   icons: 'rich' | 'dim' | 'native'
@@ -33,7 +32,6 @@ enum configKeys {
   focusSearchInputShortcut = 'focusSearchInputShortcut',
   accessToken = 'accessToken',
   compressSingletonFolder = 'compressSingletonFolder',
-  copyFileButton = 'copyFileButton',
   copySnippetButton = 'copySnippetButton',
   intelligentToggle = 'intelligentToggle',
   icons = 'icons',
@@ -59,7 +57,6 @@ export const getDefaultConfigs: () => Config = () => ({
   focusSearchInputShortcut: undefined,
   accessToken: '',
   compressSingletonFolder: true,
-  copyFileButton: !isInGitHub, // disable on github.com
   copySnippetButton: !isInGitHub, // disable on github.com
   intelligentToggle: null,
   icons: 'rich',
