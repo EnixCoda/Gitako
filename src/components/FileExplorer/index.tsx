@@ -5,7 +5,7 @@ import { SearchBar } from 'components/SearchBar'
 import { useConfigs } from 'containers/ConfigsContext'
 import { PortalContext } from 'containers/PortalContext'
 import { RepoContext } from 'containers/RepoContext'
-import { platform } from 'platforms'
+import { useInspector } from 'containers/StateInspector'
 import * as React from 'react'
 import { usePrevious, useUpdateEffect } from 'react-use'
 import { cx } from 'utils/cx'
@@ -171,12 +171,20 @@ function LoadedFileExplorer({
   const renderLabelText = useRenderLabelText(searchKey)
 
   const goToCurrentItem = React.useCallback(() => {
-    const targetPath = platform.getCurrentPath(metaData.branchName)
+    const targetPath = getCurrentPath()
     if (targetPath) expandTo(targetPath)
-  }, [metaData.branchName, expandTo])
+  }, [getCurrentPath, expandTo])
 
   useOnLocationChange(goToCurrentItem)
   useAfterRedirect(goToCurrentItem)
+
+  const [currentPath, setCurrentPath] = React.useState(() => getCurrentPath())
+  useAfterRedirect(
+    React.useCallback(() => {
+      setCurrentPath(getCurrentPath())
+    }, [getCurrentPath]),
+  )
+  useInspector('CurrentPath', currentPath)
 
   const ref = React.useRef<HTMLDivElement | null>(null)
   useFocusOnPendingTarget(
