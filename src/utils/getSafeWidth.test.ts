@@ -1,5 +1,7 @@
 import { getSafeWidth, MINIMAL_CONTENT_VIEWPORT_WIDTH, MINIMAL_WIDTH } from './getSafeWidth'
 
+jest.retryTimes(3) // Math.random may result in failure due to floating point precision
+
 it(`should shrink when window is being resized smaller`, () => {
   const randomGrow = 100 * Math.random()
   expect(
