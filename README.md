@@ -36,6 +36,8 @@ Gitako is **FREE**. If you like it, please
 
 [Feature discussions](https://github.com/EnixCoda/Gitako/discussions) and [bug reports](https://github.com/EnixCoda/Gitako/issues/) are also welcome!
 
+Check out [contributing.md](./contributing.md) if you want to contribute to Gitako directly.
+
 ### About
 
 #### Source of the name and logo?
