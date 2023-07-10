@@ -1,19 +1,20 @@
 name: Tests
 
-on:
-  push:
-    branches:
-      - '**'
-    paths-ignore:
-      - 'server/**'
-  pull_request:
-    branches:
-      - '**'
-    paths-ignore:
-      - 'server/**'
-  # Runs everyday to detect GitHub update in time
-  schedule:
-    - cron: '0 0 * * *'
+# disabled due to issue #293
+# on:
+#   push:
+#     branches:
+#       - '**'
+#     paths-ignore:
+#       - 'server/**'
+#   pull_request:
+#     branches:
+#       - '**'
+#     paths-ignore:
+#       - 'server/**'
+#   # Runs everyday to detect GitHub update in time
+#   schedule:
+#     - cron: '0 0 * * *'
 
 jobs:
   build:
