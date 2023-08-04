@@ -22,6 +22,9 @@ export function Footer(props: Props) {
       >
         {VERSION}
       </Link>
+      <Link href={wikiLinks.bye} target="_blank" rel="noopener noreferrer">
+        👋 About to say good bye.
+      </Link>
       <RoundIconButton
         aria-label={'settings'}
         icon={GearIcon}

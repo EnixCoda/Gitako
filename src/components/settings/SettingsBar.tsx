@@ -23,6 +23,7 @@ export const wikiLinks = {
   copySnippet: `${WIKI_HOME_LINK}/Copy-file-and-snippet`,
   createAccessToken: `${WIKI_HOME_LINK}/Access-token-for-Gitako`,
   pjaxMode: `${WIKI_HOME_LINK}/Pjax-Mode`,
+  bye: `${WIKI_HOME_LINK}/About-to-say-good-bye`,
 }
 
 const moreFields: SimpleConfigField<'copySnippetButton' | 'codeFolding' | 'pjaxMode'>[] =
