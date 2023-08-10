@@ -103,7 +103,7 @@ export function setBodyIndent(shouldShowGitako: boolean) {
  *  </html>
  */
 
-const mountPointContainer = document.documentElement
+const mountPointContainer = document.body
 export function insertMountPoint() {
   return $(formatID(rootElementID), undefined, () => {
     const element = document.createElement('div')
