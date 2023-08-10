@@ -1,9 +1,9 @@
+import { selectors } from '../../selectors'
 import {
   expandFloatModeSidebar,
   expectToFind,
   expectToNotFind,
   patientClick,
-  selectFileTreeItem,
   sleep,
   waitForRedirect,
 } from '../../utils'
@@ -17,11 +17,10 @@ describe(`in Gitako project page`, () => {
     await sleep(3000)
 
     await expandFloatModeSidebar()
-    await patientClick(selectFileTreeItem('.babelrc'))
+    await patientClick(selectors.gitako.fileItemOf('.babelrc'))
     await waitForRedirect()
 
-    // The selector for file content
-    await expectToFind('table.js-file-line-container')
+    await expectToFind(selectors.github.fileContent)
 
     await waitForRedirect(async () => {
       await sleep(1000) // This prevents failing in some cases due to some mystery scheduling issue of puppeteer or jest
@@ -29,6 +28,6 @@ describe(`in Gitako project page`, () => {
     })
 
     // The selector for file content
-    await expectToNotFind('table.js-file-line-container')
+    await expectToNotFind(selectors.github.fileContent)
   })
 })

@@ -1,9 +1,9 @@
+import { selectors } from '../../selectors'
 import {
   collapseFloatModeSidebar,
   expandFloatModeSidebar,
   getTextContent,
   patientClick,
-  selectFileTreeItem,
   sleep,
   waitForRedirect,
 } from '../../utils'
@@ -17,14 +17,14 @@ describe(`in Gitako project page`, () => {
     await sleep(3000)
 
     await expandFloatModeSidebar()
-    await patientClick(selectFileTreeItem('src/analytics.ts'))
+    await patientClick(selectors.gitako.fileItemOf('src/analytics.ts'))
     await waitForRedirect()
     await collapseFloatModeSidebar()
 
-    await page.click('a[data-selected-links^="repo_issues "]')
+    await page.click(selectors.github.navBarItemIssues)
     await waitForRedirect()
 
-    await page.click('a[data-selected-links^="repo_pulls "]')
+    await page.click(selectors.github.navBarItemPulls)
     await waitForRedirect()
 
     page.goBack()
@@ -33,6 +33,6 @@ describe(`in Gitako project page`, () => {
     page.goBack()
     await sleep(1000)
 
-    expect(await getTextContent('.final-path')).toBe('analytics.ts')
+    expect(await getTextContent(selectors.github.breadcrumbFileName)).toBe('analytics.ts')
   })
 })

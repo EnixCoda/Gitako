@@ -1,4 +1,5 @@
-import { expectToFind, selectFileTreeItem, sleep, waitForRedirect } from '../../utils'
+import { selectors } from '../../selectors'
+import { expectToFind, sleep, waitForRedirect } from '../../utils'
 
 describe(`in Gitako project page`, () => {
   beforeAll(() => page.goto('https://github.com/EnixCoda/Gitako/tree/develop/src'))
@@ -7,14 +8,12 @@ describe(`in Gitako project page`, () => {
     await sleep(3000)
 
     // Expect Gitako sidebar to have expanded src to see contents
-    await expectToFind(selectFileTreeItem('src/components'))
+    await expectToFind(selectors.gitako.fileItemOf('src/components'))
 
-    await page.click(
-      `.js-details-container div[role="row"] div[role="rowheader"] [title="components"]`,
-    )
+    await page.click(selectors.github.fileListItem('components'))
     await waitForRedirect()
 
     // Expect Gitako sidebar to have expanded components and see contents
-    await expectToFind(selectFileTreeItem('src/components/Gitako.tsx'))
+    await expectToFind(selectors.gitako.fileItemOf('src/components/Gitako.tsx'))
   })
 })

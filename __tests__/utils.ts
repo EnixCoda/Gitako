@@ -90,10 +90,6 @@ export async function waitForRedirect(action?: () => void | Promise<void>) {
   return Promise.race([waitForLegacyPJAXRedirect($action), waitForTurboRedirect($action)])
 }
 
-export function selectFileTreeItem(path: string): string {
-  return `.gitako-side-bar .files a[title="${path}"]`
-}
-
 export async function patientClick(selector: string) {
   await page.waitForSelector(selector)
   await page.click(selector)
