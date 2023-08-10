@@ -1,7 +1,7 @@
 import { useConfigs } from 'containers/ConfigsContext'
 import { platform } from 'platforms'
 import * as React from 'react'
-import { useEvent } from 'react-use'
+import { useEvent, useInterval } from 'react-use'
 
 const config: import('pjax-api').Config = {
   areas: [
@@ -54,8 +54,17 @@ export const loadWithFastRedirect = (url: string, element: HTMLElement) => {
 }
 
 export function useAfterRedirect(callback: () => void) {
-  useEvent('pjax:end', callback, document) // legacy support
-  useEvent('turbo:render', callback, document) // prevent page content shift after first redirect to new page via turbo when sidebar is pinned
+  const latestHref = React.useRef(location.href)
+  const raceCallback = React.useCallback(() => {
+    const { href } = location
+    if (latestHref.current !== href) {
+      latestHref.current = href
+      callback()
+    }
+  }, [callback])
+  useInterval(raceCallback, 500)
+  useEvent('pjax:end', raceCallback, document) // legacy support
+  useEvent('turbo:render', raceCallback, document) // prevent page content shift after first redirect to new page via turbo when sidebar is pinned
 }
 
 export function useRedirectedEvents(
