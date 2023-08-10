@@ -12,9 +12,10 @@ import { RepoContextWrapper } from '../containers/RepoContext'
 import { StateBarStateContextWrapper } from '../containers/SideBarState'
 
 export function Gitako() {
+  const mountPoint = React.useMemo(() => insertMountPoint(), [])
   return (
     <InspectorContextWrapper>
-      <StyleSheetManager target={insertMountPoint()}>
+      <StyleSheetManager target={mountPoint}>
         <ReloadContextWrapper>
           <ErrorBoundary>
             <ConfigsContextWrapper>

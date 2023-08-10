@@ -87,7 +87,11 @@ export async function waitForRedirect(action?: () => void | Promise<void>) {
       fired = true
       return action()
     })
-  return Promise.race([waitForLegacyPJAXRedirect($action), waitForTurboRedirect($action)])
+  return Promise.race([
+    waitForLegacyPJAXRedirect($action),
+    waitForTurboRedirect($action),
+    sleep(3 * 1000),
+  ])
 }
 
 export async function patientClick(selector: string) {
