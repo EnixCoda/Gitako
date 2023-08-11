@@ -6,6 +6,13 @@ import { formatClass, parseIntFromElement } from 'utils/DOMHelper'
 import { renderReact } from 'utils/general'
 
 const selectors = {
+  normal: {
+    reactApp: `react-app[app-name="react-code-view"] [data-target="react-app.reactRoot"]`,
+    branchSwitcher: `summary[title="Switch branches or tags"]`,
+    fileNavigation: `.file-navigation`,
+    breadcrumbs: `[data-testid="breadcrumbs"]`,
+    breadcrumbsFilename: `[data-testid="breadcrumbs-filename"]`,
+  },
   globalNavigation: {
     navbar: {
       repositoryOwner: [
@@ -93,12 +100,11 @@ export function isInRepoPage() {
 
 export function isInCodePage() {
   const branchListSelector = [
-    '#branch-select-menu',
-    '.branch-select-menu',
-    selectors.globalNavigation.branchSelector,
+    selectors.normal.breadcrumbsFilename,
+    selectors.normal.branchSwitcher,
   ].join()
   // The element may still exist in DOM for PR pages, but not visible
-  return Boolean($(branchListSelector, e => e.offsetWidth > 0 && e.offsetHeight > 0))
+  return Boolean($(branchListSelector))
 }
 
 export function isInPullFilesPage() {
@@ -293,6 +299,10 @@ export function getPath() {
   }
 
   return []
+}
+
+export function isNativeFileTreeShown() {
+  return Boolean($('#repos-file-tree'))
 }
 
 export function isNativePRFileTreeShown() {

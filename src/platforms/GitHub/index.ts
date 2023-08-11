@@ -162,7 +162,7 @@ export const GitHub: Platform = {
   },
   shouldExpandSideBar() {
     return Boolean(
-      DOMHelper.isInCodePage() ||
+      (DOMHelper.isInCodePage() && !DOMHelper.isNativePRFileTreeShown()) ||
         URLHelper.isInCommitPage() ||
         (URLHelper.isInPullPage() && !DOMHelper.isNativePRFileTreeShown()),
     )

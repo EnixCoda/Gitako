@@ -179,11 +179,7 @@ function LoadedFileExplorer({
   useAfterRedirect(goToCurrentItem)
 
   const [currentPath, setCurrentPath] = React.useState(() => getCurrentPath())
-  useAfterRedirect(
-    React.useCallback(() => {
-      setCurrentPath(getCurrentPath())
-    }, [getCurrentPath]),
-  )
+  useAfterRedirect(React.useCallback(() => setCurrentPath(getCurrentPath()), [getCurrentPath]))
   useInspector('CurrentPath', currentPath)
 
   const ref = React.useRef<HTMLDivElement | null>(null)

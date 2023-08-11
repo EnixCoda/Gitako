@@ -104,33 +104,36 @@ export function setBodyIndent(shouldShowGitako: boolean) {
  */
 
 const mountPointContainer = document.body
-export function insertMountPoint() {
-  return $(formatID(rootElementID), undefined, () => {
+export function insertMountPoint(
+  create = () => {
     const element = document.createElement('div')
     element.setAttribute('id', rootElementID)
-    mountPointContainer.appendChild(element)
     return element
-  })
+  },
+) {
+  return $(formatID(rootElementID), undefined, () => mountPointContainer.appendChild(create()))
 }
 
 export function insertSideBarMountPoint() {
-  const sidebarMountPointID = 'gitako-sidebar-mount-point'
-  return $(formatID(sidebarMountPointID), undefined, () => {
-    const sideBarElement = document.createElement('div')
-    sideBarElement.setAttribute('id', sidebarMountPointID)
-    insertMountPoint().appendChild(sideBarElement)
-    return sideBarElement
-  })
+  const id = 'gitako-sidebar-mount-point'
+  const create = () => {
+    const element = document.createElement('div')
+    element.setAttribute('id', id)
+    return element
+  }
+  return $<HTMLDivElement, HTMLDivElement>(formatID(id), undefined, () =>
+    insertMountPoint().appendChild(create()),
+  )
 }
 
 export function insertLogoMountPoint() {
-  const logoMountPointID = 'gitako-logo-mount-point'
-  return $(formatID(logoMountPointID), undefined, () => {
-    const logoMountElement = document.createElement('div')
-    logoMountElement.setAttribute('id', logoMountPointID)
-    insertMountPoint().appendChild(logoMountElement)
-    return logoMountElement
-  })
+  const id = 'gitako-logo-mount-point'
+  const create = () => {
+    const element = document.createElement('div')
+    element.setAttribute('id', id)
+    return element
+  }
+  return $(formatID(id), undefined, () => insertMountPoint().appendChild(create()))
 }
 
 /**

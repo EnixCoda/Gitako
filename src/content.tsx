@@ -1,7 +1,8 @@
 import { Gitako } from 'components/Gitako'
 import * as React from 'react'
 import { createRoot } from 'react-dom/client'
-import { insertSideBarMountPoint } from 'utils/DOMHelper'
+import { insertMountPoint, insertSideBarMountPoint } from 'utils/DOMHelper'
+import { useAfterRedirect } from 'utils/hooks/useFastRedirect'
 import './content.scss'
 
 if (document.readyState === 'loading') {
@@ -12,7 +13,18 @@ if (document.readyState === 'loading') {
 
 async function init() {
   await injectStyles(browser.runtime.getURL('content.css'))
-  createRoot(insertSideBarMountPoint()).render(<Gitako />)
+  const mountPoint = insertSideBarMountPoint()
+  const MountPointWatcher = () => {
+    useAfterRedirect(React.useCallback(() => insertMountPoint(() => mountPoint), []))
+    return null
+  }
+
+  createRoot(mountPoint).render(
+    <>
+      <MountPointWatcher />
+      <Gitako />
+    </>,
+  )
 }
 
 // injects a copy of stylesheets so that other extensions(e.g. dark reader) could read
