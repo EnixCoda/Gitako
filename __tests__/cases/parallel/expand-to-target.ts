@@ -10,7 +10,7 @@ describe(`in Gitako project page`, () => {
     // Expect Gitako sidebar to have expanded src to see contents
     await expectToFind(selectors.gitako.fileItemOf('src/components'))
 
-    await page.click(selectors.github.fileListItem('components'))
+    await page.click(selectors.github.fileListItemOf('components'))
     await waitForRedirect()
 
     // Expect Gitako sidebar to have expanded components and see contents

@@ -33,6 +33,6 @@ describe(`in Gitako project page`, () => {
     page.goBack()
     await sleep(1000)
 
-    expect(await getTextContent(selectors.github.breadcrumbFileName)).toBe('analytics.ts')
+    expect(await getTextContent(selectors.github.breadcrumbFileName)).toBe('/analytics.ts')
   })
 })

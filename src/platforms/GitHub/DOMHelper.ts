@@ -8,7 +8,7 @@ import { renderReact } from 'utils/general'
 const selectors = {
   normal: {
     reactApp: `react-app[app-name="react-code-view"] [data-target="react-app.reactRoot"]`,
-    branchSwitcher: `summary[title="Switch branches or tags"]`,
+    branchSwitcher: [`summary[title="Switch branches or tags"]`, `#branch-select-menu`].join(),
     fileNavigation: `.file-navigation`,
     breadcrumbs: `[data-testid="breadcrumbs"]`,
     breadcrumbsFilename: `[data-testid="breadcrumbs-filename"]`,
