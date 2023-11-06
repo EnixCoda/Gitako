@@ -22,6 +22,7 @@ export type Config = {
   restoreExpandedFolders: boolean
   pjaxMode: 'native' | 'pjax-api'
   showDiffInText: boolean
+  __showInspector?: boolean
 }
 
 export type ConfigKeys = keyof Config
@@ -45,6 +46,7 @@ enum configKeys {
   restoreExpandedFolders = 'restoreExpandedFolders',
   pjaxMode = 'pjaxMode',
   showDiffInText = 'showDiffInText',
+  __showInspector = '__showInspector',
 }
 
 // NOT use platform name to distinguish GHE from github.com

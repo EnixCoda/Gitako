@@ -3,7 +3,7 @@ import * as React from 'react'
 import { useLoadedContext } from 'utils/hooks/useLoadedContext'
 import { useStateIO } from 'utils/hooks/useStateIO'
 import { SideBarErrorContext } from './ErrorContext'
-import { useInspector } from './StateInspector'
+import { useInspector } from './Inspector'
 
 export type SideBarState =
   | 'disabled'

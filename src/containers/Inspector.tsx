@@ -3,6 +3,8 @@ import { IN_PRODUCTION_MODE } from 'env'
 import * as React from 'react'
 import { noop } from 'utils/general'
 import { useStateIO } from 'utils/hooks/useStateIO'
+import { useConfigs } from './ConfigsContext'
+import { Config } from 'utils/config/helper'
 
 export type InspectorContextShape = ReactIO<JSONObject>
 
@@ -12,7 +14,10 @@ export const InspectorContextWrapper = IN_PRODUCTION_MODE
   ? React.Fragment
   : function InspectorContextWrapper({ children }: PropsWithChildren) {
       const $ = useStateIO<JSONObject>({})
-      const [show, setShow] = React.useState(true)
+      const configs = useConfigs()
+      const { __showInspector: show } = configs.value
+      const setShow = (__showInspector: Config['__showInspector']) =>
+        configs.onChange({ __showInspector })
 
       return (
         <InspectorContext.Provider value={$}>

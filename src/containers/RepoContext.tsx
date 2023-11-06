@@ -9,7 +9,7 @@ import { useHandleNetworkError } from 'utils/hooks/useHandleNetworkError'
 import { useLoadedContext } from 'utils/hooks/useLoadedContext'
 import { useStateIO } from 'utils/hooks/useStateIO'
 import { SideBarStateContext } from './SideBarState'
-import { useInspector } from './StateInspector'
+import { useInspector } from './Inspector'
 
 export const RepoContext = React.createContext<MetaData | null>(null)
 

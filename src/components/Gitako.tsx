@@ -1,7 +1,7 @@
 import { SideBar } from 'components/SideBar'
 import { ConfigsContextWrapper } from 'containers/ConfigsContext'
+import { InspectorContextWrapper } from 'containers/Inspector'
 import { ReloadContextWrapper } from 'containers/ReloadContext'
-import { InspectorContextWrapper } from 'containers/StateInspector'
 import * as React from 'react'
 import { StyleSheetManager } from 'styled-components'
 import { insertMountPoint } from 'utils/DOMHelper'
@@ -14,11 +14,11 @@ import { StateBarStateContextWrapper } from '../containers/SideBarState'
 export function Gitako() {
   const mountPoint = React.useMemo(() => insertMountPoint(), [])
   return (
-    <InspectorContextWrapper>
-      <StyleSheetManager target={mountPoint}>
-        <ReloadContextWrapper>
-          <ErrorBoundary>
-            <ConfigsContextWrapper>
+    <StyleSheetManager target={mountPoint}>
+      <ReloadContextWrapper>
+        <ErrorBoundary>
+          <ConfigsContextWrapper>
+            <InspectorContextWrapper>
               <StateBarErrorContextWrapper>
                 <StateBarStateContextWrapper>
                   <OAuthWrapper>
@@ -28,10 +28,10 @@ export function Gitako() {
                   </OAuthWrapper>
                 </StateBarStateContextWrapper>
               </StateBarErrorContextWrapper>
-            </ConfigsContextWrapper>
-          </ErrorBoundary>
-        </ReloadContextWrapper>
-      </StyleSheetManager>
-    </InspectorContextWrapper>
+            </InspectorContextWrapper>
+          </ConfigsContextWrapper>
+        </ErrorBoundary>
+      </ReloadContextWrapper>
+    </StyleSheetManager>
   )
 }
