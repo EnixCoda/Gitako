@@ -1,8 +1,6 @@
 const path = require('path')
 if (process.arch === 'arm64' && process.platform === 'darwin') {
-  require('dotenv').config({
-    path: '.env.arm.mac',
-  })
+  require('dotenv').config()
 }
 
 const CRX_PATH = path.resolve(__dirname, 'dist')

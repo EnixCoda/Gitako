@@ -9,13 +9,13 @@
   "homepage": "https://github.com/EnixCoda/Gitako",
   "scripts": {
     "prepare": "husky install",
-    "dev": "VERSION=dev-v$(node scripts/get-version.js) webpack --watch",
+    "dev": "NODE_OPTIONS=--openssl-legacy-provider VERSION=dev-v$(node scripts/get-version.js) webpack --watch",
     "dev-safari": "TARGET=safari yarn run dev",
     "dev-firefox": "web-ext run --source-dir=dist --firefox-profile=firefox-profile --profile-create-if-missing --keep-profile-changes --start-url https://github.com/EnixCoda/Gitako",
-    "analyze-bundle": "ANALYZE= NODE_ENV=production webpack",
+    "analyze-bundle": "NODE_OPTIONS=--openssl-legacy-provider ANALYZE= NODE_ENV=production webpack",
     "postinstall": "node scripts/fix-deps",
     "postversion": "sh scripts/post-version.sh",
-    "build": "VERSION=v$(node scripts/get-version.js) NODE_ENV=production webpack",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider VERSION=v$(node scripts/get-version.js) NODE_ENV=production webpack",
     "roll": "make release",
     "test": "yarn run test:parallel && yarn run test:non-parallel",
     "test:unit": "NODE_ENV=test jest --config jest.config.js",
@@ -114,6 +114,7 @@
     ]
   },
   "resolutions": {
+    "fsevents": "^2.3.3",
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.3"
   }
