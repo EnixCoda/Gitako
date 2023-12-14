@@ -1,11 +1,14 @@
 import { selectors } from '../../selectors'
+import { testURL } from '../../testURL'
 import { expandFloatModeSidebar, expectToFind, expectToNotFind, scroll } from '../../utils'
 
 jest.retryTimes(3)
 
 describe(`in Gitako project page`, () => {
   beforeAll(() =>
-    page.goto('https://github.com/EnixCoda/Gitako/tree/test/200-changed-files-200-lines-each'),
+    page.goto(
+      testURL`https://github.com/EnixCoda/Gitako/tree/test/200-changed-files-200-lines-each`,
+    ),
   )
 
   it('should render Gitako', async () => {

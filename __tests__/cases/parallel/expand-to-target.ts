@@ -1,8 +1,9 @@
 import { selectors } from '../../selectors'
+import { testURL } from '../../testURL'
 import { expectToFind, sleep, waitForRedirect } from '../../utils'
 
 describe(`in Gitako project page`, () => {
-  beforeAll(() => page.goto('https://github.com/EnixCoda/Gitako/tree/develop/src'))
+  beforeAll(() => page.goto(testURL`https://github.com/EnixCoda/Gitako/tree/develop/src`))
 
   it('expand to target on load and after redirect', async () => {
     await sleep(3000)

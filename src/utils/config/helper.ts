@@ -76,7 +76,7 @@ export const getDefaultConfigs: () => Config = () => ({
 
 const configKeyArray = Object.values(configKeys)
 
-function applyDefaultConfigs(configs: Partial<Config>) {
+function applyDefaultConfigs(configs: Partial<Config> = {}) {
   const defaultConfigs = getDefaultConfigs()
   return configKeyArray.reduce((applied, key) => {
     Object.assign(applied, { [key]: key in configs ? configs[key] : defaultConfigs[key] })
@@ -94,15 +94,45 @@ const updateConfigRef = async (config: Partial<Config>) => {
 const configMigration = migrateConfig()
 configMigration.then(async () => updateConfigRef(await get()))
 
+let loadedConfigFromURL = false
+
+function getConfigFromURL() {
+  const config: Partial<Config> = {}
+  // config params pattern:
+  // ?gitako-config-<key>=<json-value>
+  new URLSearchParams(window.location.search).forEach((value, key) => {
+    if (key.match(/^gitako-config-/)) {
+      const configKey = key.replace(/^gitako-config-/, '')
+      if (configKey in configKeys) {
+        try {
+          config[configKeys[configKey as configKeys]] = JSON.parse(value)
+          loadedConfigFromURL = true
+        } catch (error) {
+          throw new Error(`Failed to parse config "${configKey}" from URL: ${value}`, {
+            cause: error,
+          })
+        }
+      } else {
+        console.warn(`Unknown config "${configKey}" from URL: ${value}`)
+      }
+    }
+  })
+
+  return config
+}
+
 async function get(): Promise<Config> {
   await configMigration
-  const config = await storageHelper.get<Record<string, Config>>([platformStorageKey])
-  return applyDefaultConfigs(config?.[platformStorageKey] || {})
+  const savedConfig = (await storageHelper.get<Record<string, Config>>([platformStorageKey]))?.[
+    platformStorageKey
+  ]
+  const configFromURL = getConfigFromURL()
+  return applyDefaultConfigs({ ...savedConfig, ...configFromURL })
 }
 
 async function set(config: Config) {
   updateConfigRef(config)
-  return await storageHelper.set({ [platformStorageKey]: config })
+  if (!loadedConfigFromURL) await storageHelper.set({ [platformStorageKey]: config })
 }
 
 export const configHelper = { get, set }

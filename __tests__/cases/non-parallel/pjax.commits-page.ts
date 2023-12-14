@@ -1,10 +1,11 @@
 import { selectors } from '../../selectors'
+import { testURL } from '../../testURL'
 import { expectToFind, expectToNotFind, sleep, waitForRedirect } from '../../utils'
 
 jest.retryTimes(3)
 
 describe(`in Gitako project page`, () => {
-  beforeAll(() => page.goto('https://github.com/EnixCoda/Gitako/commits/develop'))
+  beforeAll(() => page.goto(testURL`https://github.com/EnixCoda/Gitako/commits/develop`))
 
   it('should not break go back in history', async () => {
     for (let i = 0; i < 3; i++) {

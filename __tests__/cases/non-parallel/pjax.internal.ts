@@ -1,4 +1,5 @@
 import { selectors } from '../../selectors'
+import { testURL } from '../../testURL'
 import {
   expandFloatModeSidebar,
   expectToFind,
@@ -11,7 +12,7 @@ import {
 jest.retryTimes(3)
 
 describe(`in Gitako project page`, () => {
-  beforeAll(() => page.goto('https://github.com/EnixCoda/Gitako/tree/test/multiple-changes'))
+  beforeAll(() => page.goto(testURL`https://github.com/EnixCoda/Gitako/tree/test/multiple-changes`))
 
   it('should work with PJAX', async () => {
     await sleep(3000)

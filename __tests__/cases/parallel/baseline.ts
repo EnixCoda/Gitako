@@ -2,10 +2,11 @@
  * Confirm basic behaviors of puppeteer assertions
  */
 
+import { testURL } from '../../testURL'
 import { expectToFind, expectToNotFind } from '../../utils'
 
 describe(`in random page`, () => {
-  beforeAll(() => page.goto('https://google.com'))
+  beforeAll(() => page.goto(testURL`https://google.com`))
 
   it('wait for hidden non-exist element should resolve null', async () => {
     expect(

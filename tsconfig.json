@@ -5,7 +5,7 @@
     "target": "ESNext",
     "jsx": "react",
     "strict": true,
-    "lib": ["dom", "es2017.object", "es2016", "ES2019.Array", "ES2020.String"],
+    "lib": ["dom", "es2017.object", "es2016", "ES2019.Array", "ES2020.String", "ES2022.Error"],
     "baseUrl": "src",
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
