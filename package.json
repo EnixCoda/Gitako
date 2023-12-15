@@ -45,6 +45,7 @@
     "react-use": "^17.3.2",
     "react-window": "^1.8.7",
     "styled-components": "^5.3.5",
+    "superstruct": "^1.0.3",
     "webext-domain-permission-toggle": "^3.0.0",
     "webext-dynamic-content-scripts": "^8.1.1",
     "webextension-polyfill": "^0.10.0"

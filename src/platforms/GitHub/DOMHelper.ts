@@ -1,9 +1,11 @@
 import { raiseError } from 'analytics'
 import { Clippy, ClippyClassName } from 'components/Clippy'
 import * as React from 'react'
+import * as s from 'superstruct'
 import { $ } from 'utils/$'
 import { formatClass, parseIntFromElement } from 'utils/DOMHelper'
 import { renderReact } from 'utils/general'
+import { embeddedDataStruct } from './embeddedDataStructures'
 
 const selectors = {
   normal: {
@@ -44,15 +46,10 @@ const getDOMJSON = (selector: string) =>
     }
   })
 
-function getMetaFromPayload(payload: any) {
+function getMetaFromPayload(payload: s.Infer<typeof embeddedDataStruct.repoPayload>) {
   const { repo, refInfo } = payload
-  if (!repo || !refInfo) return
-
   const { defaultBranch, name: repoName, ownerLogin: userName } = repo
   const { name: branchName } = refInfo
-
-  // TODO: use runtime type check
-  if (!defaultBranch || !repoName || !userName || !branchName) return
 
   return {
     defaultBranch,
@@ -66,15 +63,14 @@ function getMetaFromPayload(payload: any) {
 
 // in code page, there is a JSON script tag in DOM with meta data
 function resolveEmbeddedAppData() {
-  const appData = getDOMJSON(selectors.globalNavigation.embeddedData.app)
-  const payload = appData?.payload
-  if (payload) return getMetaFromPayload(payload)
+  const data = getDOMJSON(selectors.globalNavigation.embeddedData.app)
+  if (s.is(data, embeddedDataStruct.app)) return getMetaFromPayload(data.payload)
 }
 
 function resolveEmbeddedReposOverviewData() {
-  const reposOverviewData = getDOMJSON(selectors.globalNavigation.embeddedData.reposOverview)
-  const payload = reposOverviewData?.props?.initialPayload
-  if (payload) return getMetaFromPayload(payload)
+  const data = getDOMJSON(selectors.globalNavigation.embeddedData.reposOverview)
+  if (s.is(data, embeddedDataStruct.reposOverview))
+    return getMetaFromPayload(data.props.initialPayload)
 }
 
 export function resolveEmbeddedData(): {

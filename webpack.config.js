@@ -113,10 +113,10 @@ module.exports = {
         sideEffects: false,
       },
       {
-        test: /\.js$/,
+        test: /\.m?js$/,
         loader: 'babel-loader',
         // Transpile as least files under node_modules
-        include: /node_modules\/(webext-content-scripts|webext-detect-page)\/.*\.js$/,
+        include: /node_modules\/(webext-content-scripts|webext-detect-page|superstruct)\/.*\.m?js$/,
         options: {
           cacheDirectory: true,
         },
