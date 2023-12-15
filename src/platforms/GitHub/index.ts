@@ -7,12 +7,12 @@ import { resolveGitModules } from 'utils/gitSubmodule'
 import { sortFoldersToFront } from 'utils/treeParser'
 import * as API from './API'
 import * as DOMHelper from './DOMHelper'
+import * as URLHelper from './URLHelper'
 import { getCommitTreeData } from './getCommitTreeData'
 import { getPullRequestTreeData } from './getPullRequestTreeData'
 import { useEnterpriseStatBarStyleFix } from './hooks/useEnterpriseStatBarStyleFix'
 import { useGitHubAttachCopySnippetButton } from './hooks/useGitHubAttachCopySnippetButton'
 import { useGitHubCodeFold } from './hooks/useGitHubCodeFold'
-import * as URLHelper from './URLHelper'
 
 export function processTree(tree: TreeNode[]): TreeNode {
   // nodes are created from items and put onto tree
@@ -109,7 +109,7 @@ export const GitHub: Platform = {
     }
 
     const { type } = metaFromURL
-    let branchName
+    let branchName = metaFromDOM.branchName
     if (URLHelper.isInPullPage()) {
       branchName = DOMHelper.getIssueTitle()
     } else if (URLHelper.isInCommitPage()) {
@@ -130,7 +130,7 @@ export const GitHub: Platform = {
     return metaData
   },
   async getDefaultBranchName({ userName, repoName }, accessToken) {
-    const dataFromJSON = DOMHelper.resolveMetaFromDOMJSON()
+    const dataFromJSON = DOMHelper.resolveEmbeddedData()
     if (dataFromJSON?.defaultBranch) return dataFromJSON.defaultBranch
 
     return (await API.getRepoMeta(userName, repoName, accessToken)).default_branch

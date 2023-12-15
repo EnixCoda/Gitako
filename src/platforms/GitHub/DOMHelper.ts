@@ -1,13 +1,16 @@
 import { raiseError } from 'analytics'
 import { Clippy, ClippyClassName } from 'components/Clippy'
 import * as React from 'react'
+import * as s from 'superstruct'
 import { $ } from 'utils/$'
 import { formatClass, parseIntFromElement } from 'utils/DOMHelper'
 import { renderReact } from 'utils/general'
+import { embeddedDataStruct } from './embeddedDataStructures'
 
 const selectors = {
   normal: {
     reactApp: `react-app[app-name="react-code-view"] [data-target="react-app.reactRoot"]`,
+    codeTab: '#code-tab',
     branchSwitcher: [`summary[title="Switch branches or tags"]`, `#branch-select-menu`].join(),
     fileNavigation: `.file-navigation`,
     breadcrumbs: `[data-testid="breadcrumbs"]`,
@@ -27,28 +30,28 @@ const selectors = {
     pathContext: '[data-testid="breadcrumbs"]',
     pathContextFileName: '[data-testid="breadcrumbs-filename"]',
     pathContextScreenReaderHeading: '[data-testid="screen-reader-heading"]',
+    embeddedData: {
+      app: 'script[type="application/json"][data-target="react-app.embeddedData"]',
+      reposOverview:
+        '[partial-name="repos-overview"] script[type="application/json"][data-target="react-partial.embeddedData"]',
+    },
   },
 }
 
-export function resolveMetaFromDOMJSON(): { defaultBranch: string; metaData: MetaData } | void {
-  // in code page, there is a JSON script tag in DOM with meta data
-  const json = $('script[type="application/json"][data-target="react-app.embeddedData"]', e => {
+const getDOMJSON = (selector: string) =>
+  $(selector, e => {
     try {
       return JSON.parse(e.textContent || '')
     } catch (error) {
       return null
     }
   })
-  if (!json) return
 
-  const { payload } = json
-  if (!payload) return
-
+function getMetaFromPayload(payload: s.Infer<typeof embeddedDataStruct.repoPayload>) {
   const { repo, refInfo } = payload
-  if (!repo || !refInfo) return
-
   const { defaultBranch, name: repoName, ownerLogin: userName } = repo
   const { name: branchName } = refInfo
+
   return {
     defaultBranch,
     metaData: {
@@ -59,8 +62,27 @@ export function resolveMetaFromDOMJSON(): { defaultBranch: string; metaData: Met
   }
 }
 
+// in code page, there is a JSON script tag in DOM with meta data
+function resolveEmbeddedAppData() {
+  const data = getDOMJSON(selectors.globalNavigation.embeddedData.app)
+  if (s.is(data, embeddedDataStruct.app)) return getMetaFromPayload(data.payload)
+}
+
+function resolveEmbeddedReposOverviewData() {
+  const data = getDOMJSON(selectors.globalNavigation.embeddedData.reposOverview)
+  if (s.is(data, embeddedDataStruct.reposOverview))
+    return getMetaFromPayload(data.props.initialPayload)
+}
+
+export function resolveEmbeddedData(): {
+  defaultBranch: string
+  metaData: MetaData
+} | void {
+  return resolveEmbeddedAppData() || resolveEmbeddedReposOverviewData()
+}
+
 export function resolveMeta(): Partial<MetaData> {
-  const dataFromJSON = resolveMetaFromDOMJSON()
+  const dataFromJSON = resolveEmbeddedData()
   if (dataFromJSON) return dataFromJSON.metaData
 
   const metaData = {
@@ -129,7 +151,9 @@ export function getCurrentBranch(passive = false) {
   ].join()
   const branchButtonElement = $(selectedBranchButtonSelector)
   if (branchButtonElement) {
-    const branchNameSpanElement = branchButtonElement.querySelector('span')
+    const branchNameSpanElement = branchButtonElement.querySelector(
+      ['.ref-selector-button-text-container', 'span'].join(),
+    )
     if (branchNameSpanElement) {
       const partialBranchNameFromInnerText = branchNameSpanElement.textContent?.trim() || ''
       if (partialBranchNameFromInnerText && !partialBranchNameFromInnerText.includes('…'))
@@ -137,7 +161,7 @@ export function getCurrentBranch(passive = false) {
     }
     const defaultTitle = 'Switch branches or tags'
     const title = branchButtonElement.title.trim()
-    if (title !== defaultTitle && !title.includes(' ')) return title
+    if (title && title !== defaultTitle && !title.includes(' ')) return title
   }
 
   const findFileButtonSelector = 'main .file-navigation a[data-hotkey="t"]'
@@ -153,6 +177,17 @@ export function getCurrentBranch(passive = false) {
       if (!branchName.includes(' ')) return branchName
     }
   }
+
+  const branchNameFromCodeTab = $(selectors.normal.codeTab, e => {
+    if (e instanceof HTMLAnchorElement) {
+      const chunks = e.href.split('/')
+      const indexOfTree = chunks.indexOf('tree')
+      if (indexOfTree === -1) return
+      const branchName = chunks.slice(indexOfTree + 1).join('/')
+      return branchName
+    }
+  })
+  if (branchNameFromCodeTab) return branchNameFromCodeTab
 
   if (!passive) raiseError(new Error('cannot get current branch'))
 }
