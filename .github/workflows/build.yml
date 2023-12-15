@@ -25,7 +25,7 @@ jobs:
         env:
           PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: true
         run: |
-          yarn
+          yarn --ignore-platform --ignore-engines --frozen-lockfile --prefer-offline
 
       - name: Retrieve vscode icons
         uses: actions/checkout@v3
