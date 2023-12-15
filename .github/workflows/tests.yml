@@ -50,7 +50,7 @@ jobs:
         env:
           PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: true
         run: |
-          yarn
+          yarn --ignore-platform --ignore-engines --frozen-lockfile --prefer-offline
 
       - name: E2E Test
         uses: mujo-code/puppeteer-headful@master
@@ -89,7 +89,7 @@ jobs:
         env:
           PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: true
         run: |
-          yarn
+          yarn --ignore-platform --ignore-engines --frozen-lockfile --prefer-offline
 
       - name: Unit Test
         run: |
