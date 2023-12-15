@@ -10,6 +10,7 @@ import { embeddedDataStruct } from './embeddedDataStructures'
 const selectors = {
   normal: {
     reactApp: `react-app[app-name="react-code-view"] [data-target="react-app.reactRoot"]`,
+    codeTab: '#code-tab',
     branchSwitcher: [`summary[title="Switch branches or tags"]`, `#branch-select-menu`].join(),
     fileNavigation: `.file-navigation`,
     breadcrumbs: `[data-testid="breadcrumbs"]`,
@@ -160,7 +161,7 @@ export function getCurrentBranch(passive = false) {
     }
     const defaultTitle = 'Switch branches or tags'
     const title = branchButtonElement.title.trim()
-    if (title !== defaultTitle && !title.includes(' ')) return title
+    if (title && title !== defaultTitle && !title.includes(' ')) return title
   }
 
   const findFileButtonSelector = 'main .file-navigation a[data-hotkey="t"]'
@@ -176,6 +177,17 @@ export function getCurrentBranch(passive = false) {
       if (!branchName.includes(' ')) return branchName
     }
   }
+
+  const branchNameFromCodeTab = $(selectors.normal.codeTab, e => {
+    if (e instanceof HTMLAnchorElement) {
+      const chunks = e.href.split('/')
+      const indexOfTree = chunks.indexOf('tree')
+      if (indexOfTree === -1) return
+      const branchName = chunks.slice(indexOfTree + 1).join('/')
+      return branchName
+    }
+  })
+  if (branchNameFromCodeTab) return branchNameFromCodeTab
 
   if (!passive) raiseError(new Error('cannot get current branch'))
 }
