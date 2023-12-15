@@ -27,28 +27,33 @@ const selectors = {
     pathContext: '[data-testid="breadcrumbs"]',
     pathContextFileName: '[data-testid="breadcrumbs-filename"]',
     pathContextScreenReaderHeading: '[data-testid="screen-reader-heading"]',
+    embeddedData: {
+      app: 'script[type="application/json"][data-target="react-app.embeddedData"]',
+      reposOverview:
+        '[partial-name="repos-overview"] script[type="application/json"][data-target="react-partial.embeddedData"]',
+    },
   },
 }
 
-export function resolveMetaFromDOMJSON(): { defaultBranch: string; metaData: MetaData } | void {
-  // in code page, there is a JSON script tag in DOM with meta data
-  const json = $('script[type="application/json"][data-target="react-app.embeddedData"]', e => {
+const getDOMJSON = (selector: string) =>
+  $(selector, e => {
     try {
       return JSON.parse(e.textContent || '')
     } catch (error) {
       return null
     }
   })
-  if (!json) return
 
-  const { payload } = json
-  if (!payload) return
-
+function getMetaFromPayload(payload: any) {
   const { repo, refInfo } = payload
   if (!repo || !refInfo) return
 
   const { defaultBranch, name: repoName, ownerLogin: userName } = repo
   const { name: branchName } = refInfo
+
+  // TODO: use runtime type check
+  if (!defaultBranch || !repoName || !userName || !branchName) return
+
   return {
     defaultBranch,
     metaData: {
@@ -59,8 +64,28 @@ export function resolveMetaFromDOMJSON(): { defaultBranch: string; metaData: Met
   }
 }
 
+// in code page, there is a JSON script tag in DOM with meta data
+function resolveEmbeddedAppData() {
+  const appData = getDOMJSON(selectors.globalNavigation.embeddedData.app)
+  const payload = appData?.payload
+  if (payload) return getMetaFromPayload(payload)
+}
+
+function resolveEmbeddedReposOverviewData() {
+  const reposOverviewData = getDOMJSON(selectors.globalNavigation.embeddedData.reposOverview)
+  const payload = reposOverviewData?.props?.initialPayload
+  if (payload) return getMetaFromPayload(payload)
+}
+
+export function resolveEmbeddedData(): {
+  defaultBranch: string
+  metaData: MetaData
+} | void {
+  return resolveEmbeddedAppData() || resolveEmbeddedReposOverviewData()
+}
+
 export function resolveMeta(): Partial<MetaData> {
-  const dataFromJSON = resolveMetaFromDOMJSON()
+  const dataFromJSON = resolveEmbeddedData()
   if (dataFromJSON) return dataFromJSON.metaData
 
   const metaData = {
@@ -129,7 +154,9 @@ export function getCurrentBranch(passive = false) {
   ].join()
   const branchButtonElement = $(selectedBranchButtonSelector)
   if (branchButtonElement) {
-    const branchNameSpanElement = branchButtonElement.querySelector('span')
+    const branchNameSpanElement = branchButtonElement.querySelector(
+      ['.ref-selector-button-text-container', 'span'].join(),
+    )
     if (branchNameSpanElement) {
       const partialBranchNameFromInnerText = branchNameSpanElement.textContent?.trim() || ''
       if (partialBranchNameFromInnerText && !partialBranchNameFromInnerText.includes('…'))
