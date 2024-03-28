@@ -66,20 +66,27 @@ export function processTree(tree: TreeNode[]): TreeNode {
 }
 
 export function isEnterprise() {
+  if (window.location.host === 'github.com') return false
+
   return (
-    (window.location.host !== 'github.com' &&
-      /**
-       * <a class="Header-link " href="https://host.com/" data-hotkey="g d" aria-label="Homepage Enterprise">
-       *   <span>Enterprise</span>
-       * </a>
-       */
-      $(
-        [
-          'a.Header-link[aria-label="Homepage Enterprise"]',
-          'a.Header-link[aria-label="Homepage"]', // legacy support
-        ].join(),
-        e => e.textContent?.trim() === 'Enterprise',
-      )) ||
+    /**
+     * <a class="AppHeader-logo" href="https://host.com/" data-hotkey="g d" aria-label="Homepage Enterprise">
+     *   <svg></svg>
+     * </a>
+     */
+    $('a.AppHeader-logo[aria-label="Homepage Enterprise"]') !== null ||
+    /**
+     * <a class="Header-link " href="https://host.com/" data-hotkey="g d" aria-label="Homepage Enterprise">
+     *   <span>Enterprise</span>
+     * </a>
+     */
+    $(
+      [
+        'a.Header-link[aria-label="Homepage Enterprise"]',
+        'a.Header-link[aria-label="Homepage"]', // legacy support
+      ].join(),
+      e => e.textContent?.trim() === 'Enterprise',
+    ) ||
     false
   )
 }
