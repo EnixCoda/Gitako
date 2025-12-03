@@ -37,19 +37,8 @@ export async function getPullRequestTreeData(
     pullId,
     isInPullFilesPage() ? document : undefined,
   )
-  // query all elements at once to make getFileElementHash run faster
-  const elementsHavePath = docs.map(doc => doc.querySelectorAll(`[data-path]`))
-  const map = new Map<string, string>()
-  for (const group of elementsHavePath) {
-    for (let i = 0; i < group.length; i++) {
-      const element = group[i]
-      const id = element.parentElement?.id
-      if (id) {
-        const path = element.getAttribute('data-path')
-        if (path) map.set(path, id)
-      }
-    }
-  }
+
+  const fileHashMap = resolveFileHashMap(docs)
 
   const url = new URL(sanitizedLocation.href)
   url.pathname = `/${userName}/${repoName}/pull/${pullId}/files`
@@ -65,7 +54,7 @@ export async function getPullRequestTreeData(
       raw_url: rawLink,
       blob_url: permalink,
     }) => {
-      url.hash = map.get(filename) || ''
+      url.hash = fileHashMap.get(filename) || ''
       return {
         path: filename || '',
         type: 'blob',
@@ -92,6 +81,77 @@ export async function getPullRequestTreeData(
 const GITHUB_API_RESPONSE_LENGTH_LIMIT = 3000
 const GITHUB_API_RESPONSE_MAX_SIZE_PER_PAGE = 100
 const MAX_PAGE = Math.ceil(GITHUB_API_RESPONSE_LENGTH_LIMIT / GITHUB_API_RESPONSE_MAX_SIZE_PER_PAGE)
+
+function resolveFileHashMap(docs: Document[]) {
+  const mapFromEmbeddedJSON = docs
+    .map(
+      doc =>
+        doc.querySelector('script[data-target="react-app.embeddedData"]')?.textContent ??
+        JSON.stringify({}),
+    )
+    .map(element => {
+      try {
+        type PartialReactAppEmbeddedData = {
+          payload: {
+            pullRequestsFilesRoute: {
+              diffSummaries: [
+                {
+                  changeType: 'MODIFIED'
+                  highestAnnotationLevel: null
+                  isCodeowner: null
+                  isManifestFile: boolean
+                  isSymlink: boolean
+                  isVendored: boolean
+                  linesAdded: number
+                  linesChanged: number
+                  linesDeleted: number
+                  markedAsViewed: boolean
+                  path: string
+                  pathDigest: string
+                },
+              ]
+            }
+          }
+        }
+        return JSON.parse(element) as PartialReactAppEmbeddedData
+      } catch (error) {
+        return null
+      }
+    })
+    .map(json => {
+      try {
+        return json?.payload.pullRequestsFilesRoute.diffSummaries
+      } catch (error) {
+        return null
+      }
+    })
+    .reduce((map, curr) => {
+      curr?.forEach(({ path, pathDigest }) => {
+        map.set(path, 'diff-' + pathDigest)
+      })
+      return map
+    }, new Map<string, string>())
+
+  if (mapFromEmbeddedJSON.size > 0) {
+    return mapFromEmbeddedJSON
+  }
+
+  // query all elements at once to make getFileElementHash run faster
+  const elementsHavePath = docs.map(doc => doc.querySelectorAll(`[data-path]`))
+  const map = new Map<string, string>()
+  for (const group of elementsHavePath) {
+    for (let i = 0; i < group.length; i++) {
+      const element = group[i]
+      const id = element.parentElement?.id
+      if (id) {
+        const path = element.getAttribute('data-path')
+        if (path) map.set(path, id)
+      }
+    }
+  }
+
+  return map
+}
 
 async function safeGetPullRequestTreeData(
   { userName, repoName }: Pick<MetaData, 'userName' | 'repoName' | 'branchName'>,
