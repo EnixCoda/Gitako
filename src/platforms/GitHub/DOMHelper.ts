@@ -114,6 +114,12 @@ export function resolveMeta(): Partial<MetaData> {
 export function isInRepoPage() {
   const repoHeadSelector = '.repohead'
   const authorNameSelector = '.author[itemprop="author"]'
+  const repoMetaSelector = [
+    'meta[name="octolytics-dimension-repository_nwo"]',
+    'meta[name="octolytics-dimension-repository_id"]',
+  ].join()
+  if (document.querySelector(repoMetaSelector)) return true
+
   return Boolean(
     document.querySelector(
       [
