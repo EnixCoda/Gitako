@@ -10,7 +10,7 @@ function parseFileIconMapCSV() {
   const fileExtensionIndex = new Map<string, string>()
   for (const line of rawFileIconIndex.split(rowSeparator)) {
     if (!line) continue
-    const [name, names, exts] = line.split(colSeparator)
+    const [name, names, exts] = line.trim().split(colSeparator)
     if (names) {
       for (const filename of names.split(arraySeparator)) {
         if (!filename) continue
