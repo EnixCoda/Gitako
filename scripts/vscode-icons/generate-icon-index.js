@@ -1,6 +1,6 @@
 const path = require('path')
 const { promises: fs, existsSync } = require('fs')
-const puppeteer = require('puppeteer')
+const { chromium } = require('@playwright/test')
 const generateFileIconIndex = require('./generate-file-icon-index')
 const generateFolderIconIndex = require('./generate-folder-icon-index')
 const { emitDirPath, checkEmitDir } = require('./check-emit-dir')
@@ -8,8 +8,9 @@ const { emitDirPath, checkEmitDir } = require('./check-emit-dir')
 let browser
 async function getPage() {
   const headless = process.env.HEADLESS !== 'false'
-  browser = browser || (await puppeteer.launch({ headless }))
-  return await browser.newPage()
+  browser = browser || (await chromium.launch({ headless }))
+  const context = await browser.newContext()
+  return await context.newPage()
 }
 
 async function generateCSV() {

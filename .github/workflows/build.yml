@@ -22,8 +22,6 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - name: Install Dependencies
-        env:
-          PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: true
         run: |
           yarn --ignore-platform --ignore-engines --frozen-lockfile --prefer-offline
 

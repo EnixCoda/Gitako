@@ -7,3 +7,5 @@ dist-firefox
 yarn-error.log
 /vscode-icons
 firefox-profile
+/test-results
+/playwright-report
