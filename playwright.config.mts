@@ -22,8 +22,9 @@ export default defineConfig({
     timeout: 10000,
   },
   use: {
-    trace: 'on-first-retry',
-    video: 'on-first-retry',
+    trace: 'on', // TODO: revert to 'on-first-retry' after verifying GitHub Actions report
+    video: 'on', // TODO: revert to 'on-first-retry' after verifying GitHub Actions report
+    screenshot: 'on', // TODO: remove after verifying GitHub Actions report
   },
   projects: [
     {
