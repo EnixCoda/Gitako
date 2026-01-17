@@ -58,6 +58,22 @@ jobs:
           CI: 'true'
         run: xvfb-run yarn test
 
+      - name: Upload Playwright Report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: test-results
+          path: test-results/
+          retention-days: 30
+
   unit-test:
     needs: build
     runs-on: ubuntu-latest
