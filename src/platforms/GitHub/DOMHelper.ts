@@ -205,8 +205,17 @@ export function getCommitTitle() {
   // element is gone in the new shell. Prefer the JSON (more stable than
   // React-generated class names); fall back to the legacy DOM selector for
   // any pages still serving the old layout.
+  // Signed-in users on the unified repo shell get `app-name="repo"`;
+  // anonymous / legacy layouts still ship `app-name="commits"`. Match
+  // either so the commit subject keeps resolving on both. The payload
+  // shape (`payload.commitRoute.commit.shortMessageMarkdown` on
+  // GitHub.com, `payload.commit.shortMessageMarkdown` on legacy /
+  // Enterprise pages) is unchanged between the two containers.
   const data = getDOMJSON(
-    'react-app[app-name="commits"] script[type="application/json"][data-target="react-app.embeddedData"]',
+    [
+      'react-app[app-name="repo"] script[type="application/json"][data-target="react-app.embeddedData"]',
+      'react-app[app-name="commits"] script[type="application/json"][data-target="react-app.embeddedData"]',
+    ].join(),
   )
   const html = resolveCommitShortMessageMarkdown(data)
   if (html) {

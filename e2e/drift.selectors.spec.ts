@@ -91,10 +91,16 @@ const probes: Probe[] = [
   // subject in Gitako's sidebar. If GitHub renames the app-name or
   // moves the embeddedData target, the title silently falls back to a
   // sha fragment.
+  //
+  // The current signed-in repo shell ships `app-name="repo"`, while
+  // anonymous / legacy commit pages still ship `app-name="commits"`.
+  // Only one is present at a time, so the combined selector still
+  // resolves to exactly one on either page.
   {
     label: 'commits embedded JSON exists on commit page',
     url: 'https://github.com/EnixCoda/Gitako/commit/8adccd9',
     selector:
+      'react-app[app-name="repo"] script[type="application/json"][data-target="react-app.embeddedData"], ' +
       'react-app[app-name="commits"] script[type="application/json"][data-target="react-app.embeddedData"]',
     count: 1,
   },
