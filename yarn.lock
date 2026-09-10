@@ -3237,15 +3237,10 @@ base64id@2.0.0, base64id@~2.0.0:
   resolved "https://registry.yarnpkg.com/base64id/-/base64id-2.0.0.tgz#2770ac6bc47d312af97a8bf9a634342e0cd25cb6"
   integrity sha512-lGe34o6EHj9y3Kts9R4ZYs/Gr+6N7MCaMlIFA3F1R2O5/m7K06AxfSeO5530PEERE6/WyEg3lsuyw4GHlPZHog==
 
-baseline-browser-mapping@^2.10.38:
-  version "2.10.38"
-  resolved "https://registry.yarnpkg.com/baseline-browser-mapping/-/baseline-browser-mapping-2.10.38.tgz#c84d093c4bf7325c5053c279d90f153c66526042"
-  integrity sha512-31/02mVB4yuQU6adKk5SlY6m+mxDwUq5KZkyYgnLrrKl7TEm1+3PyDtDBz2kOv/wxZz41GHsvV1A/u6RmiyBvw==
-
-baseline-browser-mapping@^2.9.0:
-  version "2.9.15"
-  resolved "https://registry.yarnpkg.com/baseline-browser-mapping/-/baseline-browser-mapping-2.9.15.tgz#6baaa0069883f50a99cdb31b56646491f47c05d7"
-  integrity sha512-kX8h7K2srmDyYnXRIppo4AH/wYgzWVCs+eKr3RusRSQ5PvRYoEFmR/I0PbdTjKFAoKqp5+kbxnNTFO9jOfSVJg==
+baseline-browser-mapping@^2.10.38, baseline-browser-mapping@^2.9.0:
+  version "2.11.21"
+  resolved "https://registry.yarnpkg.com/baseline-browser-mapping/-/baseline-browser-mapping-2.11.21.tgz#99af73cb8e54007e4f5345e132278e26c2662f2c"
+  integrity sha512-uh8vpY/1/YyFkunIDFH/12p7/7VdPKA1hejMVEbdkEaWnUz0Hesvx5EbiU6XxjyHZIOju+ZMbQJkRh+es3/spQ==
 
 bcrypt-pbkdf@^1.0.0:
   version "1.0.2"
