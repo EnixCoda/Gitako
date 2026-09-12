@@ -35,6 +35,7 @@ export type FeaturePreviewKey =
   | 'ipynb-diff'
   | 'prx_files'
   | 'pull_request_files_virtualization'
+  | 'repo_pulls_dashboard_surface'
   | 'slash_commands_beta'
 
 export type FeaturePreviewEntry = {
@@ -87,6 +88,11 @@ export const knownFeaturePreviewItems: Record<FeaturePreviewKey, FeaturePreviewE
     why:
       'Virtualises the PR file list. Same surface area as code-view virtualization that broke' +
       ' code-fold (see fix/code-fold-current-dom branch).',
+  },
+  repo_pulls_dashboard_surface: {
+    title: 'New Repository Pull Requests Dashboard',
+    affectsGitako: 'unknown',
+    why: 'Repo /pulls list page. Gitako is absent on /pulls, so likely no impact; verify before marking no.',
   },
   slash_commands_beta: {
     title: 'Slash Commands',
