@@ -30,7 +30,6 @@ export type FeaturePreviewKey =
   | 'color_modes_color_blind_themes_2'
   | 'command_palette'
   | 'copilot_chat_custom_instructions'
-  | 'dashboard_surface_react_app'
   | 'dashboard_universe_2025'
   | 'ipynb-diff'
   | 'prx_files'
@@ -59,11 +58,6 @@ export const knownFeaturePreviewItems: Record<FeaturePreviewKey, FeaturePreviewE
     title: 'Organization Custom Instructions',
     affectsGitako: 'no',
     why: 'Copilot-only.',
-  },
-  dashboard_surface_react_app: {
-    title: 'New Pull Requests Dashboard',
-    affectsGitako: 'unknown',
-    why: 'PR list page. Gitako is absent on /pulls so probably no impact; verify before marking no.',
   },
   dashboard_universe_2025: {
     title: 'New Dashboard Experience',
