@@ -24,6 +24,22 @@ import { sleep } from './utils'
 
 const FP_DIALOG = '[role="dialog"][data-component="Dialog"]'
 
+/**
+ * Thrown when the tracker knows a Feature Preview key but the signed-in
+ * account no longer offers it in the dialog — i.e. GitHub retired / GA'd /
+ * rolled it back for this user. This is benign tracker drift, NOT a runner
+ * failure: the flag can't be set because it no longer exists, so callers
+ * (notably `normalizeFeaturePreview` in globalSetup) warn and skip it rather
+ * than aborting the run, and let `drift.github-feature-preview.spec.ts`
+ * report the mismatch authoritatively.
+ */
+export class FeatureTabMissingError extends Error {
+  constructor(key: FeaturePreviewKey) {
+    super(`Feature tab "${key}" not found in dialog`)
+    this.name = 'FeatureTabMissingError'
+  }
+}
+
 async function openFeaturePreviewDialog(page: Page): Promise<void> {
   // If already open, no-op
   const alreadyOpen = await page.evaluate(sel => {
@@ -85,7 +101,7 @@ async function selectFeatureTab(page: Page, key: FeaturePreviewKey): Promise<voi
     )
     return tab?.id ?? null
   }, key)
-  if (!tabId) throw new Error(`Feature tab "${key}" not found in dialog`)
+  if (!tabId) throw new FeatureTabMissingError(key)
   // The id contains a `.` (Math.random()-style React-Aria ids); attribute
   // selector avoids parsing `.foo` as a class.
   await page.locator(`[id="${tabId}"]`).click()

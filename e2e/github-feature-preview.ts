@@ -30,7 +30,6 @@ export type FeaturePreviewKey =
   | 'color_modes_color_blind_themes_2'
   | 'command_palette'
   | 'copilot_chat_custom_instructions'
-  | 'dashboard_universe_2025'
   | 'ipynb-diff'
   | 'prx_files'
   | 'pull_request_files_virtualization'
@@ -58,11 +57,6 @@ export const knownFeaturePreviewItems: Record<FeaturePreviewKey, FeaturePreviewE
     title: 'Organization Custom Instructions',
     affectsGitako: 'no',
     why: 'Copilot-only.',
-  },
-  dashboard_universe_2025: {
-    title: 'New Dashboard Experience',
-    affectsGitako: 'no',
-    why: 'github.com home — Gitako is intentionally absent there.',
   },
   'ipynb-diff': {
     title: 'Rich Jupyter Notebook Diffs',

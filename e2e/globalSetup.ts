@@ -2,7 +2,7 @@ import { chromium, type BrowserContext, type Page, type Worker } from '@playwrig
 import * as dotenv from 'dotenv'
 import * as fs from 'fs'
 import * as path from 'path'
-import { setFeatureState } from './featurePreview'
+import { setFeatureState, FeatureTabMissingError } from './featurePreview'
 import { resolveProfilePath } from './fixtures'
 import { knownFeaturePreviewItems, type FeaturePreviewKey } from './github-feature-preview'
 import { sleep } from './utils'
@@ -315,10 +315,39 @@ async function normalizeFeaturePreview(context: BrowserContext) {
   await page.goto('https://github.com/EnixCoda/Gitako')
   await sleep(2500)
   const keys = Object.keys(knownFeaturePreviewItems) as FeaturePreviewKey[]
+  const normalized: FeaturePreviewKey[] = []
+  const skipped: FeaturePreviewKey[] = []
   for (const key of keys) {
-    await setFeatureState(page, key, target)
+    try {
+      await setFeatureState(page, key, target)
+      normalized.push(key)
+    } catch (err) {
+      // A tracker key the account no longer offers is benign drift — the
+      // flag can't be set because it doesn't exist. Warn and keep going so
+      // every still-present flag still gets normalized to the floor, and let
+      // drift.github-feature-preview.spec.ts report the tracker mismatch (a
+      // cryptic globalSetup abort previously hid that report for weeks).
+      if (err instanceof FeatureTabMissingError) {
+        skipped.push(key)
+        console.warn(
+          `[globalSetup] feature "${key}" no longer in Feature Preview dialog ` +
+            `(GitHub likely retired/GA'd it for this account) — skipping; the ` +
+            `drift spec will flag the tracker.`,
+        )
+        continue
+      }
+      // Anything real (dialog won't open, toggle won't flip) stays a hard failure.
+      throw err
+    }
   }
-  console.log(`[globalSetup] normalized ${keys.length} preview flags to ${target}`)
+  if (skipped.length > 0) {
+    console.warn(
+      `[globalSetup] normalized ${normalized.length}/${keys.length} preview flags to ${target} ` +
+        `(skipped ${skipped.length}: ${skipped.join(', ')})`,
+    )
+  } else {
+    console.log(`[globalSetup] normalized ${normalized.length} preview flags to ${target}`)
+  }
 }
 
 export default async function globalSetup() {
