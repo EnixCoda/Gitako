@@ -344,18 +344,19 @@ function useUpdateBodyIndentOnStateUpdate(shouldExpand: boolean) {
 const getDerivedExpansion = ({
   intelligentToggle,
   sidebarToggleMode,
-}: Pick<Config, 'intelligentToggle' | 'sidebarToggleMode'>) =>
+  deferToNativeFileTree,
+}: Pick<Config, 'intelligentToggle' | 'sidebarToggleMode' | 'deferToNativeFileTree'>) =>
   sidebarToggleMode === 'persistent'
     ? intelligentToggle === null // auto-expand checked
-      ? platform.shouldExpandSideBar()
+      ? platform.shouldExpandSideBar(deferToNativeFileTree)
       : intelligentToggle // read saved expand state
     : false // do not expand in float mode
 
 function useGetDerivedExpansion() {
-  const { intelligentToggle, sidebarToggleMode } = useConfigs().value
+  const { intelligentToggle, sidebarToggleMode, deferToNativeFileTree } = useConfigs().value
   return useCallback(
-    () => getDerivedExpansion({ intelligentToggle, sidebarToggleMode }),
-    [intelligentToggle, sidebarToggleMode],
+    () => getDerivedExpansion({ intelligentToggle, sidebarToggleMode, deferToNativeFileTree }),
+    [intelligentToggle, sidebarToggleMode, deferToNativeFileTree],
   )
 }
 
@@ -370,11 +371,16 @@ function useUpdateBodyIndentAfterRedirect(
     sidebarToggleMode,
     sidebarPlacement,
     neverShowSidebarAutoCollapseHint,
+    deferToNativeFileTree,
   } = useConfigs().value
   const updateForCurrentLocation = useCallback(() => {
     // check and update expand state if pinned and auto-expand checked
     if (sidebarToggleMode === 'persistent') {
-      let shouldExpand = getDerivedExpansion({ intelligentToggle, sidebarToggleMode })
+      let shouldExpand = getDerivedExpansion({
+        intelligentToggle,
+        sidebarToggleMode,
+        deferToNativeFileTree,
+      })
       // The user is keyboard-navigating the tree and just opened this file.
       // Two independent things can drop focus out of the tree across the
       // redirect, so we counter both:
@@ -408,7 +414,7 @@ function useUpdateBodyIndentAfterRedirect(
         !shouldExpand &&
         intelligentToggle === null &&
         !neverShowSidebarAutoCollapseHint &&
-        platform.isSideBarCollapsedByNativeFileTree?.()
+        platform.isSideBarCollapsedByNativeFileTree?.(deferToNativeFileTree)
       ) {
         onAutoCollapseByNativeTree?.()
       }
@@ -419,6 +425,7 @@ function useUpdateBodyIndentAfterRedirect(
     intelligentToggle,
     sidebarPlacement,
     neverShowSidebarAutoCollapseHint,
+    deferToNativeFileTree,
     onAutoCollapseByNativeTree,
     keyboardNavRef,
     setPendingFocusTarget,

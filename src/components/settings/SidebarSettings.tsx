@@ -52,6 +52,16 @@ export function SidebarSettings() {
           },
         }}
       />
+      <SimpleConfigFieldCheckbox
+        field={{
+          key: 'deferToNativeFileTree',
+          label: 'Collapse when GitHub shows its own file tree',
+          disabled: sidebarToggleMode === 'float',
+          tooltip: `Gitako stays collapsed on source pages where GitHub already shows its own file tree, so two file trees don't stack. Turn off to keep Gitako's sidebar open even while GitHub shows its own tree.${
+            sidebarToggleMode === 'float' ? '\nNow disabled as sidebar is in float mode.' : ''
+          }`,
+        }}
+      />
     </SettingsSection>
   )
 }

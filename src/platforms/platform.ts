@@ -21,11 +21,13 @@ export type Platform = {
     recursive?: boolean,
     accessToken?: string,
   ): Promise<{ root: TreeNode; defer?: boolean }>
-  shouldExpandSideBar(): boolean
+  shouldExpandSideBar(deferToNativeFileTree?: boolean): boolean
   // True when the sidebar stays collapsed specifically because the host site
   // is showing its own native file tree on a code/PR page (not merely because
-  // the page is irrelevant). Drives the one-time auto-collapse hint.
-  isSideBarCollapsedByNativeFileTree?(): boolean
+  // the page is irrelevant). Drives the one-time auto-collapse hint. The
+  // `deferToNativeFileTree` flag mirrors the user setting that disables this
+  // deferral (when false, Gitako does not collapse for the native tree).
+  isSideBarCollapsedByNativeFileTree?(deferToNativeFileTree?: boolean): boolean
   shouldExpandAll?(): boolean
   getCurrentPath(branchName: string): string[] | null
   setOAuth(code: string): Promise<string | null>

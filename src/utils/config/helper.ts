@@ -24,6 +24,7 @@ export type Config = {
   showDiffInText: boolean
   sidebarPlacement: 'left' | 'right'
   neverShowSidebarAutoCollapseHint: boolean
+  deferToNativeFileTree: boolean
   __showInspector?: boolean
 }
 
@@ -50,6 +51,7 @@ enum configKeys {
   showDiffInText = 'showDiffInText',
   sidebarPlacement = 'sidebarPlacement',
   neverShowSidebarAutoCollapseHint = 'neverShowSidebarAutoCollapseHint',
+  deferToNativeFileTree = 'deferToNativeFileTree',
   __showInspector = '__showInspector',
 }
 
@@ -78,6 +80,7 @@ export const getDefaultConfigs: () => Config = () => ({
   showDiffInText: false,
   sidebarPlacement: 'left',
   neverShowSidebarAutoCollapseHint: false,
+  deferToNativeFileTree: true,
 })
 
 const configKeyArray = Object.values(configKeys)

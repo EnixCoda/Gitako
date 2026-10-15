@@ -169,16 +169,22 @@ export const GitHub: Platform = {
 
     return getRepositoryTreeData(metaData, path, recursive, accessToken)
   },
-  shouldExpandSideBar() {
+  shouldExpandSideBar(deferToNativeFileTree = true) {
+    // GitHub shows its own file tree on code/PR pages. By default Gitako
+    // defers (stays collapsed) so two trees don't stack; when the user turns
+    // off `deferToNativeFileTree`, ignore the native tree and expand anyway.
+    const nativeTreeShown =
+      deferToNativeFileTree &&
+      (DOMHelper.isNativeFileTreeShown() || DOMHelper.isNativePRFileTreeShown())
     return Boolean(
       (DOMHelper.isInCodePage() || URLHelper.isInCommitPage() || URLHelper.isInPullPage()) &&
-      !DOMHelper.isNativeFileTreeShown() &&
-      !DOMHelper.isNativePRFileTreeShown(),
+      !nativeTreeShown,
     )
   },
-  isSideBarCollapsedByNativeFileTree() {
+  isSideBarCollapsedByNativeFileTree(deferToNativeFileTree = true) {
     return Boolean(
       (DOMHelper.isInCodePage() || URLHelper.isInCommitPage() || URLHelper.isInPullPage()) &&
+      deferToNativeFileTree &&
       (DOMHelper.isNativeFileTreeShown() || DOMHelper.isNativePRFileTreeShown()),
     )
   },
