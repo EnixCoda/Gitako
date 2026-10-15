@@ -23,6 +23,52 @@ spec. The companion nightly runner lives in `../../gitako-e2e/`.
   `fixtures.ts`). The nightly runner forces `--workers=1`. A flaky
   "createContext" failure under default workers is this, not a real bug.
 
+## Writing specs: user flows first, script only when essential
+
+This suite audits what a real signed-in user experiences. Write each spec as the
+**human operation** — real `click()` / `hover()` / `press()` on the controls a
+user actually sees, real keyboard input, and real navigation the way a user
+navigates (clicking nav tabs, file nodes, the branch picker, "back"). Index
+quality: a maintainer should be able to read the steps and recognize what a
+person did, and anyone watching the video should see those steps.
+
+Use a **script-based step only when it is genuinely essential** for that test,
+and justify it in a comment next to it:
+
+- **Counting structure** (drift tripwires) — `page.evaluate` over selectors is
+  essential; a user can't "click" a selector count.
+- **Setup that must not pollute the shared profile** — the URL-config channel
+  (`?gitako-config-…`) and token provisioning (via the OAuth/`chrome.storage`
+  flow in `globalSetup.ts`) are setup, not behavior under test; keep them
+  clearly scoped to setup.
+- **An implementation-level invariant that only exists as such** — e.g. the
+  Turbo `body`-swap root-identity test, or a synthetic click where a real
+  mouse deterministically tears the page down. Say why it's the only way.
+
+Two rules of thumb that prevent both false failures and false confidence:
+
+1. **Don't wait on GitHub internals to drive the test.** Avoid
+   `waitForFunction(() => window.Turbo !== undefined)` and `Turbo.visit(...)`.
+   GitHub only ships soft navigation (Turbo/PJAX) when the account has the
+   modern Feature-Preview cohort enabled; at the all-OFF floor it serves a
+   legacy render with full page loads. Specs should drive the real user action
+   and assert the outcome. If a spec's premise is a soft-nav invariant, detect
+   soft-nav at runtime and skip/branch honestly rather than waiting on a
+   global that may legitimately be absent.
+2. **Detect GitHub's own file tree by visibility, not existence.** When a spec
+   depends on whether GitHub shows its native file tree, require the element
+   to be present **and** have a non-zero bounding box
+   (`getBoundingClientRect()` width×height > 0) — not merely that
+   `#repos-file-tree` or its expand toggle exists. See
+   `feature.auto-collapse-hint.signed-in.spec.ts` for the canonical check. If
+   the native tree is really shown and the spec exercises **Gitako's** tree,
+   open Gitako first (real tentacle click) before continuing; if the spec's
+   goal is the defer/collapse behavior itself, assert that collapse.
+
+The floor-dependence (rule 1) is exactly why the two-pass matrix multiplies
+specs; a spec that silently can't run under one floor should say so explicitly
+(an honest skip) rather than pass vacuously or fail on a missing global.
+
 ## Provisioning the profile's access token
 
 Signed-in specs need Gitako to hold a GitHub access token. Without one Gitako

@@ -1,7 +1,7 @@
 import { expect, resolveProfilePath, test } from './fixtures'
 import { selectors } from './selectors'
 import { testURL } from './testURL'
-import { expandFloatModeSidebar } from './utils'
+import { expandFloatModeSidebar, switchBranchViaPicker } from './utils'
 
 /**
  * Branch switch must refetch the file tree, not just update the
@@ -49,16 +49,10 @@ test.describe('navigation: branch switch refetches tree', () => {
       .toBeGreaterThan(0)
     const developFiles = await capturePjxFileNames(extensionPage)
 
-    // Turbo-switch to v3 (an older branch with a substantially different
-    // file layout)
-    await extensionPage.waitForFunction(
-      () => typeof (window as { Turbo?: unknown }).Turbo !== 'undefined',
-      undefined,
-      { timeout: 10000 },
-    )
-    await extensionPage.evaluate(() => {
-      ;(window as { Turbo: { visit: (u: string) => void } }).Turbo.visit('/EnixCoda/Gitako/tree/v3')
-    })
+    // Human branch switch to v3 (an older branch with a substantially
+    // different file layout) via the branch picker — not Turbo.visit, so it
+    // works whether GitHub soft-navigates or does a full page load.
+    await switchBranchViaPicker(extensionPage, 'v3')
     await extensionPage.waitForURL('**/tree/v3', { timeout: 10000 })
     await expect(extensionPage.locator(selectors.gitako.branchName)).toHaveText('v3', {
       timeout: 10000,

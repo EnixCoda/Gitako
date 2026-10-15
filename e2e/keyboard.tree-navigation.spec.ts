@@ -76,8 +76,17 @@ const focusInTree = (page: Page) =>
 
 // GitHub's own code-view file tree — its presence is what makes auto-expand
 // collapse the pinned bar. Decides whether the collapse assertions apply.
+// Check VISIBILITY, not just presence: `#repos-file-tree` (and the "Expand
+// file tree" control on PR pages) can exist while the tree is collapsed or
+// hidden, and Gitako only defers to a tree the user can actually see — the
+// same canonical check as feature.auto-collapse-hint.signed-in.spec.ts.
 const nativeTreeShown = (page: Page) =>
-  page.evaluate(() => !!document.querySelector('#repos-file-tree'))
+  page.evaluate(() => {
+    const el = document.querySelector('#repos-file-tree')
+    if (!el) return false
+    const { width, height } = el.getBoundingClientRect()
+    return width * height > 0
+  })
 
 const hasTreeNodes = (page: Page) =>
   page.evaluate(sel => !!document.querySelector(sel), `${selectors.gitako.files} .node-item`)
@@ -129,6 +138,13 @@ test.describe('keyboard: file tree navigation matrix (mode × source × method)'
             timeout: 15000,
           })
 
+          // This cell exercises GITAKO's tree keyboard navigation, so we want
+          // the bar open regardless of why it's collapsed. When GitHub really
+          // shows its own file tree (see nativeTreeShown), Gitako auto-collapses
+          // by design; the user opts into Gitako's tree by clicking the
+          // tentacle, which is exactly what ensureExpanded does (a real click).
+          // If Gitako still can't be opened, the cell has no Gitako tree to
+          // drive — skip rather than test GitHub's tree by accident.
           test.skip(
             !(await ensureExpanded(extensionPage, mode)),
             'could not expand the bar (native tree drift?)',

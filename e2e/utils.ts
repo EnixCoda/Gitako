@@ -78,6 +78,42 @@ export async function patientClick(page: Page, selector: string) {
   await page.click(selector)
 }
 
+/**
+ * Switch branch the way a user does — open GitHub's branch/ref picker, filter
+ * to the branch, and choose it. This is deliberately NOT `Turbo.visit(...)`:
+ * the specs must drive the real control a person uses so they work whether
+ * GitHub soft-navigates (Turbo present) or does a full page load (modern
+ * Feature-Preview cohort OFF). Assumes we're on a repo code page, where
+ * `#ref-picker-repos-header-ref-selector` is the current-branch selector.
+ * Callers assert the resulting URL/ref themselves.
+ */
+export async function switchBranchViaPicker(page: Page, branchName: string) {
+  await page.locator('#ref-picker-repos-header-ref-selector').first().click()
+  // The dialog's filter field; wait for it before typing (loads lazily).
+  const filter = page.getByPlaceholder('Find a branch...')
+  await filter.waitFor({ timeout: 10000 })
+  await filter.fill(branchName)
+  const match = page.getByRole('menuitemradio', {
+    name: new RegExp(`^${branchName}$`),
+  })
+  await match.waitFor({ timeout: 10000 })
+  await match.click()
+}
+
+/**
+ * Click the repo-level Issues / "Pull requests" nav tab the way a user does.
+ * Floor-agnostic: GitHub only puts `data-turbo-frame` on these links when
+ * soft-navigation (Turbo) is enabled, so match by the visible label instead of
+ * the turbo-frame attribute — the link is present at both the modern (all-ON)
+ * and legacy (all-OFF) floors.
+ */
+export async function clickRepoNavTab(page: Page, label: 'Issues' | 'Pull requests') {
+  await page
+    .getByRole('link', { name: new RegExp(`^${label}`) })
+    .first()
+    .click()
+}
+
 export async function expandFloatModeSidebar(page: Page) {
   const button = page.locator('.gitako-toggle-show-button')
   const rect = await button.boundingBox()

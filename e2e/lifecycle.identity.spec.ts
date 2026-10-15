@@ -20,16 +20,36 @@ import { testURL } from './testURL'
  * stamped reference for reasons unrelated to the invariant being
  * tested. Programmatic Turbo.visit forces the Turbo path on both
  * auth modes so the test exercises the same lifecycle uniformly.
+ * (This is an *essential* script-based step: the invariant under test —
+ * Gitako's root surviving Turbo's `body` swap — only exists at the
+ * implementation level and only when soft-navigation is available.
+ * We still verify the human flow separately and only ever skip (never
+ * false-fail) when GitHub isn't soft-navigating, e.g. at the
+ * all-ON-off Feature-Preview floor.)
  */
 
+/**
+ * Whether GitHub is soft-navigating on this page (Turbo present). At the
+ * all-OFF Feature-Preview floor GitHub serves a legacy render with full page
+ * loads and no Turbo, so the body-swap invariant can't be exercised there —
+ * the spec skips honestly instead of waiting on a global that never appears.
+ */
+async function softNavigationAvailable(page: import('@playwright/test').Page): Promise<boolean> {
+  return page
+    .evaluate(() => typeof (window as unknown as { Turbo?: unknown }).Turbo !== 'undefined')
+    .catch(() => false)
+}
+
 async function turboVisit(page: import('@playwright/test').Page, url: string) {
+  // Turbo presence was checked before entering the sequence; this waits only
+  // for the bundle to finish binding the visit method, not for it to appear.
   await page.waitForFunction(
-    () => typeof (window as { Turbo?: unknown }).Turbo !== 'undefined',
+    () => typeof (window as unknown as { Turbo: { visit?: unknown } }).Turbo?.visit === 'function',
     undefined,
     { timeout: 10000 },
   )
   await page.evaluate(target => {
-    ;(window as { Turbo: { visit: (u: string) => void } }).Turbo.visit(target)
+    ;(window as unknown as { Turbo: { visit: (u: string) => void } }).Turbo.visit(target)
   }, url)
 }
 
@@ -68,6 +88,10 @@ test.describe('lifecycle: root identity', () => {
     await expect(extensionPage.locator('.gitako-toggle-show-button')).toBeVisible({
       timeout: 10000,
     })
+    test.skip(
+      !(await softNavigationAvailable(extensionPage)),
+      'Turbo soft-navigation not active on this floor; body-swap invariant not exercisable',
+    )
     await stampRootIdentity(extensionPage)
     await assertGitakoMounted(extensionPage, 'initial overview')
 

@@ -2,8 +2,8 @@ import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
 import { selectors } from './selectors'
 import { ensureSidebarExpanded } from './sidebar'
+import { collapseFloatModeSidebar, sleep } from './utils'
 import { testURL } from './testURL'
-import { collapseFloatModeSidebar } from './utils'
 
 async function navigateAndWait(
   page: Page,
@@ -39,7 +39,11 @@ async function navigateAndWait(
     // signal; the destination-specific assertion below is still authoritative.
     .catch(() => page.waitForLoadState('domcontentloaded'))
   await Promise.all([page.waitForURL(expectedURL, { timeout: 15000 }), action()])
-  await settled
+  // The settle promise listens for turbo:load / pjax:end inside the page. A
+  // navigation GitHub implements differently (e.g. a React-route change that
+  // fires neither event) would otherwise hang the test forever, so bound it:
+  // the destination-specific assertion below is always the authority.
+  await Promise.race([settled, sleep(15000)])
   await ready()
 }
 
@@ -71,7 +75,10 @@ test.describe('in Gitako project page', () => {
       extensionPage,
       () => extensionPage.locator(selectors.github.navBarItemIssues).click(),
       '**/issues',
-      () => expect(extensionPage.getByRole('heading', { name: 'All issues' })).toBeVisible(),
+      // Human landing signal: the issues search box. GitHub's issues page title
+      // is an <h1>Issues</h1> but there are several "Issues" headings and the
+      // first one in DOM order is hidden, so use the visible search input.
+      () => expect(extensionPage.getByPlaceholder('Search issues').first()).toBeVisible(),
     )
 
     await navigateAndWait(
@@ -88,7 +95,7 @@ test.describe('in Gitako project page', () => {
       extensionPage,
       () => extensionPage.goBack(),
       '**/issues',
-      () => expect(extensionPage.getByRole('heading', { name: 'All issues' })).toBeVisible(),
+      () => expect(extensionPage.getByPlaceholder('Search issues').first()).toBeVisible(),
     )
     await navigateAndWait(
       extensionPage,
