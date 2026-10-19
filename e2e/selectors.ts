@@ -11,16 +11,20 @@ export const selectors = {
     fileListItemLinkOf: (name: string) =>
       `table[aria-labelledby="folders-and-files"] tr.react-directory-row td.react-directory-row-name-cell-large-screen .react-directory-filename-column .react-directory-truncate a[title="${name}"]`,
     commitPage: ['div.commit', '#diff-content-parent'].join(),
-    // Repo-level Issues/PRs nav tabs. `data-turbo-frame` is the attribute
-    // GitHub puts on every link whose click should turbo-swap the repo
-    // content frame — which is exactly what the repo nav tabs do, and
-    // nothing else. Combined with the href suffix it uniquely identifies
-    // the Issues/Pulls tab without baking in the owner/repo, the locale,
-    // or fragile React-generated ids/classes. Verified count=1 on tree,
-    // blob, repo overview, and the Issues/Pulls index pages themselves,
-    // in both signed-in and anonymous DOMs.
-    navBarItemIssues: '[data-turbo-frame="repo-content-turbo-frame"][href$="/issues"]',
-    navBarItemPulls: '[data-turbo-frame="repo-content-turbo-frame"][href$="/pulls"]',
+    // Repo-level Issues/PRs nav tabs. Anchor on the repo navigation landmark
+    // (`aria-label="Repository"` — the accessible name a screen reader
+    // announces) plus the tab's href suffix. That uniquely identifies the
+    // Issues/Pulls tab without baking in the owner/repo, the locale, or
+    // fragile React-generated ids/classes.
+    //
+    // Deliberately NOT `[data-turbo-frame="repo-content-turbo-frame"]`:
+    // GitHub only puts that attribute on links that turbo-swap the repo
+    // content frame, so it disappears on the all-OFF Feature-Preview floor,
+    // which navigates with full page loads (no Turbo). Verified count=1 on
+    // tree, blob, repo overview, and the Issues/Pulls index pages in both
+    // floor renders.
+    navBarItemIssues: 'nav[aria-label="Repository"] a[href$="/issues"]',
+    navBarItemPulls: 'nav[aria-label="Repository"] a[href$="/pulls"]',
     // Legacy non-virtualized blob DOM that Gitako's code-fold feature
     // depends on (it walks `<tr>` rows inside this table). github.com no
     // longer ships it — blob pages render virtualized `.react-code-lines`

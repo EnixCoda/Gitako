@@ -22,6 +22,14 @@ type Probe = {
   /** expected count exactly; for "must be at least N" set min instead */
   count?: number
   min?: number
+  /**
+   * When this selector is absent from the document, the surface doesn't exist
+   * in this Feature-Preview render (GitHub serves different DOM per floor).
+   * Skip honestly instead of failing on a coupling point the product also
+   * doesn't take on that floor.
+   */
+  absentWhen?: string
+  absentReason?: string
 }
 
 const probes: Probe[] = [
@@ -106,14 +114,25 @@ const probes: Probe[] = [
   },
 
   // Embedded JSON on tree pages — resolveEmbeddedCodeViewData reads this
-  // for branch name resolution. Locks in the `app-name="code-view"`
-  // selector that the recent branch-resolution fix landed on.
+  // for branch name resolution. GitHub serves `app-name="code-view"` on the
+  // modern render and the legacy `app-name="react-code-view"` on some
+  // anonymous renders. The product matches both (DOMHelper.ts), so mirror
+  // that here; only one is present at a time.
+  //
+  // The all-OFF floor is a different shape again: a server-rendered tree
+  // page with no <react-app> wrapper at all, so there is no embedded JSON to
+  // read and branch resolution falls back to the ref picker (probed below).
+  // Skip there rather than fail on a surface that floor doesn't ship.
   {
     label: 'code-view embedded JSON exists on tree page',
     url: 'https://github.com/EnixCoda/Gitako/tree/develop/src',
     selector:
-      'react-app[app-name="code-view"] script[type="application/json"][data-target="react-app.embeddedData"]',
+      'react-app[app-name="code-view"] script[type="application/json"][data-target="react-app.embeddedData"], ' +
+      'react-app[app-name="react-code-view"] script[type="application/json"][data-target="react-app.embeddedData"]',
     count: 1,
+    absentWhen: 'react-app',
+    absentReason:
+      'tree page is server-rendered at this floor (no react-app); branch resolution uses the ref-picker fallback',
   },
 
   // Octolytics meta tag — `isInRepoPage` falls back to this when
@@ -147,6 +166,13 @@ test.describe('drift: selectors', () => {
         timeout: 20000,
       })
       await sleep(2500)
+      if (p.absentWhen) {
+        const surfaceAbsent = await extensionPage.evaluate(
+          sel => !document.querySelector(sel),
+          p.absentWhen,
+        )
+        test.skip(surfaceAbsent, p.absentReason)
+      }
       const actual = await extensionPage.evaluate(
         sel => document.querySelectorAll(sel).length,
         p.selector,

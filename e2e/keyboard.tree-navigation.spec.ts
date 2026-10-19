@@ -44,6 +44,13 @@ import { sleep } from './utils'
 // drift tracker (no account mutation here). The nightly run flips GitHub's
 // Feature Preview externally and re-runs; these specs read whatever is live.
 //
+// Floor factor: at the all-OFF Feature-Preview floor GitHub navigates with
+// full document loads (no Turbo). The keyboard cells then still drive the
+// open and assert the destination, but skip the focus-continuity half
+// honestly — the intent lives in a module singleton that cannot cross a new
+// JS context. The strict continuity assertions run on the soft-navigation
+// floor, where the invariant exists.
+//
 // Signed-in only: Gitako needs the profile token to fetch the tree and GitHub
 // only renders its native tree when signed in. Config is forced via the
 // URL-config channel, which also disables persistence so the shared profile
@@ -73,6 +80,37 @@ const isCollapsed = (page: Page) =>
 
 const focusInTree = (page: Page) =>
   page.evaluate(() => !!document.activeElement?.closest('.file-explorer'))
+
+// Distinguish a Turbo body swap from a full document load when an open
+// navigates. The keyboard-continuity fix holds the intent in a module-level
+// singleton, which survives Turbo replacing <body> but not a new JS context.
+// GitHub's all-OFF Feature-Preview floor navigates with full page loads (no
+// Turbo), so continuity has no premise there; detect it and skip honestly
+// instead of polling 15s for focus that cannot come back. A user cannot
+// observe this distinction, which is why it takes a script step — same
+// rationale as lifecycle.identity's softNavigationAvailable.
+const DOCUMENT_SENTINEL_KEY = '__gitakoE2EDocumentSentinel'
+
+async function stampDocument(page: Page): Promise<string> {
+  const token = `${Date.now()}-${Math.random()}`
+  await page.evaluate(
+    ([key, value]) => {
+      ;(window as unknown as Record<string, string>)[key] = value
+    },
+    [DOCUMENT_SENTINEL_KEY, token] as const,
+  )
+  return token
+}
+
+async function isSameDocument(page: Page, token: string): Promise<boolean> {
+  return page
+    .evaluate(
+      ([key, expected]) =>
+        (window as unknown as Record<string, string | undefined>)[key] === expected,
+      [DOCUMENT_SENTINEL_KEY, token] as const,
+    )
+    .catch(() => false)
+}
 
 // GitHub's own code-view file tree — its presence is what makes auto-expand
 // collapse the pinned bar. Decides whether the collapse assertions apply.
@@ -159,6 +197,10 @@ test.describe('keyboard: file tree navigation matrix (mode × source × method)'
           const target = await arrowToFile(extensionPage, ['README.md'])
           test.skip(!target, 'could not find a leaf file to open from this source')
 
+          // Lets us tell afterwards whether this open swapped <body> in place
+          // (Turbo) or replaced the document (all-OFF floor). See stampDocument.
+          const documentToken = await stampDocument(extensionPage)
+
           if (method === 'keyboard') {
             await extensionPage.keyboard.press('Enter')
           } else {
@@ -169,6 +211,10 @@ test.describe('keyboard: file tree navigation matrix (mode × source × method)'
           await expect.poll(() => hasTreeNodes(extensionPage), { timeout: 15000 }).toBe(true)
 
           if (method === 'keyboard') {
+            test.skip(
+              !(await isSameDocument(extensionPage, documentToken)),
+              'open was a full document load (no Turbo at this floor); keyboard focus continuity cannot span a new JS context',
+            )
             // Cross-context opens (notably issue -> blob) remount the sidebar.
             // Assert the eventual post-remount state instead of sampling at an
             // arbitrary fixed delay.
