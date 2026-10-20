@@ -24,10 +24,12 @@ export default defineConfig({
   // single-spec runs keep 0 retries (fast, fail-loud); CI keeps its own count.
   retries: process.env.CI ? 3 : process.env.GITAKO_PREVIEW_TARGET ? 2 : 0,
   // Playwright defaults to 50% of CPU cores when `workers` is unset — 7 on a
-  // 14-core machine — and each worker spawns its own signed-in persistent
-  // Chromium against live github.com, which oversubscribes quickly. Cap local
-  // runs at 2 (CI also uses 2); override with GITAKO_WORKERS.
-  workers: process.env.GITAKO_WORKERS ? Number(process.env.GITAKO_WORKERS) : 2,
+  // 14-core machine — but every spec shares the one signed-in persistent
+  // profile dir, which takes a filesystem lock: parallel workers race on it
+  // and produce false `createContext` failures. The suite is serial by design
+  // (the nightly forces `--workers=1`), so default to 1; override with
+  // GITAKO_WORKERS.
+  workers: process.env.GITAKO_WORKERS ? Number(process.env.GITAKO_WORKERS) : 1,
   reporter: 'html',
   timeout: 60000,
   expect: {
