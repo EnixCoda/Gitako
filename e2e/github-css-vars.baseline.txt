@@ -9,9 +9,6 @@
 --Layout-template-areas
 --Layout-template-columns
 --actionListContent-paddingBlock
---artifacts-overlay-z-index
---artifacts-panel-width
---artifacts-panel-z-index
 --base-duration-0
 --base-duration-100
 --base-duration-1000
