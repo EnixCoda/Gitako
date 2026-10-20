@@ -23,7 +23,11 @@ export default defineConfig({
   // marks them "flaky", so a genuinely broken test stays visible). Local
   // single-spec runs keep 0 retries (fast, fail-loud); CI keeps its own count.
   retries: process.env.CI ? 3 : process.env.GITAKO_PREVIEW_TARGET ? 2 : 0,
-  workers: process.env.CI ? 2 : undefined,
+  // Playwright defaults to 50% of CPU cores when `workers` is unset — 7 on a
+  // 14-core machine — and each worker spawns its own signed-in persistent
+  // Chromium against live github.com, which oversubscribes quickly. Cap local
+  // runs at 2 (CI also uses 2); override with GITAKO_WORKERS.
+  workers: process.env.GITAKO_WORKERS ? Number(process.env.GITAKO_WORKERS) : 2,
   reporter: 'html',
   timeout: 60000,
   expect: {
