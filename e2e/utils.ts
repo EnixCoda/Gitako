@@ -90,7 +90,9 @@ export async function patientClick(page: Page, selector: string) {
 export async function switchBranchViaPicker(page: Page, branchName: string) {
   await page.locator('#ref-picker-repos-header-ref-selector').first().click()
   // The dialog's filter field; wait for it before typing (loads lazily).
-  const filter = page.getByPlaceholder('Find a branch...')
+  // GitHub ships the placeholder as "Find a branch..." on the legacy floor and
+  // "Find or create a branch..." on the modern floor — match both.
+  const filter = page.getByPlaceholder(/^Find( or create)? a branch/)
   await filter.waitFor({ timeout: 10000 })
   await filter.fill(branchName)
   const match = page.getByRole('menuitemradio', {
