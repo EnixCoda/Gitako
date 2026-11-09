@@ -7,13 +7,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v6
         id: yarn-cache
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -26,7 +26,7 @@ jobs:
           yarn --ignore-platform --ignore-engines --frozen-lockfile --prefer-offline
 
       - name: Retrieve vscode icons
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
         with:
           repository: 'vscode-icons/vscode-icons'
           path: 'vscode-icons'
@@ -36,7 +36,7 @@ jobs:
           NODE_OPTIONS=--openssl-legacy-provider make build
 
       - name: Archive production artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: dist
           path: dist

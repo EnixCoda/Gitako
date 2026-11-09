@@ -1,6 +1,6 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import { expect, test } from './fixtures'
+import { expect, resolveProfilePath, test } from './fixtures'
 import { cssVarsBaselinePath, waitForStableGitHubCssVars, type CssVarsFloor } from './githubCssVars'
 
 /**
@@ -23,6 +23,13 @@ import { cssVarsBaselinePath, waitForStableGitHubCssVars, type CssVarsFloor } fr
  * profile may have been left on either floor (the nightly ends on `on`,
  * an interrupted run can leave `off`), so accept either floor's baseline
  * and only fail when the live set matches neither.
+ *
+ * Anonymous runs are skipped: both baselines are captures of signed-in
+ * Feature-Preview floors, and the signed-out render ships a different
+ * token set (today: it lacks the `--artifacts-*` panel tokens the
+ * signed-in modern floor has). Public CI is anonymous, so it cannot
+ * match either baseline and would report false drift forever. The
+ * signed-in nightly still runs this tripwire for both floors daily.
  *
  * Refresh via `e2e/maint.capture-css-baseline.spec.ts` (kept out of the
  * regular suite because it WRITES the baseline) with the target floor.
@@ -56,6 +63,12 @@ function diffAgainst(baselineKeys: string[], live: string[]): Diff {
 const diffSize = (d: Diff) => d.added.length + d.removed.length
 
 test.describe('drift: GitHub CSS design tokens', () => {
+  test.skip(
+    !resolveProfilePath(),
+    'Anonymous renders ship a different :root token set than the signed-in floors ' +
+      'these baselines were captured from — the signed-in nightly owns this tripwire.',
+  )
+
   test(':root custom property keys match baseline', async ({ extensionPage }, testInfo) => {
     const available = FLOOR_BASELINES.filter(b => fs.existsSync(b.path))
     test.skip(

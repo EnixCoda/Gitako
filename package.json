@@ -45,7 +45,7 @@
     "webextension-polyfill": "^0.11.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.40.0",
+    "@playwright/test": "^1.65.0",
     "@sentry/cli": "^1.64.2",
     "@swc/core": "^1.15.8",
     "@swc/jest": "^0.2.39",

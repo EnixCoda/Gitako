@@ -3,7 +3,7 @@ on:
   workflow_call:
     outputs:
       VERSION:
-        description: "The VERSION string"
+        description: 'The VERSION string'
         value: ${{ jobs.version.outputs.VERSION }}
 
 jobs:
@@ -16,4 +16,4 @@ jobs:
     steps:
       - name: Get the ref
         id: get_ref
-        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+        run: echo "VERSION=$(echo $GITHUB_REF | cut -d / -f 3)" >> "$GITHUB_OUTPUT"
