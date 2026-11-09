@@ -1,4 +1,4 @@
-import type { Page } from '@playwright/test'
+import type { Locator, Page } from '@playwright/test'
 
 export function sleep(timeout: number) {
   return new Promise(resolve => setTimeout(resolve, timeout))
@@ -76,6 +76,42 @@ export async function waitForRedirect(page: Page, action?: () => void | Promise<
 export async function patientClick(page: Page, selector: string) {
   await page.waitForSelector(selector)
   await page.click(selector)
+}
+
+/**
+ * Click a link and wait until the page URL actually matches `url`.
+ *
+ * GitHub's commits list is rendered entirely by client-side React (the served
+ * HTML has no commit rows). While that app is still hydrating — the norm on a
+ * CPU-starved anonymous CI runner, where the main thread is busy compiling
+ * GitHub's JS bundles — the first click on a commit title can be swallowed: no
+ * request is made, the URL never changes, and the click resolves as if it had
+ * worked. A real user just clicks the link again, so do exactly that: retry the
+ * human action a few times before surfacing the failure.
+ *
+ * `waitForRedirect` cannot cover this case — it has no signal to wait for when
+ * the click never starts a navigation at all.
+ */
+export async function clickAndWaitForURL(
+  page: Page,
+  locator: Locator,
+  url: RegExp,
+  { attempts = 3, navigationTimeout = 5000, retryDelay = 1000 } = {},
+) {
+  for (let attempt = 1; ; attempt++) {
+    await locator.click()
+    try {
+      // `commit` resolves as soon as the URL moves, before the target document
+      // finishes loading — callers assert the target content themselves.
+      await page.waitForURL(url, { timeout: navigationTimeout, waitUntil: 'commit' })
+      return
+    } catch (error) {
+      if (attempt >= attempts) throw error
+      // The click was swallowed mid-hydration; give GitHub's JS a beat to take
+      // over the page, then click again like a user would.
+      await sleep(retryDelay)
+    }
+  }
 }
 
 /**

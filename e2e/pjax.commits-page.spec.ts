@@ -1,7 +1,7 @@
 import { expect, test } from './fixtures'
 import { selectors } from './selectors'
 import { testURL } from './testURL'
-import { sleep, waitForRedirect } from './utils'
+import { clickAndWaitForURL, sleep } from './utils'
 
 test.describe('in Gitako commits page', () => {
   test.beforeEach(async ({ extensionPage }) => {
@@ -13,8 +13,11 @@ test.describe('in Gitako commits page', () => {
       const commitLinks = await extensionPage.locator(selectors.github.commitLinks).all()
       if (commitLinks.length < 2) throw new Error(`No enough commits`)
 
-      await commitLinks[i].click()
-      await waitForRedirect(extensionPage)
+      // GitHub's commits list is rendered client-side: on a slow render the
+      // first click can land before the app is interactive and be swallowed.
+      // The helper re-clicks, exactly as a user would, until the commit page
+      // actually opens.
+      await clickAndWaitForURL(extensionPage, commitLinks[i], /\/commit\/[0-9a-f]{7,}/)
       await expect(extensionPage.locator(selectors.github.commitPage).first()).toBeVisible({
         timeout: 5000,
       })
