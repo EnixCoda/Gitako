@@ -1,6 +1,8 @@
-import { formatID } from 'utils/DOMHelper'
 import * as API from './API'
+import { resolveEmbeddedCommitDiffData } from './DOMHelper'
 import { processTree } from './index'
+import { resolveFileAnchors } from './resolveCommitFileAnchors'
+import { normalizeGitHubPath } from './utils'
 
 export async function getCommitTreeData(
   { userName, repoName }: Pick<MetaData, 'userName' | 'repoName' | 'branchName'>,
@@ -17,11 +19,12 @@ export async function getCommitTreeData(
 
   const [, documents] = await API.getCommitPageDocuments(/* userName, repoName, commitSHA */)
 
+  const fileAnchors = resolveFileAnchors(documents, resolveEmbeddedCommitDiffData)
   const getItemURL = (path: string) => {
-    for (const doc of documents) {
-      const id = doc.querySelector(`[data-path="${path}"]`)?.parentElement?.id
-      if (id) return formatID(id)
-    }
+    const anchor = fileAnchors.get(normalizeGitHubPath(path))
+    // Hash-only href: the commit page stays loaded and the browser scrolls to
+    // the file's diff block (GitHub handles the scroll and the sticky header).
+    return anchor ? `#${anchor}` : undefined
   }
 
   const root = processTree(

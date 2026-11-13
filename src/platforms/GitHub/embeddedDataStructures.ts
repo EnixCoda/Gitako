@@ -93,6 +93,46 @@ export function resolveCommitShortMessageMarkdown(data: unknown) {
   if (s.is(data, legacyCommitsApp)) return data.payload.commit.shortMessageMarkdown
 }
 
+// Per-file diff entries of a commit page. `pathDigest` is the suffix of the
+// file's diff block id (`#diff-<pathDigest>`), which is what a same-page link
+// to that file scrolls to. Present under `commitRoute.diffEntryData` on
+// GitHub.com; older layouts / Enterprise keep `files` on the commit payload.
+const diffEntry = s.type({
+  path: s.string(),
+  pathDigest: s.string(),
+})
+
+const legacyCommitFilesApp = s.type({
+  payload: s.type({ commit: s.type({ files: s.array(diffEntry) }) }),
+})
+const commitRouteDiffEntriesApp = s.type({
+  payload: s.type({ commitRoute: s.type({ diffEntryData: s.array(diffEntry) }) }),
+})
+
+export type CommitDiffEntry = s.Infer<typeof diffEntry>
+
+export function resolveCommitDiffEntries(data: unknown): CommitDiffEntry[] {
+  if (s.is(data, commitRouteDiffEntriesApp)) return data.payload.commitRoute.diffEntryData
+  if (s.is(data, legacyCommitFilesApp)) return data.payload.commit.files
+  return []
+}
+
+/**
+ * Per-file diff entries (`{ path, pathDigest }`) of a commit page, read from
+ * the text of its embedded `react-app` JSON payload (the container element is
+ * found by DOMHelper.resolveEmbeddedCommitDiffData). `pathDigest` is the
+ * suffix of the file's diff block id — `#diff-<pathDigest>` — which is what a
+ * same-page link scrolls to.
+ */
+export function resolveCommitDiffEntriesFromEmbeddedText(text: string | null | undefined) {
+  if (!text) return []
+  try {
+    return resolveCommitDiffEntries(JSON.parse(text))
+  } catch {
+    return []
+  }
+}
+
 // Signed-in users see refInfo nested under codeViewTreeRoute /
 // codeViewLayoutRoute; anonymous users get it directly on payload.
 const codeViewApp = s.type({

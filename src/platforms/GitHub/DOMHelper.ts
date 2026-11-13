@@ -5,7 +5,11 @@ import * as s from 'superstruct'
 import { $, make$ } from 'utils/$'
 import { formatClass, parseIntFromElement } from 'utils/DOMHelper'
 import { renderReact } from 'utils/general'
-import { embeddedDataStruct, resolveCommitShortMessageMarkdown } from './embeddedDataStructures'
+import {
+  embeddedDataStruct,
+  resolveCommitDiffEntriesFromEmbeddedText,
+  resolveCommitShortMessageMarkdown,
+} from './embeddedDataStructures'
 import * as URLHelper from './URLHelper'
 
 const selectors = {
@@ -62,6 +66,14 @@ const selectors = {
     },
   },
 }
+
+// Signed-in users on the unified repo shell get `app-name="repo"`;
+// anonymous / legacy layouts still ship `app-name="commits"`. Match either so
+// commit-page data (subject, per-file diff entries) keeps resolving on both.
+const commitPageEmbeddedDataSelectors = [
+  'react-app[app-name="repo"] script[type="application/json"][data-target="react-app.embeddedData"]',
+  'react-app[app-name="commits"] script[type="application/json"][data-target="react-app.embeddedData"]',
+].join()
 
 const getDOMJSON = (selector: string, _$ = $) =>
   _$(selector, e => {
@@ -198,6 +210,15 @@ export function getIssueTitle() {
   return title?.trim().replace(/\n/g, '')
 }
 
+// Per-file diff entries (`{ path, pathDigest }`) of a commit page, read from
+// the same embedded payload getCommitTitle uses (selectors and fallbacks are
+// documented there). Takes a document so it works on the live page as well as
+// on documents fetched for progressive loading.
+export function resolveEmbeddedCommitDiffData(doc: Document = document) {
+  const script = make$(doc)(commitPageEmbeddedDataSelectors)
+  return resolveCommitDiffEntriesFromEmbeddedText(script?.textContent)
+}
+
 export function getCommitTitle() {
   // GitHub's current commit page ships the message in an embedded JSON
   // payload (under `payload.commitRoute.commit` on GitHub.com and
@@ -211,12 +232,7 @@ export function getCommitTitle() {
   // shape (`payload.commitRoute.commit.shortMessageMarkdown` on
   // GitHub.com, `payload.commit.shortMessageMarkdown` on legacy /
   // Enterprise pages) is unchanged between the two containers.
-  const data = getDOMJSON(
-    [
-      'react-app[app-name="repo"] script[type="application/json"][data-target="react-app.embeddedData"]',
-      'react-app[app-name="commits"] script[type="application/json"][data-target="react-app.embeddedData"]',
-    ].join(),
-  )
+  const data = getDOMJSON(commitPageEmbeddedDataSelectors)
   const html = resolveCommitShortMessageMarkdown(data)
   if (html) {
     // Strip HTML tags from the markdown render (the subject is wrapped
