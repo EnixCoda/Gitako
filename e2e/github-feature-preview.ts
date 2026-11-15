@@ -31,6 +31,7 @@ export type FeaturePreviewKey =
   | 'command_palette'
   | 'copilot_chat_custom_instructions'
   | 'ipynb-diff'
+  | 'prs_overview_react'
   | 'prx_files'
   | 'pull_request_files_virtualization'
   | 'repo_pulls_dashboard_surface'
@@ -62,6 +63,21 @@ export const knownFeaturePreviewItems: Record<FeaturePreviewKey, FeaturePreviewE
     title: 'Rich Jupyter Notebook Diffs',
     affectsGitako: 'no',
     why: 'Affects blob render only; Gitako does not inspect blob content.',
+  },
+  prs_overview_react: {
+    title: 'New Pull Requests Overview',
+    affectsGitako: 'yes',
+    why:
+      'Redesigns the PR conversation page (/pull/<N>) — the surface Gitako injects into: new' +
+      ' Overview / Commits / Checks / Files changed tabs, a compact merge box and a right-hand' +
+      ' activity pane. Verified against the live page on the ON floor (GitHub changelog' +
+      ' 2026-11-05, “New pull request overview page in public preview”): Gitako still mounts,' +
+      ' expands its own sidebar (the Overview page ships no native file tree) and builds the file' +
+      ' tree + per-file diff badges from the API, and nav.pull-request-page +' +
+      ' feature.pr-diff-summaries pass on both floors — no product change needed. The page also' +
+      ' drops the classic #files_tab_counter / #diffstat DOM, so Gitako takes its safe' +
+      ' fully-paginated path instead of the size fast-path (correctness unaffected; a large PR' +
+      ' costs a couple more requests).',
   },
   prx_files: {
     title: 'New Files Changed Experience',
